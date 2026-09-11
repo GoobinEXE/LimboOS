@@ -285,6 +285,31 @@ Se algo parece estranho, incompleto ou um pouco quebrado — às vezes é propos
 
 ---
 
+## Licença
+
+O **código-fonte** do LimboOS é disponibilizado sob a [PolyForm Noncommercial License 1.0.0](https://polyformproject.org/licenses/noncommercial/1.0.0). Veja o arquivo [`LICENSE`](LICENSE).
+
+Em resumo:
+
+- Você pode usar, estudar, modificar e publicar forks **apenas para fins não comerciais**.
+- Redistribuições devem manter os avisos `Required Notice:` do `LICENSE` e atribuir o LimboOS como projeto original.
+- **Uso comercial é proibido** sob essa licença. Se quiser usar de forma comercial (produto, SaaS, white-label, monetização etc.), entre em contato: [github.com/xXinous](https://github.com/xXinous) (issues do repositório ou perfil).
+
+### Código ≠ universo
+
+A licença do código **não** cobre sozinha o conteúdo narrativo. Mesmo com Noncommercial, fork não comercial **não** autoriza republicar o universo LimboOS.
+
+Ficam **reservados todos os direitos** (ou sob termos próprios, se indicados) sobre:
+
+- personagens, NPCs e textos narrativos (incluindo `sms/`);
+- lore das campanhas, dossiês e intel de conteúdo;
+- artes, áudios, imagens e demais mídias;
+- a marca e o nome **LimboOS**.
+
+Dependências de terceiros (npm etc.) continuam sob as respectivas licenças.
+
+---
+
 <p align="center">
   <img src="docs/readme/limboos-hero.png" alt="" width="480" />
 </p>

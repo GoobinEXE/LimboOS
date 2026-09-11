@@ -1,0 +1,33 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "words": [
+    "adminsdk",
+    "APPCHECK",
+    "appspot",
+    "commite",
+    "cursorrules",
+    "esquadroes",
+    "firebaseapp",
+    "firepit",
+    "gemini",
+    "Grotesk",
+    "nokia",
+    "recaptcha",
+    "relatorios",
+    "southamerica",
+    "Uids"
+  ],
+  "ignorePaths": [
+    "node_modules/**",
+    "dist/**",
+    "build/**",
+    "coverage/**",
+    "backend/dist/**",
+    "**/*.min.js",
+    "package-lock.json",
+    "firepit-log.txt",
+    "**/*-log.txt",
+    "*.log"
+  ]
+}

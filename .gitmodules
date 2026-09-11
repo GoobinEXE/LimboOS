@@ -1,6 +1,11 @@
 [submodule "backend"]
 	path = backend
 	url = https://github.com/xXinous/LimboOS-backend.git
+	branch = main
+	update = merge
 [submodule "mobile"]
 	path = mobile
 	url = https://github.com/xXinous/LimboOS-mobile.git
+	branch = main
+	update = merge
+

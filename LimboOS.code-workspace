@@ -1,0 +1,25 @@
+{
+  "folders": [
+    {
+      "name": "LimboOS",
+      "path": "."
+    },
+    {
+      "name": "backend",
+      "path": "backend"
+    },
+    {
+      "name": "mobile",
+      "path": "mobile"
+    }
+  ],
+  "settings": {
+    "git.detectSubmodules": true,
+    "git.detectSubmodulesLimit": 20,
+    "git.autoRepositoryDetection": true,
+    "git.repositoryScanMaxDepth": 2,
+    "git.openRepositoryInParentFolders": "never",
+    "git.fetchOnPull": true,
+    "scm.repositories.visible": 10
+  }
+}

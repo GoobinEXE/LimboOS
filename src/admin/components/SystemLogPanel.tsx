@@ -99,7 +99,7 @@ const LogRow = React.memo(({
           {entry.type.toUpperCase()}
         </span>
 
-        <span className="text-[11px] font-display font-bold text-white shrink-0 truncate max-w-[120px] tracking-wide">
+        <span className="text-[11px] font-display font-bold text-white shrink-0 truncate max-w-30 tracking-wide">
           {entry.username?.trim() || masterAccountLabelByUid(entry.uid, users, 'SISTEMA')}
         </span>
 
@@ -153,11 +153,18 @@ const LogRow = React.memo(({
   );
 });
 
-export default function SystemLogPanel() {
+interface SystemLogPanelProps {
+  /** Modo compacto para Ao Vivo — menos entradas, sem ações destrutivas. */
+  compact?: boolean;
+  /** Quando definido, restringe o log compacto a estes UIDs (sessão ativa). */
+  filterUids?: string[];
+}
+
+export default function SystemLogPanel({ compact = false, filterUids }: SystemLogPanelProps) {
   const [entries, setEntries] = useState<LogEntry[]>([]);
   const [users, setUsers] = useState<MasterAccount[]>([]);
   const [characterMap, setCharacterMap] = useState<Map<string, string>>(new Map());
-  const [maxEntries, setMaxEntries] = useState(200);
+  const [maxEntries, setMaxEntries] = useState(compact ? 50 : 200);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [isClearing, setIsClearing] = useState(false);
   const [filterSource, setFilterSource] = useState<string>('all');
@@ -205,7 +212,9 @@ export default function SystemLogPanel() {
   }, [maxEntries]);
 
   const filtered = useMemo(() => {
+    const uidSet = filterUids?.length ? new Set(filterUids) : null;
     return entries.filter((e) => {
+      if (uidSet && e.uid && !uidSet.has(e.uid)) return false;
       if (filterSource !== 'all' && e.source !== filterSource) return false;
       if (filterType !== 'all' && e.type !== filterType) return false;
       if (filterCategory && e.category !== filterCategory) return false;
@@ -213,7 +222,7 @@ export default function SystemLogPanel() {
       if (searchText && !(e.message || '').toLowerCase().includes(searchText.toLowerCase())) return false;
       return true;
     });
-  }, [entries, filterSource, filterType, filterCategory, filterUser, searchText]);
+  }, [entries, filterSource, filterType, filterCategory, filterUser, searchText, filterUids]);
 
   const errorCount = entries.filter(e => e.type === 'error').length;
 
@@ -306,15 +315,18 @@ export default function SystemLogPanel() {
   };
 
   return (
-    <div className="bg-surface-container-low border border-primary/10 flex flex-col font-sans overflow-hidden shadow-2xl" style={{ minHeight: '500px', maxHeight: '65vh' }}>
+    <div
+      className="bg-surface-container-low border border-primary/10 flex flex-col font-sans overflow-hidden shadow-2xl"
+      style={{ minHeight: compact ? '280px' : '500px', maxHeight: compact ? '40vh' : '65vh' }}
+    >
       {modal}
       
-      <div className="flex items-center justify-between px-8 py-5 bg-black/40 border-b border-primary/10 shrink-0">
+      <div className={`flex items-center justify-between ${compact ? 'px-4 py-3' : 'px-8 py-5'} bg-black/40 border-b border-primary/10 shrink-0`}>
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-3">
             <div className="w-2 h-2 bg-primary rounded-full animate-pulse glow-orange" />
             <h2 className="font-display font-bold uppercase tracking-[0.3em] text-xs text-primary">
-              Fluxo de Telemetria em Tempo Real
+              {compact ? 'Log Recente' : 'Fluxo de Telemetria em Tempo Real'}
             </h2>
           </div>
           <span className="text-[10px] font-display font-bold text-industrial-silver/20 tracking-[0.2em] uppercase">
@@ -328,39 +340,43 @@ export default function SystemLogPanel() {
           )}
         </div>
         <div className="flex items-center gap-3">
-          <button
-            onClick={handleExportJSON}
-            className="px-6 py-2 text-[10px] font-display font-bold uppercase tracking-widest bg-white/5 border border-white/5 text-industrial-silver/40 hover:bg-white/10 hover:text-white transition-all flex items-center gap-2 rounded-sm shadow-lg"
-          >
-            <span className="material-symbols-outlined text-base">download</span>
-            Exportar JSON
-          </button>
+          {!compact && (
+            <>
+              <button
+                onClick={handleExportJSON}
+                className="px-6 py-2 text-[10px] font-display font-bold uppercase tracking-widest bg-white/5 border border-white/5 text-industrial-silver/40 hover:bg-white/10 hover:text-white transition-all flex items-center gap-2 rounded-sm shadow-lg"
+              >
+                <span className="material-symbols-outlined text-base">download</span>
+                Exportar JSON
+              </button>
 
-          <button
-            onClick={handleWipeUsers}
-            disabled={isWiping}
-            className={`px-6 py-2 text-[10px] font-display font-bold uppercase tracking-widest border transition-all flex items-center gap-2 rounded-sm shadow-lg ${
-              isWiping
-                ? 'bg-red-500/20 text-red-400 border-red-500/20 animate-pulse'
-                : 'bg-red-500/5 text-red-500/60 border-red-500/10 hover:bg-red-500/10 hover:text-red-500'
-            }`}
-          >
-            <span className="material-symbols-outlined text-base">delete_forever</span>
-            {isWiping ? (wipeProgress ? `${wipeProgress.phase}: ${wipeProgress.usersProcessed}/${wipeProgress.totalUsers}` : 'APAGANDO...') : 'Wipe de Usuários'}
-          </button>
+              <button
+                onClick={handleWipeUsers}
+                disabled={isWiping}
+                className={`px-6 py-2 text-[10px] font-display font-bold uppercase tracking-widest border transition-all flex items-center gap-2 rounded-sm shadow-lg ${
+                  isWiping
+                    ? 'bg-red-500/20 text-red-400 border-red-500/20 animate-pulse'
+                    : 'bg-red-500/5 text-red-500/60 border-red-500/10 hover:bg-red-500/10 hover:text-red-500'
+                }`}
+              >
+                <span className="material-symbols-outlined text-base">delete_forever</span>
+                {isWiping ? (wipeProgress ? `${wipeProgress.phase}: ${wipeProgress.usersProcessed}/${wipeProgress.totalUsers}` : 'APAGANDO...') : 'Wipe de Usuários'}
+              </button>
 
-          <button
-            onClick={handleClearLogs}
-            disabled={isClearing}
-            className={`px-6 py-2 text-[10px] font-display font-bold uppercase tracking-widest border transition-all flex items-center gap-2 rounded-sm shadow-lg ${
-              isClearing
-                ? 'bg-white/5 text-industrial-silver/10 border-white/5'
-                : 'bg-red-500/5 text-red-500/60 border-red-500/10 hover:bg-red-500/10 hover:text-red-500'
-            }`}
-          >
-            <span className="material-symbols-outlined text-base">delete_sweep</span>
-            {isClearing ? 'PROCESSANDO...' : 'Purgar Logs'}
-          </button>
+              <button
+                onClick={handleClearLogs}
+                disabled={isClearing}
+                className={`px-6 py-2 text-[10px] font-display font-bold uppercase tracking-widest border transition-all flex items-center gap-2 rounded-sm shadow-lg ${
+                  isClearing
+                    ? 'bg-white/5 text-industrial-silver/10 border-white/5'
+                    : 'bg-red-500/5 text-red-500/60 border-red-500/10 hover:bg-red-500/10 hover:text-red-500'
+                }`}
+              >
+                <span className="material-symbols-outlined text-base">delete_sweep</span>
+                {isClearing ? 'PROCESSANDO...' : 'Purgar Logs'}
+              </button>
+            </>
+          )}
         </div>
       </div>
 

@@ -1,8 +1,57 @@
 import { collection, doc, onSnapshot } from 'firebase/firestore';
 import { db } from '../lib/firebase';
+import { checkMacClosed, checkTerminalClosed } from '../store/firestore';
 import { activityLogger } from './ActivityLogger';
 import type { PlayerData, LimboGlobalState, CharacterData } from '../types/player';
 import type { AppScreen } from '../types/player';
+
+const DOS_RELATED_SCREENS: ReadonlySet<AppScreen> = new Set(['bios', 'limbo', 'diskRepair', 'windows95']);
+
+/** Evita ack duplicado quando listeners de conta e personagem disparam no mesmo tick. */
+const pendingForceAcks = new Set<string>();
+
+/**
+ * Force flags are one-shot: open the screen once, then clear the flag so the
+ * player can dismiss the app freely without being re-pushed while the GM panel
+ * still shows a transient "pending" state.
+ */
+function applyOneShotForce(
+  uid: string,
+  characterId: string,
+  kind: 'dos' | 'mac',
+  onScreenChange: (screenSetter: (prev: AppScreen) => AppScreen) => void
+) {
+  onScreenChange((prev) => {
+    if (kind === 'dos') {
+      if (DOS_RELATED_SCREENS.has(prev)) return prev;
+      activityLogger.logSystem('sync', 'Terminal forçado pelo servidor', {
+        triggeredBy: 'forceTerminalOpen',
+        characterId,
+      });
+      return 'bios';
+    }
+    if (prev === 'macos') return prev;
+    activityLogger.logSystem('sync', 'MacOS forçado pelo servidor', {
+      triggeredBy: 'forceMacOpen',
+      characterId,
+    });
+    return 'macos';
+  });
+
+  const ackKey = `${uid}:${kind}`;
+  if (pendingForceAcks.has(ackKey)) return;
+  pendingForceAcks.add(ackKey);
+
+  const ack =
+    kind === 'dos' ? checkTerminalClosed(uid, characterId) : checkMacClosed(uid, characterId);
+  void ack
+    .catch((err) => {
+      console.warn(`[PlayerSyncService] Falha ao confirmar force ${kind}:`, err);
+    })
+    .finally(() => {
+      pendingForceAcks.delete(ackKey);
+    });
+}
 
 export class PlayerSyncService {
   private static instance: PlayerSyncService;
@@ -49,23 +98,11 @@ export class PlayerSyncService {
       (snap) => {
         if (snap.exists()) {
           const data = snap.data() as CharacterData;
-          
+
           if (data.forceTerminalOpen) {
-            onScreenChange((prev) => {
-              if (prev !== 'bios' && prev !== 'limbo' && prev !== 'diskRepair') {
-                activityLogger.logSystem('sync', 'Terminal forçado pelo servidor', { triggeredBy: 'forceTerminalOpen', characterId });
-                return 'bios';
-              }
-              return prev;
-            });
+            applyOneShotForce(uid, characterId, 'dos', onScreenChange);
           } else if (data.forceMacOpen) {
-            onScreenChange((prev) => {
-              if (prev !== 'macos') {
-                activityLogger.logSystem('sync', 'MacOS forçado pelo servidor', { triggeredBy: 'forceMacOpen', characterId });
-                return 'macos';
-              }
-              return prev;
-            });
+            applyOneShotForce(uid, characterId, 'mac', onScreenChange);
           }
 
           onPlayerDataUpdate({ character: { ...data, id: characterId } });
@@ -75,27 +112,15 @@ export class PlayerSyncService {
     );
 
     // 3. Master Account Listener (Account-level flags)
-    const unsubUser = onSnapshot(doc(db, 'users', uid), 
+    const unsubUser = onSnapshot(doc(db, 'users', uid),
       (snap) => {
         if (snap.exists()) {
           const data = snap.data();
 
           if (data.forceTerminalOpen) {
-            onScreenChange((prev) => {
-              if (prev !== 'bios' && prev !== 'limbo' && prev !== 'diskRepair') {
-                activityLogger.logSystem('sync', 'Terminal forçado pelo servidor', { triggeredBy: 'forceTerminalOpen', characterId });
-                return 'bios';
-              }
-              return prev;
-            });
+            applyOneShotForce(uid, characterId, 'dos', onScreenChange);
           } else if (data.forceMacOpen) {
-            onScreenChange((prev) => {
-              if (prev !== 'macos') {
-                activityLogger.logSystem('sync', 'MacOS forçado pelo servidor', { triggeredBy: 'forceMacOpen', characterId });
-                return 'macos';
-              }
-              return prev;
-            });
+            applyOneShotForce(uid, characterId, 'mac', onScreenChange);
           }
 
           onPlayerDataUpdate({
@@ -116,7 +141,18 @@ export class PlayerSyncService {
       (error) => console.warn('[PlayerSyncService] Limbo error:', error)
     );
 
-    this.unsubs.push(unsubIntel, unsubChar, unsubUser, unsubLimbo);
+    // 5. Achievements — grants admin/remotos refletem sem reload
+    const unsubAchievements = onSnapshot(
+      collection(db, 'users', uid, 'characters', characterId, 'achievements'),
+      (snapshot) => {
+        onPlayerDataUpdate({
+          achievementIds: snapshot.docs.map((d) => d.id),
+        });
+      },
+      (error) => console.warn('[PlayerSyncService] Achievements error:', error)
+    );
+
+    this.unsubs.push(unsubIntel, unsubChar, unsubUser, unsubLimbo, unsubAchievements);
   }
 
   public stopAll() {

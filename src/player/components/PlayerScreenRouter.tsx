@@ -1,18 +1,28 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import RetroLoading from '../../components/player/RetroLoading';
-import WalkmanShell from './WalkmanShell';
-import MiniAppsOverlay from './MiniAppsOverlay';
-import LoginScreen from '../../components/LoginScreen';
+import { usePlayerSession } from '../context/PlayerProviders';
+import { usePlayerPlayback } from '../context/PlayerProviders';
 
+const WalkmanShell = React.lazy(() => import('./WalkmanShell'));
+const MiniAppsOverlay = React.lazy(() => import('./MiniAppsOverlay'));
+const LoginScreen = React.lazy(() => import('../../components/LoginScreen'));
 const CharacterSelectionScreen = React.lazy(() => import('../../components/CharacterSelectionScreen'));
 const ProfileScreen = React.lazy(() => import('../../components/ProfileScreen'));
 const AgentDossierOverlay = React.lazy(() =>
   import('../../components/campaign/AgentDossierOverlay').then((m) => ({ default: m.AgentDossierOverlay }))
 );
 const CampaignSelection = React.lazy(() => import('../../components/CampaignSelection'));
-import { usePlayerSession } from '../context/PlayerProviders';
-import { usePlayerPlayback } from '../context/PlayerProviders';
+
+const LIMBO_EASE = [0.22, 1, 0.36, 1] as const;
+const SCREEN_TRANSITION = { duration: 0.28, ease: LIMBO_EASE };
+
+const screenMotion = {
+  initial: { opacity: 0, y: 10 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -8 },
+  transition: SCREEN_TRANSITION,
+};
 
 export default function PlayerScreenRouter() {
   const session = usePlayerSession();
@@ -40,21 +50,17 @@ export default function PlayerScreenRouter() {
       {screen === 'login' || !masterAccount ? (
         <motion.div
           key="login"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.15 }}
+          {...screenMotion}
           className="w-full h-full flex items-center justify-center"
         >
-          <LoginScreen onLogin={handleLogin} />
+          <React.Suspense fallback={<RetroLoading message="CARREGANDO TERMINAL..." />}>
+            <LoginScreen onLogin={handleLogin} />
+          </React.Suspense>
         </motion.div>
       ) : screen === 'characterSelection' && masterAccount ? (
         <motion.div
           key="charSelect"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.15 }}
+          {...screenMotion}
           className="w-full h-full flex items-center justify-center"
         >
           <React.Suspense fallback={<RetroLoading message="LISTANDO AGENTES..." />}>
@@ -70,9 +76,7 @@ export default function PlayerScreenRouter() {
       ) : screen === 'profile' ? (
         <motion.div
           key="profile"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
+          {...screenMotion}
           className="w-full h-full flex items-center justify-center"
         >
           <React.Suspense fallback={<RetroLoading message="ACESSANDO PERFIL..." />}>
@@ -91,12 +95,10 @@ export default function PlayerScreenRouter() {
       ) : screen === 'agentDossier' ? (
         <motion.div
           key="agentDossier"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
+          {...screenMotion}
           className="w-full h-full flex items-center justify-center p-0 sm:p-4"
         >
-          <div className="w-full h-full max-w-[520px] rounded-none sm:rounded-[20px] shadow-[0_35px_100px_rgba(0,0,0,0.9)] border-0 sm:border-2 border-primary/20 relative flex flex-col mx-auto overflow-hidden bg-surface">
+          <div className="w-full h-full max-w-130 rounded-none sm:rounded-panel shadow-panel border-0 sm:border border-border-accent relative flex flex-col mx-auto overflow-hidden bg-surface">
             <React.Suspense fallback={<RetroLoading message="ABRINDO DOSSIÊ..." />}>
               <AgentDossierOverlay
                 onClose={() => setScreen('campaignSelection')}
@@ -109,9 +111,7 @@ export default function PlayerScreenRouter() {
       ) : screen === 'campaignSelection' ? (
         <motion.div
           key="campaignSelection"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
+          {...screenMotion}
           className="w-full h-full flex items-center justify-center p-0 sm:p-4"
         >
           <React.Suspense fallback={<RetroLoading message="SELECIONANDO MISSÃO..." />}>
@@ -123,40 +123,49 @@ export default function PlayerScreenRouter() {
               onLogout={handleLogout}
               onShowProfile={() => setScreen('agentDossier')}
               onChangeCharacter={handleCharacterSwitch}
+              onBack={
+                playerData.character.campaignId
+                  ? () => setScreen('player')
+                  : undefined
+              }
               playerData={playerData}
             />
           </React.Suspense>
         </motion.div>
       ) : screen === 'player' ? (
-        <WalkmanShell
-          currentIntel={playback.currentIntel}
-          walkmanStatus={playback.walkmanStatus}
-          isPlaying={playback.isPlaying}
-          displayMode={playback.displayMode}
-          volume={playback.volume}
-          setVolume={playback.setVolume}
-          intelItems={intelManager?.getAll() ?? []}
-          playerData={playerData}
-          onEject={playback.handleEject}
-          onScanClick={playback.handleScanClick}
-          onCancelScan={playback.handleCancelScan}
-          onQrDetected={playback.handleQrDetected}
-          onIntelSelect={playback.handleIntelSelect}
-          onModeChange={playback.handleModeChange}
-          onProfileOpen={playback.handleProfileOpen}
-          onCharacterSwitch={handleCharacterSwitch}
-          onSetIsPlaying={playback.handleSetIsPlaying}
-          onRewind={playback.handleRewind}
-          onTerminalOpen={playback.handleTerminalOpen}
-          onMacOpen={playback.handleMacOpen}
-        />
+        <React.Suspense fallback={<RetroLoading message="INICIALIZANDO DECK..." />}>
+          <WalkmanShell
+            currentIntel={playback.currentIntel}
+            walkmanStatus={playback.walkmanStatus}
+            isPlaying={playback.isPlaying}
+            displayMode={playback.displayMode}
+            volume={playback.volume}
+            setVolume={playback.setVolume}
+            intelItems={intelManager?.getAll() ?? []}
+            playerData={playerData}
+            onEject={playback.handleEject}
+            onScanClick={playback.handleScanClick}
+            onCancelScan={playback.handleCancelScan}
+            onQrDetected={playback.handleQrDetected}
+            onIntelSelect={playback.handleIntelSelect}
+            onModeChange={playback.handleModeChange}
+            onProfileOpen={playback.handleProfileOpen}
+            onCharacterSwitch={handleCharacterSwitch}
+            onSetIsPlaying={playback.handleSetIsPlaying}
+            onRewind={playback.handleRewind}
+            onTerminalOpen={playback.handleTerminalOpen}
+            onMacOpen={playback.handleMacOpen}
+          />
+        </React.Suspense>
       ) : (
-        <MiniAppsOverlay
-          screen={screen}
-          playerData={playerData}
-          limboStatus={limboStatus}
-          setScreen={setScreen}
-        />
+        <React.Suspense fallback={<RetroLoading message="INICIALIZANDO SISTEMA..." />}>
+          <MiniAppsOverlay
+            screen={screen}
+            playerData={playerData}
+            limboStatus={limboStatus}
+            setScreen={setScreen}
+          />
+        </React.Suspense>
       )}
     </AnimatePresence>
   );

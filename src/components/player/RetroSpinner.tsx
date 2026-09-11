@@ -14,7 +14,7 @@ export default function RetroSpinner({ size = 'md', className = '' }: RetroSpinn
 
   const borderSize = {
     sm: 'border-2',
-    md: 'border-3',
+    md: 'border-[3px]',
     lg: 'border-4'
   }[size];
 
@@ -27,9 +27,9 @@ export default function RetroSpinner({ size = 'md', className = '' }: RetroSpinn
   return (
     <div className={`relative flex items-center justify-center ${className}`}>
       <div className={`${dimensions} relative flex items-center justify-center`}>
-        <div className={`absolute inset-0 rounded-full ${borderSize} border-surface-bright`} />
-        <div className={`absolute inset-0 rounded-full ${borderSize} border-transparent border-t-retro-orange animate-[spin_1s_linear_infinite]`} />
-        <div className={`${dotSize} bg-retro-orange rounded-full animate-pulse`} />
+        <div className={`absolute inset-0 rounded-full ${borderSize} border-border`} />
+        <div className={`absolute inset-0 rounded-full ${borderSize} border-transparent border-t-accent glow-orange-subtle animate-spin`} />
+        <div className={`${dotSize} bg-accent rounded-full animate-pulse`} />
       </div>
     </div>
   );

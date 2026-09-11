@@ -43,7 +43,7 @@ export default function MissionVideoTab({
           Transmissão Remota de Vídeo
         </h4>
         <p className="text-[11px] text-industrial-silver/50 leading-relaxed max-w-2xl mb-6">
-          Selecione um coletável de vídeo (VHS/DVD) e dispare a reprodução na tela dos Nokia dos
+          Selecione um coletável de vídeo (VHS/DVD) e dispare a reprodução na tela dos handsets dos
           agentes vinculados a esta missão. O mesmo fluxo unificado de distribuição de Intel é usado
           aqui, com opção de desbloqueio automático.
         </p>

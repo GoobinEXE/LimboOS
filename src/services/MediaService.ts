@@ -1,32 +1,37 @@
-import { 
-  collection, 
-  addDoc, 
-  deleteDoc, 
-  doc, 
-  query, 
-  where, 
-  orderBy, 
-  onSnapshot, 
+import {
+  collection,
+  addDoc,
+  deleteDoc,
+  doc,
+  query,
+  where,
+  orderBy,
+  onSnapshot,
   serverTimestamp,
   updateDoc,
-  getDocs
+  getDocs,
+  getDoc,
 } from 'firebase/firestore';
-import { 
-  ref, 
-  uploadBytesResumable, 
-  getDownloadURL, 
+import {
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
   deleteObject,
-  uploadBytes
 } from 'firebase/storage';
 import { db, storage } from '../lib/firebase';
 import { MediaAsset, MediaType } from '../types/media';
 
+const MAX_UPLOAD_BYTES = 100 * 1024 * 1024;
+const ALLOWED_MIME_PREFIXES = ['audio/', 'image/', 'video/', 'application/pdf'] as const;
+
+export type UploadMediaOptions = {
+  folderIds?: string[];
+  onProgress?: (progress: number) => void;
+};
+
 class MediaService {
   private collectionName = 'mediaAssets';
 
-  /**
-   * Determine MediaType from MIME type
-   */
   private getMediaType(mimeType: string): MediaType {
     if (mimeType.startsWith('audio/')) return 'audio';
     if (mimeType.startsWith('image/')) return 'image';
@@ -35,53 +40,76 @@ class MediaService {
     return 'other';
   }
 
+  private assertAllowedUpload(file: File): void {
+    const allowed =
+      ALLOWED_MIME_PREFIXES.some((prefix) =>
+        prefix.endsWith('/') ? file.type.startsWith(prefix) : file.type === prefix,
+      );
+    if (!allowed || this.getMediaType(file.type) === 'other') {
+      throw new Error('Tipo de arquivo não permitido. Use áudio, imagem, vídeo ou PDF.');
+    }
+    if (file.size <= 0 || file.size > MAX_UPLOAD_BYTES) {
+      throw new Error('Arquivo inválido ou maior que 100MB.');
+    }
+  }
+
+  private sanitizeFilename(name: string): string {
+    const base = name.split(/[/\\]/).pop() || 'upload';
+    return base.replace(/[^a-zA-Z0-9._-]/g, '_').slice(0, 120) || 'upload';
+  }
+
   /**
-   * Upload file and create asset record
+   * Upload file and create asset record.
+   * `folderIds` (opcional) grava IDs de pastas em metadata.tags.
    */
   async uploadMedia(
-    file: File, 
-    uploadedBy: string, 
-    onProgress?: (progress: number) => void
+    file: File,
+    uploadedBy: string,
+    onProgressOrOptions?: ((progress: number) => void) | UploadMediaOptions,
   ): Promise<MediaAsset> {
+    const options: UploadMediaOptions =
+      typeof onProgressOrOptions === 'function'
+        ? { onProgress: onProgressOrOptions }
+        : onProgressOrOptions || {};
+
+    this.assertAllowedUpload(file);
     const type = this.getMediaType(file.type);
     const timestamp = Date.now();
-    const storagePath = `media/${type}/${timestamp}_${file.name}`;
+    const safeName = this.sanitizeFilename(file.name);
+    const storagePath = `media/${type}/${timestamp}_${safeName}`;
     const storageRef = ref(storage, storagePath);
 
     return new Promise((resolve, reject) => {
-      const uploadTask = uploadBytesResumable(storageRef, file);
+      const uploadTask = uploadBytesResumable(storageRef, file, {
+        contentType: file.type,
+      });
 
       uploadTask.on(
         'state_changed',
         (snapshot) => {
           const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          if (onProgress) onProgress(progress);
+          options.onProgress?.(progress);
         },
         (error) => reject(error),
         async () => {
           try {
             const url = await getDownloadURL(uploadTask.snapshot.ref);
-            
-            let metadata: MediaAsset['metadata'] = {
-              title: file.name.replace(/\.[^/.]+$/, ""),
+
+            const metadata: MediaAsset['metadata'] = {
+              title: safeName.replace(/\.[^/.]+$/, ''),
             };
 
-            // Attempt to parse metadata for audio
-            if (type === 'audio') {
-              try {
-                const { parseBlob } = await import('music-metadata');
-                const meta = await parseBlob(file);
-                if (meta.common.title) metadata.title = meta.common.title;
-                if (meta.common.artist) metadata.artist = meta.common.artist;
-                if (meta.format.duration) metadata.duration = Math.round(meta.format.duration);
-                if (meta.common.album) metadata.category = meta.common.album;
-              } catch (err) {
-                console.warn('Metadata parsing failed:', err);
-              }
+            if (type === 'audio' && typeof (file as File & { duration?: number }).duration === 'number') {
+              metadata.duration = Math.round((file as File & { duration?: number }).duration!);
+            }
+
+            const folderIds = [...new Set((options.folderIds || []).filter(Boolean))];
+            if (folderIds.length > 0) {
+              metadata.tags = folderIds;
             }
 
             const assetData: Omit<MediaAsset, 'id'> = {
-              filename: file.name,
+              filename: safeName,
               originalName: file.name,
               url,
               storagePath,
@@ -90,7 +118,7 @@ class MediaService {
               type,
               uploadedAt: serverTimestamp() as any,
               uploadedBy,
-              metadata
+              metadata,
             };
 
             const docRef = await addDoc(collection(db, this.collectionName), assetData);
@@ -98,42 +126,37 @@ class MediaService {
           } catch (error) {
             reject(error);
           }
-        }
+        },
       );
     });
   }
 
-  /**
-   * Subscribe to media assets
-   */
   subscribeToMedia(callback: (assets: MediaAsset[]) => void, type?: MediaType) {
     let q = query(collection(db, this.collectionName), orderBy('uploadedAt', 'desc'));
-    
+
     if (type) {
-      q = query(collection(db, this.collectionName), where('type', '==', type), orderBy('uploadedAt', 'desc'));
+      q = query(
+        collection(db, this.collectionName),
+        where('type', '==', type),
+        orderBy('uploadedAt', 'desc'),
+      );
     }
 
     return onSnapshot(q, (snapshot) => {
-      const assets = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
+      const assets = snapshot.docs.map((docSnap) => ({
+        id: docSnap.id,
+        ...docSnap.data(),
       })) as MediaAsset[];
       callback(assets);
     });
   }
 
-  /**
-   * Delete media asset (Firestore + Storage)
-   */
   async deleteMedia(asset: MediaAsset) {
     try {
-      // 1. Delete from Storage
       const storageRef = ref(storage, asset.storagePath);
-      await deleteObject(storageRef).catch(err => {
+      await deleteObject(storageRef).catch((err) => {
         console.warn('File not found in storage, proceeding with Firestore deletion', err);
       });
-
-      // 2. Delete from Firestore
       await deleteDoc(doc(db, this.collectionName, asset.id));
     } catch (error) {
       console.error('Error deleting media asset:', error);
@@ -142,23 +165,31 @@ class MediaService {
   }
 
   /**
-   * Update asset metadata
+   * Merge parcial de metadata (não substitui o objeto inteiro).
    */
   async updateMetadata(assetId: string, metadata: Partial<MediaAsset['metadata']>) {
     const docRef = doc(db, this.collectionName, assetId);
-    await updateDoc(docRef, { metadata });
+    const snap = await getDoc(docRef);
+    if (!snap.exists()) throw new Error('Asset não encontrado.');
+    const existing = (snap.data().metadata || {}) as MediaAsset['metadata'];
+    const merged = { ...existing, ...metadata };
+    await updateDoc(docRef, { metadata: merged });
   }
 
-  /**
-   * Get all media assets once
-   */
   async getAllMedia(type?: MediaType): Promise<MediaAsset[]> {
     let q = query(collection(db, this.collectionName), orderBy('uploadedAt', 'desc'));
     if (type) {
-      q = query(collection(db, this.collectionName), where('type', '==', type), orderBy('uploadedAt', 'desc'));
+      q = query(
+        collection(db, this.collectionName),
+        where('type', '==', type),
+        orderBy('uploadedAt', 'desc'),
+      );
     }
     const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as MediaAsset[];
+    return snapshot.docs.map((docSnap) => ({
+      id: docSnap.id,
+      ...docSnap.data(),
+    })) as MediaAsset[];
   }
 }
 

@@ -13,11 +13,16 @@ import {
   serverTimestamp, 
   query, 
   orderBy,
+  where,
   Timestamp,
   arrayUnion,
 } from 'firebase/firestore';
 import { Group, GroupCharacterSlot } from '../types/player';
 import { intelService } from './IntelService';
+
+function deriveMemberUids(slots: GroupCharacterSlot[]): string[] {
+  return Array.from(new Set(slots.map((s) => s.uid).filter(Boolean)));
+}
 
 export class GroupService {
   private static instance: GroupService;
@@ -30,13 +35,33 @@ export class GroupService {
     return GroupService.instance;
   }
 
+  private async ensureMemberUids(groupId: string, data: Partial<Group> & { characterSlots?: GroupCharacterSlot[] }): Promise<string[]> {
+    const slots = data.characterSlots || [];
+    const memberUids = deriveMemberUids(slots);
+    const existing = (data as Group).memberUids;
+    const same =
+      Array.isArray(existing)
+      && existing.length === memberUids.length
+      && memberUids.every((uid) => existing.includes(uid));
+    if (!same) {
+      await updateDoc(doc(db, 'groups', groupId), { memberUids }).catch(() => {
+        /* admin-only write; ignore if not admin */
+      });
+    }
+    return memberUids;
+  }
+
   public subscribeToGroups(callback: (groups: Group[]) => void): () => void {
     const q = query(collection(db, 'groups'), orderBy('createdAt', 'desc'));
     return onSnapshot(q, (snapshot) => {
-      const groups = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })) as Group[];
+      const groups = snapshot.docs.map(docSnap => {
+        const data = { id: docSnap.id, ...docSnap.data() } as Group;
+        if (!Array.isArray(data.memberUids) || data.memberUids.length === 0) {
+          void this.ensureMemberUids(docSnap.id, data);
+          data.memberUids = deriveMemberUids(data.characterSlots || []);
+        }
+        return data;
+      });
       callback(groups);
     });
   }
@@ -44,11 +69,13 @@ export class GroupService {
   public async createGroup(name: string, characterSlots: GroupCharacterSlot[], sessions: string[], campaignId?: string, unlockedCampaigns?: string[]): Promise<string> {
     const groupRef = doc(collection(db, 'groups'));
     const now = Timestamp.now();
+    const memberUids = deriveMemberUids(characterSlots);
 
     const newGroup: Group = {
       id: groupRef.id,
       name,
       characterSlots,
+      memberUids,
       ...(campaignId ? { campaignId } : {}),
       unlockedCampaigns: unlockedCampaigns || [],
       sessions,
@@ -62,11 +89,15 @@ export class GroupService {
 
   public async updateGroup(groupId: string, data: Partial<Group>): Promise<void> {
     const groupRef = doc(db, 'groups', groupId);
-
-    await updateDoc(groupRef, {
+    const patch: Record<string, unknown> = {
       ...data,
-      updatedAt: serverTimestamp()
-    });
+      updatedAt: serverTimestamp(),
+    };
+    if (data.characterSlots) {
+      patch.memberUids = deriveMemberUids(data.characterSlots);
+    }
+
+    await updateDoc(groupRef, patch);
   }
 
   public async deleteGroup(groupId: string): Promise<void> {
@@ -100,9 +131,11 @@ export class GroupService {
       characterId,
       joinedAt: Timestamp.now(),
     };
+    const nextSlots = [...slots, newSlot];
 
     await updateDoc(groupRef, {
-      characterSlots: [...slots, newSlot],
+      characterSlots: nextSlots,
+      memberUids: deriveMemberUids(nextSlots),
       updatedAt: serverTimestamp()
     });
   }
@@ -120,6 +153,7 @@ export class GroupService {
 
     await updateDoc(groupRef, {
       characterSlots: newSlots,
+      memberUids: deriveMemberUids(newSlots),
       updatedAt: serverTimestamp()
     });
   }
@@ -156,9 +190,12 @@ export class GroupService {
    * Get all groups that a specific character belongs to.
    */
   public async getGroupsForCharacter(characterId: string, uid?: string): Promise<Group[]> {
-    const q = query(collection(db, 'groups'));
+    if (!uid) {
+      return [];
+    }
+    const q = query(collection(db, 'groups'), where('memberUids', 'array-contains', uid));
     const snap = await getDocs(q);
-    const groups = snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Group));
+    const groups = snap.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() } as Group));
     return this.filterGroupsForCharacter(groups, characterId, uid);
   }
 
@@ -170,9 +207,13 @@ export class GroupService {
     callback: (groups: Group[]) => void,
     uid?: string
   ): () => void {
-    const q = query(collection(db, 'groups'));
+    if (!uid) {
+      callback([]);
+      return () => {};
+    }
+    const q = query(collection(db, 'groups'), where('memberUids', 'array-contains', uid));
     return onSnapshot(q, (snapshot) => {
-      const groups = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Group));
+      const groups = snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() } as Group));
       callback(this.filterGroupsForCharacter(groups, characterId, uid));
     }, (error) => {
       console.warn('[GroupService] subscribeToGroupsForCharacter error:', error);
@@ -252,9 +293,9 @@ export class GroupService {
       orderBy('createdAt', 'asc')
     );
     return onSnapshot(q, (snapshot) => {
-      const messages = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
+      const messages = snapshot.docs.map(docSnap => ({
+        id: docSnap.id,
+        ...docSnap.data()
       }));
       callback(messages);
     }, (error) => {
@@ -277,7 +318,7 @@ export class GroupService {
     recipientNumber?: string
   ): Promise<void> {
     const messageRef = doc(collection(db, 'groups', groupId, 'messages'));
-    const data: any = {
+    const data: Record<string, unknown> = {
       id: messageRef.id,
       senderId,
       senderName,
@@ -330,4 +371,3 @@ export class GroupService {
 }
 
 export const groupService = GroupService.getInstance();
-

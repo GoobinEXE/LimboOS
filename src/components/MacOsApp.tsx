@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import AppleIcon from './icons/AppleIcon';
-import { checkMacClosed, firestoreUnlockIntel, firestoreGrantAchievements } from '../store/firestore';
+import { checkMacClosed, firestoreUnlockIntel } from '../store/firestore';
 import { analyticsTracker } from '../services/AnalyticsTracker';
 import { activityLogger } from '../services/ActivityLogger';
 import { useLandscapeLayout } from '../player/hooks/useLandscapeLayout';
@@ -16,7 +16,7 @@ C̷á̴l̴c̶u̵l̸o̸ ̴t̵r̶a̷n̶s̴i̷ç̸ã̶o̴:̷
 S̵e̷ ̴e̷u̷ ̶s̸u̷m̷i̴r̶,̴ ̶f̴r̶e̵q̵u̶ê̵n̵c̶i̵a̶ ̵f̶u̵n̶c̸i̶o̸n̸o̷u̷.̶
 M̶e̷ ̷a̵c̵h̴e̶m̷ ̴n̶o̵ ̵z̴e̴r̶o̵.̶`;
 const TEXTO_LIMPO = `A Teoria das Cordas diz que existem 11 dimensões, mas todo mundo está ignorando o óbvio: o zero é a ponte.
-Eu percebi que o que está acontecendo agora é uma colisão. É a minha frequência analógica (do walkman mesmo) batendo de frente com esse "reset" digital do Bug do Milênio. Se a onda sonora atingir o infinito no exato milisegundo em que o erro temporal acontecer... a gente vai ver a verdade.
+Eu percebi que o que está acontecendo agora é uma colisão. É a minha frequência analógica (do deck mesmo) batendo de frente com esse "reset" digital do Bug do Milênio. Se a onda sonora atingir o infinito no exato milisegundo em que o erro temporal acontecer... a gente vai ver a verdade.
 O Multiverso não é uma linha reta, como ensinam na escola. É um loop de código. 1900 foi um erro de sintaxe. 2000 é o próximo.
 O LIMBO_01 é a fenda que abriu. E o Malware... ele não é um vírus comum. Ele é algo que vive no espaço "entre" os zeros. Ele se alimenta de sinal, por isso ele odeia tudo o que é analógico. A fita cassete é a minha única âncora aqui.
 Cálculo de transição: (E=h⋅f)/Y2K_Bug=ACESSO
@@ -26,12 +26,12 @@ type ActiveWindow = null | 'controlPanel' | 'diskRepair';
 function WindowTitleBar({ title, onClose }: { title: string; onClose: () => void }) {
   return (
     <div
-      className="h-[22px] shrink-0 border-b border-black flex items-center justify-center relative"
+      className="h-5.5 shrink-0 border-b border-black flex items-center justify-center relative"
       style={{ background: 'repeating-linear-gradient(to bottom, #ddd, #ddd 1px, #aaa 1px, #aaa 2px)' }}
     >
       <button
         onClick={onClose}
-        className="absolute left-[6px] w-3 h-3 bg-white border border-black active:bg-black"
+        className="absolute left-1.5 w-3 h-3 bg-white border border-black active:bg-black"
         style={{ boxShadow: 'inset 1px 1px 0 #ccc' }}
         aria-label="Fechar janela"
       />
@@ -80,12 +80,13 @@ function DesktopIcon({ emoji, label, highlighted, onClick }: { emoji: string; la
 }
 interface MacOsAppProps {
   uid: string;
+  characterId?: string;
   onClose: () => void;
 }
 import { diskRepairService } from '../services/DiskRepairService';
 import { intelRegistry } from '../data/intel_registry';
 
-export default function MacOsApp({ uid, onClose }: MacOsAppProps) {
+export default function MacOsApp({ uid, characterId, onClose }: MacOsAppProps) {
   const { isLandscape, viewportHeight } = useLandscapeLayout();
   const [phase, setPhase] = useState<'login' | 'desktop'>('login');
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -106,9 +107,9 @@ export default function MacOsApp({ uid, onClose }: MacOsAppProps) {
 
   const handleClose = useCallback(async () => {
     activityLogger.logAction('macos', 'Solicitou desligamento do MacOS');
-    await checkMacClosed(uid);
+    await checkMacClosed(uid, characterId);
     onClose();
-  }, [uid, onClose]);
+  }, [uid, characterId, onClose]);
 
   const handleLogin = useCallback(() => {
     if (navigator.vibrate) navigator.vibrate(20);
@@ -138,7 +139,7 @@ export default function MacOsApp({ uid, onClose }: MacOsAppProps) {
     analyticsTracker.grantAchievement('ACH-REPAIR-APP');
   }, [uid]);
   const closeWindow = useCallback(() => setActiveWindow(null), []);
-  const windowMaxHeight = Math.min(480, Math.max(200, viewportHeight - 56));
+  const windowMaxHeight = Math.min(480, Math.max(180, viewportHeight - (isLandscape ? 40 : 56)));
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -158,8 +159,15 @@ export default function MacOsApp({ uid, onClose }: MacOsAppProps) {
         />
       )}
 
-      <div className="h-6 shrink-0 bg-[#eee] border-b border-black flex items-center justify-between px-3 text-[12px] font-bold relative z-50">
-        <div className="flex items-center gap-0 relative">
+      <div
+        className={`${isLandscape ? 'h-5' : 'h-6'} shrink-0 bg-[#eee] border-b border-black flex items-center justify-between text-[12px] font-bold relative z-50`}
+        style={{
+          paddingLeft: 'max(0.75rem, env(safe-area-inset-left, 0px))',
+          paddingRight: 'max(0.75rem, env(safe-area-inset-right, 0px))',
+          paddingTop: 'env(safe-area-inset-top, 0px)',
+        }}
+      >
+        <div className="flex items-center gap-0 relative min-w-0">
     
           <div
             className={`flex items-center px-2 py-px cursor-pointer transition-colors ${appleMenuOpen ? 'bg-black text-white' : ''}`}
@@ -200,7 +208,22 @@ export default function MacOsApp({ uid, onClose }: MacOsAppProps) {
             </>
           )}
         </div>
-        <span>{currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+        <div className="flex items-center gap-2 shrink-0">
+          <span>{currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              void handleClose();
+            }}
+            className="w-4 h-4 flex items-center justify-center border border-black bg-white text-[10px] leading-none hover:bg-black hover:text-white active:bg-black active:text-white"
+            style={{ boxShadow: 'inset 1px 1px 0 #ccc' }}
+            aria-label="Fechar Mac OS"
+            title="Fechar"
+          >
+            ×
+          </button>
+        </div>
       </div>
 
       <div className="flex-1 relative overflow-hidden" onClick={handleDesktopClick}>
@@ -214,7 +237,7 @@ export default function MacOsApp({ uid, onClose }: MacOsAppProps) {
               exit={{ scale: 1.1, opacity: 0 }}
               className="absolute inset-0 flex items-center justify-center p-6"
             >
-              <div className="w-full max-w-[280px] bg-[#eee] border-2 border-black p-4 flex flex-col items-center gap-4 text-center"
+              <div className="w-full max-w-70 bg-[#eee] border-2 border-black p-4 flex flex-col items-center gap-4 text-center"
                 style={{ boxShadow: '2px 2px 0 rgba(0,0,0,1)' }}
               >
                 <div className="text-5xl text-black py-2"><AppleIcon size={48} /></div>
@@ -245,10 +268,10 @@ export default function MacOsApp({ uid, onClose }: MacOsAppProps) {
             >
         
               <div
-                className={`absolute z-10 p-4 ${
+                className={`absolute z-10 ${
                   isLandscape
-                    ? 'left-0 top-0 right-0 flex flex-row flex-wrap gap-6 items-start'
-                    : 'right-0 top-0 bottom-0 w-24 flex flex-col items-center gap-8'
+                    ? 'left-0 top-0 right-0 flex flex-row flex-wrap gap-4 items-start p-2 pl-[max(0.5rem,env(safe-area-inset-left))]'
+                    : 'right-0 top-0 bottom-0 w-24 flex flex-col items-center gap-8 p-4'
                 }`}
               >
                 <DesktopIcon emoji="💿" label="Macintosh HD" onClick={() => setActiveWindow('controlPanel')} />
@@ -259,8 +282,10 @@ export default function MacOsApp({ uid, onClose }: MacOsAppProps) {
               </div>
 
               <div
-                className={`absolute inset-0 flex pointer-events-none px-4 py-2 z-30 ${
-                  isLandscape ? 'items-start justify-start pt-14' : 'items-center justify-center'
+                className={`absolute inset-0 flex pointer-events-none px-3 py-2 z-30 ${
+                  isLandscape
+                    ? 'items-start justify-start pt-12 pl-[max(0.5rem,env(safe-area-inset-left))]'
+                    : 'items-center justify-center'
                 }`}
               >
                 <AnimatePresence>
@@ -270,7 +295,8 @@ export default function MacOsApp({ uid, onClose }: MacOsAppProps) {
                       initial={{ scale: 0.9, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
                       exit={{ scale: 0.9, opacity: 0 }}
-                      className="pointer-events-auto w-full max-w-sm bg-[#ddd] border border-black flex flex-col min-h-0 overflow-hidden"
+                      transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+                      className={`pointer-events-auto w-full ${isLandscape ? 'max-w-md' : 'max-w-sm'} bg-[#ddd] border border-black flex flex-col min-h-0 overflow-hidden`}
                       style={{ boxShadow: '2px 2px 0 rgba(0,0,0,0.5)', maxHeight: windowMaxHeight }}
                     >
                       <WindowTitleBar title="Painel de Controle" onClose={closeWindow} />
@@ -290,7 +316,8 @@ export default function MacOsApp({ uid, onClose }: MacOsAppProps) {
                       initial={{ scale: 0.9, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
                       exit={{ scale: 0.9, opacity: 0 }}
-                      className="pointer-events-auto w-full max-w-lg bg-[#ddd] border border-black flex flex-col min-h-0 overflow-hidden"
+                      transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+                      className={`pointer-events-auto w-full ${isLandscape ? 'max-w-md' : 'max-w-lg'} bg-[#ddd] border border-black flex flex-col min-h-0 overflow-hidden`}
                       style={{ boxShadow: '2px 2px 0 rgba(0,0,0,0.5)', maxHeight: windowMaxHeight }}
                     >
                       <WindowTitleBar title="DiskRepair Pro 4.0" onClose={closeWindow} />

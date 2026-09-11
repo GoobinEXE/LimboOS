@@ -37,9 +37,8 @@ src/
 ├── main.tsx                # Entry point React
 ├── player/                 # Orquestração do app jogador
 │   ├── context/            # PlayerSessionProvider + usePlayerSession/Playback
-│   ├── hooks/              # auth, intel, sync, walkman playback
+│   ├── hooks/              # auth, intel, sync, walkman playback, AppScreen history
 │   ├── components/         # ScreenRouter, WalkmanShell, NokiaLayout...
-│   ├── lazyScreens.ts      # React.lazy centralizado
 │   └── types.ts            # Contratos de context
 ├── admin/                  # Painel administrativo (/admin)
 │   ├── AdminApp.tsx
@@ -66,6 +65,12 @@ sms/                        # Diálogos de NPCs (conteúdo narrativo em Markdown
 | `/terminal/*` | `terminal/TerminalApp.tsx` | ARG / easter egg |
 
 Todas são lazy-loaded em `App.tsx` com `Suspense` + `RetroLoading`.
+
+### Navegação interna (History API)
+
+- **Player:** estado `AppScreen` sincronizado com o histórico do browser via `useAppScreenHistory` (`/?s=profile`, etc.). O botão Voltar do browser desfaz telas (perfil, campanha, mini-apps). Conta admin pode jogar com `/?mode=play`.
+- **Admin:** tabs refletidas em query (`/admin?tab=live`, `/admin?tab=mesa&sub=esquadroes`, `/admin?tab=systems&sub=relatorios`); keep-alive de painéis permanece em memória. Destinos: Ao Vivo, Mesa, Missões, Conteúdo, Sistema.
+- Lazy de telas do jogador fica inline em `PlayerScreenRouter.tsx` / `MiniAppsOverlay.tsx` (não há `lazyScreens.ts`).
 
 ## Conceitos de domínio
 
@@ -153,7 +158,7 @@ Nunca commite `.env` com credenciais reais.
 | Tarefa | Onde olhar |
 |--------|------------|
 | Fluxo do jogador / walkman | `src/Player.tsx`, `src/player/`, `src/components/player/` |
-| Nova tela do jogador (`AppScreen`) | `src/player/components/PlayerScreenRouter.tsx` + `src/player/lazyScreens.ts` |
+| Nova tela do jogador (`AppScreen`) | `src/player/components/PlayerScreenRouter.tsx` (+ lazy inline) e `useAppScreenHistory` |
 | Nova campanha (seed local) | `src/data/campaigns.ts` + Firestore via admin |
 | Novo intel hardcoded | `src/data/intel_registry.ts` |
 | Lógica de unlock / intel | `src/services/IntelService.ts`, `IntelEngine.ts` |

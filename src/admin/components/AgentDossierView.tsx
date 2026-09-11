@@ -15,6 +15,11 @@ import { useModal } from './ConfirmModal';
 import Screw from '../../components/player/Screw';
 import { ALL_ACHIEVEMENTS } from '../../data/achievements';
 import { achievementLabel, intelTitleLabel } from '../lib/entityLabels';
+import {
+  isAchievementEarned,
+  parseAchievementGrantId,
+} from '../../services/AchievementManager';
+import { resolveCampaignPlatform } from '../../data/campaigns';
 
 interface AgentDossierViewProps {
   uid: string;
@@ -168,8 +173,10 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
   };
 
   const handleGrantAchievement = async (achId: string) => {
-    await userService.grantUserAchievement(uid, character.id, achId);
-    activityLogger.logAdmin('gm.mpg', 'achievement_grant', `Outorgou medalha ${achId} para ${character.codinome}`, { uid, charId: character.id, achId });
+    const campaignId = character.campaignId || 'unscoped';
+    const platform = resolveCampaignPlatform(character.campaignId);
+    await userService.grantUserAchievement(uid, character.id, achId, { campaignId, platform });
+    activityLogger.logAdmin('gm.mpg', 'achievement_grant', `Outorgou medalha ${achId} para ${character.codinome}`, { uid, charId: character.id, achId, campaignId });
     setShowAchievementSelect(false);
     await loadDetails();
   };
@@ -350,9 +357,11 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
                        <>
                          <div className="fixed inset-0 z-40" onClick={() => setShowAchievementSelect(false)} />
                          <div className="absolute top-full right-0 mt-2 bg-black border-2 border-[#1a1a1a] shadow-xl rounded-sm w-56 z-50 max-h-64 overflow-y-auto custom-scrollbar">
-                           {ALL_ACHIEVEMENTS.filter(a => !details?.achievements.includes(a.id)).map(a => (
+                           {ALL_ACHIEVEMENTS.filter(
+                             (a) => !isAchievementEarned(details?.achievements || [], a.id, character.campaignId)
+                           ).map((a) => (
                              <button key={a.id} onClick={() => handleGrantAchievement(a.id)} className="w-full text-left px-4 py-3 text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3 border-b border-[#1a1a1a]">
-                               <span className="text-sm grayscale">{a.icon}</span> <span className="truncate">{a.title}</span>
+                               <img src={a.icon} alt="" className="w-6 h-6 object-cover rounded-sm border border-white/10" /> <span className="truncate">{a.title}</span>
                              </button>
                            ))}
                          </div>
@@ -363,14 +372,22 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
                 <div className="space-y-3">
                    {details?.achievements && details.achievements.length > 0 ? (
                      details.achievements.map(achId => {
-                       const achDef = ALL_ACHIEVEMENTS.find(a => a.id === achId);
+                       const { achievementId, campaignId: grantCamp } = parseAchievementGrantId(achId);
+                       const achDef = ALL_ACHIEVEMENTS.find(a => a.id === achievementId);
                        return (
                          <div key={achId} className="flex items-center justify-between p-3 bg-black/40 border border-white/5 rounded-sm group hover:border-primary/20 transition-all">
                             <div className="flex items-center gap-4">
-                              <div className="w-8 h-8 bg-primary/10 text-primary flex items-center justify-center rounded-full border border-primary/20 shadow-lg text-lg">
-                                 {achDef?.icon || <span className="material-symbols-outlined text-[18px]">workspace_premium</span>}
+                              <div className="w-8 h-8 overflow-hidden rounded-full border border-primary/20 shadow-lg">
+                                 {achDef?.icon ? (
+                                   <img src={achDef.icon} alt="" className="w-full h-full object-cover" />
+                                 ) : (
+                                   <span className="material-symbols-outlined text-[18px] text-primary flex items-center justify-center w-full h-full">workspace_premium</span>
+                                 )}
                               </div>
-                              <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest group-hover:text-primary transition-colors">{achievementLabel(achId)}</span>
+                              <div className="min-w-0">
+                                <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest group-hover:text-primary transition-colors block truncate">{achievementLabel(achievementId)}</span>
+                                <span className="text-[8px] font-mono text-zinc-600 uppercase">{grantCamp}</span>
+                              </div>
                             </div>
                             <button onClick={() => handleRevokeAchievement(achId)} className="p-1.5 text-zinc-800 hover:text-red-500 hover:bg-red-500/10 rounded-sm transition-all opacity-0 group-hover:opacity-100">
                               <span className="material-symbols-outlined text-sm">delete</span>

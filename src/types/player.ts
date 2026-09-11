@@ -19,6 +19,10 @@ export interface MasterAccount {
   // Account-level flags
   hasTerminalAccess?: boolean;
   hasMacAccess?: boolean;
+  /** One-shot: mestre força abertura do DOS; jogador consome e limpa */
+  forceTerminalOpen?: boolean;
+  /** One-shot: mestre força abertura do Mac; jogador consome e limpa */
+  forceMacOpen?: boolean;
   suspended?: boolean;
   notes?: string;
 }
@@ -62,6 +66,14 @@ export interface PlayerStats {
   ejectWithoutPlay: number;
   maxVolumeTime: number;
   zeroVolumeTime: number;
+  /** Flags one-shot / contadores de exploração (0 = nunca). */
+  biosOpened: number;
+  win95Opened: number;
+  macosOpened: number;
+  fullTapeListens: number;
+  threadsReadCount: number;
+  archiveOpened: number;
+  modeSwitches: number;
 }
 
 /**
@@ -101,6 +113,8 @@ export interface Group {
   name: string;
   description?: string;
   characterSlots: GroupCharacterSlot[];
+  /** UIDs denormalizados para rules/queries de membership. */
+  memberUids?: string[];
   campaignId?: string;
   unlockedCampaigns?: string[];
   sessions: string[];

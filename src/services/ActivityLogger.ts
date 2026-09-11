@@ -19,6 +19,9 @@ class ActivityLogger {
   private static instance: ActivityLogger;
   private lastNavTimestamp = 0;
   private readonly NAV_THROTTLE_MS = 2000;
+  private lastActionThrottle = new Map<string, number>();
+  private readonly ACTION_THROTTLE_MS = 2500;
+  private readonly THROTTLED_ACTION_PREFIXES = ['screw', 'fidget', 'volume', 'parafuso'];
   
   // Internal User State
   private currentUid: string | null = null;
@@ -84,7 +87,7 @@ class ActivityLogger {
     
     if (type === 'navigation' && message.includes('→')) {
       const screens: Record<string, string> = {
-        'player':     'Walkman MK-III',
+        'player':     'Deck MK-III',
         'profile':    'Perfil Usuário',
         'bios':       'Terminal BIOS',
         'limbo':      'Limbo (Firewall)',
@@ -189,6 +192,13 @@ class ActivityLogger {
   }
 
   logAction(...args: any[]): void {
+    const category = typeof args[0] === 'string' ? args[0] : '';
+    if (this.THROTTLED_ACTION_PREFIXES.some((p) => category.toLowerCase().includes(p))) {
+      const now = Date.now();
+      const last = this.lastActionThrottle.get(category) || 0;
+      if (now - last < this.ACTION_THROTTLE_MS) return;
+      this.lastActionThrottle.set(category, now);
+    }
     this.write('action', 'player', args);
   }
 

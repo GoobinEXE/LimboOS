@@ -38,9 +38,9 @@ export default function NokiaSessionLayout() {
     >
       <div
         style={{ display: screen === 'player' ? 'flex' : 'none' }}
-        className="w-full h-full flex-col flex-grow min-h-0"
+        className="w-full h-full flex-col grow min-h-0"
       >
-        <React.Suspense fallback={<RetroLoading message="CARREGANDO NOKIA..." />}>
+        <React.Suspense fallback={<RetroLoading message="CARREGANDO HANDSET..." />}>
           <NokiaPlayer
             currentIntel={playback.currentIntel}
             status={playback.walkmanStatus}
@@ -74,7 +74,7 @@ export default function NokiaSessionLayout() {
       </div>
       <div
         style={{ display: screen === 'profile' ? 'flex' : 'none' }}
-        className="w-full h-full flex-col flex-grow min-h-0"
+        className="w-full h-full flex-col grow min-h-0"
       >
         <React.Suspense fallback={<RetroLoading message="ACESSANDO PERFIL..." />}>
           <ProfileScreen

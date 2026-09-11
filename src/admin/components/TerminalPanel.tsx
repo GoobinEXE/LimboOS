@@ -1,62 +1,43 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { doc, setDoc, onSnapshot } from 'firebase/firestore';
-import { db } from '../../lib/firebase';
-import {
-  setTerminalStateForUsers,
-  setMacStateForUsers,
-  setLimboMilitarySeizureGlobal,
-  PlayerMeta,
-} from '../../store/firestore';
-import { Terminal, ShieldBan, ShieldCheck, UserCheck, Apple } from 'lucide-react';
+import { PlayerMeta } from '../../store/firestore';
 import { activityLogger } from '../../services/ActivityLogger';
 import { userService } from '../../services/UserService';
-import type { CharacterData, LimboGlobalState } from '../../types/player';
-import { LIMBO_THREAD_COUNT } from '../../components/LimboBoard';
+import type { CharacterData } from '../../types/player';
+import { useToast } from './ToastProvider';
+import { ONLINE_WINDOW_MS, useHardwareAccessActions } from '../hooks/useHardwareAccessActions';
 
-interface TerminalAgentRow {
+type AccessFilter = 'all' | 'dos' | 'mac' | 'none' | 'online';
+
+interface AccountRow {
   uid: string;
-  characterId: string;
-  codinome: string;
-  masterName?: string;
+  label: string;
   email?: string;
-  hasTerminalAccess?: boolean;
-  hasMacAccess?: boolean;
-  forceTerminalOpen?: boolean;
-  forceMacOpen?: boolean;
+  agents: string[];
+  hasTerminalAccess: boolean;
+  hasMacAccess: boolean;
+  forceTerminalOpen: boolean;
+  forceMacOpen: boolean;
+  lastLoginMs: number;
+  isOnline: boolean;
 }
 
-function rowKey(uid: string, characterId: string): string {
-  return `${uid}|${characterId}`;
+interface TerminalPanelProps {
+  /** Quando true, omite o título externo (shell Sistema). */
+  embedded?: boolean;
 }
 
-export default function TerminalPanel() {
+/**
+ * Sistema → Acesso — autorização persistente de hardware (sem Limbo/DiskRepair; esses ficam no Ao Vivo).
+ */
+export default function TerminalPanel({ embedded = false }: TerminalPanelProps) {
+  const toast = useToast();
+  const { pushDos, pushMac, grantDos, grantMac, isBusy } = useHardwareAccessActions();
+
   const [accounts, setAccounts] = useState<PlayerMeta[]>([]);
   const [characters, setCharacters] = useState<{ uid: string; char: CharacterData }[]>([]);
-  const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
-  const [limboState, setLimboState] = useState<LimboGlobalState>({ seized: false });
-  const [diskRepairAllowed, setDiskRepairAllowed] = useState(false);
-
-  const agents = useMemo((): TerminalAgentRow[] => {
-    const accountByUid = new Map(accounts.map((acc) => [acc.uid, acc]));
-
-    return characters
-      .filter(({ char }) => !char.archived)
-      .map(({ uid, char }) => {
-        const account = accountByUid.get(uid);
-        return {
-          uid,
-          characterId: char.id,
-          codinome: char.codinome || 'Sem codinome',
-          masterName: account?.masterName || account?.displayName,
-          email: account?.email,
-          hasTerminalAccess: account?.hasTerminalAccess,
-          hasMacAccess: account?.hasMacAccess,
-          forceTerminalOpen: account?.forceTerminalOpen,
-          forceMacOpen: account?.forceMacOpen,
-        };
-      })
-      .sort((a, b) => a.codinome.localeCompare(b.codinome, 'pt-BR'));
-  }, [accounts, characters]);
+  const [search, setSearch] = useState('');
+  const [filter, setFilter] = useState<AccessFilter>('all');
+  const [selectedUids, setSelectedUids] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const unsubUsers = userService.subscribeToUsers((users) => setAccounts(users as PlayerMeta[]));
@@ -67,262 +48,385 @@ export default function TerminalPanel() {
     };
   }, []);
 
-  useEffect(() => {
-    const unsubLimbo = onSnapshot(doc(db, 'system', 'limboState'), (snap) => {
-      setLimboState(snap.exists() ? (snap.data() as LimboGlobalState) : { seized: false });
+  const rows = useMemo((): AccountRow[] => {
+    const now = Date.now();
+    const charsByUid = new Map<string, string[]>();
+    characters.forEach(({ uid, char }) => {
+      if (char.archived) return;
+      const list = charsByUid.get(uid) || [];
+      list.push(char.codinome || 'Sem codinome');
+      charsByUid.set(uid, list);
     });
-    const unsubGameEvents = onSnapshot(doc(db, 'system', 'gameEvents'), (snap) => {
-      setDiskRepairAllowed(snap.exists() ? !!snap.data().diskRepairAllowed : false);
+
+    return accounts
+      .map((acc) => {
+        const lastLoginMs = acc.lastLogin?.toMillis?.() ?? 0;
+        const agents = charsByUid.get(acc.uid) || [];
+        return {
+          uid: acc.uid,
+          label: acc.masterName || acc.displayName || acc.email || acc.uid.slice(0, 8),
+          email: acc.email,
+          agents,
+          hasTerminalAccess: Boolean(acc.hasTerminalAccess),
+          hasMacAccess: Boolean(acc.hasMacAccess),
+          forceTerminalOpen: Boolean(acc.forceTerminalOpen),
+          forceMacOpen: Boolean(acc.forceMacOpen),
+          lastLoginMs,
+          isOnline: lastLoginMs > 0 && now - lastLoginMs <= ONLINE_WINDOW_MS,
+        };
+      })
+      .filter((row) => row.agents.length > 0 || row.hasTerminalAccess || row.hasMacAccess)
+      .sort((a, b) => a.label.localeCompare(b.label, 'pt-BR'));
+  }, [accounts, characters]);
+
+  const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return rows.filter((row) => {
+      if (filter === 'dos' && !row.hasTerminalAccess) return false;
+      if (filter === 'mac' && !row.hasMacAccess) return false;
+      if (filter === 'none' && (row.hasTerminalAccess || row.hasMacAccess)) return false;
+      if (filter === 'online' && !row.isOnline) return false;
+      if (!q) return true;
+      const hay = [row.label, row.email, ...row.agents].filter(Boolean).join(' ').toLowerCase();
+      return hay.includes(q);
     });
-    return () => {
-      unsubLimbo();
-      unsubGameEvents();
-    };
-  }, []);
+  }, [rows, search, filter]);
 
-  const selectedUids = useMemo(() => {
-    const uids = new Set<string>();
-    for (const key of selectedKeys) {
-      const [uid] = key.split('|');
-      if (uid) uids.add(uid);
-    }
-    return [...uids];
-  }, [selectedKeys]);
+  const selectedList = useMemo(() => [...selectedUids], [selectedUids]);
+  const selectedLabels = useMemo(
+    () =>
+      filtered
+        .filter((r) => selectedUids.has(r.uid))
+        .map((r) => r.agents[0] || r.label)
+        .join(', '),
+    [filtered, selectedUids]
+  );
 
-  const toggleSelect = (uid: string, characterId: string) => {
-    const key = rowKey(uid, characterId);
-    setSelectedKeys((prev) => {
+  const toggleSelect = (uid: string) => {
+    setSelectedUids((prev) => {
       const next = new Set(prev);
-      if (next.has(key)) next.delete(key);
-      else next.add(key);
+      if (next.has(uid)) next.delete(uid);
+      else next.add(uid);
       return next;
     });
   };
 
-  const selectAll = () => {
-    if (selectedKeys.size === agents.length) setSelectedKeys(new Set());
-    else setSelectedKeys(new Set(agents.map((a) => rowKey(a.uid, a.characterId))));
+  const selectFiltered = () => {
+    if (selectedUids.size === filtered.length && filtered.every((r) => selectedUids.has(r.uid))) {
+      setSelectedUids(new Set());
+    } else {
+      setSelectedUids(new Set(filtered.map((r) => r.uid)));
+    }
   };
 
-  const selectedCodinomes = () =>
-    agents
-      .filter((a) => selectedKeys.has(rowKey(a.uid, a.characterId)))
-      .map((a) => a.codinome)
-      .join(', ');
-
-  const handleForceTerminal = async () => {
-    if (selectedUids.length === 0) return;
-    activityLogger.logTrace('force_terminal_step', `Iniciando injeção de evento DOS para ${selectedUids.length} conta(s)...`);
-    await setTerminalStateForUsers(selectedUids, true, true);
-    activityLogger.logAdmin('gm.mpg', 'force_terminal', `Forçou terminal DOS para: ${selectedCodinomes()}`, { uids: selectedUids });
-    setSelectedKeys(new Set());
-  };
-
-  const handleRevokeAccess = async () => {
-    if (selectedUids.length === 0) return;
-    activityLogger.logTrace('revoke_terminal_step', `Iniciando revogação de acesso DOS para ${selectedUids.length} conta(s)...`);
-    await setTerminalStateForUsers(selectedUids, false, false);
-    activityLogger.logAdmin('gm.mpg', 'revoke_terminal', `Revogou acesso DOS de: ${selectedCodinomes()}`, { uids: selectedUids });
-    setSelectedKeys(new Set());
-  };
-
-  const handleForceMac = async () => {
-    if (selectedUids.length === 0) return;
-    activityLogger.logTrace('force_mac_step', `Iniciando injeção de boot MacOS para ${selectedUids.length} conta(s)...`);
-    await setMacStateForUsers(selectedUids, true, true);
-    activityLogger.logAdmin('gm.mpg', 'force_mac', `Forçou MacOS para: ${selectedCodinomes()}`, { uids: selectedUids });
-    setSelectedKeys(new Set());
-  };
-
-  const handleRevokeMac = async () => {
-    if (selectedUids.length === 0) return;
-    activityLogger.logTrace('revoke_mac_step', `Iniciando revogação de acesso MacOS para ${selectedUids.length} conta(s)...`);
-    await setMacStateForUsers(selectedUids, false, false);
-    activityLogger.logAdmin('gm.mpg', 'revoke_mac', `Revogou acesso Mac de: ${selectedCodinomes()}`, { uids: selectedUids });
-    setSelectedKeys(new Set());
-  };
-
-  const toggleLimboMilitary = async () => {
-    const next = !limboState.seized;
-    activityLogger.logTrace('limbo_military_step', `Limbo USArmy → ${next ? 'ATIVO' : 'INATIVO'}`);
-    await setLimboMilitarySeizureGlobal(next);
-    activityLogger.logAdmin('gm.mpg', 'limbo_military_toggle', `Limbo USArmy ${next ? 'ATIVADO' : 'DESATIVADO'} globalmente`, { seized: next });
-  };
-
-  const toggleDiskRepair = async () => {
-    const newState = !diskRepairAllowed;
-    await setDoc(doc(db, 'system', 'gameEvents'), { diskRepairAllowed: newState }, { merge: true });
-    activityLogger.logAdmin('gm.mpg', 'disk_repair_toggle', `DiskRepair ${newState ? 'ATIVADO' : 'DESATIVADO'}`, { diskRepairAllowed: newState });
-  };
+  const rowLabel = (row: AccountRow) => row.agents[0] || row.label;
 
   return (
-    <div className="space-y-8 font-chakra">
-      <div className="flex items-center gap-4">
-        <div className="w-2 h-8 bg-primary rounded-full animate-pulse shadow-[0_0_10px_rgba(255,140,0,0.4)]" />
-        <h2 className="font-black uppercase tracking-widest text-lg text-white">Interface_de_Injeção_de_Terminais</h2>
-      </div>
+    <div className="space-y-6 font-display">
+      {!embedded && (
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-4">
+            <div className="w-1.5 h-8 bg-primary shadow-[0_0_10px_rgba(255,140,0,0.4)]" />
+            <h2 className="font-bold uppercase tracking-widest text-lg text-white">Acesso & Hardware</h2>
+          </div>
+          <p className="text-[10px] font-bold uppercase tracking-widest text-industrial-silver/40 pl-6">
+            Autorização persistente por conta. Push one-shot e Limbo/DiskRepair ficam no Ao Vivo.
+          </p>
+        </div>
+      )}
 
-      <div className="flex flex-col lg:flex-row gap-8">
-        <div className="lg:w-1/3 flex flex-col gap-6">
-          <div className={`bg-[#1a1a1a] border-4 p-8 rounded-xl shadow-xl flex flex-col gap-6 transition-all ${limboState.seized ? 'border-red-500 shadow-[0_0_30px_rgba(239,68,68,0.2)]' : 'border-[#1a1a1a]'}`}>
-            <div className="flex items-center justify-between">
-              <h3 className="text-[10px] font-black uppercase tracking-widest text-zinc-600">Estado_Global_LIMBO_01</h3>
-              {limboState.seized && <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />}
-            </div>
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center gap-4 font-black uppercase text-xl">
-                {limboState.seized ? (
-                  <span className="text-red-500 flex items-center gap-3"><ShieldBan size={24}/> MILITAR_LOCK</span>
-                ) : (
-                  <span className="text-emerald-500 flex items-center gap-3"><ShieldCheck size={24}/> GRID_OPEN</span>
-                )}
-              </div>
-              <p className={`text-[10px] font-mono font-bold uppercase tracking-widest ${limboState.seized ? 'text-red-500/70' : 'text-emerald-500/70'}`}>
-                Monitorando leitura global de dados... [{(limboState.readThreadIds || []).length}/{LIMBO_THREAD_COUNT}]
+      {embedded && (
+        <p className="text-[10px] font-bold uppercase tracking-widest text-industrial-silver/40">
+          Por conta (UID) · Acesso = reabrir sozinho · Empurrar = 1ª abertura · Push durante sessão → Ao Vivo
+        </p>
+      )}
+
+      <div className="bg-surface-container-low border border-primary/10 rounded-sm shadow-xl overflow-hidden">
+        <div className="p-5 border-b border-primary/10 bg-black/30 space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <h3 className="text-[11px] font-bold uppercase tracking-widest text-white">Autorização de hardware</h3>
+              <p className="text-[9px] font-bold uppercase tracking-widest text-industrial-silver/40 mt-1">
+                Grant / revoke em massa, inclusive offline
               </p>
             </div>
-            <p className="text-[10px] text-zinc-500 leading-relaxed font-bold uppercase tracking-wide">
-              O bloqueio global é colaborativo. Ativado automaticamente quando todos os setores forem explorados. Forçar este estado sobrescreve a lógica do grid.
-            </p>
-            <div className="bg-primary/5 border border-primary/20 p-4 rounded-sm">
-              <p className="text-[9px] font-black text-primary uppercase tracking-widest mb-1">Acesso_LIMBO_01</p>
-              <p className="text-lg font-mono font-black text-white tracking-wider">212.45.1.1</p>
-              <p className="text-[9px] text-zinc-500 font-bold uppercase mt-1 leading-relaxed">
-                IP alvo no terminal DOS — após TRIGGER_DOS ou unlock via walkman.
-              </p>
-            </div>
-            <div className="bg-black/40 border border-white/5 p-5 rounded-sm space-y-4">
-              <div className="flex justify-between items-center">
-                <span className="text-[11px] font-black text-white uppercase">{limboState.seized ? 'DESATIVAR_BLOQUEIO' : 'FORÇAR_USArmy'}</span>
+            {selectedList.length > 0 && (
+              <div className="flex flex-wrap gap-2">
                 <button
                   type="button"
-                  onClick={toggleLimboMilitary}
-                  className={`px-6 py-2 border-2 font-black uppercase text-[10px] tracking-widest transition-all rounded-sm ${limboState.seized ? 'bg-red-600 border-red-400 text-white' : 'bg-[#333] border-white/5 text-zinc-400 hover:bg-[#444]'} active:scale-95`}
+                  disabled={isBusy('dos', 'revoke')}
+                  onClick={async () => {
+                    try {
+                      await grantDos(selectedList, false, selectedLabels);
+                      toast.info(`DOS revogado em ${selectedList.length}`);
+                      setSelectedUids(new Set());
+                    } catch {
+                      toast.error('Falha ao revogar DOS');
+                    }
+                  }}
+                  className="px-3 py-1.5 text-[9px] font-black uppercase tracking-widest bg-[#333] border border-white/5 text-zinc-300 hover:bg-[#444] disabled:opacity-30"
                 >
-                  {limboState.seized ? 'NORMALIZAR' : 'BLOQUEAR'}
+                  Revogar DOS filtrados
+                </button>
+                <button
+                  type="button"
+                  disabled={isBusy('mac', 'revoke')}
+                  onClick={async () => {
+                    try {
+                      await grantMac(selectedList, false, selectedLabels);
+                      toast.info(`Mac revogado em ${selectedList.length}`);
+                      setSelectedUids(new Set());
+                    } catch {
+                      toast.error('Falha ao revogar Mac');
+                    }
+                  }}
+                  className="px-3 py-1.5 text-[9px] font-black uppercase tracking-widest bg-[#333] border border-white/5 text-zinc-300 hover:bg-[#444] disabled:opacity-30"
+                >
+                  Revogar Mac filtrados
                 </button>
               </div>
-            </div>
+            )}
           </div>
 
-          <div className="bg-[#1a1a1a] border-4 border-[#1a1a1a] p-8 rounded-xl shadow-xl flex flex-col gap-6">
-            <h3 className="text-[10px] font-black uppercase tracking-widest text-zinc-600">Protocolos_RPG_Mestre</h3>
-            <div className="flex items-center justify-between p-5 bg-black/40 border border-white/5 rounded-sm">
-              <div>
-                <p className="font-black text-sm text-white uppercase">DiskRepair.exe</p>
-                <p className="text-[9px] text-zinc-600 font-bold uppercase mt-1">Desmagnetização Remota</p>
-              </div>
-              <button
-                onClick={toggleDiskRepair}
-                className={`relative w-14 h-7 rounded-full transition-all border-2 ${diskRepairAllowed ? 'bg-primary/20 border-primary shadow-[0_0_10px_rgba(255,140,0,0.2)]' : 'bg-zinc-900 border-zinc-800'}`}
-              >
-                <div className={`absolute top-1 left-1 w-4 h-4 rounded-full transition-transform duration-300 ${diskRepairAllowed ? 'translate-x-7 bg-primary shadow-[0_0_8px_rgba(255,140,0,0.8)]' : 'translate-x-0 bg-zinc-800'}`} />
-              </button>
+          <div className="flex flex-col lg:flex-row gap-3">
+            <input
+              type="search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Buscar codinome, nome ou email..."
+              className="flex-1 bg-black/50 border border-white/10 px-4 py-2.5 text-xs font-bold uppercase tracking-wide text-white placeholder:text-zinc-700 focus:outline-none focus:border-primary/40"
+            />
+            <div className="flex flex-wrap gap-1.5">
+              {(
+                [
+                  ['all', 'Todos'],
+                  ['online', 'Online'],
+                  ['dos', 'Acesso DOS'],
+                  ['mac', 'Acesso Mac'],
+                  ['none', 'Sem acesso'],
+                ] as const
+              ).map(([id, label]) => (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => setFilter(id)}
+                  className={`px-3 py-2 text-[9px] font-black uppercase tracking-widest border transition-colors ${
+                    filter === id
+                      ? 'border-primary bg-primary/15 text-primary'
+                      : 'border-white/5 text-zinc-600 hover:text-zinc-300'
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
             </div>
           </div>
         </div>
 
-        <div className="lg:w-2/3 flex flex-col bg-[#1a1a1a] border-4 border-[#1a1a1a] rounded-xl shadow-xl overflow-hidden">
-          <div className="p-6 border-b-4 border-[#1a1a1a] bg-black/40 flex flex-wrap gap-4 items-center">
-            <div className="flex flex-col mr-2">
-              <span className="text-[8px] font-black text-zinc-600 uppercase tracking-widest">LIMBO_01</span>
-              <span className="text-xs font-mono font-black text-primary">212.45.1.1</span>
-            </div>
-            <div className="w-px h-8 bg-white/5" />
-            <button onClick={handleForceTerminal} disabled={selectedKeys.size === 0} className="px-6 py-2 bg-primary text-black font-black uppercase text-[10px] tracking-widest hover:bg-primary-container transition-all disabled:opacity-10 rounded-sm flex items-center gap-3 glow-orange">
-              <Terminal size={14}/> TRIGGER_DOS
-            </button>
-            <button onClick={handleRevokeAccess} disabled={selectedKeys.size === 0} className="px-6 py-2 bg-[#333] border border-white/5 text-zinc-300 font-black uppercase text-[10px] tracking-widest hover:bg-[#444] transition-all disabled:opacity-10 rounded-sm">
-              EXIT_DOS
-            </button>
-            <div className="w-px h-6 bg-white/5 mx-2" />
-            <button onClick={handleForceMac} disabled={selectedKeys.size === 0} className="px-6 py-2 bg-zinc-200 text-black font-black uppercase text-[10px] tracking-widest hover:bg-white transition-all disabled:opacity-10 rounded-sm flex items-center gap-3 shadow-lg">
-              <Apple size={14}/> BOOT_MACOS
-            </button>
-            <button onClick={handleRevokeMac} disabled={selectedKeys.size === 0} className="px-6 py-2 bg-[#333] border border-white/5 text-zinc-300 font-black uppercase text-[10px] tracking-widest hover:bg-[#444] transition-all disabled:opacity-10 rounded-sm">
-              EXIT_MAC
-            </button>
-          </div>
+        <div className="px-5 py-2 border-b border-white/5 bg-black/20 flex items-center justify-between gap-3">
+          <button
+            type="button"
+            onClick={selectFiltered}
+            className="text-[9px] font-black uppercase tracking-widest text-zinc-500 hover:text-primary"
+          >
+            {selectedUids.size > 0 ? `Limpar seleção (${selectedUids.size})` : `Selecionar filtrados (${filtered.length})`}
+          </button>
+          <span className="text-[9px] font-mono text-zinc-700 uppercase tracking-widest">
+            {filtered.length} conta(s)
+          </span>
+        </div>
 
-          <p className="px-6 py-3 text-[9px] font-black text-zinc-600 uppercase tracking-widest border-b border-white/5 bg-black/20">
-            {agents.length} personagem(ns) ativo(s) — acesso DOS/MAC é por conta (UID)
-          </p>
+        <ul className="divide-y divide-white/5 max-h-[560px] overflow-y-auto">
+          {filtered.length === 0 ? (
+            <li className="p-12 text-center text-zinc-600 text-[10px] font-black uppercase tracking-widest">
+              Nenhuma conta neste filtro
+            </li>
+          ) : (
+            filtered.map((row) => {
+              const selected = selectedUids.has(row.uid);
+              const dosBusy =
+                isBusy('dos', 'push', row.uid) ||
+                isBusy('dos', 'grant', row.uid) ||
+                isBusy('dos', 'revoke', row.uid);
+              const macBusy =
+                isBusy('mac', 'push', row.uid) ||
+                isBusy('mac', 'grant', row.uid) ||
+                isBusy('mac', 'revoke', row.uid);
 
-          <div className="flex-1 overflow-x-auto bg-black/20">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-black/40 border-b border-[#1a1a1a] text-[10px] font-black uppercase tracking-[0.2em] text-zinc-700">
-                  <th className="p-5 w-16 text-center">
-                    <div
-                      onClick={selectAll}
-                      className={`w-5 h-5 border-2 rounded-sm mx-auto cursor-pointer transition-all flex items-center justify-center ${selectedKeys.size > 0 ? 'bg-primary border-primary' : 'border-zinc-800'}`}
+              return (
+                <li
+                  key={row.uid}
+                  className={`flex flex-col gap-4 p-5 hover:bg-primary/5 transition-colors ${
+                    selected ? 'bg-primary/5' : ''
+                  }`}
+                >
+                  <div className="flex items-start gap-4">
+                    <button
+                      type="button"
+                      onClick={() => toggleSelect(row.uid)}
+                      className={`mt-0.5 w-5 h-5 border-2 rounded-sm shrink-0 flex items-center justify-center transition-all ${
+                        selected ? 'bg-primary border-primary' : 'border-zinc-800 hover:border-zinc-600'
+                      }`}
+                      aria-label="Selecionar conta"
                     >
-                      {selectedKeys.size > 0 && <span className="material-symbols-outlined text-black text-xs font-black">check</span>}
+                      {selected && (
+                        <span className="material-symbols-outlined text-black text-xs font-black">check</span>
+                      )}
+                    </button>
+
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <p className="text-xs font-black uppercase text-zinc-100 tracking-wide">{row.label}</p>
+                        {row.isOnline && (
+                          <span className="text-[8px] font-black uppercase tracking-widest text-emerald-500 border border-emerald-500/30 px-1.5 py-0.5">
+                            Online
+                          </span>
+                        )}
+                        {row.forceTerminalOpen && (
+                          <span className="text-[8px] font-black uppercase tracking-widest text-primary animate-pulse">
+                            Push DOS pendente
+                          </span>
+                        )}
+                        {row.forceMacOpen && (
+                          <span className="text-[8px] font-black uppercase tracking-widest text-cyan-400 animate-pulse">
+                            Push Mac pendente
+                          </span>
+                        )}
+                      </div>
+                      {row.email && (
+                        <p className="text-[9px] font-mono text-zinc-600 mt-0.5 truncate">{row.email}</p>
+                      )}
+                      <p className="text-[9px] font-bold uppercase tracking-wide text-zinc-500 mt-1">
+                        {row.agents.length > 0 ? row.agents.join(' · ') : 'Sem personagem ativo'}
+                      </p>
                     </div>
-                  </th>
-                  <th className="p-5">PERSONAGEM</th>
-                  <th className="p-5 text-center">AUTORIZAÇÃO_HARDWARE</th>
-                  <th className="p-5 text-right">ESTADO_EM_CAMPO</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/5">
-                {agents.length === 0 ? (
-                  <tr>
-                    <td colSpan={4} className="p-12 text-center text-zinc-600 text-[10px] font-black uppercase tracking-widest">
-                      Nenhum personagem ativo encontrado
-                    </td>
-                  </tr>
-                ) : (
-                  agents.map((agent) => {
-                    const key = rowKey(agent.uid, agent.characterId);
-                    const isSelected = selectedKeys.has(key);
-                    return (
-                      <tr key={key} className={`hover:bg-primary/5 transition-all group ${isSelected ? 'bg-primary/5' : ''}`}>
-                        <td className="p-5 text-center">
-                          <div
-                            onClick={() => toggleSelect(agent.uid, agent.characterId)}
-                            className={`w-5 h-5 border-2 rounded-sm mx-auto cursor-pointer transition-all flex items-center justify-center ${isSelected ? 'bg-primary border-primary' : 'border-zinc-800 group-hover:border-zinc-600'}`}
-                          >
-                            {isSelected && <span className="material-symbols-outlined text-black text-xs font-black">check</span>}
-                          </div>
-                        </td>
-                        <td className="p-5">
-                          <div className="flex items-center gap-3">
-                            <UserCheck size={16} className={agent.hasTerminalAccess ? 'text-emerald-500' : 'text-zinc-800'} />
-                            <div>
-                              <p className={`text-xs font-black uppercase ${isSelected ? 'text-primary' : 'text-zinc-200 group-hover:text-white'}`}>
-                                {agent.codinome}
-                              </p>
-                              {(agent.masterName || agent.email) && (
-                                <p className="text-[8px] font-bold text-zinc-500 uppercase mt-0.5 tracking-wide">
-                                  {agent.masterName}{agent.masterName && agent.email ? ' · ' : ''}{agent.email}
-                                </p>
-                              )}
-                            </div>
-                          </div>
-                        </td>
-                        <td className="p-5 text-center">
-                          <div className="flex items-center justify-center gap-4">
-                            <div className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-sm border ${agent.hasTerminalAccess ? 'border-emerald-500/20 text-emerald-500 bg-emerald-500/5' : 'border-zinc-900 text-zinc-800'}`}>DOS</div>
-                            <div className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-sm border ${agent.hasMacAccess ? 'border-cyan-500/20 text-cyan-500 bg-cyan-500/5' : 'border-zinc-900 text-zinc-800'}`}>MAC</div>
-                          </div>
-                        </td>
-                        <td className="p-5 text-right">
-                          <div className="flex flex-col items-end gap-1">
-                            {agent.forceTerminalOpen && <span className="text-primary text-[9px] font-black uppercase tracking-widest animate-pulse flex items-center gap-1"><div className="w-1 h-1 bg-primary rounded-full" /> DOS_LIVE</span>}
-                            {agent.forceMacOpen && <span className="text-cyan-500 text-[9px] font-black uppercase tracking-widest animate-pulse flex items-center gap-1"><div className="w-1 h-1 bg-cyan-500 rounded-full" /> MAC_LIVE</span>}
-                            {!agent.forceTerminalOpen && !agent.forceMacOpen && <span className="text-zinc-800 text-[9px] font-black uppercase tracking-widest">---</span>}
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:pl-9">
+                    <div className="flex flex-wrap items-center gap-4">
+                      <GrantToggle
+                        label="Acesso DOS"
+                        active={row.hasTerminalAccess}
+                        disabled={dosBusy}
+                        onToggle={async () => {
+                          const next = !row.hasTerminalAccess;
+                          try {
+                            await grantDos([row.uid], next, rowLabel(row));
+                            activityLogger.logAdmin(
+                              'gm.mpg',
+                              next ? 'grant_terminal' : 'revoke_terminal',
+                              `${next ? 'Liberou' : 'Revogou'} DOS: ${rowLabel(row)}`
+                            );
+                            toast.success(next ? `Acesso DOS liberado: ${rowLabel(row)}` : `DOS revogado: ${rowLabel(row)}`);
+                          } catch {
+                            toast.error('Falha ao alterar acesso DOS');
+                          }
+                        }}
+                      />
+                      <GrantToggle
+                        label="Acesso Mac"
+                        active={row.hasMacAccess}
+                        disabled={macBusy}
+                        accent="cyan"
+                        onToggle={async () => {
+                          const next = !row.hasMacAccess;
+                          try {
+                            await grantMac([row.uid], next, rowLabel(row));
+                            toast.success(next ? `Acesso Mac liberado: ${rowLabel(row)}` : `Mac revogado: ${rowLabel(row)}`);
+                          } catch {
+                            toast.error('Falha ao alterar acesso Mac');
+                          }
+                        }}
+                      />
+                    </div>
+
+                    <div className="flex flex-wrap gap-2 sm:ml-auto">
+                      <button
+                        type="button"
+                        disabled={dosBusy}
+                        onClick={async () => {
+                          try {
+                            await pushDos([row.uid], rowLabel(row));
+                            toast.success(`DOS empurrado: ${rowLabel(row)}`);
+                          } catch {
+                            toast.error('Falha ao empurrar DOS');
+                          }
+                        }}
+                        className="px-3 py-1.5 text-[9px] font-black uppercase tracking-widest bg-primary text-black hover:bg-primary-container disabled:opacity-30"
+                      >
+                        Empurrar DOS
+                      </button>
+                      <button
+                        type="button"
+                        disabled={macBusy}
+                        onClick={async () => {
+                          try {
+                            await pushMac([row.uid], rowLabel(row));
+                            toast.success(`Mac empurrado: ${rowLabel(row)}`);
+                          } catch {
+                            toast.error('Falha ao empurrar Mac');
+                          }
+                        }}
+                        className="px-3 py-1.5 text-[9px] font-black uppercase tracking-widest bg-zinc-200 text-black hover:bg-white disabled:opacity-30"
+                      >
+                        Empurrar Mac
+                      </button>
+                    </div>
+                  </div>
+                </li>
+              );
+            })
+          )}
+        </ul>
       </div>
     </div>
+  );
+}
+
+function GrantToggle({
+  label,
+  active,
+  disabled,
+  onToggle,
+  accent = 'emerald',
+}: {
+  label: string;
+  active: boolean;
+  disabled?: boolean;
+  onToggle: () => void;
+  accent?: 'emerald' | 'cyan';
+}) {
+  const on =
+    accent === 'cyan'
+      ? 'bg-cyan-500/20 border-cyan-500/40'
+      : 'bg-emerald-500/20 border-emerald-500/40';
+  const knob = accent === 'cyan' ? 'bg-cyan-400' : 'bg-emerald-400';
+
+  return (
+    <button
+      type="button"
+      disabled={disabled}
+      onClick={onToggle}
+      className="flex items-center gap-3 disabled:opacity-30"
+    >
+      <span
+        className={`relative w-10 h-5 rounded-full border transition-all ${
+          active ? on : 'bg-zinc-900 border-zinc-800'
+        }`}
+      >
+        <span
+          className={`absolute top-0.5 left-0.5 w-3.5 h-3.5 rounded-full transition-transform ${
+            active ? `translate-x-5 ${knob}` : 'translate-x-0 bg-zinc-700'
+          }`}
+        />
+      </span>
+      <span
+        className={`text-[9px] font-black uppercase tracking-widest ${
+          active ? (accent === 'cyan' ? 'text-cyan-400' : 'text-emerald-400') : 'text-zinc-600'
+        }`}
+      >
+        {label}
+      </span>
+    </button>
   );
 }

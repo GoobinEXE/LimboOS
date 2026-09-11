@@ -10,7 +10,6 @@ import { resolveAdminAccess } from '../lib/adminAccess';
 
 // Lazy-load Material Symbols font (admin-only, ~250KB)
 const MATERIAL_SYMBOLS_URL = 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap';
-const ADMIN_CODENAME = 'gm.mpg';
 
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
@@ -26,25 +25,14 @@ export default function App() {
       document.head.appendChild(link);
     }
 
-
-    
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
       if (currentUser) {
         const userRef = doc(db, 'users', currentUser.uid);
-        // Execute logging updates in the background to avoid blocking the Admin UI load
+        // Atualiza lastLogin sem tentar bootstrap de role admin no client
         getDoc(userRef)
           .then((userSnap) => {
-            if (!userSnap.exists()) {
-              setDoc(userRef, {
-                uid: currentUser.uid,
-                email: currentUser.email,
-                displayName: ADMIN_CODENAME,
-                role: 'admin',
-                createdAt: serverTimestamp(),
-                lastLogin: serverTimestamp(),
-              }).catch(err => console.warn('[AdminApp] Error creating admin user doc:', err));
-            } else {
+            if (userSnap.exists()) {
               setDoc(userRef, { lastLogin: serverTimestamp() }, { merge: true })
                 .catch(err => console.warn('[AdminApp] Error updating admin login timestamp:', err));
             }
@@ -67,8 +55,50 @@ export default function App() {
   }
 
   if (!user || !hasAdminAccess) {
-    window.location.href = '/';
-    return null;
+    return (
+      <div className="w-full h-full min-h-screen flex items-center justify-center bg-surface relative overflow-hidden">
+        <div className="noise-overlay" />
+        <div className="scanlines" />
+        <div className="relative z-10 max-w-md w-full mx-4 border border-primary/30 bg-surface-container-low/90 p-8 text-center space-y-6">
+          <p className="text-[10px] font-display uppercase tracking-[0.35em] text-primary/70">
+            Terminal RM-84 // Admin
+          </p>
+          <h1 className="font-display text-2xl font-bold text-white uppercase tracking-tight">
+            Acesso Negado
+          </h1>
+          <p className="text-sm text-industrial-silver/60 leading-relaxed">
+            {!user
+              ? 'É necessário autenticar com uma conta autorizada para acessar o painel administrativo.'
+              : 'Esta conta não possui privilégios de administrador. Contate o operador do sistema se isso for um erro.'}
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
+            {user && (
+              <button
+                type="button"
+                onClick={() => void logout()}
+                className="px-4 py-2 border border-white/10 text-[11px] font-display uppercase tracking-widest text-industrial-silver/70 hover:border-primary/40 hover:text-primary transition-colors"
+              >
+                Encerrar Sessão
+              </button>
+            )}
+            <a
+              href="/?mode=play"
+              className="px-4 py-2 border border-primary/40 bg-primary/10 text-[11px] font-display uppercase tracking-widest text-primary hover:bg-primary/20 transition-colors"
+            >
+              Ir para o Player
+            </a>
+            {!user && (
+              <a
+                href="/"
+                className="px-4 py-2 border border-white/10 text-[11px] font-display uppercase tracking-widest text-industrial-silver/70 hover:border-primary/40 hover:text-primary transition-colors"
+              >
+                Fazer Login
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return <ToastProvider><Dashboard user={user} onLogout={logout} /></ToastProvider>;

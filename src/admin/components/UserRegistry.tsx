@@ -42,7 +42,19 @@ function statusBadge(status: ReturnType<typeof getAccountStatus>) {
   return <span className={`text-[9px] font-display font-bold px-2 py-0.5 rounded-sm uppercase tracking-widest border ${s.cls}`}>{s.label}</span>;
 }
 
-export default function UserRegistry({ isAdmin }: { isAdmin: boolean }) {
+export default function UserRegistry({
+  isAdmin,
+  embedded = false,
+  deepLinkAccountUid,
+  deepLinkAgent,
+  onDeepLinkConsumed,
+}: {
+  isAdmin: boolean;
+  embedded?: boolean;
+  deepLinkAccountUid?: string | null;
+  deepLinkAgent?: { uid: string; charId: string } | null;
+  onDeepLinkConsumed?: () => void;
+}) {
   const [accounts, setAccounts] = useState<MasterAccount[]>([]);
   const [charactersByUid, setCharactersByUid] = useState<Record<string, CharacterData[]>>({});
   const [expandedAccounts, setExpandedAccounts] = useState<Set<string>>(new Set());
@@ -160,6 +172,57 @@ export default function UserRegistry({ isAdmin }: { isAdmin: boolean }) {
 
     return () => unsub();
   }, [isAdmin]);
+
+  // Deep link do Spotlight / Dashboard
+  useEffect(() => {
+    if (!deepLinkAccountUid && !deepLinkAgent) return;
+    if (accounts.length === 0) return;
+
+    let cancelled = false;
+
+    const run = async () => {
+      const uid = deepLinkAgent?.uid || deepLinkAccountUid;
+      if (!uid) return;
+      const acc = accounts.find((a) => a.uid === uid);
+      if (!acc) {
+        onDeepLinkConsumed?.();
+        return;
+      }
+
+      setExpandedAccounts((prev) => new Set(prev).add(uid));
+      let chars = getOwnProperty(charactersByUid, uid);
+      if (!chars) {
+        try {
+          chars = await userService.fetchCharactersForUser(uid);
+          if (cancelled) return;
+          setCharactersByUid((prev) => ({ ...prev, [uid]: chars! }));
+        } catch {
+          onDeepLinkConsumed?.();
+          return;
+        }
+      }
+
+      if (cancelled) return;
+
+      if (deepLinkAgent) {
+        const char = (chars || []).find((c) => c.id === deepLinkAgent.charId);
+        if (char) setSelectedAgent({ uid, char });
+        else setEditingAccount(acc);
+      } else {
+        setEditMasterName(acc.masterName || '');
+        setEditNotes(acc.notes || '');
+        setEditingAccount(acc);
+      }
+      onDeepLinkConsumed?.();
+    };
+
+    void run();
+    return () => {
+      cancelled = true;
+    };
+    // charactersByUid intencionalmente omitido — só reage ao deep link
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [deepLinkAccountUid, deepLinkAgent, accounts]);
 
   const handleCreateUser = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -310,6 +373,7 @@ export default function UserRegistry({ isAdmin }: { isAdmin: boolean }) {
       {modal}
       
       {/* Header */}
+      {!embedded && (
       <div className="flex flex-col border-b border-primary/10 bg-black/40">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between p-6 gap-6">
           <div className="flex items-center gap-4">
@@ -320,8 +384,11 @@ export default function UserRegistry({ isAdmin }: { isAdmin: boolean }) {
             </div>
           </div>
         </div>
+      </div>
+      )}
 
-        <div className="flex flex-col md:flex-row md:items-center justify-between px-6 pb-6 gap-6">
+      <div className="flex flex-col border-b border-primary/10 bg-black/20">
+        <div className="flex flex-col md:flex-row md:items-center justify-between px-6 py-6 gap-6">
           <div className="flex items-center gap-4">
             <span className="text-[10px] font-display font-bold text-industrial-silver/40 tracking-widest uppercase">
               {accounts.length} Contas • {allCharacters.filter(c => !c.char.archived).length} Personagens Ativos
@@ -357,7 +424,7 @@ export default function UserRegistry({ isAdmin }: { isAdmin: boolean }) {
                     <span className="material-symbols-outlined text-base">download</span> EXPORTAR
                   </button>
                   {showExportMenu && (
-                    <div className="absolute top-full right-0 mt-1 bg-surface-container-low border border-primary/20 shadow-2xl z-50 min-w-[140px]">
+                    <div className="absolute top-full right-0 mt-1 bg-surface-container-low border border-primary/20 shadow-2xl z-50 min-w-35">
                       <button onClick={() => handleExport('csv')} className="w-full flex items-center gap-3 px-4 py-3 text-[10px] font-display font-bold text-industrial-silver/50 hover:text-primary hover:bg-primary/5 transition-all uppercase tracking-widest">
                         <span className="material-symbols-outlined text-sm">table_chart</span> CSV
                       </button>
@@ -377,7 +444,7 @@ export default function UserRegistry({ isAdmin }: { isAdmin: boolean }) {
       </div>
 
       {/* Accordion Table */}
-      <div className="p-6 min-h-[600px] bg-black/10">
+      <div className="p-6 min-h-150 bg-black/10">
         <div className="overflow-x-auto bg-surface-container-lowest border border-white/5 shadow-inner">
           <table className="w-full text-left border-collapse">
             <thead>
@@ -466,7 +533,7 @@ export default function UserRegistry({ isAdmin }: { isAdmin: boolean }) {
                     {isExpanded && (
                       <tr>
                         <td colSpan={8} className="p-0 bg-black/20">
-                          <div className="p-6 pl-[4.5rem] border-l-2 border-primary/30 shadow-inner">
+                          <div className="p-6 pl-18 border-l-2 border-primary/30 shadow-inner">
                             <div className="flex justify-between items-center mb-6">
                               <h4 className="text-[10px] font-display font-bold uppercase tracking-widest text-industrial-silver/40 flex items-center gap-2">
                                 <span className="material-symbols-outlined text-sm">group</span> Personagens Vinculados
@@ -539,7 +606,7 @@ export default function UserRegistry({ isAdmin }: { isAdmin: boolean }) {
         <AnimatePresence>
           {showCreateCharacter && (
         <motion.div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4 backdrop-blur-md"
+          className="fixed inset-0 z-100 flex items-center justify-center bg-black/90 p-4 backdrop-blur-md"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -594,7 +661,7 @@ export default function UserRegistry({ isAdmin }: { isAdmin: boolean }) {
         <AnimatePresence>
           {editingAccount && (
         <motion.div
-          className="fixed inset-0 z-[100] flex justify-end bg-black/70 backdrop-blur-sm"
+          className="fixed inset-0 z-100 flex justify-end bg-black/70 backdrop-blur-sm"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -646,9 +713,17 @@ export default function UserRegistry({ isAdmin }: { isAdmin: boolean }) {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-10 pt-8 border-t border-white/5">
                  <div className="space-y-4">
-                    <label className="block text-[9px] font-black text-zinc-500 uppercase tracking-[0.3em] mb-4">Permissões de Sistema</label>
-                    <ToggleButton label="ACESSO TERMINAL" active={!!editingAccount.hasTerminalAccess} onClick={() => handleUpdateAccountFlag(editingAccount.uid, 'hasTerminalAccess', !editingAccount.hasTerminalAccess)} />
-                    <ToggleButton label="ACESSO MACOS" active={!!editingAccount.hasMacAccess} onClick={() => handleUpdateAccountFlag(editingAccount.uid, 'hasMacAccess', !editingAccount.hasMacAccess)} />
+                    <label className="block text-[9px] font-black text-zinc-500 uppercase tracking-[0.3em] mb-4">Hardware</label>
+                    <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest leading-relaxed">
+                      Autorização DOS/Mac fica em Sistema → Acesso (grants persistentes). Push durante a sessão fica no Ao Vivo.
+                    </p>
+                    <a
+                      href="/admin?tab=systems&sub=acesso"
+                      className="inline-flex items-center gap-2 px-4 py-3 border border-primary/30 text-primary text-[10px] font-black uppercase tracking-widest hover:bg-primary/10 transition-colors"
+                    >
+                      <span className="material-symbols-outlined text-base">lock_open</span>
+                      Gerenciar em Acesso
+                    </a>
                  </div>
                  <div className="space-y-4">
                     <label className="block text-[9px] font-black text-zinc-500 uppercase tracking-[0.3em] mb-4">Nível de Autoridade</label>
@@ -691,7 +766,7 @@ export default function UserRegistry({ isAdmin }: { isAdmin: boolean }) {
         <AnimatePresence>
           {showCreateUser && (
         <motion.div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4 backdrop-blur-md"
+          className="fixed inset-0 z-100 flex items-center justify-center bg-black/90 p-4 backdrop-blur-md"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}

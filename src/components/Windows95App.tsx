@@ -7,12 +7,13 @@ import DiskRepairApp from './DiskRepairApp';
 
 interface Windows95AppProps {
   uid: string;
+  characterId?: string;
   onClose: () => void;
 }
 
 type WindowType = 'myComputer' | 'diskRepair' | 'recycleBin';
 
-export default function Windows95App({ uid, onClose }: Windows95AppProps) {
+export default function Windows95App({ uid, characterId, onClose }: Windows95AppProps) {
   const { isLandscape, viewportHeight } = useLandscapeLayout();
   const [activeWindows, setActiveWindows] = useState<WindowType[]>([]);
   const [focusedWindow, setFocusedWindow] = useState<WindowType | null>(null);
@@ -43,7 +44,7 @@ export default function Windows95App({ uid, onClose }: Windows95AppProps) {
 
   const handleShutdown = async () => {
     activityLogger.logAction('windows95', 'Solicitou desligamento do Windows 95');
-    await checkMacClosed(uid); 
+    await checkMacClosed(uid, characterId);
     onClose();
   };
 
@@ -92,19 +93,23 @@ export default function Windows95App({ uid, onClose }: Windows95AppProps) {
 
       {/* Desktop Icons */}
       <div
-        className={`flex-1 p-4 pointer-events-none min-h-0 ${
-          isLandscape ? 'flex flex-row flex-wrap gap-4 items-start content-start' : 'flex flex-col gap-4'
+        className={`flex-1 pointer-events-none min-h-0 ${
+          isLandscape
+            ? 'flex flex-row flex-wrap gap-3 items-start content-start p-2 pt-2 pl-2'
+            : 'flex flex-col gap-4 p-4'
         }`}
       >
-        <DesktopIcon icon="💻" label="Meu Computador" onClick={() => toggleWindow('myComputer')} />
-        <DesktopIcon icon="🗑️" label="Lixeira" onClick={() => toggleWindow('recycleBin')} />
-        <DesktopIcon icon="💾" label="DiskRepair Pro" onClick={() => toggleWindow('diskRepair')} />
+        <DesktopIcon icon="💻" label="Meu Computador" onClick={() => toggleWindow('myComputer')} compact={isLandscape} />
+        <DesktopIcon icon="🗑️" label="Lixeira" onClick={() => toggleWindow('recycleBin')} compact={isLandscape} />
+        <DesktopIcon icon="💾" label="DiskRepair Pro" onClick={() => toggleWindow('diskRepair')} compact={isLandscape} />
       </div>
 
       {/* Windows Layer */}
       <div
-        className={`absolute inset-0 pointer-events-none flex pb-10 ${
-          isLandscape ? 'items-start justify-start pt-2 pl-2' : 'items-center justify-center'
+        className={`absolute inset-0 pointer-events-none flex ${
+          isLandscape
+            ? 'items-start justify-start pt-1 pl-1 pb-8'
+            : 'items-center justify-center pb-10'
         }`}
       >
         <AnimatePresence>
@@ -125,20 +130,23 @@ export default function Windows95App({ uid, onClose }: Windows95AppProps) {
       </div>
 
       {/* Taskbar */}
-      <div className="h-10 bg-[#c0c0c0] border-t-2 border-white flex items-center px-1 gap-1 z-50">
+      <div
+        className={`${isLandscape ? 'h-8' : 'h-10'} bg-[#c0c0c0] border-t-2 border-white flex items-center px-1 gap-1 z-50 shrink-0`}
+        style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+      >
         <button 
           onClick={() => setStartMenuOpen(!startMenuOpen)}
-          className={`win95-button h-8 px-2 flex items-center gap-1 font-bold text-sm ${startMenuOpen ? 'bg-[#dfdfdf] shadow-[inset_1px_1px_#0a0a0a]' : ''}`}
+          className={`win95-button ${isLandscape ? 'h-6 px-1.5 text-xs' : 'h-8 px-2 text-sm'} flex items-center gap-1 font-bold min-h-0 ${startMenuOpen ? 'bg-[#dfdfdf] shadow-[inset_1px_1px_#0a0a0a]' : ''}`}
         >
-          <span className="text-lg">🪟</span> Iniciar
+          <span className={isLandscape ? 'text-sm' : 'text-lg'}>🪟</span> Iniciar
         </button>
         
-        <div className="flex-1 flex gap-1 h-8 overflow-hidden mx-1">
+        <div className={`flex-1 flex gap-1 ${isLandscape ? 'h-6' : 'h-8'} overflow-hidden mx-1`}>
           {activeWindows.map(win => (
             <button 
               key={win}
               onClick={() => setFocusedWindow(win)}
-              className={`win95-button h-full px-2 text-xs text-left min-w-[100px] truncate ${focusedWindow === win ? 'shadow-[inset_1px_1px_#0a0a0a] bg-[#dfdfdf]' : ''}`}
+              className={`win95-button h-full px-2 text-xs text-left min-w-25 truncate ${focusedWindow === win ? 'shadow-[inset_1px_1px_#0a0a0a] bg-[#dfdfdf]' : ''}`}
             >
               <span className="mr-1">{win === 'diskRepair' ? '💾' : win === 'recycleBin' ? '🗑️' : '💻'}</span>
               {getWindowLabel(win)}
@@ -147,7 +155,7 @@ export default function Windows95App({ uid, onClose }: Windows95AppProps) {
         </div>
 
         {/* System Tray */}
-        <div className="win95-border-in h-8 px-2 flex items-center gap-2 text-[11px] min-w-[70px] justify-center bg-[#c0c0c0]">
+        <div className={`win95-border-in ${isLandscape ? 'h-6' : 'h-8'} px-2 flex items-center gap-2 text-[11px] min-w-17.5 justify-center bg-[#c0c0c0]`}>
           <span>🔊</span>
           <span>{currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
         </div>
@@ -162,7 +170,8 @@ export default function Windows95App({ uid, onClose }: Windows95AppProps) {
               initial={{ y: 10, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 10, opacity: 0 }}
-              className="absolute bottom-10 left-0 w-60 max-h-[calc(100dvh-2.5rem)] bg-[#c0c0c0] win95-border-out z-50 p-0.5 flex overflow-hidden"
+              transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+              className={`absolute ${isLandscape ? 'bottom-8' : 'bottom-10'} left-0 w-60 max-h-[calc(100dvh-2.5rem)] bg-[#c0c0c0] win95-border-out z-50 p-0.5 flex overflow-hidden`}
             >
               <div className="start-menu-sidebar shrink-0">
                 <span className="start-menu-text">Windows 95</span>
@@ -185,18 +194,18 @@ export default function Windows95App({ uid, onClose }: Windows95AppProps) {
   );
 }
 
-function DesktopIcon({ icon, label, onClick, labelOnLight }: { icon: string, label: string, onClick: () => void, labelOnLight?: boolean }) {
+function DesktopIcon({ icon, label, onClick, labelOnLight, compact }: { icon: string, label: string, onClick: () => void, labelOnLight?: boolean, compact?: boolean }) {
   return (
     <div 
-      className="w-20 flex flex-col items-center gap-1 cursor-pointer group pointer-events-auto active:opacity-70"
+      className={`${compact ? 'w-16' : 'w-20'} flex flex-col items-center gap-1 cursor-pointer group pointer-events-auto active:opacity-70`}
       onClick={onClick}
     >
-      <div className="text-4xl">{icon}</div>
+      <div className={compact ? 'text-3xl' : 'text-4xl'}>{icon}</div>
       <span
         className={
           labelOnLight
-            ? 'text-[11px] text-black text-center leading-tight bg-transparent px-1 group-active:bg-[#000080] group-active:text-white selection:bg-[#000080] selection:text-white'
-            : 'text-[11px] text-white text-center leading-tight bg-transparent group-active:bg-[#000080] px-1 selection:bg-[#000080]'
+            ? 'text-[10px] text-black text-center leading-tight bg-transparent px-1 group-active:bg-[#000080] group-active:text-white selection:bg-[#000080] selection:text-white'
+            : 'text-[10px] text-white text-center leading-tight bg-transparent group-active:bg-[#000080] px-1 selection:bg-[#000080]'
         }
       >
         {label}
@@ -228,26 +237,27 @@ const Window: React.FC<{
   viewportHeight: number;
   stackIndex: number;
 }> = ({ type, isFocused, onFocus, onClose, uid, isLandscape, viewportHeight, stackIndex }) => {
-  const maxWindowHeight = Math.min(480, Math.max(200, viewportHeight - 48));
-  const minHeight = isLandscape ? 200 : 300;
+  const maxWindowHeight = Math.min(480, Math.max(180, viewportHeight - (isLandscape ? 36 : 48)));
+  const minHeight = isLandscape ? 160 : 300;
 
   return (
     <motion.div
       initial={{ scale: 0.95, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       exit={{ scale: 0.95, opacity: 0 }}
-      className={`absolute w-[90%] max-w-lg bg-[#c0c0c0] win95-border-out pointer-events-auto flex flex-col min-h-0`}
+      transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+      className={`absolute ${isLandscape ? 'w-[min(92%,420px)]' : 'w-[90%]'} max-w-lg bg-[#c0c0c0] win95-border-out pointer-events-auto flex flex-col min-h-0`}
       style={{
         zIndex: isFocused ? 45 : 35,
         minHeight,
         maxHeight: maxWindowHeight,
-        top: isLandscape ? 8 + stackIndex * 24 : undefined,
-        left: isLandscape ? 8 + stackIndex * 24 : undefined,
+        top: isLandscape ? 4 + stackIndex * 18 : undefined,
+        left: isLandscape ? 4 + stackIndex * 18 : undefined,
       }}
       onPointerDown={onFocus}
     >
       {/* Window Title Bar */}
-      <div className={`h-[22px] flex items-center px-1 gap-1 ${isFocused ? 'bg-linear-to-r from-[#000080] to-[#1084d0]' : 'bg-[#808080]'}`}>
+      <div className={`h-5 flex items-center px-1 gap-1 shrink-0 ${isFocused ? 'bg-linear-to-r from-[#000080] to-[#1084d0]' : 'bg-[#808080]'}`}>
         <span className="text-xs px-1">{type === 'diskRepair' ? '💾' : type === 'recycleBin' ? '🗑️' : '💻'}</span>
         <span className="text-white font-bold text-[11px] flex-1 truncate select-none">{getWindowLabel(type)}</span>
         <div className="flex gap-1 h-4 py-0.5">
@@ -263,7 +273,7 @@ const Window: React.FC<{
       </div>
 
       {/* Menu Bar */}
-      <div className="flex px-1 gap-3 text-[11px] h-5 items-center">
+      <div className={`flex px-1 gap-3 text-[11px] ${isLandscape ? 'h-4' : 'h-5'} items-center shrink-0`}>
         <span className="hover:win95-border-in px-1 cursor-default">Arquivo</span>
         <span className="hover:win95-border-in px-1 cursor-default">Editar</span>
         <span className="hover:win95-border-in px-1 cursor-default">Exibir</span>
@@ -271,20 +281,20 @@ const Window: React.FC<{
       </div>
 
       {/* Window Content */}
-      <div className="flex-1 min-h-0 bg-white m-0.5 win95-border-in overflow-auto p-4 flex flex-col">
+      <div className={`flex-1 min-h-0 bg-white m-0.5 win95-border-in overflow-auto flex flex-col ${isLandscape ? 'p-2' : 'p-4'}`}>
         {type === 'myComputer' && (
-          <div className={`grid gap-4 ${isLandscape ? 'grid-cols-2' : 'grid-cols-3 gap-6'}`}>
-            <DesktopIcon icon="💽" label="Disco Local (C:)" onClick={() => {}} labelOnLight />
-            <DesktopIcon icon="💿" label="Drive CD (D:)" onClick={() => {}} labelOnLight />
-            <DesktopIcon icon="💾" label="Disquete (A:)" onClick={() => {}} labelOnLight />
+          <div className={`grid gap-3 ${isLandscape ? 'grid-cols-3' : 'grid-cols-3 gap-6'}`}>
+            <DesktopIcon icon="💽" label="Disco Local (C:)" onClick={() => {}} labelOnLight compact={isLandscape} />
+            <DesktopIcon icon="💿" label="Drive CD (D:)" onClick={() => {}} labelOnLight compact={isLandscape} />
+            <DesktopIcon icon="💾" label="Disquete (A:)" onClick={() => {}} labelOnLight compact={isLandscape} />
           </div>
         )}
         
         {type === 'diskRepair' && <DiskRepairApp uid={uid} isWindowed />}
 
         {type === 'recycleBin' && (
-          <div className="flex flex-col items-center justify-center py-12 opacity-30">
-            <span className="text-6xl mb-4">🗑️</span>
+          <div className={`flex flex-col items-center justify-center opacity-30 ${isLandscape ? 'py-6' : 'py-12'}`}>
+            <span className={`${isLandscape ? 'text-4xl mb-2' : 'text-6xl mb-4'}`}>🗑️</span>
             <span className="text-sm font-bold">A Lixeira está vazia.</span>
           </div>
         )}

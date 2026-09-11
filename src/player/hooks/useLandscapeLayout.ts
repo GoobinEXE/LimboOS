@@ -12,7 +12,8 @@ function getIsLandscape(): boolean {
   return window.matchMedia(LANDSCAPE_QUERY).matches;
 }
 
-export function useLandscapeLayout() {
+/** Estado bruto — use via LandscapeLayoutProvider (um listener por árvore). */
+export function useLandscapeLayoutState() {
   const [isLandscape, setIsLandscape] = useState(getIsLandscape);
   const [viewportHeight, setViewportHeight] = useState(getViewportHeight);
 
@@ -40,3 +41,6 @@ export function useLandscapeLayout() {
 
   return { isLandscape, viewportHeight };
 }
+
+/** Re-export do hook de context para imports legados `../hooks/useLandscapeLayout`. */
+export { useLandscapeLayout } from '../context/LandscapeLayoutContext';

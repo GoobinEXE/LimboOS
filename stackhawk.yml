@@ -1,0 +1,25 @@
+# LimboOS — SPA React/Vite (cenário C: frontend puro; backend Firebase fora do escopo DAST)
+# Rotas client-side: /, /admin/*, /terminal/*
+# git_origin: xxinous/limboos (ASM sem match — tag para rastreio)
+app:
+  applicationId: ${APP_ID:9f9af0e0-778b-4a05-99c3-4a07ad6da26d}
+  env: ${APP_ENV:Production}
+  host: ${APP_HOST:http://localhost:5173}
+hawk:
+  spider:
+    base: true
+    ajax: true
+    maxDurationMinutes: 4
+    ajaxBrowser: CHROME_HEADLESS
+    seedPaths:
+      - /admin
+      - /terminal
+tags:
+  - name: _STACKHAWK_AGENT
+    value: ${HAWK_AGENT:none}
+  - name: _STACKHAWK_GIT_COMMIT_SHA
+    value: ${COMMIT_SHA:none}
+  - name: _STACKHAWK_GIT_BRANCH
+    value: ${BRANCH_NAME:none}
+  - name: git_origin
+    value: xxinous/limboos

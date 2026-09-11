@@ -3,7 +3,7 @@
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Space Grotesk", sans-serif;
-  --font-mono: ui-monospace, "Courier New", monospace;
+  --font-mono: "JetBrains Mono", ui-monospace, "Courier New", monospace;
   --font-headline: "Space Grotesk", sans-serif;
   --font-body: "Inter", sans-serif;
   --font-label: "Space Grotesk", sans-serif;
@@ -72,9 +72,71 @@
   --color-outline: #a48c7a;
   --color-outline-variant: #564334;
 
+  /* Superfícies estruturais (refresh visual)
+     Escala de elevação usada por painéis, cartões e overlays do player. */
+  --color-surface-sunken: #0a0a0a;
+  --color-surface-raised: #191919;
+  --color-surface-panel: #1f1f1f;
+  --color-surface-overlay: #0d0d0dee;
+  --color-surface-scrim: #05050599;
+
+  /* Bordas (hairlines) — hierarquia de contorno em 3 níveis + acento */
+  --color-border-subtle: #ffffff0f;
+  --color-border: #ffffff1a;
+  --color-border-strong: #ffffff2e;
+  --color-border-accent: #ff8c0059;
+
+  /* Acento em opacidades — evita rgba() solto pelos componentes */
+  --color-accent: #ff8c00;
+  --color-accent-05: #ff8c000d;
+  --color-accent-10: #ff8c001a;
+  --color-accent-20: #ff8c0033;
+  --color-accent-40: #ff8c0066;
+  --color-accent-60: #ff8c0099;
+  --color-accent-80: #ff8c00cc;
+
+  /* Raios — nomeados por função para não sobrescrever a escala do Tailwind */
+  --radius-inset: 3px;
+  --radius-control: 6px;
+  --radius-card: 10px;
+  --radius-panel: 16px;
+  --radius-device: 24px;
+
+  /* Glow controlado — brilho curto e denso, sem halo difuso */
+  --shadow-glow-xs: 0 0 0 1px #ff8c0033, 0 1px 6px -2px #ff8c0040;
+  --shadow-glow: 0 0 12px -2px #ff8c0059, 0 1px 2px #00000080;
+  --shadow-glow-lg: 0 0 24px -6px #ff8c0080, 0 2px 8px #000000a6;
+  --shadow-panel: 0 1px 0 0 #ffffff0d inset, 0 12px 32px -12px #000000cc;
+  --shadow-hairline: 0 1px 0 0 #ffffff0f inset, 0 -1px 0 0 #00000066 inset;
+
+  /* Easing de movimento (gera utilitários ease-*) */
+  --ease-limbo: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-limbo-in: cubic-bezier(0.55, 0, 1, 0.45);
+  --ease-limbo-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-mechanical: cubic-bezier(0.34, 1.32, 0.64, 1);
+
   /* Custom utility variables for v4 */
   --spacing-12: 3rem;
   --border-width-12: 12px;
+}
+
+/* Tokens de movimento e textura consumidos por CSS/JS (Motion, transitions).
+   Ficam fora de @theme por não pertencerem a um namespace de utilitário. */
+:root {
+  --duration-instant: 80ms;
+  --duration-fast: 140ms;
+  --duration-base: 220ms;
+  --duration-slow: 360ms;
+  --duration-deliberate: 600ms;
+
+  --easing-standard: cubic-bezier(0.22, 1, 0.36, 1);
+  --easing-enter: cubic-bezier(0.16, 1, 0.3, 1);
+  --easing-exit: cubic-bezier(0.55, 0, 1, 0.45);
+  --easing-mechanical: cubic-bezier(0.34, 1.32, 0.64, 1);
+
+  --noise-opacity: 0.022;
+  --scanline-opacity: 0.035;
+  --vignette-strength: 0.55;
 }
 
 @layer base {
@@ -94,14 +156,43 @@
 }
 
 @layer utilities {
+  /* Tipografia — três vozes: display (títulos), protocol (rótulos/UI), mono (dados) */
+  .text-display {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    text-wrap: balance;
+  }
+  .text-protocol {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.6875rem;
+    letter-spacing: 0.16em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+  .text-mono-ui {
+    font-family: var(--font-mono);
+    font-weight: 400;
+    font-size: 0.75rem;
+    letter-spacing: 0.02em;
+    line-height: 1.4;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "zero" 1;
+  }
+
   .glow-orange {
-    box-shadow: 0 0 20px rgba(255, 140, 0, 0.2);
+    box-shadow: var(--shadow-glow);
   }
   .glow-orange-strong {
-    box-shadow: 0 0 30px rgba(255, 140, 0, 0.4);
+    box-shadow: var(--shadow-glow-lg);
+  }
+  .glow-orange-subtle {
+    box-shadow: var(--shadow-glow-xs);
   }
   .text-shadow-orange {
-    text-shadow: 0 0 8px rgba(255, 140, 0, 0.5);
+    text-shadow: 0 0 6px rgba(255, 140, 0, 0.35);
   }
   .glow-green {
     box-shadow: 0 0 15px rgba(34, 197, 94, 0.3);
@@ -112,18 +203,51 @@
   .glow-yellow {
     box-shadow: 0 0 15px rgba(234, 179, 8, 0.3);
   }
+  /* Grão fino e dessaturado: textura de filme, não sujeira */
   .noise-overlay {
-    @apply fixed inset-0 pointer-events-none opacity-[0.03] z-0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    @apply fixed inset-0 pointer-events-none z-0;
+    opacity: var(--noise-opacity);
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    background-size: 160px 160px;
   }
+  @media (prefers-reduced-motion: reduce) {
+    .noise-overlay {
+      background-image: none;
+      opacity: 0.015;
+      background-color: rgba(255, 255, 255, 0.015);
+    }
+    .scanlines {
+      display: none;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+  /* Linhas de varredura de 3px, escuras (subtrativas) em vez de leitosas */
   .scanlines {
     @apply fixed inset-0 pointer-events-none z-0;
-    background: linear-gradient(
+    background-image: repeating-linear-gradient(
       to bottom,
-      rgba(18, 16, 16, 0) 50%,
-      rgba(0, 0, 0, 0.05) 50%
+      rgba(0, 0, 0, 0) 0px,
+      rgba(0, 0, 0, 0) 2px,
+      rgba(0, 0, 0, var(--scanline-opacity)) 2px,
+      rgba(0, 0, 0, var(--scanline-opacity)) 3px
     );
-    background-size: 100% 4px;
+  }
+  /* Vinheta do gabinete: foca o centro do dispositivo e sela as bordas */
+  .vignette {
+    @apply fixed inset-0 pointer-events-none z-0;
+    background: radial-gradient(
+      120% 90% at 50% 45%,
+      rgba(0, 0, 0, 0) 40%,
+      rgba(0, 0, 0, calc(var(--vignette-strength) * 0.45)) 76%,
+      rgba(0, 0, 0, var(--vignette-strength)) 100%
+    );
   }
   .scanline {
     width: 100%;
@@ -159,10 +283,8 @@
   border-radius: 4px;
 }
 
-/* ═══════════════════════════════════════════════════
-   Nokia 2280 Authentic LCD Screen Effects
-   Ported from nokia-rpg-companion reference project
-   ═══════════════════════════════════════════════════ */
+/* Handset LCD — efeitos de tela monocromática
+   (tema .nokia-theme-active / #nokia-lcd-screen-inner) */
 
 /* Authentic physical LCD pixel grid overlay texture */
 #nokia-lcd-screen-inner::before {
@@ -341,5 +463,42 @@ body.nokia-active {
   flex-direction: row;
   min-height: 0;
   min-width: 0;
+}
+
+/* Desktop: mais respiro ao redor do aparelho sem afetar phone landscape */
+.desktop-player-shell {
+  --desktop-shell-pad: 1.5rem;
+}
+
+/*
+ * Modo leve WebKit (Safari macOS/iOS + browsers iOS) — inclui MacBook.
+ * Classe aplicada em main.tsx via applyWebKitLiteClass().
+ * Chrome/Firefox/Edge desktop não recebem esta classe.
+ */
+html.webkit-lite .noise-overlay {
+  display: none;
+}
+
+html.webkit-lite .scanlines {
+  display: none;
+}
+
+html.webkit-lite .vignette {
+  opacity: 0.55;
+}
+
+html.webkit-lite .backdrop-blur-sm,
+html.webkit-lite .backdrop-blur-md,
+html.webkit-lite .backdrop-blur-xl,
+html.webkit-lite .backdrop-blur {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  background-color: rgba(19, 19, 19, 0.92) !important;
+}
+
+/* Qualquer utilitário Tailwind com backdrop-blur-* */
+html.webkit-lite [class*='backdrop-blur'] {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
 }
 

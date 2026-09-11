@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { motion } from 'motion/react';
-import { IntelBase, VisualIntel, TextIntel, AudioIntel, MetaIntel } from '../services/IntelEngine';
+import { IntelBase, VisualIntel, TextIntel, AudioIntel, MetaIntel, VideoIntel } from '../services/IntelEngine';
+import { analyticsTracker } from '../services/AnalyticsTracker';
 
 interface EvidenceReaderProps {
   evidence: IntelBase;
@@ -166,14 +167,22 @@ function CorruptedTextRenderer({ text }: { text: string }) {
  * Suporta:
  * - TEXT   → Renderiza textContent em estilo terminal verde
  * - VISUAL → Exibe imagem com descrição em estilo ciano
- * - AUDIO  → Exibe player de áudio embutido (caso acessado fora do walkman)
+ * - AUDIO  → Exibe player de áudio embutido (caso acessado fora do deck)
+ * - VIDEO  → Overlay de vídeo (upload / YouTube) para deck desktop e evidências
  * - META   → Exibe ícone e descrição de conquista/flag
  */
 export default function EvidenceReader({ evidence, onClose }: EvidenceReaderProps) {
   const isVisual = evidence instanceof VisualIntel;
   const isText = evidence instanceof TextIntel;
   const isAudio = evidence instanceof AudioIntel;
+  const isVideo = evidence instanceof VideoIntel;
   const isMeta = evidence instanceof MetaIntel;
+
+  useEffect(() => {
+    if (!isAudio) {
+      analyticsTracker.markFlag('archiveOpened');
+    }
+  }, [isAudio, evidence.id]);
   
   const levelLabel = evidence.getFormattedLevel();
   const details = evidence.getDetails();
@@ -183,7 +192,9 @@ export default function EvidenceReader({ evidence, onClose }: EvidenceReaderProp
   
   const scheme = isVisual
     ? { bg: 'bg-[#0a0a0f]', text: 'text-cyan-400', border: 'border-cyan-400', accent: 'cyan', selBg: 'selection:bg-cyan-400', selText: 'selection:text-[#0a0a0f]', scrollThumb: '#22d3ee' }
-    : isMeta
+    : isVideo
+      ? { bg: 'bg-[#0a0a0a]', text: 'text-orange-400', border: 'border-orange-400', accent: 'orange', selBg: 'selection:bg-orange-400', selText: 'selection:text-[#0a0a0a]', scrollThumb: '#fb923c' }
+      : isMeta
       ? { bg: 'bg-[#0f0a15]', text: 'text-purple-400', border: 'border-purple-400', accent: 'purple', selBg: 'selection:bg-purple-400', selText: 'selection:text-[#0f0a15]', scrollThumb: '#a855f7' }
       : isAudio
         ? { bg: 'bg-[#0d0a00]', text: 'text-amber-400', border: 'border-amber-400', accent: 'amber', selBg: 'selection:bg-amber-400', selText: 'selection:text-[#0d0a00]', scrollThumb: '#f59e0b' }
@@ -193,10 +204,11 @@ export default function EvidenceReader({ evidence, onClose }: EvidenceReaderProp
 
   return (
     <motion.div 
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 20 }}
-      className={`absolute inset-0 z-50 flex flex-col ${scheme.bg} ${scheme.text} font-mono p-4 sm:p-6 sm:rounded-[32px] overflow-hidden`}
+      initial={{ opacity: 0, y: 24, scale: 0.985 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: 24, scale: 0.985 }}
+      transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
+      className={`absolute inset-0 z-50 flex flex-col ${scheme.bg} ${scheme.text} font-mono p-4 sm:p-6 sm:rounded-4xl overflow-hidden border border-current/15 shadow-[0_24px_64px_-24px_rgba(0,0,0,0.9)]`}
     >
       {/* Scanline overlay */}
       <div className="absolute inset-0 pointer-events-none z-10" style={{
@@ -206,6 +218,15 @@ export default function EvidenceReader({ evidence, onClose }: EvidenceReaderProp
       <div className="absolute inset-0 pointer-events-none z-20" style={{
         background: 'radial-gradient(circle, transparent 70%, rgba(0,0,0,0.3) 100%)'
       }} />
+      {/* Faixa de protocolo — enquadramento de documento */}
+      <div className="flex items-center justify-between gap-3 mb-3 shrink-0 text-[8px] uppercase tracking-[0.3em] opacity-40 select-none">
+        <span className="flex items-center gap-2 whitespace-nowrap">
+          <span aria-hidden className="inline-block w-1.5 h-1.5 bg-current animate-pulse" />
+          REGISTRO DE EVIDÊNCIA
+        </span>
+        <span aria-hidden className="flex-1 border-t border-dashed border-current/40" />
+        <span className="whitespace-nowrap">ARQ//{evidence.id}</span>
+      </div>
       {/* Header */}
       <div className={`flex items-center justify-between border-b ${scheme.border}/30 pb-4 mb-4 shrink-0`}>
         <div className="flex items-center gap-3">
@@ -215,6 +236,8 @@ export default function EvidenceReader({ evidence, onClose }: EvidenceReaderProp
             <p className="text-[10px] opacity-70 italic">
               {isVisual 
                 ? `Categoria: ${details.category || 'Intel'}` 
+                : isVideo
+                  ? `Formato: ${(details as { format?: string }).format || 'Vídeo'} // ${(details as { isYoutube?: boolean }).isYoutube ? 'YouTube' : 'Upload'}`
                 : isAudio
                   ? `Artista: ${details.artist || 'Desconhecido'}`
                   : isMeta
@@ -227,14 +250,15 @@ export default function EvidenceReader({ evidence, onClose }: EvidenceReaderProp
         <div className="flex items-center gap-3">
           <span className={`text-[8px] font-bold uppercase tracking-[0.2em] px-2 py-0.5 border rounded ${
             evidence.level >= 3 
-              ? `${scheme.border}/50 ${scheme.text} ${scheme.bg.replace('bg-', 'bg-')}/10` 
+              ? 'border-current/50 bg-current/10 shadow-[0_0_10px_-2px_currentColor]' 
               : 'border-current/30 opacity-50'
           }`}>
             {levelLabel}
           </span>
           <button 
             onClick={onClose}
-            className={`px-3 py-1 border ${scheme.border} hover:${scheme.bg} text-[10px] transition-colors uppercase font-bold`}
+            aria-label="Fechar evidência"
+            className={`px-3 py-1 border ${scheme.border} bg-transparent hover:bg-current/15 active:bg-current/25 focus-visible:outline-1 focus-visible:outline-current text-[10px] transition-colors duration-150 uppercase font-bold cursor-pointer`}
           >
             [ FECHAR_ ]
           </button>
@@ -248,8 +272,36 @@ export default function EvidenceReader({ evidence, onClose }: EvidenceReaderProp
           .custom-scrollbar::-webkit-scrollbar-thumb { background: ${scheme.scrollThumb}; border-radius: 2px; }
         `}</style>
 
-        {/* VISUAL: Video or Image */}
-        {isVisual && details.url ? (
+        {/* VIDEO: player unificado (deck desktop / evidência) */}
+        {isVideo ? (
+          <div className="flex flex-col items-center py-4 gap-4">
+            <div className="w-full aspect-video max-h-[55vh] rounded-lg border border-orange-400/30 overflow-hidden bg-black">
+              {(evidence as VideoIntel).isYoutube() && (evidence as VideoIntel).youtubeId ? (
+                <iframe
+                  title={evidence.title}
+                  src={`https://www.youtube.com/embed/${(evidence as VideoIntel).youtubeId}?rel=0&modestbranding=1`}
+                  className="w-full h-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              ) : (
+                <video
+                  src={(evidence as VideoIntel).mediaUrl}
+                  controls
+                  autoPlay
+                  playsInline
+                  preload="metadata"
+                  className="w-full h-full object-contain"
+                />
+              )}
+            </div>
+            {evidence.description && (
+              <div className={`w-full text-sm leading-relaxed whitespace-pre-wrap ${scheme.selBg} ${scheme.selText} opacity-80`}>
+                {evidence.description}
+              </div>
+            )}
+          </div>
+        ) : isVisual && details.url ? (
           <div className="flex flex-col items-center py-4 gap-4">
             {details.isVideo ? (
               <video
@@ -319,10 +371,10 @@ export default function EvidenceReader({ evidence, onClose }: EvidenceReaderProp
         )}
       </div>
       {/* Footer with enriched metadata */}
-      <div className={`mt-4 pt-4 border-t ${scheme.border}/30 text-[9px] opacity-50 flex justify-between uppercase`}>
-        <span>Setor: {evidence.metadata.chapter || 'Desconhecido'}</span>
-        <span>Nível: {levelLabel}</span>
-        <span>{details.npc ? `NPC: ${details.npc}` : 'Checksum: OK'}</span>
+      <div className={`mt-4 pt-3 border-t ${scheme.border}/30 text-[9px] opacity-50 flex justify-between gap-3 uppercase tracking-[0.15em] shrink-0`}>
+        <span className="truncate">Setor: {evidence.metadata.chapter || 'Desconhecido'}</span>
+        <span className="whitespace-nowrap">Nível: {levelLabel}</span>
+        <span className="truncate text-right">{details.npc ? `NPC: ${details.npc}` : 'Checksum: OK'}</span>
       </div>
     </motion.div>
   );

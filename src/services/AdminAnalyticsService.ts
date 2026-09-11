@@ -2,13 +2,15 @@ import { db } from "../lib/firebase";
 import { 
   collection, 
   onSnapshot, 
-  getDocs, 
+  getDocs,
+  getDoc,
   collectionGroup, 
   writeBatch, 
   doc, 
   query, 
   orderBy, 
-  limit 
+  limit,
+  where,
 } from "firebase/firestore";
 import { ALL_ACHIEVEMENTS } from "../data/achievements";
 
@@ -63,6 +65,61 @@ export class AdminAnalyticsService {
     }, (err) => console.warn('[AdminAnalyticsService] aggregated analytics listener error:', err));
   }
 
+  /**
+   * Engagement leve: agrega collectionGroups sob demanda (sem listeners permanentes).
+   * Preferir system/analytics quando os campos existirem.
+   */
+  public async fetchEngagementSnapshot(): Promise<{
+    totalAchievements: number;
+    totalScrews: number;
+    totalFidgets: number;
+    totalEjects: number;
+  }> {
+    try {
+      const analyticsSnap = await getDoc(doc(db, 'system', 'analytics'));
+      const agg = analyticsSnap.exists()
+        ? (analyticsSnap.data() as {
+            totalAchievements?: number;
+            totalScrews?: number;
+            totalFidgets?: number;
+            totalEjects?: number;
+          })
+        : undefined;
+      if (
+        agg &&
+        typeof agg.totalScrews === 'number' &&
+        typeof agg.totalFidgets === 'number'
+      ) {
+        return {
+          totalAchievements: agg.totalAchievements ?? 0,
+          totalScrews: agg.totalScrews,
+          totalFidgets: agg.totalFidgets,
+          totalEjects: agg.totalEjects ?? 0,
+        };
+      }
+    } catch {
+      // fallback abaixo
+    }
+
+    try {
+      const [achSnap, statsSnap] = await Promise.all([
+        getDocs(query(collectionGroup(db, 'achievements'), limit(500))),
+        getDocs(query(collectionGroup(db, 'stats'), limit(500))),
+      ]);
+      const stats = statsSnap.docs.map((d) => d.data() as PlayerStats);
+      return {
+        totalAchievements: achSnap.size,
+        totalScrews: stats.reduce((s, x) => s + (x.screwClicks || 0), 0),
+        totalFidgets: stats.reduce((s, x) => s + (x.fidgetClicks || 0), 0),
+        totalEjects: stats.reduce((s, x) => s + (x.ejectWithoutPlay || 0), 0),
+      };
+    } catch (err) {
+      console.warn('[AdminAnalyticsService] fetchEngagementSnapshot:', err);
+      return { totalAchievements: 0, totalScrews: 0, totalFidgets: 0, totalEjects: 0 };
+    }
+  }
+
+  /** @deprecated Prefer fetchEngagementSnapshot / subscribeToAggregatedAnalytics — listeners full-collection. */
   public subscribeToRawData(callback: (data: {
     playEvents: PlayEvent[];
     users: UserData[];
@@ -70,17 +127,15 @@ export class AdminAnalyticsService {
     unlockedAchievements: UserAchievement[];
     stats: PlayerStats[];
   }) => void): () => void {
-    let playEvents: PlayEvent[] = [];
     let users: UserData[] = [];
     let audios: AudioMetadata[] = [];
     let unlockedAchievements: UserAchievement[] = [];
     let stats: PlayerStats[] = [];
 
     const notify = () => {
-      callback({ playEvents, users, audios, unlockedAchievements, stats });
+      callback({ playEvents: [], users, audios, unlockedAchievements, stats });
     };
 
-    // We keep these for now but they should eventually be paginated or replaced
     const unsubs = [
       onSnapshot(collection(db, "users"), 
         (snap) => {
@@ -89,11 +144,10 @@ export class AdminAnalyticsService {
         },
         (err) => console.warn('[AdminAnalyticsService] users listener error:', err)
       ),
-      onSnapshot(collection(db, "mediaAssets"),
+      onSnapshot(
+        query(collection(db, "mediaAssets"), where("type", "==", "audio"), limit(200)),
         (snap) => {
-          audios = snap.docs
-            .filter((d) => (d.data() as { type?: string }).type === 'audio')
-            .map((d) => {
+          audios = snap.docs.map((d) => {
               const data = d.data() as { size?: number; originalName?: string; metadata?: { title?: string } };
               return {
                 id: d.id,
@@ -106,14 +160,14 @@ export class AdminAnalyticsService {
         },
         (err) => console.warn('[AdminAnalyticsService] mediaAssets listener error:', err)
       ),
-      onSnapshot(collectionGroup(db, "achievements"), 
+      onSnapshot(query(collectionGroup(db, "achievements"), limit(500)), 
         (snap) => {
           unlockedAchievements = snap.docs.map(d => d.data() as UserAchievement);
           notify();
         },
         (err) => console.warn('[AdminAnalyticsService] achievements listener error:', err)
       ),
-      onSnapshot(collectionGroup(db, "stats"), 
+      onSnapshot(query(collectionGroup(db, "stats"), limit(500)), 
         (snap) => {
           stats = snap.docs.map(d => d.data() as PlayerStats);
           notify();
@@ -159,6 +213,13 @@ export class AdminAnalyticsService {
         ejectWithoutPlay: 0,
         maxVolumeTime: 0,
         zeroVolumeTime: 0,
+        biosOpened: 0,
+        win95Opened: 0,
+        macosOpened: 0,
+        fullTapeListens: 0,
+        threadsReadCount: 0,
+        archiveOpened: 0,
+        modeSwitches: 0,
       }, { merge: true });
       count++;
       if (count % 400 === 0) {
@@ -279,7 +340,28 @@ export class AdminAnalyticsService {
       ejectWithoutPlay: acc.ejectWithoutPlay + (s.ejectWithoutPlay || 0),
       maxVolumeTime: acc.maxVolumeTime + (s.maxVolumeTime || 0),
       zeroVolumeTime: acc.zeroVolumeTime + (s.zeroVolumeTime || 0),
-    }), { totalListenTime: 0, screwClicks: 0, fidgetClicks: 0, ejectWithoutPlay: 0, maxVolumeTime: 0, zeroVolumeTime: 0 });
+      biosOpened: acc.biosOpened + (s.biosOpened || 0),
+      win95Opened: acc.win95Opened + (s.win95Opened || 0),
+      macosOpened: acc.macosOpened + (s.macosOpened || 0),
+      fullTapeListens: acc.fullTapeListens + (s.fullTapeListens || 0),
+      threadsReadCount: acc.threadsReadCount + (s.threadsReadCount || 0),
+      archiveOpened: acc.archiveOpened + (s.archiveOpened || 0),
+      modeSwitches: acc.modeSwitches + (s.modeSwitches || 0),
+    }), {
+      totalListenTime: 0,
+      screwClicks: 0,
+      fidgetClicks: 0,
+      ejectWithoutPlay: 0,
+      maxVolumeTime: 0,
+      zeroVolumeTime: 0,
+      biosOpened: 0,
+      win95Opened: 0,
+      macosOpened: 0,
+      fullTapeListens: 0,
+      threadsReadCount: 0,
+      archiveOpened: 0,
+      modeSwitches: 0,
+    });
 
     return { 
       activeUsers, 

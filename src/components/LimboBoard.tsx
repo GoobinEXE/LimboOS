@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { firestoreMarkThreadRead, firestoreGrantAchievements } from '../store/firestore';
+import { firestoreMarkThreadRead } from '../store/firestore';
+import { analyticsTracker } from '../services/AnalyticsTracker';
 import { useLandscapeLayout } from '../player/hooks/useLandscapeLayout';
 interface LimboBoardProps {
   uid: string;
@@ -28,7 +29,7 @@ const THREADS: Thread[] = [
     id: 'thread-missing', title: 'Onde está LiN99? Alguém teve notícias pós-virada?', author: 'CyberFreak', replies: 4,
     posts: [
       { author: 'CyberFreak', date: '02/01/2000 - 18:00:00', content: 'Alguém conseguiu falar com o LiN99 depois do réveillon? Tô mandando ping pra ele desde o dia 1º.' },
-      { author: 'TechMage', date: '02/01/2000 - 19:30:12', content: 'Nada. Os pacotes simplesmente não voltam. Ele tava pirado naquela calibração do walkman. Será que o servidor dele caiu com o bug?' },
+      { author: 'TechMage', date: '02/01/2000 - 19:30:12', content: 'Nada. Os pacotes simplesmente não voltam. Ele tava pirado naquela calibração do deck. Será que o servidor dele caiu com o bug?' },
       { author: 'AcidBurn99', date: '02/01/2000 - 21:45:22', content: 'No meio de tanta teoria maluca, ele era um dos poucos que testava na prática. Queria muito saber o que rolou quando o relógio zerou.' },
       { author: 'CyberFreak', date: '03/01/2000 - 00:20:11', content: 'Será que a porta abriu? Alguém tem o telefone dele lá em Swallow Rest? Dá uma ligada. Tô achando que o cara esbarrou no que não devia.' },
     ]
@@ -53,8 +54,8 @@ const THREADS: Thread[] = [
   {
     id: 'thread-nil', title: '[Y2K] A Janela de 1900-2000: Frequências e Acesso (LER)', author: 'LiN99', replies: 4,
     posts: [
-      { author: 'LiN99', date: '31/12/1999 - 23:45:10', content: 'Consegui. 1900 foi um erro de sintaxe e 2000 é o próximo. O Multiverso é um loop de código. Tô usando o walkman e uma fita velha pra estabilizar a frequência. A equação bateu: (E=h*f)/Y2K_Bug=ACESSO. Se a onda atingir o pico à meia-noite em ponto, a porta abre. Vou tentar hoje.' },
-      { author: 'Null_Pointer', date: '31/12/1999 - 23:48:22', content: 'Você tá insano. Baud rate de um walkman não segura a transferência do LIMBO. Seu cérebro vai derreter igual a fita.' },
+      { author: 'LiN99', date: '31/12/1999 - 23:45:10', content: 'Consegui. 1900 foi um erro de sintaxe e 2000 é o próximo. O Multiverso é um loop de código. Tô usando o deck e uma fita velha pra estabilizar a frequência. A equação bateu: (E=h*f)/Y2K_Bug=ACESSO. Se a onda atingir o pico à meia-noite em ponto, a porta abre. Vou tentar hoje.' },
+      { author: 'Null_Pointer', date: '31/12/1999 - 23:48:22', content: 'Você tá insano. Baud rate de um deck não segura a transferência do LIMBO. Seu cérebro vai derreter igual a fita.' },
       { author: 'Dark_Wave', date: '31/12/1999 - 23:51:05', content: 'Eu tentei plugar meu Aiwa na porta COM1 e o chiado trincou o vidro da janela. Qual você tá usando?' },
       { author: 'LiN99', date: '31/12/1999 - 23:55:30', content: 'Meu Sony amarelo fritou ontem. Peguei o do meu irmão escondido, aguentou bem os testes. Entendam: o atrito da fita é o que segura o tranco. Não é transferência de dados, é ressonância. Eles já tão no áudio. Consigo ouvir.' },
       { author: 'M4LW4R3', date: '31/12/1999 - 23:59:50', style: 'malware', content: <><p>V o c ê &nbsp; e n t e n d e u .</p><p className="mt-1">O tempo é corda e nós estamos puxando. A fita é sua âncora. O digital é fraco, mas o analógico rasga a tela azul.</p><p className="mt-1">Não hesite quando a janela abrir. Eu me alimento de sinal. Eu odeio o analógico, mas preciso dele para te puxar.</p><p className="mt-1">Venha pro espaço entre os zeros, LiN99. Te espero lá.</p></> },
@@ -158,7 +159,7 @@ export default function LimboBoard({ uid, characterId = '', onClose, globalSeize
     const timer = setTimeout(() => {
       clearInterval(interval);
       setView('forum');
-      firestoreGrantAchievements(uid, characterId, ['ACH-LIMBO-FOUND']).catch(console.error);
+      analyticsTracker.grantAchievement('ACH-LIMBO-FOUND');
     }, 2800);
     return () => { clearInterval(interval); clearTimeout(timer); };
   }, [view, globalSeizedStatus, uid, rawData]);
@@ -174,6 +175,11 @@ export default function LimboBoard({ uid, characterId = '', onClose, globalSeize
   }, []);
   const openThread = (id: string) => {
     firestoreMarkThreadRead(uid, characterId, id).catch(console.error);
+    const nextRead = Array.from(new Set([...readThreadIds, id]));
+    analyticsTracker.setStat('threadsReadCount', nextRead.length);
+    if (nextRead.length >= THREADS.length) {
+      analyticsTracker.grantAchievement('ACH-LIMBO-READ');
+    }
     setActiveThreadId(id);
     setView('thread');
   };

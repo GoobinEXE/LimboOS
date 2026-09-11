@@ -15,7 +15,12 @@ import type {
 } from '../../types/player';
 import type { PlayerIntelCollection } from '../../types/intel';
 import type { Toast } from '../../components/ToastNotification';
-import { isAdminAccount, redirectToAdminPanel } from '../../lib/adminAccess';
+import {
+  isAdminAccount,
+  redirectToAdminPanel,
+  wantsPlayAsPlayerMode,
+  clearPlayAsPlayerMode,
+} from '../../lib/adminAccess';
 
 export interface UsePlayerAuthOptions {
   addToast: (toast: Omit<Toast, 'id'>) => void;
@@ -42,7 +47,9 @@ export function usePlayerAuth(options: UsePlayerAuthOptions) {
       try {
         if (user) {
           const account = await ensureUserProfile(user);
-          if (isAdminAccount(account)) {
+          // Admin sem ?mode=play → painel. Evita cair em seleção/criação de agentes.
+          if (isAdminAccount(account) && !wantsPlayAsPlayerMode()) {
+            clearPlayAsPlayerMode();
             redirectToAdminPanel();
             return;
           }
@@ -104,6 +111,7 @@ export function usePlayerAuth(options: UsePlayerAuthOptions) {
     }
     analyticsTracker.stopAll(true);
     playerSyncService.stopAll();
+    clearPlayAsPlayerMode();
 
     setPlayerData(null);
     setMasterAccount(undefined);
@@ -141,7 +149,8 @@ export function usePlayerAuthLoginHandler(
 ) {
   return useCallback(
     (acc: MasterAccount) => {
-      if (isAdminAccount(acc)) {
+      if (isAdminAccount(acc) && !wantsPlayAsPlayerMode()) {
+        clearPlayAsPlayerMode();
         redirectToAdminPanel();
         return;
       }

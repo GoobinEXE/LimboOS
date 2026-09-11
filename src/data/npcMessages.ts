@@ -476,7 +476,7 @@ export const npcMessages: Record<string, NpcSmsDialogue[]> = {
         },
         {
           "speaker": "npc",
-          "text": "Acho que sim. O mormaço da rua me dá um pouco de dor de cabeça, mas o Joe me emprestou o Walkman dele. Tô ouvindo umas fitas antigas de grunge pra me desligar. É bom ter vocês de volta. Eu achei que a gente tinha estragado tudo no ano 2000."
+          "text": "Acho que sim. O mormaço da rua me dá um pouco de dor de cabeça, mas o Joe me emprestou o Deck dele. Tô ouvindo umas fitas antigas de grunge pra me desligar. É bom ter vocês de volta. Eu achei que a gente tinha estragado tudo no ano 2000."
         }
       ]
     },
@@ -497,7 +497,7 @@ export const npcMessages: Record<string, NpcSmsDialogue[]> = {
         },
         {
           "speaker": "npc",
-          "text": "Não... nada. É como se tivesse um arquivo corrompido no meu cérebro. Mas deixa pra lá, deve ser o mormaço. O Joe mudou a fiação do Walkman hoje e colocou uns relés. O aparelho tá esquentando um pouco no meu peito, mas o som tá nítido."
+          "text": "Não... nada. É como se tivesse um arquivo corrompido no meu cérebro. Mas deixa pra lá, deve ser o mormaço. O Joe mudou a fiação do Deck hoje e colocou uns relés. O aparelho tá esquentando um pouco no meu peito, mas o som tá nítido."
         }
       ]
     },
@@ -560,7 +560,7 @@ export const npcMessages: Record<string, NpcSmsDialogue[]> = {
         },
         {
           "speaker": "npc",
-          "text": "O Walkman do Joe tá queimando a minha pele. Tá cheirando a plástico derretido. Venham rápido. Eu não sei por quanto tempo ainda vou lembrar de quem são vocês. Venham pro porão. AGORA."
+          "text": "O Deck do Joe tá queimando a minha pele. Tá cheirando a plástico derretido. Venham rápido. Eu não sei por quanto tempo ainda vou lembrar de quem são vocês. Venham pro porão. AGORA."
         }
       ]
     }

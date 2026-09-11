@@ -178,14 +178,20 @@ export function useWalkmanPlayback(options: UseWalkmanPlaybackOptions) {
         analyticsTracker.checkAchievements(recentScans);
 
         if (intel instanceof VideoIntel && !capabilitiesRef.current.supportsVideo) {
-          // Intel desbloqueada, mas este dispositivo não reproduz vídeo
+          // Walkman / desktop: reproduz vídeo via EvidenceReader (overlay)
+          hasPlayedCurrentTape.current = false;
+          setActiveEvidence(intel);
           addToast({
-            type: 'error',
-            title: alreadyOwned ? 'Mídia Incompatível' : 'Intel Desbloqueada!',
-            subtitle: 'Este dispositivo não reproduz vídeo',
-            icon: '[X]',
+            type: 'tape',
+            title: alreadyOwned ? 'Transmissão Aberta' : 'Intel Desbloqueada!',
+            subtitle: intel.title,
+            icon: '[▶]',
           });
-          activityLogger.logAction('video_select', `Vídeo bloqueado (dispositivo incompatível): ${intel.title}`, { tapeId: intel.id });
+          activityLogger.logAction(
+            alreadyOwned ? 'video_select' : 'tape_unlock',
+            `${alreadyOwned ? 'Abriu vídeo' : 'Desbloqueou vídeo'}: ${intel.title}`,
+            { tapeId: intel.id }
+          );
           return;
         }
 
@@ -224,18 +230,12 @@ export function useWalkmanPlayback(options: UseWalkmanPlaybackOptions) {
           { intelId: intel.id }
         );
         firebaseAnalytics.logEvidenceViewed(intel.id, intel.type);
+      } else if (intel instanceof VideoIntel && !capabilitiesRef.current.supportsVideo) {
+        setActiveEvidence(intel);
+        activityLogger.logAction('video_select', `Abriu vídeo (overlay): ${intel.title}`, { intelId: intel.id });
+        firebaseAnalytics.logEvidenceViewed(intel.id, intel.type);
       } else if (intel instanceof AudioIntel || intel instanceof VideoIntel) {
         if (intel.id === currentIntel?.id) return;
-        if (intel instanceof VideoIntel && !capabilitiesRef.current.supportsVideo) {
-          addToast({
-            type: 'error',
-            title: 'Mídia Incompatível',
-            subtitle: 'Este dispositivo não reproduz vídeo',
-            icon: '[X]',
-          });
-          activityLogger.logAction('video_select', `Vídeo bloqueado (dispositivo incompatível): ${intel.title}`, { intelId: intel.id });
-          return;
-        }
         if (!hasPlayedCurrentTape.current && currentIntel) {
           analyticsTracker.incrementStat('ejectWithoutPlay');
         }
@@ -286,6 +286,8 @@ export function useWalkmanPlayback(options: UseWalkmanPlaybackOptions) {
       const nextIndex = (currentIndex + (dir === 'up' ? 1 : -1) + modes.length) % modes.length;
       return modes[nextIndex] ?? 'default';
     });
+    analyticsTracker.incrementStat('modeSwitches');
+    analyticsTracker.incrementStat('fidgetClicks');
   }, []);
 
   const handleProfileOpen = useCallback(() => setScreen('profile'), [setScreen]);
@@ -345,13 +347,14 @@ export function useWalkmanPlayback(options: UseWalkmanPlaybackOptions) {
         }
 
         if (!capabilitiesRef.current.supportsVideo) {
-          // Desbloqueia a intel, mas avisa que este dispositivo não reproduz vídeo
           await clearPendingVideoPlay(currentPD.uid, currentPD.activeCharacterId);
+          setScreen('player');
+          setActiveEvidence(intel);
           addToast({
-            type: 'error',
+            type: 'tape',
             title: 'Transmissão Recebida',
-            subtitle: 'Este dispositivo não reproduz vídeo',
-            icon: '[X]',
+            subtitle: intel.title,
+            icon: '[▶]',
           });
           return;
         }

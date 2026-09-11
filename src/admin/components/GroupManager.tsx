@@ -9,21 +9,31 @@ import { collection, onSnapshot, Timestamp } from 'firebase/firestore';
 import { useModal } from './ConfirmModal';
 import IntelDistributionDrawer from './IntelDistributionDrawer';
 import NpcSmsDistributionModal from './NpcSmsDistributionModal';
+import GroupMissionsModal from './GroupMissionsModal';
 import { campaignLabel, masterAccountLabel, masterAccountLabelByUid } from '../lib/entityLabels';
 
 interface GroupManagerProps {
   isAdmin: boolean;
   onNavigateToMission?: (campaignId: string) => void;
+  embedded?: boolean;
+  deepLinkGroupId?: string | null;
+  onDeepLinkConsumed?: () => void;
 }
 
-export default function GroupManager({ isAdmin, onNavigateToMission }: GroupManagerProps) {
+export default function GroupManager({
+  isAdmin,
+  onNavigateToMission,
+  embedded = false,
+  deepLinkGroupId,
+  onDeepLinkConsumed,
+}: GroupManagerProps) {
   const [groups, setGroups] = useState<Group[]>([]);
   const [users, setUsers] = useState<MasterAccount[]>([]);
   const [allCharacters, setAllCharacters] = useState<{uid: string, char: CharacterData}[]>([]);
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [isCreating, setIsCreating] = useState(false);
   const [editingGroup, setEditingGroup] = useState<Group | null>(null);
-  const { showConfirm, modal } = useModal();
+  const { showConfirm, showAlert, modal } = useModal();
   
   // Form State
   const [groupName, setGroupName] = useState("");
@@ -39,6 +49,9 @@ export default function GroupManager({ isAdmin, onNavigateToMission }: GroupMana
   
   // SMS Distribution State
   const [showSmsModal, setShowSmsModal] = useState<string | null>(null);
+
+  // Missions management State
+  const [showMissionsModal, setShowMissionsModal] = useState<string | null>(null);
 
   // Quick Action State
   const [quickAddGroup, setQuickAddGroup] = useState<string | null>(null);
@@ -60,6 +73,18 @@ export default function GroupManager({ isAdmin, onNavigateToMission }: GroupMana
       unsubCampaigns();
     };
   }, []);
+
+  useEffect(() => {
+    if (!deepLinkGroupId) return;
+    if (groups.length === 0) return;
+    const el = document.getElementById(`group-${deepLinkGroupId}`);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      el.classList.add('ring-2', 'ring-primary');
+      window.setTimeout(() => el.classList.remove('ring-2', 'ring-primary'), 2500);
+    }
+    onDeepLinkConsumed?.();
+  }, [deepLinkGroupId, groups, onDeepLinkConsumed]);
 
   const fetchInitialAgents = async () => {
     try {
@@ -248,7 +273,7 @@ export default function GroupManager({ isAdmin, onNavigateToMission }: GroupMana
 
   return (
     <div className="space-y-8 font-chakra">
-      {/* Cabeçalho de Grupos */}
+      {!embedded && (
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
            <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
@@ -264,6 +289,18 @@ export default function GroupManager({ isAdmin, onNavigateToMission }: GroupMana
           </button>
         )}
       </div>
+      )}
+      {embedded && !isCreating && (
+        <div className="flex justify-end">
+          <button 
+            onClick={() => setIsCreating(true)}
+            className="flex items-center gap-2 bg-primary/10 text-primary px-6 py-2 rounded-sm font-black text-[10px] tracking-widest border border-primary/20 hover:bg-primary/20 transition-all active:scale-95 glow-orange uppercase"
+          >
+            <span className="material-symbols-outlined text-sm">group_add</span>
+            NOVO_ESQUADRÃO
+          </button>
+        </div>
+      )}
 
       {isCreating ? (
         <div className="bg-[#1a1a1a] border-4 border-[#1a1a1a] p-8 rounded-xl shadow-2xl relative overflow-hidden">
@@ -286,7 +323,7 @@ export default function GroupManager({ isAdmin, onNavigateToMission }: GroupMana
 
                 <div className="bg-primary/5 border border-primary/20 rounded-sm p-4">
                   <p className="text-[9px] font-black text-primary/70 uppercase tracking-widest leading-relaxed">
-                    Missões ativas e autorizações são gerenciadas na aba Missões → Gerenciar.
+                    Após criar o esquadrão, use o botão de missões no card para autorizar e designar missões.
                   </p>
                 </div>
 
@@ -307,7 +344,7 @@ export default function GroupManager({ isAdmin, onNavigateToMission }: GroupMana
                       ADD_DATA
                     </button>
                   </div>
-                  <div className="flex flex-wrap gap-2 min-h-[40px] bg-black/40 p-3 rounded-sm border border-[#1a1a1a]">
+                  <div className="flex flex-wrap gap-2 min-h-10 bg-black/40 p-3 rounded-sm border border-[#1a1a1a]">
                     {sessions.map(date => (
                       <span key={date} className="bg-black border border-white/10 text-primary px-3 py-1.5 rounded-sm text-[9px] font-mono font-black flex items-center gap-3 shadow-lg">
                         {date}
@@ -448,7 +485,7 @@ export default function GroupManager({ isAdmin, onNavigateToMission }: GroupMana
             const missingCount = statuses.filter(s => s === 'desaparecido').length;
 
             return (
-              <div key={group.id} className="bg-[#1a1a1a] border-4 border-[#1a1a1a] p-6 group hover:border-primary/20 transition-all rounded-xl shadow-xl relative overflow-hidden active:scale-[0.99]">
+              <div id={`group-${group.id}`} key={group.id} className="bg-[#1a1a1a] border-4 border-[#1a1a1a] p-6 group hover:border-primary/20 transition-all rounded-xl shadow-xl relative overflow-hidden active:scale-[0.99]">
                 <div className="absolute top-0 right-0 w-12 h-12 bg-primary/5 rotate-45 translate-x-6 -translate-y-6 border-b border-primary/10" />
                 <div className="flex justify-between items-start mb-6">
                   <div>
@@ -484,15 +521,13 @@ export default function GroupManager({ isAdmin, onNavigateToMission }: GroupMana
                     </div>
                   </div>
                   <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0">
-                    {group.campaignId && onNavigateToMission && (
-                      <button
-                        onClick={() => onNavigateToMission(group.campaignId!)}
-                        className="w-8 h-8 flex items-center justify-center bg-black/60 border border-white/10 rounded-sm text-emerald-500 hover:bg-emerald-500 hover:text-black transition-all active:scale-90"
-                        title="Gerenciar Missões"
-                      >
-                        <span className="material-symbols-outlined text-sm">rocket_launch</span>
-                      </button>
-                    )}
+                    <button
+                      onClick={() => setShowMissionsModal(group.id)}
+                      className="w-8 h-8 flex items-center justify-center bg-black/60 border border-white/10 rounded-sm text-emerald-500 hover:bg-emerald-500 hover:text-black transition-all active:scale-90"
+                      title="Gerenciar Missões"
+                    >
+                      <span className="material-symbols-outlined text-sm">rocket_launch</span>
+                    </button>
                     <button onClick={() => setShowSmsModal(group.id)} className="w-8 h-8 flex items-center justify-center bg-black/60 border border-white/10 rounded-sm text-primary hover:bg-primary hover:text-black transition-all active:scale-90" title="Distribuir Torpedos SMS de NPCs">
                       <span className="material-symbols-outlined text-sm">sms</span>
                     </button>
@@ -523,7 +558,7 @@ export default function GroupManager({ isAdmin, onNavigateToMission }: GroupMana
                       const item = allCharacters.find(c => c.uid === slot.uid && c.char.id === slot.characterId);
                       if (!item) return null;
                       return (
-                        <div key={`${slot.uid}_${slot.characterId}`} className="group/member flex items-center gap-2 bg-black/40 border border-white/5 px-2 py-1.5 rounded-sm min-w-[120px] relative">
+                        <div key={`${slot.uid}_${slot.characterId}`} className="group/member flex items-center gap-2 bg-black/40 border border-white/5 px-2 py-1.5 rounded-sm min-w-30 relative">
                            <div className={`w-2 h-2 rounded-full ${item.char.agentStatus === 'vivo' ? 'bg-emerald-500 shadow-[0_0_5px_rgba(16,185,129,0.5)]' : item.char.agentStatus === 'morto' ? 'bg-red-500' : 'bg-yellow-500'}`} />
                            <div className="min-w-0 flex-1">
                              <p className="font-black text-[9px] text-zinc-300 uppercase truncate pr-4">{item.char.codinome}</p>
@@ -611,6 +646,20 @@ export default function GroupManager({ isAdmin, onNavigateToMission }: GroupMana
              allCharacters={allCharacters}
              onClose={() => setShowSmsModal(null)}
              onSuccess={() => {}}
+          />
+        ) : null;
+      })()}
+
+      {/* Group Missions Modal */}
+      {showMissionsModal && (() => {
+        const targetGroup = groups.find(g => g.id === showMissionsModal);
+        return targetGroup ? (
+          <GroupMissionsModal
+            group={targetGroup}
+            campaigns={campaigns}
+            onClose={() => setShowMissionsModal(null)}
+            showAlert={showAlert}
+            onNavigateToMission={onNavigateToMission}
           />
         ) : null;
       })()}

@@ -23,3 +23,7 @@ query_local_model
 *.pem
 *.key
 *.cert
+service-account.json
+*-firebase-adminsdk*.json
+**/GoogleService-Info.plist
+**/google-services.json

@@ -1,3 +1,5 @@
+export type PlayerDeviceType = 'walkman' | 'nokia';
+
 export interface Campaign {
   id: string;
   name: string;
@@ -7,10 +9,34 @@ export interface Campaign {
   rpgSystem: string;
   status: 'Ativa' | 'Arquivada' | 'Bloqueada';
   imageUrl: string;
-  playerType?: 'walkman' | 'nokia';
+  playerType?: PlayerDeviceType;
 }
 
 export const campaigns: Campaign[] = [
+  {
+    id: 'last-rewind',
+    name: 'LAST REWIND',
+    description:
+      'O Bug do Milênio não destruiu o mundo exterior. Ele abriu uma porta para onde as memórias esquecidas vão. Swallow Rest, Polarized, Walkman e a fenda Y2K.',
+    location: 'Swallow Rest / Ashfield Springs',
+    year: '1999–2000',
+    rpgSystem: 'Kids on Bikes',
+    status: 'Ativa',
+    imageUrl: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=800&auto=format&fit=crop',
+    playerType: 'walkman',
+  },
+  {
+    id: 'last-rewind-side-b',
+    name: 'LAST REWIND: SIDE B',
+    description:
+      '2003 é um beco sem saída. Contagem regressiva, Nokia 3310 e a única saída: voltar ao ponto zero.',
+    location: 'Swallow Rest (2003)',
+    year: '2003',
+    rpgSystem: 'Kids on Bikes',
+    status: 'Ativa',
+    imageUrl: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=800&auto=format&fit=crop',
+    playerType: 'nokia',
+  },
   {
     id: 'neo-sampa-2099',
     name: 'Neo-Sampa 2099',
@@ -51,5 +77,15 @@ export const campaigns: Campaign[] = [
     rpgSystem: 'Fallout 2d20',
     status: 'Bloqueada',
     imageUrl: 'https://images.unsplash.com/photo-1542382156909-9ae37b3f56fd?q=80&w=800&auto=format&fit=crop',
-  }
+  },
 ];
+
+export function getCampaignById(id: string | undefined): Campaign | undefined {
+  if (!id) return undefined;
+  return campaigns.find((c) => c.id === id);
+}
+
+export function resolveCampaignPlatform(campaignId: string | undefined): 'walkman' | 'nokia' {
+  const c = getCampaignById(campaignId);
+  return c?.playerType === 'nokia' ? 'nokia' : 'walkman';
+}

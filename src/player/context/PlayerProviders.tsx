@@ -6,6 +6,7 @@ import { useActiveCampaign, useShowNokiaShell } from '../hooks/useActiveCampaign
 import { usePlayerServicesSync, usePlayerScreenAnalytics } from '../hooks/usePlayerSync';
 import { useToasts } from '../hooks/useToasts';
 import { useWalkmanPlayback } from '../hooks/useWalkmanPlayback';
+import { useAppScreenHistory } from '../hooks/useAppScreenHistory';
 import type { PlayerSessionValue, PlayerPlaybackValue } from '../types';
 
 const PlayerSessionContext = createContext<PlayerSessionValue | null>(null);
@@ -103,6 +104,8 @@ function PlayerProvidersInner({ children }: { children: React.ReactNode }) {
   );
 
   const handleLogin = usePlayerAuthLoginHandler(setMasterAccount, setScreen);
+
+  useAppScreenHistory(screen, setScreen, Boolean(masterAccount));
 
   usePlayerServicesSync(auth, addToast);
   usePlayerScreenAnalytics(screen);

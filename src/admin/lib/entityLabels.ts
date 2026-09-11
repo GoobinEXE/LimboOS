@@ -52,7 +52,8 @@ export function intelTitleLabel(
 }
 
 export function achievementLabel(achId: string): string {
-  const ach = ALL_ACHIEVEMENTS.find((a) => a.id === achId);
+  const baseId = achId.includes('__') ? achId.slice(0, achId.lastIndexOf('__')) : achId;
+  const ach = ALL_ACHIEVEMENTS.find((a) => a.id === baseId);
   return ach?.title || 'Conquista desconhecida';
 }
 

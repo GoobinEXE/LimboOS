@@ -13,14 +13,13 @@ import {
   serverTimestamp,
 } from 'firebase/firestore';
 import { db } from '../lib/firebase';
+import { callFunction } from '../lib/functions';
 import { mediaService } from './MediaService';
 import {
   fetchAudioTapeById,
   fetchAudioTapesByIds,
   fetchAllMediaAssets,
-  fetchQrRedirect,
   firestoreUnlockIntel,
-  firestoreGrantAchievements,
   updateRemoteIntel,
   broadcastVideoToCharacters,
   type VideoBroadcastTarget,
@@ -52,6 +51,9 @@ export interface IntelDeleteOptions {
  */
 class IntelService {
   private static instance: IntelService;
+  /** Último código QR resolvido — usado para autorizar unlock de mediaAsset remoto. */
+  private lastResolvedSourceCode: string | null = null;
+  private lastResolvedIntelId: string | null = null;
 
   private constructor() {}
 
@@ -296,24 +298,56 @@ class IntelService {
 
   /**
    * Resolve um código QR/ID para um IntelItem.
-   * 1. Verifica redirecionamentos QR
+   * 1. Verifica redirecionamentos QR + mediaAsset via callable (sem listar catálogo)
    * 2. Busca no registro local
-   * 3. Tenta buscar do Firebase como áudio remoto
    */
   public async resolve(code: string): Promise<IntelItem | null> {
-    // Step 1: Check for QR redirect
-    const redirectedId = await fetchQrRedirect(code);
-    const finalCode = redirectedId || code;
+    // Registry local primeiro (funciona offline / sem Functions deployadas)
+    const localDirect = intelRegistry.getByCode(code);
+    if (localDirect) {
+      this.lastResolvedSourceCode = code;
+      this.lastResolvedIntelId = localDirect.id;
+      return localDirect;
+    }
 
-    // Step 2: Check local registry
-    const local = intelRegistry.getByCode(finalCode);
-    if (local) return local;
+    let result: {
+      redirectedId: string | null;
+      asset: Record<string, unknown> | null;
+    } | null = null;
 
-    // Step 3: Try Firebase mediaAsset
-    const remoteMedia = await fetchAudioTapeById(finalCode);
-    if (remoteMedia) {
-      // Registra no registry para cache local
-      return this.registerMediaAssetAsIntel(remoteMedia);
+    try {
+      result = await callFunction<{ code: string }, {
+        redirectedId: string | null;
+        asset: Record<string, unknown> | null;
+      }>('resolveIntelCode', { code });
+    } catch (err) {
+      console.warn('[IntelService] resolveIntelCode falhou, tentando registry local:', err);
+      const localFallback = intelRegistry.getByCode(code);
+      if (localFallback) {
+        this.lastResolvedSourceCode = code;
+        this.lastResolvedIntelId = localFallback.id;
+        return localFallback;
+      }
+      throw err;
+    }
+
+    const finalCode = result.redirectedId || code;
+
+    const local = intelRegistry.getByCode(finalCode) || intelRegistry.getByCode(code);
+    if (local) {
+      this.lastResolvedSourceCode = code;
+      this.lastResolvedIntelId = local.id;
+      return local;
+    }
+
+    if (result.asset) {
+      this.lastResolvedSourceCode = code;
+      const item = this.registerMediaAssetAsIntel({
+        id: String(result.asset.id || finalCode),
+        ...result.asset,
+      });
+      if (item) this.lastResolvedIntelId = item.id;
+      return item;
     }
 
     return null;
@@ -330,12 +364,22 @@ class IntelService {
    */
   public async unlock(
     playerData: PlayerData,
-    intelId: string
+    intelId: string,
+    sourceCode?: string,
   ): Promise<{ alreadyOwned: boolean; updatedIds: string[] }> {
     const alreadyOwned = playerData.unlockedIntelIds.includes(intelId);
+    const code = sourceCode || (this.lastResolvedSourceCode && this.lastResolvedIntelId === intelId
+      ? this.lastResolvedSourceCode
+      : undefined);
 
     // Persiste no Firestore na nova subcoleção 'intel'
-    await firestoreUnlockIntel(playerData.uid, playerData.activeCharacterId, intelId, playerData.character.campaignId);
+    await firestoreUnlockIntel(
+      playerData.uid,
+      playerData.activeCharacterId,
+      intelId,
+      playerData.character.campaignId,
+      code,
+    );
 
     const updatedIds = alreadyOwned
       ? playerData.unlockedIntelIds
@@ -357,7 +401,9 @@ class IntelService {
     
     // Batch fetch remote items (max 30 per query via Firestore 'in' operator)
     if (idsToFetch.length > 0) {
-      const remoteMediaResults = await fetchAudioTapesByIds(idsToFetch);
+      const remoteMediaResults = await fetchAudioTapesByIds(idsToFetch, {
+        characterId: playerData.activeCharacterId,
+      });
 
       // Registra os novos itens remotos
       remoteMediaResults.forEach(remoteMedia => {
@@ -425,15 +471,15 @@ class IntelService {
   }
 
   /**
-   * Resolve todos os IDs, incluindo busca assíncrona de itens remotos.
+   * Resolve todos os IDs, incluindo busca assíncrona de itens remotos já desbloqueados.
    */
-  public async resolveAll(ids: string[]): Promise<IntelItem[]> {
+  public async resolveAll(ids: string[], characterId?: string): Promise<IntelItem[]> {
     const idsToFetch = ids.filter(id => !intelRegistry.get(id));
     
     if (idsToFetch.length > 0) {
-      const remoteTapesResults = await Promise.all(
-        idsToFetch.map(id => fetchAudioTapeById(id))
-      );
+      const remoteTapesResults = characterId
+        ? await fetchAudioTapesByIds(idsToFetch, { characterId })
+        : await Promise.all(idsToFetch.map(id => fetchAudioTapeById(id)));
 
       remoteTapesResults.forEach(remoteTape => {
         if (remoteTape) {

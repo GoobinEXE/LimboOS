@@ -5,8 +5,9 @@ export const Barcode = memo(({ onClick, className }: { onClick: () => void, clas
   return (
     <button 
       onClick={onClick}
-      className={`flex items-end h-8 gap-[2px] opacity-60 hover:opacity-100 transition-all cursor-help ${className}`}
+      className={`flex items-end h-8 gap-[2px] opacity-60 hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-1 focus-visible:outline-accent-60 focus-visible:outline-offset-4 transition-opacity duration-150 cursor-help ${className}`}
       title="Ver Metadata do Terminal"
+      aria-label="Ver metadata do terminal"
     >
       {lines.map((w, i) => (
         <div key={i} className="bg-current h-full" style={{ width: `${w * 1.5}px` }} />
@@ -16,7 +17,7 @@ export const Barcode = memo(({ onClick, className }: { onClick: () => void, clas
 });
 
 export const AnalogLogo = memo(() => (
-  <div className="flex items-center gap-2 font-display text-xl font-bold tracking-tighter text-white">
+  <div className="flex items-center gap-2 font-display text-xl font-bold tracking-tighter text-white select-none">
     <div className="flex items-center">
       <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-primary mr-1" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M12 2L2 7l10 5 10-5-10-5z" />

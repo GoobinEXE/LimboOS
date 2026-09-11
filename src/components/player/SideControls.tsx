@@ -13,8 +13,8 @@ export default React.memo(function SideControls({ volume, setVolume, onModeChang
   const firedRef = useRef(false);
   const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const upArrowColor = useTransform(dragY, (v: number) => v < -5 ? '#ea580c' : '#6b7280');
-  const downArrowColor = useTransform(dragY, (v: number) => v > 5 ? '#ea580c' : '#6b7280');
+  const upArrowColor = useTransform(dragY, (v: number) => v < -5 ? '#FF8C00' : '#6b6b6b');
+  const downArrowColor = useTransform(dragY, (v: number) => v > 5 ? '#FF8C00' : '#6b6b6b');
   
   const lastLoggedVolume = useRef(volume);
   const volumeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -60,8 +60,8 @@ export default React.memo(function SideControls({ volume, setVolume, onModeChang
     <div
       className={
         landscape
-          ? 'relative shrink-0 w-16 flex flex-col items-center justify-center gap-4 py-2 touch-none'
-          : 'absolute right-2 top-[240px] bottom-20 flex flex-col items-center justify-center gap-6 w-16 touch-none'
+          ? 'relative shrink-0 w-14 flex flex-col items-center justify-between gap-2 py-1 touch-none min-h-0'
+          : 'absolute right-2 top-60 bottom-20 flex flex-col items-center justify-center gap-6 w-16 touch-none'
       }
     >
       <button 
@@ -73,12 +73,12 @@ export default React.memo(function SideControls({ volume, setVolume, onModeChang
             longPressTimer.current = null;
           }
         }}
-        className="w-10 h-10 rounded-full bg-[#333] border-2 border-[#1a1a1a] flex items-center justify-center hover:bg-orange-900/30 transition-colors shrink-0 active:scale-90"
+        className={`${landscape ? 'w-9 h-9 min-h-9' : 'w-10 h-10'} rounded-full bg-radial-[at_35%_30%] from-surface-bright to-surface-container-highest border-2 border-surface-sunken shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_4px_10px_-3px_rgba(0,0,0,0.9)] flex items-center justify-center hover:from-accent-20 hover:to-surface-container-highest transition-all duration-150 ease-limbo shrink-0 active:scale-90 active:shadow-[inset_0_2px_5px_rgba(0,0,0,0.7)]`}
         title="Clique para perfil, segure para trocar agente"
       >
-        <User size={16} className="text-orange-500" />
+        <User size={landscape ? 14 : 16} className="text-accent" />
       </button>
-      <div className="relative w-14 h-14 shrink-0 flex items-center justify-center z-20">
+      <div className={`relative ${landscape ? 'w-12 h-12' : 'w-14 h-14'} shrink-0 flex items-center justify-center z-20`}>
         <motion.div style={{ color: upArrowColor }} className="absolute -top-4 pointer-events-none transition-colors">
           <div className="w-0 h-0 border-l-4 border-l-transparent border-r-4 border-r-transparent border-b-[6px] border-b-current" />
         </motion.div>
@@ -87,7 +87,7 @@ export default React.memo(function SideControls({ volume, setVolume, onModeChang
         </motion.div>
         <motion.div
           style={{ y: dragY, touchAction: 'none' }}
-          className="relative w-14 h-14 rounded-full bg-[#333] border-4 border-[#1a1a1a] shadow-lg flex items-center justify-center group cursor-ns-resize"
+          className={`relative ${landscape ? 'w-12 h-12 border-[3px]' : 'w-14 h-14 border-4'} rounded-full bg-radial-[at_35%_25%] from-surface-bright to-surface-container-highest border-surface-sunken shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_6px_14px_-4px_rgba(0,0,0,0.9)] flex items-center justify-center group cursor-ns-resize`}
           onPointerDown={(e) => {
             e.preventDefault();
             e.currentTarget.setPointerCapture(e.pointerId);
@@ -123,23 +123,26 @@ export default React.memo(function SideControls({ volume, setVolume, onModeChang
             el.addEventListener('pointermove', onMove);
             el.addEventListener('pointerup', onUp);
           }}>
-          <div className="absolute inset-0 rounded-full border border-white/10 pointer-events-none" />
-          <div className="w-10 h-10 rounded-full bg-[#444] border-2 border-[#222] flex items-center justify-center shadow-inner pointer-events-none">
-            <div className="w-5 h-5 rounded-full bg-orange-600 border-2 border-[#1a1a1a]" />
+          <div className="absolute inset-0 rounded-full border border-border pointer-events-none" />
+          <div className={`${landscape ? 'w-8 h-8' : 'w-10 h-10'} rounded-full bg-surface-bright border-2 border-surface-container flex items-center justify-center shadow-inner pointer-events-none`}>
+            <div className={`${landscape ? 'w-4 h-4' : 'w-5 h-5'} rounded-full bg-accent border-2 border-surface-sunken glow-orange-subtle`} />
           </div>
         </motion.div>
       </div>
-      <div className="w-8 flex-1 max-h-40 bg-[#1a1a1a] rounded-full border-2 border-[#333] relative flex flex-col items-center py-2 shrink-0" style={{ touchAction: 'none' }}>
-        <span className="text-[10px] text-gray-500 font-bold mb-1">+</span>
-        <div className="flex-1 w-1 bg-[#222] rounded-full relative overflow-visible cursor-pointer"
+      <div
+        className={`w-7 flex-1 ${landscape ? 'min-h-18 max-h-none' : 'max-h-40'} bg-surface-sunken rounded-full border-2 border-surface-container-highest shadow-[inset_0_2px_6px_rgba(0,0,0,0.7)] relative flex flex-col items-center py-1.5 shrink min-h-0`}
+        style={{ touchAction: 'none' }}
+      >
+        <span className="text-[10px] text-industrial-silver/50 font-bold mb-1">+</span>
+        <div className="flex-1 w-1 bg-surface-container rounded-full relative overflow-visible cursor-pointer"
           onClick={(e) => {
             analyticsTracker.incrementStat('fidgetClicks');
             const rect = e.currentTarget.getBoundingClientRect();
             const pct = Math.round(((rect.bottom - e.clientY) / rect.height) * 100);
             setVolume(Math.max(0, Math.min(100, pct)));
           }}>
-          <div className="absolute bottom-0 w-full bg-orange-600 rounded-full transition-[height] duration-75" style={{ height: `${volume}%` }} />
-          <div className="absolute left-1/2 -translate-x-1/2 w-6 h-8 bg-linear-to-b from-stone-200 to-stone-400 rounded border-2 border-stone-600 shadow-lg cursor-ns-resize flex flex-col justify-center items-center gap-0.5 z-10"
+          <div className="absolute bottom-0 w-full bg-accent rounded-full transition-[height] duration-75" style={{ height: `${volume}%` }} />
+          <div className="absolute left-1/2 -translate-x-1/2 w-6 h-8 bg-linear-to-b from-stone-200 to-stone-400 rounded border-2 border-stone-600 shadow-[0_3px_8px_-2px_rgba(0,0,0,0.9),inset_0_1px_0_rgba(255,255,255,0.5)] cursor-ns-resize flex flex-col justify-center items-center gap-0.5 z-10"
             style={{ bottom: `calc(${volume}% - 16px)`, touchAction: 'none' }}
             onPointerDown={(e) => {
               (e.target as Element).setPointerCapture(e.pointerId);
@@ -154,7 +157,7 @@ export default React.memo(function SideControls({ volume, setVolume, onModeChang
             {[0,1,2].map(i => <div key={i} className="w-3 h-0.5 bg-stone-500 rounded-full" />)}
           </div>
         </div>
-        <span className="text-[10px] text-gray-500 font-bold mt-1">-</span>
+        <span className="text-[10px] text-industrial-silver/50 font-bold mt-1">-</span>
       </div>
     </div>
   );

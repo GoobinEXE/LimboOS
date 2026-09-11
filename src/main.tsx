@@ -2,6 +2,10 @@ import {StrictMode} from 'react';
 import {createRoot} from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
+import {applyWebKitLiteClass} from './lib/webkitLite';
+
+// Antes do paint React: overlays CSS leves em Safari / iOS WebKit
+applyWebKitLiteClass();
 
 // Handle Vite chunk load errors after new deployments
 window.addEventListener('vite:preloadError', () => {

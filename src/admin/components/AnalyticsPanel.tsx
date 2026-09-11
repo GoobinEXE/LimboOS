@@ -113,7 +113,7 @@ export default function AnalyticsPanel({ onNavigate }: AnalyticsPanelProps = {})
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <KPICard label="Usuários Ativos" value={users.length} icon="group" color="text-primary" onClick={() => onNavigate?.('players')} />
         <KPICard label="Ativos 7d" value={displayAnalytics.activeUsers} icon="trending_up" color="text-tertiary" onClick={() => onNavigate?.('players')} />
-        <KPICard label="Arquivos Áudio" value={audios.length} icon="library_music" color="text-secondary" onClick={() => onNavigate?.('intel', { intelSubTab: 'acervo' })} />
+        <KPICard label="Arquivos Áudio" value={audios.length} icon="library_music" color="text-secondary" onClick={() => onNavigate?.('media')} />
         <KPICard
           label="Eventos Play"
           value={aggregatedData?.totalPlays ?? playEvents.length}
@@ -124,7 +124,7 @@ export default function AnalyticsPanel({ onNavigate }: AnalyticsPanelProps = {})
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <ClickableSection onClick={() => onNavigate?.('intel', { intelSubTab: 'acervo' })} className="bg-surface-container-low border border-primary/10 p-6 shadow-xl group hover:border-primary/20 transition-all">
+        <ClickableSection onClick={() => onNavigate?.('media')} className="bg-surface-container-low border border-primary/10 p-6 shadow-xl group hover:border-primary/20 transition-all">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               <span className="material-symbols-outlined text-secondary text-base">cloud_done</span>
@@ -193,7 +193,7 @@ export default function AnalyticsPanel({ onNavigate }: AnalyticsPanelProps = {})
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <ClickableSection onClick={() => onNavigate?.('intel', { intelSubTab: 'acervo' })} className="bg-surface-container-low border border-primary/10 p-6 shadow-xl">
+        <ClickableSection onClick={() => onNavigate?.('media')} className="bg-surface-container-low border border-primary/10 p-6 shadow-xl">
           <div className="flex items-center gap-3 mb-8">
             <span className="material-symbols-outlined text-primary text-base">leaderboard</span>
             <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-industrial-silver/40">Top Conteúdo (Plays)</h3>
@@ -254,7 +254,7 @@ export default function AnalyticsPanel({ onNavigate }: AnalyticsPanelProps = {})
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <ClickableSection onClick={() => onNavigate?.('intel', { intelSubTab: 'conquistas' })} className="bg-surface-container-low border border-primary/10 p-6 shadow-xl">
+        <ClickableSection onClick={() => onNavigate?.('systems', { intelSubTab: 'conquistas' })} className="bg-surface-container-low border border-primary/10 p-6 shadow-xl">
           <div className="flex items-center gap-3 mb-8">
             <span className="material-symbols-outlined text-primary text-base">stars</span>
             <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-industrial-silver/40">Conquistas de Alta Raridade</h3>
@@ -262,8 +262,12 @@ export default function AnalyticsPanel({ onNavigate }: AnalyticsPanelProps = {})
           <div className="space-y-6">
             {analytics.rarityList.slice(0, 5).map((ach) => (
               <div key={ach.id} className="flex items-center gap-4 group">
-                <div className="text-2xl w-12 h-12 bg-black/40 border border-white/5 flex items-center justify-center shrink-0 group-hover:border-primary/30 transition-all rounded-sm shadow-inner group-hover:scale-110">
-                  {ach.icon}
+                <div className="w-12 h-12 bg-black/40 border border-white/5 flex items-center justify-center shrink-0 group-hover:border-primary/30 transition-all rounded-sm shadow-inner overflow-hidden group-hover:scale-110">
+                  {ach.icon?.startsWith('/') || ach.icon?.endsWith('.png') ? (
+                    <img src={ach.icon} alt="" className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-2xl">{ach.icon}</span>
+                  )}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between items-start mb-2">

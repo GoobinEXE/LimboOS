@@ -11,8 +11,14 @@ interface MediaUploadZoneProps {
   disabled?: boolean;
   /** Oculta a zona de drag-and-drop (ex.: modo seleção no modal). */
   hideDropZone?: boolean;
+  /** Oculta o botão de upload (CTA unificado no header). */
+  hideUploadButton?: boolean;
   /** Texto do botão de upload rápido. */
   uploadButtonLabel?: string;
+  /** Texto principal da zona de drop. */
+  dropHint?: string;
+  /** Texto secundário da zona de drop. */
+  dropSubhint?: string;
 }
 
 export default function MediaUploadZone({
@@ -21,7 +27,10 @@ export default function MediaUploadZone({
   uploadProgress,
   disabled = false,
   hideDropZone = false,
+  hideUploadButton = false,
   uploadButtonLabel = 'NOVO_UPLOAD',
+  dropHint = 'ARRASTAR E SOLTAR PARA CRIAR INTEL',
+  dropSubhint = 'O editor abre automaticamente com o arquivo vinculado',
 }: MediaUploadZoneProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragOver, setIsDragOver] = useState(false);
@@ -57,26 +66,30 @@ export default function MediaUploadZone({
         </OverlayPortal>
       )}
 
-      <div className="flex flex-wrap items-center gap-3 justify-end">
-        <input
-          type="file"
-          ref={fileInputRef}
-          onChange={(e) => handleFiles(e.target.files)}
-          multiple
-          className="hidden"
-        />
-        <button
-          type="button"
-          onClick={() => fileInputRef.current?.click()}
-          disabled={disabled || uploading}
-          className="flex items-center gap-2 bg-primary hover:bg-primary-container text-black px-5 py-2.5 rounded-sm font-display font-bold text-[10px] tracking-widest transition-all active:scale-95 glow-orange shadow-lg disabled:opacity-40"
-        >
-          <span className="material-symbols-outlined text-base">
-            {uploading ? 'sync' : 'add_circle'}
-          </span>
-          {uploadButtonLabel}
-        </button>
-      </div>
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={(e) => handleFiles(e.target.files)}
+        multiple
+        accept="audio/*,image/*,video/*,application/pdf"
+        className="hidden"
+      />
+
+      {!hideUploadButton && (
+        <div className="flex flex-wrap items-center gap-3 justify-end">
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={disabled || uploading}
+            className="flex items-center gap-2 bg-primary hover:bg-primary-container text-black px-5 py-2.5 rounded-sm font-display font-bold text-[10px] tracking-widest transition-all active:scale-95 glow-orange shadow-lg disabled:opacity-40"
+          >
+            <span className="material-symbols-outlined text-base">
+              {uploading ? 'sync' : 'add_circle'}
+            </span>
+            {uploadButtonLabel}
+          </button>
+        </div>
+      )}
 
       {!hideDropZone && (
         <div
@@ -90,7 +103,10 @@ export default function MediaUploadZone({
             setIsDragOver(false);
             handleFiles(e.dataTransfer.files);
           }}
-          className={`relative border-2 border-dashed rounded-sm p-10 text-center transition-all group overflow-hidden ${
+          onClick={() => {
+            if (!disabled && !uploading) fileInputRef.current?.click();
+          }}
+          className={`relative border-2 border-dashed rounded-sm p-8 text-center transition-all group overflow-hidden cursor-pointer ${
             isDragOver
               ? 'border-primary bg-primary/5'
               : 'border-primary/10 bg-black/20 hover:border-primary/20 hover:bg-black/40'
@@ -119,10 +135,10 @@ export default function MediaUploadZone({
             </span>
           </div>
           <p className="text-industrial-silver/60 text-[10px] font-display font-bold uppercase tracking-[0.3em] group-hover:text-industrial-silver/80">
-            {isDragOver ? 'SOLTAR AGORA' : 'ARRASTAR E SOLTAR ARQUIVOS PARA O ACERVO'}
+            {isDragOver ? 'SOLTAR AGORA' : dropHint}
           </p>
           <p className="text-industrial-silver/30 text-[9px] font-display uppercase tracking-widest mt-2">
-            Arquivos entram como órfãos até você completar os metadados
+            {dropSubhint}
           </p>
         </div>
       )}

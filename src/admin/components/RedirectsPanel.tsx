@@ -12,7 +12,7 @@ interface QrRedirect {
   reason?: string;
 }
 
-export default function RedirectsPanel() {
+export default function RedirectsPanel({ embedded = false }: { embedded?: boolean }) {
   const [redirects, setRedirects] = useState<QrRedirect[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -70,6 +70,7 @@ export default function RedirectsPanel() {
   return (
     <section className="space-y-8 font-chakra">
       {modal}
+      {!embedded && (
       <div className="flex items-center gap-4">
         <div className="w-2 h-8 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.4)]" />
         <h2 className="font-black uppercase tracking-widest text-lg text-white">
@@ -79,6 +80,12 @@ export default function RedirectsPanel() {
           {redirects.length} MAPEAMENTOS_ATIVOS_NO_GRID
         </span>
       </div>
+      )}
+      {embedded && (
+        <p className="text-[10px] font-display font-bold text-industrial-silver/40 uppercase tracking-widest">
+          Mapear QR físico → intel · {redirects.length} mapeamentos ativos
+        </p>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Form Column */}
@@ -133,7 +140,7 @@ export default function RedirectsPanel() {
 
             <div className="bg-black/60 border-2 border-[#1a1a1a] p-5 rounded-xl">
               <p className="text-[10px] text-zinc-600 leading-relaxed font-bold uppercase tracking-wide">
-                <span className="text-emerald-500 font-black">LOG:</span> Mapeie IDs de QR impressos para novos endereços de memória. O sinal físico permanece o mesmo, mas o núcleo processará o destino.
+                <span className="text-emerald-500 font-black">LOG:</span> Mapear QR físico → intel de destino. O código impresso permanece; o núcleo resolve para o alvo. Para gerar o QR de uma intel, use o catálogo em Conteúdo.
               </p>
             </div>
           </div>

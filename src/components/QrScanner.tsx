@@ -112,7 +112,7 @@ export default function QrScanner({ onDetected, onCancel }: QrScannerProps) {
         width: '100%',
         height: '100%',
         overflow: 'hidden',
-        borderRadius: '12px',
+        borderRadius: 'var(--radius-card, 12px)',
         background: '#000',
       }}
     >
@@ -155,8 +155,8 @@ export default function QrScanner({ onDetected, onCancel }: QrScannerProps) {
               left: 0,
               width: '30px',
               height: '30px',
-              borderTop: '4px solid #f97316',
-              borderLeft: '4px solid #f97316',
+              borderTop: '4px solid var(--color-accent, #ff8c00)',
+              borderLeft: '4px solid var(--color-accent, #ff8c00)',
             }}
           />
           <div
@@ -166,8 +166,8 @@ export default function QrScanner({ onDetected, onCancel }: QrScannerProps) {
               right: 0,
               width: '30px',
               height: '30px',
-              borderTop: '4px solid #f97316',
-              borderRight: '4px solid #f97316',
+              borderTop: '4px solid var(--color-accent, #ff8c00)',
+              borderRight: '4px solid var(--color-accent, #ff8c00)',
             }}
           />
           <div
@@ -177,8 +177,8 @@ export default function QrScanner({ onDetected, onCancel }: QrScannerProps) {
               left: 0,
               width: '30px',
               height: '30px',
-              borderBottom: '4px solid #f97316',
-              borderLeft: '4px solid #f97316',
+              borderBottom: '4px solid var(--color-accent, #ff8c00)',
+              borderLeft: '4px solid var(--color-accent, #ff8c00)',
             }}
           />
           <div
@@ -188,8 +188,8 @@ export default function QrScanner({ onDetected, onCancel }: QrScannerProps) {
               right: 0,
               width: '30px',
               height: '30px',
-              borderBottom: '4px solid #f97316',
-              borderRight: '4px solid #f97316',
+              borderBottom: '4px solid var(--color-accent, #ff8c00)',
+              borderRight: '4px solid var(--color-accent, #ff8c00)',
             }}
           />
           <motion.div
@@ -200,8 +200,8 @@ export default function QrScanner({ onDetected, onCancel }: QrScannerProps) {
               left: 4,
               right: 4,
               height: '2px',
-              background: '#f97316',
-              boxShadow: '0 0 12px rgba(249,115,22,0.8)',
+              background: 'var(--color-accent, #ff8c00)',
+              boxShadow: '0 0 12px rgba(255, 140, 0, 0.8)',
               top: 0,
             }}
           />
@@ -210,24 +210,10 @@ export default function QrScanner({ onDetected, onCancel }: QrScannerProps) {
       <button
         type="button"
         onClick={onCancel}
-        style={{
-          position: 'absolute',
-          bottom: '20px',
-          right: '20px',
-          width: '40px',
-          height: '40px',
-          background: 'rgba(0,0,0,0.6)',
-          border: '1px solid rgba(255,255,255,0.2)',
-          borderRadius: '50%',
-          cursor: 'pointer',
-          zIndex: 30,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          backdropFilter: 'blur(10px)',
-        }}
+        aria-label="Cancelar leitura"
+        className="absolute bottom-5 right-5 w-10 h-10 z-30 flex items-center justify-center rounded-full cursor-pointer bg-black/60 border border-border-strong backdrop-blur-md text-white transition-colors duration-150 hover:border-border-accent hover:text-accent active:bg-black/80"
       >
-        <X size={24} color="#fff" />
+        <X size={24} />
       </button>
     </div>
   );

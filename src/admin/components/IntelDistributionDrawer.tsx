@@ -227,7 +227,7 @@ export default function IntelDistributionDrawer({
               </span>
               <input
                 type="text"
-                placeholder="LOCALIZAR NO ACERVO..."
+                placeholder="LOCALIZAR NA BIBLIOTECA..."
                 value={addSearch}
                 onChange={(e) => setAddSearch(e.target.value)}
                 className="w-full bg-black/60 border-2 border-[#1a1a1a] text-[11px] font-bold uppercase px-12 py-4 text-white outline-none focus:ring-1 focus:ring-primary transition-all rounded-sm placeholder:text-zinc-800 tracking-widest"

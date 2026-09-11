@@ -2,6 +2,15 @@ import type { PlayerData, PlayerStats } from '../types/player';
 import type { IntelItem } from '../types/intel';
 import { recordPlayEvent, markPlayEventCompleted, firestoreUpdateStats, firestoreGrantAchievements } from '../store/firestore';
 import { checkNewAchievements } from '../data/achievements';
+import {
+  achievementManager,
+  achievementGrantDocId,
+  isAchievementEarned,
+  type Achievement,
+  type PlayerPlatform,
+} from './AchievementManager';
+import { achievementSfx } from './AchievementSfx';
+import { resolveCampaignPlatform } from '../data/campaigns';
 import { intelRegistry } from '../data/intel_registry';
 import type { Toast } from '../components/ToastNotification';
 import { activityLogger } from './ActivityLogger';
@@ -42,10 +51,8 @@ export class AnalyticsTracker {
     this.onStatsSync = onStatsSync;
     this.onToast = onToast;
     
-    // Auto-initialize activity logger context
     activityLogger.setUser(playerData.uid, playerData.character.codinome, playerData.activeCharacterId);
     
-    // Initialize Firebase Analytics with user identity
     firebaseAnalytics.init().then(() => {
       firebaseAnalytics.setUser(playerData.uid, playerData.activeCharacterId, playerData.character.codinome);
     });
@@ -75,25 +82,47 @@ export class AnalyticsTracker {
     }
   }
 
+  /** Seta flag one-shot (0→1) e reavalia conquistas. Idempotente. */
+  public markFlag(key: keyof PlayerStats) {
+    if (!this.localStats) return;
+    if ((this.localStats[key] as number) >= 1) {
+      this.checkAchievements();
+      return;
+    }
+    this.localStats[key] = 1;
+    this.syncLocalChanges();
+    this.forceSyncToServer();
+    this.checkAchievements();
+  }
+
+  /** Atualiza contador absoluto (ex.: threads lidas) e reavalia. */
+  public setStat(key: keyof PlayerStats, value: number) {
+    if (!this.localStats) return;
+    if ((this.localStats[key] as number) === value) {
+      this.checkAchievements();
+      return;
+    }
+    this.localStats[key] = value;
+    this.syncLocalChanges();
+    this.forceSyncToServer();
+    this.checkAchievements();
+  }
+
   public startPlayback(intel: IntelItem) {
     if (!this.playerData) return;
 
-    // Retomar a mesma fita após pausa não é um novo play: reaproveita o
-    // playEvent aberto e só religa o timer de escuta.
     const isResume = this.activePlayEventId !== null && this.activeTapeId === intel.id;
     if (!isResume) {
       this.activeTapeId = intel.id;
       this.activePlayEventId = null;
       recordPlayEvent(this.playerData.uid, this.playerData.activeCharacterId, intel.id)
         .then(id => {
-          // Descarta o ID se outra fita começou enquanto o registro era criado
           if (this.activeTapeId === intel.id) this.activePlayEventId = id;
         })
         .catch(console.error);
 
       activityLogger.logAction('tape_play', `Iniciou reprodução: ${intel.title}`, { intelId: intel.id });
 
-      // Firebase Analytics: tape engagement tracking
       firebaseAnalytics.logTapePlay(
         intel.id, 
         intel.type || 'AUDIO', 
@@ -126,12 +155,15 @@ export class AnalyticsTracker {
     this.activeTapeId = null;
     activityLogger.logAction('tape_end', 'Reprodução finalizada');
     
-    // Firebase Analytics: completion tracking
     if (this.localStats) {
+      this.localStats.fullTapeListens += 1;
       firebaseAnalytics.logTapeCompleted(
         completedEventId || 'unknown',
         this.localStats.totalListenTime
       );
+      this.syncLocalChanges();
+      this.forceSyncToServer();
+      this.checkAchievements();
     }
   }
 
@@ -191,40 +223,86 @@ export class AnalyticsTracker {
     return intelRegistry.resolve(ids);
   }
 
+  private resolveGrantScope(): { campaignId: string; platform: PlayerPlatform } {
+    const campaignId = this.playerData?.character?.campaignId || 'unscoped';
+    const device = resolveCampaignPlatform(this.playerData?.character?.campaignId);
+    return { campaignId, platform: device };
+  }
+
+  private announceUnlock(ach: Achievement) {
+    achievementSfx.playUnlock(ach.tier);
+    if (this.onToast) {
+      this.onToast({
+        type: 'achievement',
+        title: ach.title,
+        subtitle: ach.description,
+        icon: ach.icon,
+        tier: ach.tier,
+        platform: ach.primaryPlatform,
+      });
+    }
+    firebaseAnalytics.logAchievementUnlocked(ach.id);
+    activityLogger.logAction('achievement', `Conquista desbloqueada: ${ach.title}`, { achievementId: ach.id });
+  }
+
   public checkAchievements(scanTimes: number[] = []) {
     if (!this.playerData || !this.localStats) return;
+    const { campaignId, platform } = this.resolveGrantScope();
     const profile = { ...this.playerData, stats: this.localStats };
     const intelItems = this.resolveOwnedIntelForAchievements();
-    const newAchievements = checkNewAchievements(profile, intelItems, scanTimes.length);
-    
+    const newAchievements = checkNewAchievements(
+      profile,
+      intelItems,
+      scanTimes.length,
+      campaignId,
+      platform
+    );
+
     if (newAchievements.length > 0) {
-      firestoreGrantAchievements(this.playerData.uid, this.playerData.activeCharacterId, newAchievements.map(a => a.id))
-        .catch(err => console.warn('[AnalyticsTracker] Failed to grant achievements:', err));
-      
+      const grantIds = newAchievements.map((a) => achievementGrantDocId(a.id, campaignId));
+      firestoreGrantAchievements(
+        this.playerData.uid,
+        this.playerData.activeCharacterId,
+        newAchievements.map((a) => a.id),
+        { campaignId, platform }
+      ).catch((err) => console.warn('[AnalyticsTracker] Failed to grant achievements:', err));
+
       this.forceSyncToServer();
-      newAchievements.forEach(ach => {
-        if (this.onToast) this.onToast({ type: 'achievement', title: 'Conquista!', subtitle: ach.title, icon: ach.icon });
-        // Firebase Analytics: achievement tracking for ML predictions
-        firebaseAnalytics.logAchievementUnlocked(ach.id);
-      });
-      this.playerData.achievementIds = [...this.playerData.achievementIds, ...newAchievements.map(a => a.id)];
+      newAchievements.forEach((ach) => this.announceUnlock(ach));
+      this.playerData.achievementIds = [...this.playerData.achievementIds, ...grantIds];
       this.syncLocalChanges();
     }
   }
 
   public grantAchievement(id: string) {
     if (!this.playerData || !this.localStats) return;
-    if (this.playerData.achievementIds.includes(id)) return;
-    
-    firestoreGrantAchievements(this.playerData.uid, this.playerData.activeCharacterId, [id])
-      .catch(err => console.warn('[AnalyticsTracker] Failed to grant achievement:', err));
-    
-    this.playerData.achievementIds = [...this.playerData.achievementIds, id];
-    activityLogger.logAction('achievement', `Conquista desbloqueada: ${id}`, { achievementId: id });
-    
-    if (this.onToast) {
-      this.onToast({ type: 'achievement', title: 'Conquista!', subtitle: 'Nova Conquista Desbloqueada', icon: '🏆' });
+    const { campaignId, platform } = this.resolveGrantScope();
+    if (isAchievementEarned(this.playerData.achievementIds, id, campaignId)) return;
+
+    const ach = achievementManager.getAchievement(id);
+    const grantId = achievementGrantDocId(id, campaignId);
+
+    firestoreGrantAchievements(this.playerData.uid, this.playerData.activeCharacterId, [id], {
+      campaignId,
+      platform: ach?.primaryPlatform || platform,
+    }).catch((err) => console.warn('[AnalyticsTracker] Failed to grant achievement:', err));
+
+    this.playerData.achievementIds = [...this.playerData.achievementIds, grantId];
+
+    if (ach) {
+      this.announceUnlock(ach);
+    } else if (this.onToast) {
+      achievementSfx.playUnlock('common');
+      this.onToast({
+        type: 'achievement',
+        title: 'Nova Medalha',
+        subtitle: id,
+        icon: '/achievements/ACH-VETERAN.png',
+        tier: 'common',
+        platform: 'global',
+      });
     }
+
     this.syncLocalChanges();
     this.forceSyncToServer();
   }

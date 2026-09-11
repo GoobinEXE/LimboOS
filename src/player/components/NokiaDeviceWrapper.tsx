@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion } from 'motion/react';
 import { useLandscapeLayout } from '../hooks/useLandscapeLayout';
 import type { AppScreen, WalkmanStatus } from '../../types/player';
 
@@ -34,9 +35,9 @@ function NavButton({
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`border border-[#111e14] rounded hover:bg-[#111e14] hover:text-[#edfeed] transition-all duration-100 active:scale-95 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed ${
+      className={`border border-[#111e14] rounded hover:bg-[#111e14] hover:text-[#edfeed] transition-all duration-100 ease-limbo active:scale-95 active:translate-y-px cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed ${
         vertical
-          ? 'w-full py-2 flex flex-col items-center justify-center gap-0.5 min-h-[44px]'
+          ? 'w-full py-2 flex flex-col items-center justify-center gap-0.5 min-h-11'
           : 'px-3 py-1.5 flex items-center gap-1'
       }`}
     >
@@ -108,15 +109,23 @@ export default function NokiaDeviceWrapper({
       )}
 
       {onProfileOpen && (
-        <NavButton onClick={onProfileOpen} icon="[#]" label="Dossie" vertical={isLandscape} />
+        <NavButton onClick={onProfileOpen} icon="[#]" label="Perfil" vertical={isLandscape} />
       )}
     </>
   );
 
   return (
-    <div className="absolute inset-0 w-full h-full bg-[#edfeed] p-2 sm:p-4 z-50 flex items-center justify-center overflow-hidden player-viewport">
+    <div
+      // Moldura respeita notch/home indicator (safe areas) sem alterar a cor do LCD
+      className="absolute inset-0 w-full h-full bg-[#edfeed] z-50 flex items-center justify-center overflow-hidden player-viewport pt-[max(0.5rem,env(safe-area-inset-top))] pr-[max(0.5rem,env(safe-area-inset-right))] pb-[max(0.5rem,env(safe-area-inset-bottom))] pl-[max(0.5rem,env(safe-area-inset-left))] sm:pt-[max(1rem,env(safe-area-inset-top))] sm:pr-[max(1rem,env(safe-area-inset-right))] sm:pb-[max(1rem,env(safe-area-inset-bottom))] sm:pl-[max(1rem,env(safe-area-inset-left))]"
+    >
+      {/* Sombreamento do plástico ao redor do LCD: escurece as bordas sem mudar o tom verde */}
       <div
-        className={`w-full h-full bg-[#edfeed] rounded-xl border-[4px] border-[#111e14] relative shadow-[inset_0_4px_16px_rgba(0,0,0,0.45)] overflow-hidden max-w-4xl mx-auto ${
+        aria-hidden
+        className="absolute inset-0 pointer-events-none bg-radial-[at_50%_45%] from-transparent via-transparent to-[#111e14]/10"
+      />
+      <div
+        className={`w-full h-full bg-[#edfeed] rounded-xl border-4 border-[#111e14] relative shadow-[inset_0_4px_16px_rgba(0,0,0,0.45),inset_0_0_0_1px_rgba(255,255,255,0.35),0_0_0_1px_rgba(17,30,20,0.35),0_10px_30px_-12px_rgba(17,30,20,0.6)] overflow-hidden max-w-4xl mx-auto ${
           isLandscape && !isScanning ? 'flex flex-row' : 'flex flex-col'
         }`}
       >
@@ -130,20 +139,25 @@ export default function NokiaDeviceWrapper({
           <div className="absolute inset-0 border border-[#111e14]/15 pointer-events-none z-20" />
 
           {!isScanning && isLandscape && (
-            <div className="w-12 shrink-0 flex flex-col justify-around items-stretch bg-[#edfeed] border-r-2 border-[#111e14] py-2 px-1 gap-1 z-20 select-none text-[#111e14]">
+            <motion.div
+              initial={{ opacity: 0, x: -8 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+              className="w-11 shrink-0 flex flex-col justify-around items-stretch bg-[#edfeed] border-r-2 border-[#111e14] py-1.5 px-0.5 gap-0.5 z-20 select-none text-[#111e14]"
+            >
               {navButtons}
-            </div>
+            </motion.div>
           )}
 
           <div className={`flex flex-col min-h-0 min-w-0 ${isLandscape && !isScanning ? 'flex-1' : 'h-full'}`}>
             {!isScanning && (
-              <div className="flex justify-between items-center bg-[#edfeed] px-2 border-b border-[#111e14] py-1 text-[12px] font-bold h-[24px] select-none z-10 leading-none shrink-0">
-                <div className="flex items-end gap-[1px] h-[10px]" title="Signal">
-                  <span className="text-[10px] leading-none pr-[2px] font-black">HP</span>
+              <div className="flex justify-between items-center bg-[#edfeed] px-2 border-b border-[#111e14] py-1 text-[12px] font-bold h-6 select-none z-10 leading-none shrink-0">
+                <div className="flex items-end gap-px h-2.5" title="Signal">
+                  <span className="text-[10px] leading-none pr-0.5 font-black">HP</span>
                   {[1, 2, 3, 4, 5].map((level) => (
                     <div
                       key={level}
-                      className={`w-[2px] ${signalBarsCount >= level ? 'bg-[#111e14]' : 'bg-[#111e14]/10'}`}
+                      className={`w-0.5 ${signalBarsCount >= level ? 'bg-[#111e14]' : 'bg-[#111e14]/10'}`}
                       style={{ height: `${level * 2 + 2}px` }}
                     />
                   ))}
@@ -151,20 +165,20 @@ export default function NokiaDeviceWrapper({
 
                 <span className="tracking-wide text-[12px] tabular-nums">{systemTime}</span>
 
-                <div className="flex items-center gap-[2px]">
-                  <span className="text-[10px] pr-[2px] font-black">MP</span>
-                  <div className="flex items-center border border-[#111e14] p-[1px] rounded-[1px] w-[18px] h-[10px]">
+                <div className="flex items-center gap-0.5">
+                  <span className="text-[10px] pr-0.5 font-black">MP</span>
+                  <div className="flex items-center border border-[#111e14] p-px rounded-[1px] w-4.5 h-2.5">
                     <div className="bg-[#111e14] h-full w-[75%]" />
                   </div>
-                  <div className="w-[1px] h-[4px] bg-[#111e14] -ml-[1px]" />
+                  <div className="w-px h-1 bg-[#111e14] -ml-px" />
                 </div>
               </div>
             )}
 
-            <div className="flex-grow overflow-hidden relative p-2 flex flex-col min-h-0">{children}</div>
+            <div className="grow overflow-hidden relative p-2 flex flex-col min-h-0">{children}</div>
 
             {!isScanning && !isLandscape && (
-              <div className="flex justify-around items-center bg-[#edfeed] border-t-2 border-[#111e14] py-2 text-[12px] font-bold z-20 h-[44px] select-none text-[#111e14] shrink-0">
+              <div className="flex justify-around items-center bg-[#edfeed] border-t-2 border-[#111e14] py-2 text-[12px] font-bold z-20 h-11 select-none text-[#111e14] shrink-0">
                 {navButtons}
               </div>
             )}

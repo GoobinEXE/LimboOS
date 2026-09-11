@@ -8,6 +8,8 @@ interface TapeProgressProps {
   onChange?: (index: number) => void;
 }
 
+const pad = (n: number) => String(n).padStart(2, '0');
+
 export const TapeProgress = ({ total, current, onChange }: TapeProgressProps) => {
   const barRef = useRef<HTMLDivElement>(null);
 
@@ -21,7 +23,7 @@ export const TapeProgress = ({ total, current, onChange }: TapeProgressProps) =>
 
   const handlePointerDown = useCallback((e: React.PointerEvent) => {
     resolveIndex(e.clientX);
-    
+
     const onMove = (ev: PointerEvent) => resolveIndex(ev.clientX);
     const onUp = () => {
       window.removeEventListener('pointermove', onMove);
@@ -32,9 +34,11 @@ export const TapeProgress = ({ total, current, onChange }: TapeProgressProps) =>
     window.addEventListener('pointerup', onUp);
   }, [resolveIndex]);
 
+  const denominator = Math.max(1, total - 1);
+
   return (
-    <div className="flex flex-col items-center w-full max-w-[200px] cursor-pointer group">
-      <div 
+    <div className="flex flex-col items-center w-full max-w-55 cursor-pointer group">
+      <div
         ref={barRef}
         className="relative w-full py-4 -my-4 touch-none"
         onPointerDown={handlePointerDown}
@@ -44,27 +48,33 @@ export const TapeProgress = ({ total, current, onChange }: TapeProgressProps) =>
         aria-valuemax={total - 1}
         aria-valuenow={current}
       >
-        <div className="relative w-full h-1.5 bg-primary/10 border border-primary/20 overflow-hidden shadow-inner transition-colors group-hover:bg-primary/20">
-          <div className="absolute inset-0 flex justify-between px-4 pointer-events-none opacity-20">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="w-px h-full bg-primary" />
-            ))}
-          </div>
-          
-          <motion.div 
-            className="absolute top-0 bottom-0 bg-primary shadow-[0_0_15px_rgba(255,183,125,0.6)]"
+        <div className="relative w-full h-2 rounded-full bg-surface-sunken border border-border overflow-hidden shadow-hairline transition-colors group-hover:border-border-strong">
+          {total > 1 && (
+            <div aria-hidden className="absolute inset-y-0 left-3 right-3 pointer-events-none">
+              {Array.from({ length: total }).map((_, i) => (
+                <span
+                  key={i}
+                  className="absolute top-0 bottom-0 w-px bg-border-strong"
+                  style={{ left: `${(i / denominator) * 100}%` }}
+                />
+              ))}
+            </div>
+          )}
+
+          <motion.div
+            className="absolute top-0 bottom-0 w-6 rounded-full bg-primary glow-orange"
             initial={false}
-            animate={{ 
-              left: `${(current / Math.max(1, total - 1)) * 100}%`,
-              width: '20px',
-              x: '-50%'
-            }}
+            animate={{ left: `${(current / denominator) * 100}%`, x: `${-(current / denominator) * 100}%` }}
             transition={INDICATOR_SPRING}
           />
         </div>
       </div>
-      <div className="mt-3 text-[9px] font-display font-bold text-industrial-silver/20 tracking-[0.3em] uppercase group-hover:text-primary/30 transition-colors">
-        Navegador de Registros
+
+      <div className="mt-3 flex items-baseline gap-2 text-mono-ui text-[10px] text-industrial-silver/30 group-hover:text-industrial-silver/60 transition-colors">
+        <span className="text-primary/80">{pad(Math.min(current + 1, Math.max(total, 1)))}</span>
+        <span className="opacity-50">/</span>
+        <span>{pad(total)}</span>
+        <span className="text-protocol text-[8px] ml-2 opacity-70">Registros</span>
       </div>
     </div>
   );

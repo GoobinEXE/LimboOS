@@ -6,6 +6,7 @@ import { audioEngine } from '../../services/AudioEngine';
 import { useLandscapeLayout } from '../../player/hooks/useLandscapeLayout';
 import type { WalkmanStatus, CharacterData, Group } from '../../types/player';
 import { groupService } from '../../services/GroupService';
+import { analyticsTracker } from '../../services/AnalyticsTracker';
 
 // Lazy loaded scanner to keep bundle optimized
 const QrScanner = React.lazy(() => import('../QrScanner'));
@@ -231,6 +232,8 @@ export default function NokiaPlayer({
   useEffect(() => {
     if (activeConversationId) {
       markConversationRead(activeConversationId);
+      // Primeira abertura de conversa SMS → ACH-SB-SIGNAL (Inbox Fantasma)
+      analyticsTracker.grantAchievement('ACH-SB-SIGNAL');
     }
   }, [activeConversationId, markConversationRead]);
 
@@ -672,22 +675,101 @@ export default function NokiaPlayer({
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
+                        transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
                         className="border-2 border-[#111e14] p-1.5 bg-[#edfeed] shadow-[2px_2px_0px_#111e14] h-full flex flex-col min-h-0 nokia-scroll-area"
                       >
                         <div className="text-center mb-1 shrink-0">
                           <div className="text-[11px] font-black uppercase truncate leading-none mb-0.5">
                             {currentIntel.title}
                           </div>
+                          <div className="text-[8px] font-bold opacity-70 uppercase truncate">
+                            {currentIntel instanceof AudioIntel
+                              ? currentIntel.metadata.artist
+                              : currentIntel instanceof VideoIntel
+                                ? `${currentIntel.format} · ${currentIntel.metadata?.npc || 'ARQUIVO'}`
+                                : currentIntel.metadata?.npc}
+                          </div>
                         </div>
-                        <div className="flex justify-center gap-2 mt-auto shrink-0">
-                          <button onClick={handleRewindTap} className="w-8 h-8 border-2 border-[#111e14] flex items-center justify-center active:bg-[#111e14] active:text-[#edfeed]">
+
+                        {isVideoIntel && currentIntel instanceof VideoIntel ? (
+                          <div className="relative mb-1 border-2 border-[#111e14] aspect-video max-h-[42%] min-h-0 overflow-hidden shadow-[2px_2px_0px_#111e14] shrink">
+                            <NokiaVideoSurface
+                              ref={videoSurfaceRef}
+                              intel={currentIntel}
+                              isPlaying={isPlaying}
+                              volume={volume}
+                              onEnded={onVideoEnded}
+                            />
+                          </div>
+                        ) : (
+                          <div className="flex justify-center mb-1 shrink-0">
+                            <div className="w-24 h-10 bg-[#edfeed] border-2 border-[#111e14] relative flex items-center justify-around px-3">
+                              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-1.5 border-b-2 border-[#111e14]" />
+                              {[0, 1].map((ri) => (
+                                <div
+                                  key={ri}
+                                  className="w-5 h-5 border-2 border-[#111e14] flex items-center justify-center relative bg-white/20"
+                                >
+                                  <div
+                                    className={`w-full h-0.5 bg-[#111e14] absolute ${isPlaying ? 'animate-spin' : ''}`}
+                                    style={{ animationDuration: '4s' }}
+                                  />
+                                  <div
+                                    className={`w-0.5 h-full bg-[#111e14] absolute ${isPlaying ? 'animate-spin' : ''}`}
+                                    style={{ animationDuration: '4s' }}
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        <div className="mb-1 shrink-0">
+                          <div className="flex justify-between items-center text-[8px] font-black px-0.5 mb-0.5">
+                            <span>{currentTimeStr}</span>
+                            <span className="uppercase tracking-[0.15em] text-[7px]">
+                              {status === 'REWINDING' ? '<< REW' : isPlaying ? 'PLAY' : 'PAUSE'}
+                            </span>
+                            <span>{durationTimeStr}</span>
+                          </div>
+                          <div className="w-full border-2 border-[#111e14] h-3 p-[1px] flex gap-[1px] items-center bg-[#edfeed]">
+                            {Array.from({ length: 16 }).map((_, i) => {
+                              const pct = (i + 1) / 16;
+                              const isFilled = audioDuration > 0 && audioProgress / audioDuration >= pct;
+                              return (
+                                <div
+                                  key={i}
+                                  className={`h-full flex-1 ${isFilled ? 'bg-[#111e14]' : 'bg-transparent'}`}
+                                />
+                              );
+                            })}
+                          </div>
+                        </div>
+
+                        <div className="flex justify-center items-center gap-1.5 mt-auto shrink-0">
+                          <button
+                            onClick={handleRewindTap}
+                            className={`w-8 h-8 min-h-8 border-2 border-[#111e14] flex items-center justify-center active:bg-[#111e14] active:text-[#edfeed] active:scale-95 ${status === 'REWINDING' ? 'bg-[#111e14] text-[#edfeed]' : ''}`}
+                          >
                             <PixelIcon.Rewind />
                           </button>
-                          <button onClick={handlePlayToggle} className="w-10 h-9 border-2 border-[#111e14] flex items-center justify-center bg-[#111e14] text-[#edfeed]">
+                          <button
+                            onClick={handlePlayToggle}
+                            className="w-10 h-9 min-h-9 border-2 border-[#111e14] flex items-center justify-center bg-[#111e14] text-[#edfeed] active:scale-95"
+                          >
                             {isPlaying ? <PixelIcon.Pause /> : <PixelIcon.Play />}
                           </button>
-                          <button onClick={handleEject} className="w-8 h-8 border-2 border-[#111e14] flex items-center justify-center active:bg-[#111e14] active:text-[#edfeed]">
+                          <button
+                            onClick={handleEject}
+                            className="w-8 h-8 min-h-8 border-2 border-[#111e14] flex items-center justify-center active:bg-[#111e14] active:text-[#edfeed] active:scale-95"
+                          >
                             <PixelIcon.Close />
+                          </button>
+                          <button
+                            onClick={handleVolumeTap}
+                            className="w-8 h-8 min-h-8 border-2 border-[#111e14] flex items-center justify-center active:bg-[#111e14] active:text-[#edfeed] active:scale-95"
+                          >
+                            <PixelIcon.Volume />
                           </button>
                         </div>
                       </motion.div>
@@ -697,8 +779,9 @@ export default function NokiaPlayer({
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
+                        transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
                         onClick={onScanClick}
-                        className="border-2 border-dashed border-[#111e14] p-3 h-full flex flex-col justify-center items-center cursor-pointer gap-2"
+                        className="border-2 border-dashed border-[#111e14] p-3 h-full flex flex-col justify-center items-center cursor-pointer gap-2 active:bg-[#111e14]/10"
                       >
                         <PixelIcon.Camera />
                         <span className="text-[9px] font-black uppercase tracking-[0.15em] text-center">ESCANEAR CÓDIGO</span>

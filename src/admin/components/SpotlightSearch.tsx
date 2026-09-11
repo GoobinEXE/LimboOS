@@ -6,7 +6,7 @@ interface SearchableItem {
   id: string;
   label: string;
   sublabel?: string;
-  category: 'account' | 'agent' | 'tab';
+  category: 'account' | 'agent' | 'tab' | 'group' | 'mission';
   icon: string;
   action: () => void;
 }
@@ -52,6 +52,8 @@ export default function SpotlightSearch({ open, onClose, items }: SpotlightSearc
     tab: 'NAVEGAÇÃO',
     account: 'CONTAS',
     agent: 'AGENTES',
+    group: 'ESQUADRÕES',
+    mission: 'MISSÕES',
   };
 
   useEffect(() => {
@@ -86,7 +88,7 @@ export default function SpotlightSearch({ open, onClose, items }: SpotlightSearc
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.15 }}
-          className="fixed inset-0 z-[9999] flex items-start justify-center pt-[15vh] bg-black/85 backdrop-blur-lg p-4"
+          className="fixed inset-0 z-9999 flex items-start justify-center pt-[15vh] bg-black/85 backdrop-blur-lg p-4"
           onMouseDown={(e) => { if (e.target === e.currentTarget) onClose(); }}
         >
           <motion.div
@@ -153,10 +155,12 @@ export default function SpotlightSearch({ open, onClose, items }: SpotlightSearc
             </div>
 
             {/* Footer */}
-            <div className="px-6 py-3 border-t border-white/5 bg-black/20 flex items-center justify-between">
-              <div className="flex gap-4">
+            <div className="px-6 py-3 border-t border-white/5 bg-black/20 flex items-center justify-between gap-3 flex-wrap">
+              <div className="flex gap-3 flex-wrap">
                 <span className="text-[8px] font-display font-bold text-industrial-silver/15 uppercase tracking-widest">↑↓ Navegar</span>
                 <span className="text-[8px] font-display font-bold text-industrial-silver/15 uppercase tracking-widest">↵ Selecionar</span>
+                <span className="text-[8px] font-display font-bold text-industrial-silver/15 uppercase tracking-widest">⌘/Ctrl+K Spotlight</span>
+                <span className="text-[8px] font-display font-bold text-industrial-silver/15 uppercase tracking-widest">⌘/Ctrl+1–6 Abas</span>
               </div>
               <span className="text-[8px] font-display font-bold text-industrial-silver/15 uppercase tracking-widest">{filtered.length} resultados</span>
             </div>
@@ -173,23 +177,126 @@ export function buildSearchItems(
   setActiveTab: (tab: string) => void,
   onSelectAccount?: (uid: string) => void,
   onSelectAgent?: (uid: string, charId: string) => void,
+  onOpenMissionInventory?: () => void,
+  onOpenOpsSub?: (sub: 'relatorios' | 'acesso' | 'qr' | 'conquistas') => void,
+  onOpenMesaSub?: (sub: 'esquadroes' | 'contas') => void,
+  groups?: { id: string; name: string }[],
+  campaigns?: { id: string; name: string }[],
+  onSelectGroup?: (groupId: string) => void,
+  onSelectMission?: (campaignId: string) => void,
 ): SearchableItem[] {
   const items: SearchableItem[] = [];
 
-  // Navigation tabs
   const tabs = [
-    { id: 'dashboard', label: 'Painel Central', icon: 'monitoring' },
+    { id: 'live', label: 'Ao Vivo', icon: 'sensors' },
+    { id: 'mesa', label: 'Mesa', icon: 'groups' },
     { id: 'missions', label: 'Missões', icon: 'map' },
-    { id: 'players', label: 'Agentes', icon: 'group' },
-    { id: 'inventory', label: 'Inventário', icon: 'inventory_2' },
-    { id: 'intel', label: 'Acervo', icon: 'hub' },
-    { id: 'systems', label: 'Acessos', icon: 'settings_input_component' },
+    { id: 'media', label: 'Conteúdo', icon: 'folder_open' },
+    { id: 'systems', label: 'Sistema', icon: 'tune' },
   ];
   tabs.forEach((t) => {
-    items.push({ id: `tab_${t.id}`, label: t.label, category: 'tab', icon: t.icon, action: () => setActiveTab(t.id) });
+    items.push({
+      id: `tab_${t.id}`,
+      label: t.label,
+      category: 'tab',
+      icon: t.icon,
+      action: () => setActiveTab(t.id),
+    });
   });
 
-  // Accounts
+  const mesaSubs: { id: 'esquadroes' | 'contas'; label: string; icon: string }[] = [
+    { id: 'esquadroes', label: 'Esquadrões', icon: 'groups' },
+    { id: 'contas', label: 'Contas', icon: 'group' },
+  ];
+  mesaSubs.forEach((s) => {
+    items.push({
+      id: `mesa_${s.id}`,
+      label: s.label,
+      sublabel: 'Mesa',
+      category: 'tab',
+      icon: s.icon,
+      action: () => {
+        if (onOpenMesaSub) onOpenMesaSub(s.id);
+        else setActiveTab('mesa');
+      },
+    });
+  });
+
+  const opsSubs: { id: 'relatorios' | 'acesso' | 'qr' | 'conquistas'; label: string; icon: string }[] = [
+    { id: 'relatorios', label: 'Relatórios', icon: 'analytics' },
+    { id: 'acesso', label: 'Acesso Hardware', icon: 'lock_open' },
+    { id: 'qr', label: 'QR & Links', icon: 'qr_code' },
+    { id: 'conquistas', label: 'Conquistas', icon: 'emoji_events' },
+  ];
+  opsSubs.forEach((s) => {
+    items.push({
+      id: `ops_${s.id}`,
+      label: s.label,
+      sublabel: 'Sistema',
+      category: 'tab',
+      icon: s.icon,
+      action: () => {
+        if (onOpenOpsSub) onOpenOpsSub(s.id);
+        else setActiveTab('systems');
+      },
+    });
+  });
+
+  items.push({
+    id: 'tab_mission_inventory',
+    label: 'Inventário de Missão',
+    sublabel: 'Abrir missões → inventário',
+    category: 'tab',
+    icon: 'inventory_2',
+    action: () => {
+      if (onOpenMissionInventory) onOpenMissionInventory();
+      else setActiveTab('missions');
+    },
+  });
+
+  items.push({
+    id: 'tab_jukebox',
+    label: 'Jukebox',
+    sublabel: 'Ao Vivo',
+    category: 'tab',
+    icon: 'queue_music',
+    action: () => {
+      setActiveTab('live');
+      window.setTimeout(() => {
+        document.getElementById('admin-jukebox')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 200);
+    },
+  });
+
+  (groups || []).forEach((g) => {
+    items.push({
+      id: `group_${g.id}`,
+      label: g.name,
+      sublabel: 'Esquadrão',
+      category: 'group',
+      icon: 'groups',
+      action: () => {
+        if (onSelectGroup) onSelectGroup(g.id);
+        else if (onOpenMesaSub) onOpenMesaSub('esquadroes');
+        else setActiveTab('mesa');
+      },
+    });
+  });
+
+  (campaigns || []).forEach((c) => {
+    items.push({
+      id: `mission_${c.id}`,
+      label: c.name,
+      sublabel: 'Missão',
+      category: 'mission',
+      icon: 'map',
+      action: () => {
+        if (onSelectMission) onSelectMission(c.id);
+        else setActiveTab('missions');
+      },
+    });
+  });
+
   accounts.forEach((acc) => {
     items.push({
       id: `acc_${acc.uid}`,
@@ -197,11 +304,14 @@ export function buildSearchItems(
       sublabel: acc.email,
       category: 'account',
       icon: 'person',
-      action: () => { setActiveTab('players'); onSelectAccount?.(acc.uid); },
+      action: () => {
+        if (onOpenMesaSub) onOpenMesaSub('contas');
+        else setActiveTab('mesa');
+        onSelectAccount?.(acc.uid);
+      },
     });
   });
 
-  // Characters
   const accountByUid = new Map(accounts.map((acc) => [acc.uid, acc]));
   characters.forEach(({ uid, char }) => {
     const account = accountByUid.get(uid);
@@ -211,7 +321,11 @@ export function buildSearchItems(
       sublabel: masterAccountLabel(account, 'Mestre desconhecido'),
       category: 'agent',
       icon: 'badge',
-      action: () => { setActiveTab('players'); onSelectAgent?.(uid, char.id); },
+      action: () => {
+        if (onOpenMesaSub) onOpenMesaSub('contas');
+        else setActiveTab('mesa');
+        onSelectAgent?.(uid, char.id);
+      },
     });
   });
 

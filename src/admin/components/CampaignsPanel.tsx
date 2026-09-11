@@ -267,7 +267,7 @@ export default function CampaignsPanel({
                     <span className="material-symbols-outlined text-base text-industrial-silver/20">
                       devices
                     </span>
-                    {campaign.playerType === 'nokia' ? 'NOKIA 2280' : 'WALKMAN'}
+                    {campaign.playerType === 'nokia' ? 'HANDSET LCD' : 'DECK'}
                   </div>
                   <span
                     className={`px-3 py-1 rounded-sm border font-display font-bold ${

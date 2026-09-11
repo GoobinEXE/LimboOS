@@ -16,6 +16,7 @@ import {
 } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { storage, db } from '../lib/firebase';
+import { callFunction } from '../lib/functions';
 import { 
   PlayerData, 
   PlayerStats, 
@@ -28,6 +29,9 @@ import {
 } from '../types/player';
 import type { IntelItem } from '../types/intel';
 
+const PROFILE_PHOTO_MAX_BYTES = 5 * 1024 * 1024;
+const PROFILE_PHOTO_MIME = /^image\/(jpeg|jpg|png|webp|gif)$/i;
+
 const DEFAULT_STATS: PlayerStats = {
   totalListenTime: 0,
   screwClicks: 0,
@@ -35,6 +39,13 @@ const DEFAULT_STATS: PlayerStats = {
   ejectWithoutPlay: 0,
   maxVolumeTime: 0,
   zeroVolumeTime: 0,
+  biosOpened: 0,
+  win95Opened: 0,
+  macosOpened: 0,
+  fullTapeListens: 0,
+  threadsReadCount: 0,
+  archiveOpened: 0,
+  modeSwitches: 0,
 };
 
 // --- Admin Types ---
@@ -170,25 +181,36 @@ export async function loadPlayerData(uid: string, characterId: string): Promise<
 
 // --- Character Progress ---
 
-export async function firestoreUnlockIntel(uid: string, characterId: string, intelId: string, campaignId?: string): Promise<void> {
-  const unlockData = {
+export async function firestoreUnlockIntel(
+  uid: string,
+  characterId: string,
+  intelId: string,
+  campaignId?: string,
+  sourceCode?: string,
+): Promise<void> {
+  await callFunction('unlockIntel', {
+    characterId,
     intelId,
-    unlockedAt: serverTimestamp(),
     campaignId: campaignId || null,
-    type: 'AUDIO' // Default type; overridden by IntelService with proper type
-  };
-  await setDoc(doc(db, 'users', uid, 'characters', characterId, 'intel', intelId), unlockData, { merge: true });
+    targetUid: uid,
+    ...(sourceCode ? { sourceCode } : {}),
+  });
 }
 
-export async function firestoreGrantAchievements(uid: string, characterId: string, achievementIds: string[]): Promise<void> {
-  const batch = writeBatch(db);
-  achievementIds.forEach((id) => {
-    batch.set(doc(db, 'users', uid, 'characters', characterId, 'achievements', id), {
-      achievementId: id,
-      unlockedAt: serverTimestamp(),
-    });
+export async function firestoreGrantAchievements(
+  uid: string,
+  characterId: string,
+  achievementIds: string[],
+  options?: { campaignId?: string; platform?: string }
+): Promise<void> {
+  if (achievementIds.length === 0) return;
+  await callFunction('grantAchievements', {
+    characterId,
+    achievementIds,
+    targetUid: uid,
+    campaignId: options?.campaignId || 'unscoped',
+    platform: options?.platform || 'walkman',
   });
-  await batch.commit();
 }
 
 export async function firestoreUpdateStats(uid: string, characterId: string, statsDelta: Partial<PlayerStats>): Promise<void> {
@@ -196,7 +218,24 @@ export async function firestoreUpdateStats(uid: string, characterId: string, sta
 }
 
 export async function firestoreUpdateSpotifyPlaylist(uid: string, characterId: string, url: string): Promise<void> {
-  await setDoc(doc(db, 'users', uid, 'characters', characterId), { spotifyPlaylistUrl: url }, { merge: true });
+  const trimmed = url.trim();
+  if (trimmed) {
+    try {
+      if (trimmed.startsWith('spotify:')) {
+        if (!/^spotify:(playlist|album|track|episode|show):[a-zA-Z0-9]+$/.test(trimmed)) {
+          throw new Error('URL Spotify inválida');
+        }
+      } else {
+        const parsed = new URL(trimmed);
+        if (parsed.protocol !== 'https:' || parsed.hostname !== 'open.spotify.com') {
+          throw new Error('URL Spotify inválida');
+        }
+      }
+    } catch {
+      throw new Error('URL Spotify inválida');
+    }
+  }
+  await setDoc(doc(db, 'users', uid, 'characters', characterId), { spotifyPlaylistUrl: trimmed }, { merge: true });
 }
 
 export async function firestoreUpdatePhoneNumber(uid: string, characterId: string, phoneNumber: string): Promise<void> {
@@ -204,7 +243,11 @@ export async function firestoreUpdatePhoneNumber(uid: string, characterId: strin
 }
 
 export async function firestoreSetCampaign(uid: string, characterId: string, campaignId: string): Promise<void> {
-  await setDoc(doc(db, 'users', uid, 'characters', characterId), { campaignId }, { merge: true });
+  await callFunction('setCharacterCampaign', {
+    characterId,
+    campaignId,
+    targetUid: uid,
+  });
 }
 
 export async function updateAgentStatus(uid: string, characterId: string, status: 'vivo' | 'morto' | 'desaparecido'): Promise<void> {
@@ -224,9 +267,16 @@ export async function updateCodinome(uid: string, characterId: string, newCodino
 // --- Profile Photos ---
 
 export async function uploadProfilePhoto(uid: string, characterId: string, file: File): Promise<{ url: string }> {
-  const photoId = `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+  if (!PROFILE_PHOTO_MIME.test(file.type)) {
+    throw new Error('Tipo de arquivo inválido. Use JPEG, PNG, WebP ou GIF.');
+  }
+  if (file.size > PROFILE_PHOTO_MAX_BYTES) {
+    throw new Error('Imagem muito grande. Máximo 5MB.');
+  }
+  const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_').slice(0, 80);
+  const photoId = `${Date.now()}_${Math.random().toString(36).slice(2, 8)}_${safeName}`;
   const storageRef = ref(storage, `profilePhotos/${uid}/${characterId}/${photoId}`);
-  await uploadBytes(storageRef, file);
+  await uploadBytes(storageRef, file, { contentType: file.type });
   const url = await getDownloadURL(storageRef);
   await setDoc(doc(db, 'users', uid, 'characters', characterId), { profilePhotoUrl: url }, { merge: true });
   return { url };
@@ -267,8 +317,15 @@ export async function checkTerminalClosed(uid: string, characterId?: string): Pr
   }
 }
 
-export async function checkMacClosed(uid: string): Promise<void> {
+export async function checkMacClosed(uid: string, characterId?: string): Promise<void> {
   await setDoc(doc(db, 'users', uid), { forceMacOpen: false }, { merge: true });
+  if (characterId) {
+    await setDoc(
+      doc(db, 'users', uid, 'characters', characterId),
+      { forceMacOpen: false },
+      { merge: true }
+    );
+  }
 }
 
 export async function setLimboMilitarySeizureGlobal(seized: boolean): Promise<void> {
@@ -289,23 +346,14 @@ export async function firestoreMarkThreadRead(
   threadId: string,
 ): Promise<void> {
   const charRef = doc(db, 'users', uid, 'characters', characterId);
-  const limboRef = doc(db, 'system', 'limboState');
 
   await runTransaction(db, async (transaction) => {
     const charSnap = await transaction.get(charRef);
-    const limboSnap = await transaction.get(limboRef);
+    if (!charSnap.exists()) return;
 
-    if (charSnap.exists()) {
-      const charReadIds: string[] = charSnap.data().readThreadIds || [];
-      if (!charReadIds.includes(threadId)) {
-        transaction.set(charRef, { readThreadIds: [...charReadIds, threadId] }, { merge: true });
-      }
-    }
-
-    const limboData = limboSnap.exists() ? limboSnap.data() : { seized: false, readThreadIds: [] };
-    const globalReadIds: string[] = limboData.readThreadIds || [];
-    if (!globalReadIds.includes(threadId)) {
-      transaction.set(limboRef, { readThreadIds: [...globalReadIds, threadId] }, { merge: true });
+    const charReadIds: string[] = charSnap.data().readThreadIds || [];
+    if (!charReadIds.includes(threadId)) {
+      transaction.set(charRef, { readThreadIds: [...charReadIds, threadId] }, { merge: true });
     }
   });
 }
@@ -336,13 +384,58 @@ export async function generateAgentId(uid: string, characterId: string): Promise
   return agentId;
 }
 
-export async function fetchAudioTapeById(audioId: string) {
+export async function fetchAudioTapeById(
+  audioId: string,
+  options?: { characterId?: string; forUnlockResolve?: boolean },
+) {
+  if (options?.forUnlockResolve) {
+    const result = await callFunction<{ code: string }, {
+      asset: Record<string, unknown> | null;
+    }>('resolveIntelCode', { code: audioId });
+    return result.asset ? { id: String(result.asset.id || audioId), ...result.asset } : null;
+  }
+
+  if (options?.characterId) {
+    const result = await callFunction<
+      { characterId: string; assetIds: string[] },
+      { assets: Array<Record<string, unknown>> }
+    >('getMediaAssetsByIds', {
+      characterId: options.characterId,
+      assetIds: [audioId],
+    });
+    const asset = result.assets?.[0];
+    return asset ? { id: String(asset.id || audioId), ...asset } : null;
+  }
+
+  // Admin path (rules: mediaAssets read admin-only)
   const snap = await getDoc(doc(db, 'mediaAssets', audioId));
   return snap.exists() ? { id: snap.id, ...snap.data() } : null;
 }
 
-export async function fetchAudioTapesByIds(audioIds: string[]) {
+export async function fetchAudioTapesByIds(
+  audioIds: string[],
+  options?: { characterId?: string },
+) {
   if (audioIds.length === 0) return [];
+
+  if (options?.characterId) {
+    const audios: any[] = [];
+    for (let i = 0; i < audioIds.length; i += 50) {
+      const chunk = audioIds.slice(i, i + 50);
+      const result = await callFunction<
+        { characterId: string; assetIds: string[] },
+        { assets: Array<Record<string, unknown>> }
+      >('getMediaAssetsByIds', {
+        characterId: options.characterId,
+        assetIds: chunk,
+      });
+      (result.assets || []).forEach((asset) => {
+        audios.push({ id: asset.id, ...asset });
+      });
+    }
+    return audios;
+  }
+
   const audios: any[] = [];
   for (let i = 0; i < audioIds.length; i += 30) {
     const chunk = audioIds.slice(i, i + 30);
@@ -365,6 +458,12 @@ export async function fetchAllMediaAssets() {
  */
 export async function updateRemoteIntel(item: IntelItem): Promise<void> {
   const docRef = doc(db, 'mediaAssets', item.id);
+
+  // setDoc merge substitui o mapa `metadata` inteiro — preservar tags de pastas da biblioteca
+  const existingSnap = await getDoc(docRef);
+  const existingTags = existingSnap.exists()
+    ? (existingSnap.data()?.metadata?.tags as string[] | undefined)
+    : undefined;
 
   let rawType = 'other';
   if (item.type === 'AUDIO') {
@@ -402,6 +501,10 @@ export async function updateRemoteIntel(item: IntelItem): Promise<void> {
     if (item.metadata.youtubeId !== undefined) metadata.youtubeId = item.metadata.youtubeId;
   }
 
+  if (existingTags && existingTags.length > 0) {
+    metadata.tags = existingTags;
+  }
+
   const updateData: any = {
     type: rawType,
     campaignId: item.campaignId || null,
@@ -419,8 +522,11 @@ export async function updateRemoteIntel(item: IntelItem): Promise<void> {
 }
 
 export async function fetchQrRedirect(sourceId: string): Promise<string | null> {
-  const snap = await getDoc(doc(db, 'qrRedirects', sourceId));
-  return snap.exists() ? snap.data().targetId || null : null;
+  const result = await callFunction<{ sourceId: string }, { targetId: string | null }>(
+    'fetchQrRedirect',
+    { sourceId },
+  );
+  return result.targetId || null;
 }
 
 export async function fetchAllQrRedirects(): Promise<QrRedirect[]> {

@@ -121,8 +121,8 @@ export default function MissionDataTab({
                 }
                 className="w-full bg-surface-container-lowest border-none text-primary text-[10px] font-display font-bold px-4 py-4 outline-none rounded-sm uppercase cursor-pointer shadow-inner appearance-none"
               >
-                <option value="walkman">WALKMAN RETRO</option>
-                <option value="nokia">NOKIA 2280 AZUL</option>
+                <option value="walkman">DECK RETRO</option>
+                <option value="nokia">HANDSET AZUL</option>
               </select>
               <div className="h-0.5 w-0 bg-primary transition-all duration-300 group-focus-within:w-full" />
             </div>

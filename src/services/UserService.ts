@@ -17,6 +17,7 @@ import {
   orderBy,
   startAfter
 } from "firebase/firestore";
+import { achievementGrantDocId } from "./AchievementManager";
 import { MasterAccount, CharacterData, PlayerStats } from "../types/player";
 
 export interface PlayCountData {
@@ -266,15 +267,33 @@ export class UserService {
     await setDoc(doc(db, "users", uid, "characters", characterId, "intel", intelId), unlockData, { merge: true });
   }
 
-  public async grantUserAchievement(uid: string, characterId: string, achievementId: string): Promise<void> {
-    await setDoc(doc(db, "users", uid, "characters", characterId, "achievements", achievementId), {
-      achievementId,
+  public async grantUserAchievement(
+    uid: string,
+    characterId: string,
+    achievementId: string,
+    options?: { campaignId?: string; platform?: string }
+  ): Promise<void> {
+    const campaignId = options?.campaignId || 'unscoped';
+    const docId = achievementId.includes('__')
+      ? achievementId
+      : achievementGrantDocId(achievementId, campaignId);
+    const baseId = achievementId.includes('__')
+      ? achievementId.slice(0, achievementId.lastIndexOf('__'))
+      : achievementId;
+    await setDoc(doc(db, "users", uid, "characters", characterId, "achievements", docId), {
+      achievementId: baseId,
+      campaignId,
+      platform: options?.platform || 'walkman',
       unlockedAt: serverTimestamp(),
     });
   }
 
   public async revokeUserAchievement(uid: string, characterId: string, achievementId: string): Promise<void> {
-    await deleteDoc(doc(db, "users", uid, "characters", characterId, "achievements", achievementId));
+    // Tenta doc composto e legado
+    const refs = [
+      doc(db, "users", uid, "characters", characterId, "achievements", achievementId),
+    ];
+    await Promise.all(refs.map((r) => deleteDoc(r).catch(() => undefined)));
   }
 
   public async adminCreateUser(masterId: string, rawPassword: string, role: 'player' | 'admin'): Promise<{ uid: string; characterId: string }> {

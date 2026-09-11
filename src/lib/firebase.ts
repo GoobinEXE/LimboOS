@@ -10,6 +10,7 @@ import {
 import { getStorage } from 'firebase/storage';
 import { getAnalytics, isSupported } from 'firebase/analytics';
 import type { Analytics } from 'firebase/analytics';
+import { isWebKitLite } from './webkitLite';
 const firebaseConfig = {
   apiKey:            import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain:        import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -22,9 +23,25 @@ const firebaseConfig = {
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 export const auth = getAuth(app);
 
+// App Check (opcional): defina VITE_FIREBASE_APPCHECK_SITE_KEY no .env
+// e registre o provedor no Firebase Console → App Check.
+const appCheckSiteKey = import.meta.env.VITE_FIREBASE_APPCHECK_SITE_KEY as string | undefined;
+if (appCheckSiteKey && typeof window !== 'undefined') {
+  void import('firebase/app-check').then(({ initializeAppCheck, ReCaptchaV3Provider }) => {
+    initializeAppCheck(app, {
+      provider: new ReCaptchaV3Provider(appCheckSiteKey),
+      isTokenAutoRefreshEnabled: true,
+    });
+  }).catch((err) => {
+    console.warn('[firebase] App Check não inicializado:', err);
+  });
+}
+
 // Em dev (incl. browser embutido do Cursor), HTTP/2 do WebChannel costuma falhar.
-// Long polling + cache em memória evita ERR_HTTP2_PING_FAILED e BloomFilterError.
-const firestoreSettings = import.meta.env.DEV
+// No Safari/WebKit o transporte fetch/stream do Listen/Write também falha com
+// "Fetch API cannot load ... due to access control checks" — long polling estabiliza.
+const useLongPolling = import.meta.env.DEV || isWebKitLite();
+const firestoreSettings = useLongPolling
   ? {
       localCache: memoryLocalCache(),
       experimentalForceLongPolling: true,

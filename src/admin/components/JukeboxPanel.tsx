@@ -38,7 +38,7 @@ function isYoutubeUrl(url: string): boolean {
 }
 
 /* ── Component ─────────────────────────────────────────── */
-export default function JukeboxPanel() {
+export default function JukeboxPanel({ embedded = false }: { embedded?: boolean }) {
   const [tracks, setTracks] = useState<JukeboxTrack[]>([]);
   const [currentIndex, setCurrentIndex] = useState<number>(-1);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -270,6 +270,7 @@ export default function JukeboxPanel() {
       />
 
       {/* Header */}
+      {!embedded ? (
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <div className="w-2 h-8 bg-primary rounded-full animate-pulse shadow-[0_0_10px_rgba(255,140,0,0.4)]" />
@@ -285,6 +286,19 @@ export default function JukeboxPanel() {
           {statusLabel}
         </div>
       </div>
+      ) : (
+      <div className="flex items-center justify-between">
+        <span className="text-[10px] font-display font-bold text-industrial-silver/40 tracking-widest uppercase">{tracks.length} FAIXAS NO BUFFER</span>
+        <div className={`flex items-center gap-3 px-4 py-1.5 border text-[10px] font-display font-bold uppercase tracking-widest rounded-sm ${
+          isPlaying ? 'border-primary/40 text-primary bg-primary/5' :
+          isLooping ? 'border-amber-500/40 text-amber-400 bg-amber-500/5' :
+          'border-primary/10 text-industrial-silver/40'
+        }`}>
+          <div className={`w-1.5 h-1.5 rounded-full ${isPlaying ? 'bg-primary animate-pulse' : 'bg-zinc-800'}`} />
+          {statusLabel}
+        </div>
+      </div>
+      )}
 
       {/* Player Area */}
       <div className="bg-[#1a1a1a] border-4 border-[#1a1a1a] rounded-xl overflow-hidden shadow-2xl relative">
@@ -376,7 +390,7 @@ export default function JukeboxPanel() {
           <button onClick={() => setIsMediaSelectorOpen(true)}
             className="flex items-center gap-3 px-10 py-3.5 bg-primary/10 text-primary border-2 border-primary/20 text-[10px] font-black tracking-widest hover:bg-primary/20 transition-all rounded-sm active:scale-95 glow-orange">
             <span className="material-symbols-outlined text-sm">perm_media</span>
-            ADICIONAR_DO_ACERVO_DE_MÍDIA
+            ADICIONAR_DA_BIBLIOTECA_DE_MÍDIA
           </button>
         </div>
       </div>

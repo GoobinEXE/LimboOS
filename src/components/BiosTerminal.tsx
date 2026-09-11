@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { checkTerminalClosed } from '../store/firestore';
 import { activityLogger } from '../services/ActivityLogger';
 import { useLandscapeLayout } from '../player/hooks/useLandscapeLayout';
@@ -81,14 +81,14 @@ function TerminalKeyboard({
   compact?: boolean;
   className?: string;
 }) {
-  const keyHeight = compact ? 'h-9' : 'h-11';
-  const keyMaxW = compact ? 'max-w-[36px]' : 'max-w-[44px]';
-  const fontSize = compact ? 'text-[10px]' : 'text-xs sm:text-sm';
+  const keyHeight = compact ? 'h-11 min-h-[44px]' : 'h-11';
+  const keyMaxW = compact ? 'max-w-[40px]' : 'max-w-[44px]';
+  const fontSize = compact ? 'text-[11px]' : 'text-xs sm:text-sm';
 
   return (
-    <div className={`flex flex-col gap-1.5 ${className}`}>
+    <div className={`flex flex-col gap-2 ${className}`}>
       {KEYBOARD_ROWS.map((row, i) => (
-        <div key={i} className={`flex justify-center gap-1 w-full px-1 ${compact ? '' : 'max-w-lg mx-auto px-2'}`}>
+        <div key={i} className={`flex justify-center gap-1.5 w-full px-1 ${compact ? '' : 'max-w-lg mx-auto px-2'}`}>
           {row.map((keyObj, j) => {
             const isObj = typeof keyObj === 'object';
             const label = isObj ? keyObj.label : keyObj;
@@ -260,6 +260,8 @@ export default function BiosTerminal({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
+      transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+      layout
       className="fixed inset-0 z-50 flex flex-col bg-[#050505] overflow-hidden text-[#33FF33] font-mono select-none player-viewport"
       style={{ fontFamily: '"Terminal", "Fixedsys", "Lucida Console", "Courier New", monospace' }}
     >
@@ -274,11 +276,17 @@ export default function BiosTerminal({
         }
       `}</style>
 
-      <div className="absolute top-0 right-0 p-2 sm:p-4 z-[100] flex items-center gap-2 pointer-events-none">
+      <div
+        className="absolute z-100 flex items-center gap-2 pointer-events-none"
+        style={{
+          top: 'max(0.5rem, env(safe-area-inset-top, 0px))',
+          right: 'max(0.5rem, env(safe-area-inset-right, 0px))',
+        }}
+      >
         <button
           type="button"
           onClick={() => setKeyboardVisible((v) => !v)}
-          className="pointer-events-auto touch-manipulation text-[#33FF33]/70 font-bold text-sm hover:text-[#33FF33] transition-colors px-2 py-1 border border-[#33FF33]/20 hover:border-[#33FF33]/50"
+          className="pointer-events-auto touch-manipulation text-[#33FF33]/70 font-bold text-sm hover:text-[#33FF33] transition-colors px-2 py-1 min-h-11 border border-[#33FF33]/20 hover:border-[#33FF33]/50"
           style={{ textShadow: `0 0 4px ${PHOSPHOR}40` }}
           title={keyboardVisible ? 'Ocultar teclado' : 'Mostrar teclado'}
         >
@@ -287,7 +295,7 @@ export default function BiosTerminal({
         <button
           type="button"
           onClick={handleClose}
-          className="pointer-events-auto touch-manipulation text-[#33FF33]/70 font-bold text-lg hover:text-[#33FF33] transition-colors px-2 py-1 border border-[#33FF33]/20 hover:border-[#33FF33]/50"
+          className="pointer-events-auto touch-manipulation text-[#33FF33]/70 font-bold text-lg hover:text-[#33FF33] transition-colors px-2 py-1 min-h-11 border border-[#33FF33]/20 hover:border-[#33FF33]/50"
           style={{ textShadow: `0 0 4px ${PHOSPHOR}40` }}
           aria-label="Fechar terminal"
         >
@@ -347,7 +355,7 @@ Estação: Haven Bytes — PC #07, Swallow Rest`}
           </div>
 
           <div
-            className={`${compactUi ? 'mb-3 px-2 py-2' : 'mb-5 px-3 py-3 sm:px-4'} border border-[#33FF33]/20 bg-[#33FF33]/[0.03]`}
+            className={`${compactUi ? 'mb-3 px-2 py-2' : 'mb-5 px-3 py-3 sm:px-4'} border border-[#33FF33]/20 bg-[#33FF33]/3`}
             style={{ boxShadow: `inset 0 0 20px ${PHOSPHOR}08` }}
           >
             {!compactUi && (
@@ -359,7 +367,7 @@ Estação: Haven Bytes — PC #07, Swallow Rest`}
               </div>
             )}
             <TerminalBlock
-              className={`${compactUi ? 'text-[11px] leading-[1.5]' : 'text-[12px] sm:text-[13px] leading-[1.7]'}`}
+              className={`${compactUi ? 'text-[11px] leading-normal' : 'text-[12px] sm:text-[13px] leading-[1.7]'}`}
               style={{ color: PHOSPHOR_DIM }}
             >
               {compactUi
@@ -387,17 +395,24 @@ Estação: Haven Bytes — PC #07, Swallow Rest`}
         </div>
 
         {/* On-screen keyboard */}
+        <AnimatePresence>
         {keyboardVisible && (
-          <div
-            className={`border-[#33FF33]/15 bg-[#0a0a0a]/80 backdrop-blur-sm z-20 touch-none shrink-0 ${
+          <motion.div
+            key="terminal-keyboard"
+            initial={isLandscape ? { opacity: 0, x: 16 } : { opacity: 0, y: 16 }}
+            animate={{ opacity: 1, x: 0, y: 0 }}
+            exit={isLandscape ? { opacity: 0, x: 12 } : { opacity: 0, y: 12 }}
+            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+            className={`border-[#33FF33]/15 bg-surface-sunken/80 backdrop-blur-sm z-20 touch-none shrink-0 ${
               isLandscape
-                ? 'border-l w-44 sm:w-48 overflow-y-auto py-2 pr-[max(0.5rem,env(safe-area-inset-right))]'
+                ? 'border-l w-52 sm:w-56 overflow-y-auto py-2 pl-1 pr-[max(0.5rem,env(safe-area-inset-right))]'
                 : 'border-t p-2 pb-[max(1.5rem,env(safe-area-inset-bottom))]'
             }`}
           >
             <TerminalKeyboard onKey={handleKeyInput} compact={isLandscape} />
-          </div>
+          </motion.div>
         )}
+        </AnimatePresence>
       </div>
     </motion.div>
   );

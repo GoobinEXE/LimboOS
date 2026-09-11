@@ -4,7 +4,7 @@
 
 > PLAYER: Pois é, Nil. A vida em 2003 é bem mais fácil. Você tá conseguindo relaxar?
 
-> Nil: Acho que sim. O mormaço da rua me dá um pouco de dor de cabeça, mas o Joe me emprestou o Walkman dele. Tô ouvindo umas fitas antigas de grunge pra me desligar. É bom ter vocês de volta. Eu achei que a gente tinha estragado tudo no ano 2000.
+> Nil: Acho que sim. O mormaço da rua me dá um pouco de dor de cabeça, mas o Joe me emprestou o Deck dele. Tô ouvindo umas fitas antigas de grunge pra me desligar. É bom ter vocês de volta. Eu achei que a gente tinha estragado tudo no ano 2000.
 
 ## Conversa 2
 
@@ -12,7 +12,7 @@
 
 > PLAYER: Cara, era de chocolate com calda de morango. Você repetiu três vezes, não lembra?
 
-> Nil: Não... nada. É como se tivesse um arquivo corrompido no meu cérebro. Mas deixa pra lá, deve ser o mormaço. O Joe mudou a fiação do Walkman hoje e colocou uns relés. O aparelho tá esquentando um pouco no meu peito, mas o som tá nítido.
+> Nil: Não... nada. É como se tivesse um arquivo corrompido no meu cérebro. Mas deixa pra lá, deve ser o mormaço. O Joe mudou a fiação do Deck hoje e colocou uns relés. O aparelho tá esquentando um pouco no meu peito, mas o som tá nítido.
 
 ## O DESPERTAR DO COLAPSO (14 DE JUNHO DE 2003 - HOJE)
 
@@ -36,4 +36,4 @@
 
 > PLAYER: Nil, calma! A gente tá indo pro porão!
 
-> Nil: O Walkman do Joe tá queimando a minha pele. Tá cheirando a plástico derretido. Venham rápido. Eu não sei por quanto tempo ainda vou lembrar de quem são vocês. Venham pro porão. AGORA.
+> Nil: O Deck do Joe tá queimando a minha pele. Tá cheirando a plástico derretido. Venham rápido. Eu não sei por quanto tempo ainda vou lembrar de quem são vocês. Venham pro porão. AGORA.

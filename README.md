@@ -293,7 +293,7 @@ Em resumo:
 
 - Você pode usar, estudar, modificar e publicar forks **apenas para fins não comerciais**.
 - Redistribuições devem manter os avisos `Required Notice:` do `LICENSE` e atribuir o LimboOS como projeto original.
-- **Uso comercial é proibido** sob essa licença. Se quiser usar de forma comercial (produto, SaaS, white-label, monetização etc.), entre em contato: [github.com/xXinous](https://github.com/xXinous) (issues do repositório ou perfil).
+- **Uso comercial é proibido** sob essa licença. Se quiser usar de forma comercial (produto, SaaS, white-label, monetização etc.), entre em contato: [github.com/GoobinEXE](https://github.com/GoobinEXE) (issues do repositório ou perfil).
 
 ### Código ≠ universo
 

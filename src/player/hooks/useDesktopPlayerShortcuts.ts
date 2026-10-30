@@ -47,6 +47,8 @@ export function useDesktopPlayerShortcuts(
           onCloseEvidence();
           return;
         }
+        // Diálogo aberto (menu, metadata) fecha a si mesmo; não navegar por baixo dele
+        if (document.querySelector('[aria-modal="true"]')) return;
         if (screen === 'campaignSelection') {
           // Só volta ao player se já houver missão ativa
           if (hasCampaign) {

@@ -39,8 +39,9 @@ export abstract class IntelBase {
   }
 
   public getTypeLabel(): string {
-    const labels: Record<string, string> = { AUDIO: '📼 Áudio', TEXT: '💾 Textos', VISUAL: '📷 Imagens', META: '🏆 Conquistas', VIDEO: '📺 Vídeo' };
-    return labels[this.type] || '❓ Desconhecido';
+    // Sem emoji: a UI desenha o ícone vetorial (IntelTypeIcon) ao lado do rótulo
+    const labels: Record<string, string> = { AUDIO: 'Áudio', TEXT: 'Textos', VISUAL: 'Imagens', META: 'Conquistas', VIDEO: 'Vídeo' };
+    return labels[this.type] || 'Desconhecido';
   }
 
   public getTypeIcon(): string {

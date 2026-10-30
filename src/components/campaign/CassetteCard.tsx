@@ -51,7 +51,7 @@ const Reel = ({ spinning, reverse = false }: { spinning: boolean; reverse?: bool
 const Spec = ({ label, value }: { label: string; value: string }) => (
   <div className="min-w-0 flex flex-col gap-0.5">
     <span className="text-protocol text-[8px] text-primary/50">{label}</span>
-    <span className="text-mono-ui text-[10px] text-white/80 truncate">{value}</span>
+    <span className="text-mono-ui text-[10px] text-white/80 line-clamp-2 break-words leading-snug">{value}</span>
   </div>
 );
 
@@ -76,7 +76,7 @@ export const CassetteCard = memo(({ campaign, onSelect, index, dragX, cardWidth,
   const filter = useTransform(
     distance,
     [0, step, step * 2],
-    ['blur(0px) brightness(1)', 'blur(2px) brightness(0.65)', 'blur(4px) brightness(0.45)'],
+    ['brightness(1)', 'brightness(0.65)', 'brightness(0.45)'],
     { clamp: true }
   );
 
@@ -98,14 +98,10 @@ export const CassetteCard = memo(({ campaign, onSelect, index, dragX, cardWidth,
         }
       }}
     >
-      {/* Halo do cartucho ativo — em WebKit lite usa box-shadow (sem blur-2xl) */}
+      {/* Moldura do encaixe ativo: aro fino em vez de halo borrado */}
       <motion.div
         aria-hidden
-        className={
-          webkitLite
-            ? 'absolute -inset-2 rounded-panel pointer-events-none shadow-[0_0_0_1px_rgba(255,140,0,0.3),0_0_18px_-6px_rgba(255,140,0,0.55)]'
-            : 'absolute -inset-4 rounded-panel bg-accent-10 blur-2xl pointer-events-none'
-        }
+        className="absolute -inset-1.5 rounded-panel pointer-events-none border border-accent-40"
         initial={false}
         animate={{ opacity: isActive && !isLocked ? 1 : 0 }}
         transition={{ duration: 0.5, ease: EASE_OUT }}
@@ -221,7 +217,7 @@ export const CassetteCard = memo(({ campaign, onSelect, index, dragX, cardWidth,
               }}
               className={`w-full text-protocol py-3.5 rounded-control transition duration-200 flex items-center justify-center gap-2 group/btn active:scale-[0.98] ${
                 isActive
-                  ? 'bg-accent text-black glow-orange hover:bg-primary-container'
+                  ? 'bg-accent text-black hover:bg-primary-container'
                   : 'bg-surface-raised text-ash-400 border border-border hover:border-border-accent hover:text-primary'
               }`}
             >

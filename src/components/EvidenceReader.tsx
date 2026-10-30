@@ -4,6 +4,7 @@ import { motion } from 'motion/react';
 import { EASE_ENTER, EASE_EXIT } from '../lib/motion';
 import { IntelBase, VisualIntel, TextIntel, AudioIntel, MetaIntel, VideoIntel } from '../services/IntelEngine';
 import { analyticsTracker } from '../services/AnalyticsTracker';
+import IntelTypeIcon from './player/IntelTypeIcon';
 
 interface EvidenceReaderProps {
   evidence: IntelBase;
@@ -155,7 +156,7 @@ function CorruptedTextRenderer({ text }: { text: string }) {
       </div>
 
       {/* Bottom warning bar */}
-      <div className="mt-4 flex items-center gap-2 text-red-500/60 text-[9px] font-mono uppercase tracking-[0.3em] animate-pulse">
+      <div className="mt-4 flex items-center gap-2 text-red-500/60 text-[9px] font-mono uppercase tracking-[0.3em] animate-led">
         <span>⚠</span>
         <span>{t('evidence.crcError')}</span>
         <span>⚠</span>
@@ -216,7 +217,7 @@ export default function EvidenceReader({ evidence, onClose }: EvidenceReaderProp
       role="dialog"
       aria-modal="true"
       aria-label={evidence.title}
-      className={`absolute inset-0 z-50 flex flex-col ${scheme.bg} ${scheme.text} font-mono p-4 sm:p-6 sm:rounded-4xl overflow-hidden border border-current/15 shadow-[0_24px_64px_-24px_rgba(0,0,0,0.9)]`}
+      className={`absolute inset-0 z-50 flex flex-col ${scheme.bg} ${scheme.text} font-mono p-4 sm:p-6 sm:rounded-panel overflow-hidden border border-current/15 shadow-[0_24px_64px_-24px_rgba(0,0,0,0.9)]`}
     >
       {/* Scanline overlay */}
       <div className="absolute inset-0 pointer-events-none z-10" style={{
@@ -227,9 +228,9 @@ export default function EvidenceReader({ evidence, onClose }: EvidenceReaderProp
         background: 'radial-gradient(circle, transparent 70%, rgba(0,0,0,0.3) 100%)'
       }} />
       {/* Faixa de protocolo — enquadramento de documento */}
-      <div className="flex items-center justify-between gap-3 mb-3 shrink-0 text-[8px] uppercase tracking-[0.3em] opacity-40 select-none">
+      <div className="flex items-center justify-between gap-3 mb-3 shrink-0 text-[9px] uppercase tracking-[0.3em] opacity-70 select-none">
         <span className="flex items-center gap-2 whitespace-nowrap">
-          <span aria-hidden className="inline-block w-1.5 h-1.5 bg-current animate-pulse" />
+          <span aria-hidden className="inline-block w-1.5 h-1.5 bg-current animate-led" />
           {t('evidence.registry')}
         </span>
         <span aria-hidden className="flex-1 border-t border-dashed border-current/40" />
@@ -238,7 +239,7 @@ export default function EvidenceReader({ evidence, onClose }: EvidenceReaderProp
       {/* Header */}
       <div className={`flex items-center justify-between border-b ${scheme.border}/30 pb-4 mb-4 shrink-0`}>
         <div className="flex items-center gap-3">
-          <span className="text-2xl">{evidence.getTypeIcon()}</span>
+          <IntelTypeIcon type={evidence.type} size={22} className={scheme.text} />
           <div>
             <h2 className="text-sm font-bold uppercase tracking-widest">{evidence.title}</h2>
             <p className="text-[10px] opacity-70 italic">
@@ -261,8 +262,8 @@ export default function EvidenceReader({ evidence, onClose }: EvidenceReaderProp
         <div className="flex items-center gap-3">
           <span className={`text-[8px] font-bold uppercase tracking-[0.2em] px-2 py-0.5 border rounded ${
             evidence.level >= 3 
-              ? 'border-current/50 bg-current/10 shadow-[0_0_8px_-3px_currentColor]' 
-              : 'border-current/30 opacity-50'
+              ? 'border-current/50 bg-current/10' 
+              : 'border-current/30 opacity-80'
           }`}>
             {levelLabel}
           </span>
@@ -286,7 +287,7 @@ export default function EvidenceReader({ evidence, onClose }: EvidenceReaderProp
         {/* VIDEO: player unificado (deck desktop / evidência) */}
         {isVideo ? (
           <div className="flex flex-col items-center py-4 gap-4">
-            <div className="w-full aspect-video max-h-[55vh] rounded-lg border border-orange-400/30 overflow-hidden bg-black">
+            <div className="w-full aspect-video max-h-[55vh] lg:max-h-[68vh] rounded-lg border border-orange-400/30 overflow-hidden bg-black">
               {(evidence as VideoIntel).isYoutube() && (evidence as VideoIntel).youtubeId ? (
                 <iframe
                   title={evidence.title}
@@ -318,14 +319,14 @@ export default function EvidenceReader({ evidence, onClose }: EvidenceReaderProp
               <video
                 src={details.url}
                 controls
-                className="w-full max-h-[50vh] rounded-lg border border-tube-500/30 bg-black"
+                className="w-full max-h-[50vh] lg:max-h-[68vh] rounded-lg border border-tube-500/30 bg-black"
                 playsInline
               />
             ) : (
               <img
                 src={details.url}
                 alt={evidence.title}
-                className="w-full max-h-[50vh] object-contain rounded-lg border border-tube-500/30"
+                className="w-full max-h-[50vh] lg:max-h-[68vh] object-contain rounded-lg border border-tube-500/30"
               />
             )}
             {evidence.description && (
@@ -337,8 +338,8 @@ export default function EvidenceReader({ evidence, onClose }: EvidenceReaderProp
         ) : isAudio && details.source ? (
           /* AUDIO: Embedded player */
           <div className="flex flex-col items-center py-8 gap-6">
-            <div className="w-24 h-24 rounded-2xl bg-amber-400/10 border-2 border-amber-400/30 flex items-center justify-center text-5xl animate-pulse">
-              📼
+            <div className="w-24 h-24 rounded-card bg-amber-400/10 border-2 border-amber-400/30 flex items-center justify-center">
+              <IntelTypeIcon type="AUDIO" size={44} />
             </div>
             <div className="w-full max-w-sm">
               <audio src={details.source} controls className="w-full" preload="metadata" />
@@ -359,9 +360,11 @@ export default function EvidenceReader({ evidence, onClose }: EvidenceReaderProp
         ) : isMeta ? (
           /* META: Achievement/flag display */
           <div className="flex flex-col items-center py-8 gap-4 text-center">
-            <div className="text-6xl">
-              {details.icon || '🏆'}
-            </div>
+            {details.icon ? (
+              <div className="text-6xl">{details.icon}</div>
+            ) : (
+              <IntelTypeIcon type="META" size={56} />
+            )}
             <h3 className="text-lg font-bold uppercase tracking-widest">{evidence.title}</h3>
             <p className={`text-sm leading-relaxed max-w-xs opacity-80 ${scheme.selBg} ${scheme.selText}`}>
               {evidence.description}
@@ -384,7 +387,7 @@ export default function EvidenceReader({ evidence, onClose }: EvidenceReaderProp
         )}
       </div>
       {/* Footer with enriched metadata */}
-      <div className={`mt-4 pt-3 border-t ${scheme.border}/30 text-[9px] opacity-50 flex justify-between gap-3 uppercase tracking-[0.15em] shrink-0`}>
+      <div className={`mt-4 pt-3 border-t ${scheme.border}/30 text-[9px] opacity-75 flex justify-between gap-3 uppercase tracking-[0.15em] shrink-0`}>
         <span className="truncate">{t('evidence.sector', { chapter: evidence.metadata.chapter || t('unknown', { ns: 'common' }) })}</span>
         <span className="whitespace-nowrap">{t('evidence.level', { level: levelLabel })}</span>
         <span className="truncate text-right">{details.npc ? t('evidence.npc', { npc: details.npc }) : t('evidence.checksumOk')}</span>

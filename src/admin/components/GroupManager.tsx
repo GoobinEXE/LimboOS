@@ -383,7 +383,7 @@ export default function GroupManager({
                               <p className="font-black text-[10px] text-primary uppercase truncate">
                                 {item.char.codinome}
                               </p>
-                              <p className="text-[7px] font-mono text-ash-600 font-bold uppercase truncate mt-0.5">
+                              <p className="text-[9px] font-mono text-ash-600 font-bold uppercase truncate mt-0.5">
                                 {masterAccountLabel(user, '?')}
                               </p>
                             </div>
@@ -448,7 +448,7 @@ export default function GroupManager({
                               <p className="font-black text-[10px] text-ash-400 uppercase truncate group-hover:text-bone transition-colors">
                                 {item.char.codinome}
                               </p>
-                              <p className="text-[7px] font-mono text-ash-600 font-bold uppercase truncate mt-0.5">
+                              <p className="text-[9px] font-mono text-ash-600 font-bold uppercase truncate mt-0.5">
                                 JOGADOR: {masterAccountLabel(user, '?')}
                               </p>
                             </div>

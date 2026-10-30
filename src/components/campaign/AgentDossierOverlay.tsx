@@ -12,6 +12,7 @@ import type { AccessLevel } from '../../types/intel';
 import { IntelManager, IntelBase, VisualIntel, TextIntel } from '../../services/IntelEngine';
 import RetroSpinner from '../player/RetroSpinner';
 import { extractSpotifyEmbedUrl, isValidSpotifyPlaylistInput } from '../../lib/spotify';
+import IntelTypeIcon from '../player/IntelTypeIcon';
 
 const STATUS_STYLE = {
   vivo: { labelKey: 'status.ativo', color: 'text-phosphor-400', dot: 'bg-phosphor-400', border: 'border-phosphor-500/30' },
@@ -181,7 +182,7 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager, onUpdat
             type="button"
             onClick={() => fileInputRef.current?.click()}
             aria-label={t('dossier.changePhoto')}
-            className="relative w-16 h-16 rounded-card overflow-hidden bg-surface-sunken border border-border-strong flex items-center justify-center text-primary text-display text-xl shrink-0 group glow-orange-subtle"
+            className="relative w-16 h-16 rounded-card overflow-hidden bg-surface-sunken border border-border-strong flex items-center justify-center text-primary text-display text-xl shrink-0 group"
           >
             {currentPhotoUrl ? (
               <img
@@ -218,7 +219,7 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager, onUpdat
             )}
             <div className="flex items-center gap-2 mt-1.5 flex-wrap">
               <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-inset border bg-surface-raised text-protocol text-[8px] ${stats.statusCfg.border} ${stats.statusCfg.color}`}>
-                <span className={`w-1.5 h-1.5 rounded-full ${stats.statusCfg.dot} animate-pulse`} />
+                <span className={`w-1.5 h-1.5 rounded-full ${stats.statusCfg.dot} animate-led`} />
                 {stats.statusCfg.label}
               </span>
               {playerData.character.agentId && <span className="text-mono-ui text-[10px] text-ash-500">RM-{playerData.character.agentId}</span>}
@@ -250,13 +251,15 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager, onUpdat
       </div>
 
       {/* Abas */}
-      <nav className="flex bg-surface-raised/50 shrink-0 relative z-20 border-b border-border">
+      <nav role="tablist" className="flex bg-surface-raised/50 shrink-0 relative z-20 border-b border-border">
         {TABS.map(tab => {
           const isActive = activeTab === tab.id;
           return (
             <button
               key={tab.id}
               type="button"
+              role="tab"
+              aria-selected={isActive}
               onClick={() => setActiveTab(tab.id)}
               className={`relative flex-1 flex items-center justify-center gap-2 py-3.5 text-protocol text-[9px] transition-colors duration-200 ${
                 isActive ? 'text-primary' : 'text-ash-500 hover:text-ash-300'
@@ -266,7 +269,7 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager, onUpdat
               {isActive && (
                 <motion.span
                   layoutId="dossier-tab-indicator"
-                  className="absolute inset-x-6 -bottom-px h-0.5 bg-primary glow-orange-subtle"
+                  className="absolute inset-x-6 -bottom-px h-0.5 bg-primary"
                   transition={SPRING_INDICATOR}
                 />
               )}
@@ -304,7 +307,7 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager, onUpdat
                         key={i}
                         className={`h-2 flex-1 rounded-inset transition duration-700 ${
                           i < stats.dangerLevel
-                            ? stats.dangerLevel >= 4 ? 'bg-red-500 shadow-[0_0_8px_#ef444466]' : 'bg-primary glow-orange-subtle'
+                            ? stats.dangerLevel >= 4 ? 'bg-red-500' : 'bg-primary'
                             : 'bg-surface-sunken border border-border-subtle'
                         }`}
                       />
@@ -368,7 +371,7 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager, onUpdat
                     </div>
                   </div>
                 ) : stats.embedUrl ? (
-                  <div className="rounded-card overflow-hidden border border-border bg-surface-sunken shadow-[0_0_24px_-8px_rgba(29,185,84,0.25)]">
+                  <div className="rounded-card overflow-hidden border border-border bg-surface-sunken">
                     <iframe src={stats.embedUrl} width="100%" height="152" frameBorder="0" allow="autoplay; encrypted-media; fullscreen" loading="lazy" className="block" title="Spotify" />
                   </div>
                 ) : (
@@ -398,15 +401,16 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager, onUpdat
                     <button
                       key={lvl}
                       type="button"
+                      aria-pressed={isActive}
                       onClick={() => setActiveLevel(lvl)}
                       className={`relative flex-1 py-2 rounded-control text-protocol text-[8px] transition-colors duration-200 ${
-                        isActive ? 'text-black' : 'text-primary/40 hover:text-primary/70'
+                        isActive ? 'text-black' : 'text-primary/60 hover:text-primary'
                       }`}
                     >
                       {isActive && (
                         <motion.span
                           layoutId="dossier-level-indicator"
-                          className="absolute inset-0 rounded-control bg-accent glow-orange-subtle"
+                          className="absolute inset-0 rounded-control bg-accent"
                           transition={SPRING_INDICATOR}
                         />
                       )}
@@ -447,7 +451,7 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager, onUpdat
                         }`}
                       >
                         <div className="w-10 h-10 rounded-control border border-border bg-surface-sunken flex items-center justify-center shrink-0 group-hover:border-border-accent transition-colors">
-                          <span className="text-lg leading-none">{item.getTypeIcon()}</span>
+                          <IntelTypeIcon type={item.type} size={18} className="text-ash-300 group-hover:text-primary transition-colors" />
                         </div>
                         <div className="min-w-0 flex-1">
                           <p className="text-[11px] font-semibold text-white group-hover:text-primary transition-colors truncate uppercase tracking-wide">{item.title}</p>
@@ -482,7 +486,7 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager, onUpdat
 
       <footer className="px-5 sm:px-6 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] flex justify-between items-center bg-surface-raised/80 border-t border-border-subtle shrink-0 relative z-20">
         <div className="flex items-center gap-2 text-protocol text-[8px] text-ash-400">
-          <span className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse glow-orange-subtle" /> {t('dossier.secureConn')}
+          <span className="w-1.5 h-1.5 bg-primary rounded-full animate-led" /> {t('dossier.secureConn')}
         </div>
         <div className="text-mono-ui text-[9px] text-ash-600">{t('dossier.gridNode')}</div>
       </footer>

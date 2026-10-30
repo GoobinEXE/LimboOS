@@ -515,13 +515,13 @@ export default function MediaLibraryPanel({
                           {catalogStatus && !selectionMode && (
                             <div className="absolute top-1 right-1 z-20 flex flex-col items-end gap-0.5">
                               <span
-                                className={`text-[7px] font-display font-bold uppercase tracking-widest px-1 py-0.5 border rounded-sm bg-black/70 ${intelCatalogStatusClass(catalogStatus)}`}
+                                className={`text-[8px] font-display font-bold uppercase tracking-widest px-1 py-0.5 border rounded-sm bg-black/70 ${intelCatalogStatusClass(catalogStatus)}`}
                               >
                                 {intelCatalogStatusLabel(catalogStatus)}
                               </span>
                               {intelItem && (
                                 <span
-                                  className={`text-[7px] font-display font-bold uppercase tracking-widest px-1 py-0.5 border rounded-sm bg-black/70 ${accessLevelClass(intelItem.level)}`}
+                                  className={`text-[8px] font-display font-bold uppercase tracking-widest px-1 py-0.5 border rounded-sm bg-black/70 ${accessLevelClass(intelItem.level)}`}
                                 >
                                   {accessLevelLabel(intelItem.level)}
                                 </span>
@@ -534,7 +534,7 @@ export default function MediaLibraryPanel({
                               {tags.slice(0, 2).map((tid) => (
                                 <span
                                   key={tid}
-                                  className="px-1 py-0.5 bg-black/70 text-[7px] font-display font-bold text-primary uppercase tracking-wider truncate max-w-18"
+                                  className="px-1 py-0.5 bg-black/70 text-[8px] font-display font-bold text-primary uppercase tracking-wider truncate max-w-18"
                                 >
                                   {folderNameById.get(tid) || '…'}
                                 </span>

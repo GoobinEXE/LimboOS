@@ -139,7 +139,10 @@ export default function BiosTerminal({
   const { isLandscape } = useLandscapeLayout();
   const [history, setHistory] = useState<React.ReactNode[]>([]);
   const [currentLine, setCurrentLine] = useState('');
-  const [keyboardVisible, setKeyboardVisible] = useState(true);
+  // Desktop com teclado físico começa sem o teclado de tela; [⌨] reabre
+  const [keyboardVisible, setKeyboardVisible] = useState(
+    () => typeof window === 'undefined' || !window.matchMedia('(min-width: 1024px) and (pointer: fine)').matches
+  );
   const terminalRef = useRef<HTMLDivElement>(null);
 
   const handleClose = useCallback(() => {
@@ -292,6 +295,8 @@ export default function BiosTerminal({
           className="pointer-events-auto touch-manipulation text-crt/70 font-bold text-sm hover:text-crt transition-colors px-2 py-1 min-h-11 border border-crt/20 hover:border-crt/50"
           style={{ textShadow: `0 0 4px ${PHOSPHOR}40` }}
           title={keyboardVisible ? t('bios.hideKeyboard') : t('bios.showKeyboard')}
+          aria-label={keyboardVisible ? t('bios.hideKeyboard') : t('bios.showKeyboard')}
+          aria-pressed={keyboardVisible}
         >
           [⌨]
         </button>

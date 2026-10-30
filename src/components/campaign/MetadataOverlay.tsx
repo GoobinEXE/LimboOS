@@ -70,6 +70,12 @@ export const MetadataOverlay = ({ onClose, agent }: MetadataOverlayProps) => {
     }
   }, [loading, agentCode]);
 
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [onClose]);
+
   const status = agent?.agentStatus || 'vivo';
   const statusCfg = useMemo(() => {
     const cfg = STATUS_STYLE[status] || STATUS_STYLE.vivo;
@@ -92,6 +98,9 @@ export const MetadataOverlay = ({ onClose, agent }: MetadataOverlayProps) => {
         initial={{ scale: 0.94, y: 16 }}
         animate={{ scale: 1, y: 0 }}
         transition={SPRING_SNAP}
+        role="dialog"
+        aria-modal="true"
+        aria-label={t('metadata.title')}
         className="bg-surface-panel border border-border-strong rounded-card shadow-panel w-full max-w-90 relative overflow-hidden"
         onClick={e => e.stopPropagation()}
       >
@@ -103,7 +112,7 @@ export const MetadataOverlay = ({ onClose, agent }: MetadataOverlayProps) => {
           <div className="flex items-center justify-between mb-2">
             <span className="text-protocol text-[8px] text-primary/60">{t('metadata.title')}</span>
             <span className="inline-flex items-center gap-1.5 text-protocol text-[8px]">
-              <span className={`w-1.5 h-1.5 rounded-full ${statusCfg.dot} animate-pulse`} />
+              <span className={`w-1.5 h-1.5 rounded-full ${statusCfg.dot} animate-led`} />
               <span className={statusCfg.color}>{statusCfg.label}</span>
             </span>
           </div>
@@ -113,7 +122,7 @@ export const MetadataOverlay = ({ onClose, agent }: MetadataOverlayProps) => {
         <div className="px-7 py-6 space-y-5 relative z-10">
           <Row label={t('metadata.idLabel')}>
             {loading ? (
-              <span className="text-primary/40 animate-pulse">{t('metadata.syncing')}</span>
+              <span className="text-primary/40 animate-led">{t('metadata.syncing')}</span>
             ) : (
               <span className="text-primary font-semibold relative inline-block">
                 <AnimatePresence mode="wait" initial={false}>
@@ -150,7 +159,7 @@ export const MetadataOverlay = ({ onClose, agent }: MetadataOverlayProps) => {
                   key={i}
                   className={`h-2 flex-1 rounded-inset transition duration-700 ${
                     i < dangerLevel
-                      ? dangerLevel >= 4 ? 'bg-red-500 shadow-[0_0_8px_#ef444466]' : 'bg-primary glow-orange-subtle'
+                      ? dangerLevel >= 4 ? 'bg-red-500' : 'bg-primary'
                       : 'bg-surface-sunken border border-border-subtle'
                   }`}
                 />
@@ -167,7 +176,7 @@ export const MetadataOverlay = ({ onClose, agent }: MetadataOverlayProps) => {
           <button
             type="button"
             onClick={onClose}
-            className="w-full bg-accent-10 hover:bg-accent-20 text-primary border border-border-accent rounded-control py-3.5 text-protocol transition duration-200 active:scale-[0.98] glow-orange-subtle"
+            className="w-full bg-accent-10 hover:bg-accent-20 text-primary border border-border-accent rounded-control py-3.5 text-protocol transition duration-200 active:scale-[0.98]"
           >
             {t('metadata.syncExit')}
           </button>

@@ -110,7 +110,7 @@ export default function CharacterSelectionScreen({ account, onSelect, onLogout }
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <button onClick={onLogout} className="bg-error/10 hover:bg-error/20 text-error border border-error/30 w-10 h-10 rounded-control flex items-center justify-center transition-colors duration-(--duration-fast) active:scale-[0.97]" title={t('character.logoutTitle')}>
+            <button onClick={onLogout} className="bg-error/10 hover:bg-error/20 text-error border border-error/30 w-10 h-10 rounded-control flex items-center justify-center transition-colors duration-(--duration-fast) active:scale-[0.97]" title={t('character.logoutTitle')} aria-label={t('character.logoutTitle')}>
               <LogOut size={16} />
             </button>
             <button onClick={() => setIsCreating(true)} className="bg-accent/10 hover:bg-accent/20 text-accent border border-accent/30 px-4 py-2 rounded-control text-protocol transition-colors duration-(--duration-fast) flex items-center gap-2 group active:scale-[0.97]">
@@ -232,7 +232,7 @@ export default function CharacterSelectionScreen({ account, onSelect, onLogout }
                   <button type="button" onClick={() => setIsCreating(false)} className="flex-1 py-4 text-protocol text-ash-400 hover:text-white transition-colors duration-(--duration-fast)">
                     {tCommon('cancel')}
                   </button>
-                  <button type="submit" disabled={creating} className="flex-2 bg-accent hover:bg-primary text-[#1a0d00] active:scale-[0.97] font-display font-bold text-xs uppercase tracking-[0.2em] py-4 px-8 rounded-control transition duration-(--duration-fast) flex items-center justify-center gap-3 disabled:opacity-50 glow-orange">
+                  <button type="submit" disabled={creating} className="flex-2 bg-accent hover:bg-primary text-[#1a0d00] active:scale-[0.97] font-display font-bold text-xs uppercase tracking-[0.2em] py-4 px-8 rounded-control transition duration-(--duration-fast) flex items-center justify-center gap-3 disabled:opacity-50">
                     {creating ? <RetroSpinner size="sm" /> : t('character.create.submit')}
                   </button>
                 </div>
@@ -246,7 +246,7 @@ export default function CharacterSelectionScreen({ account, onSelect, onLogout }
       <AnimatePresence>
         {showMasterNamePrompt && (
           <motion.div variants={overlayFade} initial="hidden" animate="visible" exit="exit" className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-surface-sunken/95">
-            <motion.div role="dialog" aria-modal="true" variants={dialogPop} initial="hidden" animate="visible" exit="exit" className="w-full max-w-md bg-surface-raised border border-accent/50 rounded-card p-8 shadow-2xl machined-edge relative glow-orange-subtle">
+            <motion.div role="dialog" aria-modal="true" variants={dialogPop} initial="hidden" animate="visible" exit="exit" className="w-full max-w-md bg-surface-raised border border-accent/50 rounded-card p-8 shadow-2xl machined-edge relative">
               <div className="absolute -top-3 left-6 bg-accent px-2 py-0.5 text-[10px] font-display font-bold text-black tracking-widest uppercase rounded-inset">
                 {t('character.master.badge')}
               </div>
@@ -274,7 +274,7 @@ export default function CharacterSelectionScreen({ account, onSelect, onLogout }
                   </div>
                 </div>
 
-                <button type="submit" disabled={savingMasterName} className="w-full bg-accent hover:bg-primary text-[#1a0d00] active:scale-[0.97] font-display font-bold text-xs uppercase tracking-[0.2em] py-4 rounded-control transition duration-(--duration-fast) flex items-center justify-center gap-3 disabled:opacity-50 glow-orange">
+                <button type="submit" disabled={savingMasterName} className="w-full bg-accent hover:bg-primary text-[#1a0d00] active:scale-[0.97] font-display font-bold text-xs uppercase tracking-[0.2em] py-4 rounded-control transition duration-(--duration-fast) flex items-center justify-center gap-3 disabled:opacity-50">
                   {savingMasterName ? <RetroSpinner size="sm" /> : t('character.master.submit')}
                 </button>
               </form>

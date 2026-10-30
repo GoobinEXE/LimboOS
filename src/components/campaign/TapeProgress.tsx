@@ -64,7 +64,7 @@ export const TapeProgress = ({ total, current, onChange }: TapeProgressProps) =>
           )}
 
           <motion.div
-            className="absolute top-0 bottom-0 w-6 rounded-full bg-primary glow-orange"
+            className="absolute top-0 bottom-0 w-6 rounded-full bg-primary"
             initial={false}
             animate={{ left: `${(current / denominator) * 100}%`, x: `${-(current / denominator) * 100}%` }}
             transition={INDICATOR_SPRING}
@@ -76,7 +76,7 @@ export const TapeProgress = ({ total, current, onChange }: TapeProgressProps) =>
         <span className="text-primary/80">{pad(Math.min(current + 1, Math.max(total, 1)))}</span>
         <span className="opacity-50">/</span>
         <span>{pad(total)}</span>
-        <span className="text-protocol text-[8px] ml-2 opacity-70">{t('campaign.progressRecords')}</span>
+        <span className="text-protocol text-[9px] ml-2 text-ash-500">{t('campaign.progressRecords')}</span>
       </div>
     </div>
   );

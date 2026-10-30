@@ -107,9 +107,11 @@ export default React.memo(function BottomControls({
             onRewind();
           }
         }}
+        aria-label={t('walkman.rewind')}
+        aria-disabled={!hasTape || isRewinding}
         className={`${sideBtn} rounded-full ${KEYCAP} ${(hasTape && !isRewinding) ? KEYCAP_ACTIVE : KEYCAP_DISABLED}`}
       >
-        <RotateCcw size={iconSide} className={`text-accent ${isRewinding ? 'animate-spin drop-shadow-[0_0_6px_rgba(255,140,0,0.6)]' : ''}`} />
+        <RotateCcw size={iconSide} className={`text-accent ${isRewinding ? 'animate-spin' : ''}`} />
       </button>
 
       <button onClick={() => {
@@ -120,14 +122,19 @@ export default React.memo(function BottomControls({
           setIsPlaying(nextPlaying);
         }
       }}
+        aria-label={isPlaying ? t('walkman.pause') : t('walkman.play')}
+        aria-disabled={!hasTape}
         className={`${playBtn} gap-1 ${KEYCAP} ${hasTape ? KEYCAP_ACTIVE : KEYCAP_DISABLED}`}>
         {isPlaying
-          ? <Pause size={iconPlay} className="text-accent fill-accent drop-shadow-[0_0_6px_rgba(255,140,0,0.55)]" />
+          ? <Pause size={iconPlay} className="text-accent fill-accent" />
           : <Play size={iconPlay} className="text-accent fill-accent" />}
       </button>
 
       <button 
         onClick={handleAppClick} 
+        aria-label={appCount > 1 ? t('walkman.systems') : terminalAccess ? t('walkman.mhDos') : macAccess ? t('walkman.macos') : t('walkman.eq')}
+        aria-disabled={appCount === 0}
+        aria-expanded={appCount > 1 ? showMenu : undefined}
         className={`${sideBtn} rounded-full ${KEYCAP} ${appCount > 0 ? KEYCAP_ACTIVE : KEYCAP_DISABLED}`}
       >
         <span className="flex items-center justify-center pointer-events-none">
@@ -136,7 +143,7 @@ export default React.memo(function BottomControls({
           ) : terminalAccess ? (
             <span className="text-crt text-[10px] font-black tracking-tighter drop-shadow-[0_0_5px_rgba(51,255,51,0.5)]">{t('walkman.mhDosShort')}</span>
           ) : macAccess ? (
-            <span className="text-ash-300 drop-shadow-[0_0_5px_rgba(255,255,255,0.3)]">
+            <span className="text-ash-300">
               <AppleIcon size={iconSide} />
             </span>
           ) : (

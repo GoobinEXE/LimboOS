@@ -144,7 +144,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
                   {t('login.hint.register')}
                 </p>
                 <button type="submit" disabled={isLoggingIn}
-                  className="shrink-0 bg-accent hover:bg-primary text-[#1a0d00] font-display font-bold text-xs uppercase tracking-[0.2em] py-4 px-8 rounded-control transition duration-(--duration-fast) flex items-center justify-center gap-3 group disabled:opacity-50 disabled:cursor-not-allowed glow-orange-subtle active:scale-[0.97]">
+                  className="shrink-0 bg-accent hover:bg-primary text-[#1a0d00] font-display font-bold text-xs uppercase tracking-[0.2em] py-4 px-8 rounded-control transition duration-(--duration-fast) flex items-center justify-center gap-3 group disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.97]">
                   {isLoggingIn ? (
                     <>
                       <RetroSpinner size="sm" />
@@ -195,7 +195,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
           <div className="bg-surface-panel h-10 flex items-center px-8 justify-between border-t border-border">
             <div className="flex gap-1">
               {[1,2,3,4,5].map(i => (
-                <div key={i} className={`w-1.5 h-3 rounded-inset ${isLoggingIn ? 'animate-pulse bg-accent' : 'bg-border-strong'}`} style={{ animationDelay: `${i * 0.1}s` }} />
+                <div key={i} className={`w-1.5 h-3 rounded-inset ${isLoggingIn ? 'animate-led bg-accent' : 'bg-border-strong'}`} style={{ animationDelay: `${i * 0.1}s` }} />
               ))}
             </div>
             <div className="text-protocol text-ash-600">{t('login.linkNode')}</div>

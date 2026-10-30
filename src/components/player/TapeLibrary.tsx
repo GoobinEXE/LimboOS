@@ -3,6 +3,7 @@ import type { IntelBase } from '../../services/IntelEngine';
 import type { DisplayMode } from '../../types/player';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import IntelTypeIcon from './IntelTypeIcon';
 
 export default React.memo(function TapeLibrary({
   intelItems,
@@ -65,7 +66,7 @@ export default React.memo(function TapeLibrary({
         <div className="tape-scroll overflow-y-auto h-full">
           {intelItems.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full p-4 text-center">
-              <span className="text-3xl mb-2">📼</span>
+              <IntelTypeIcon type="AUDIO" size={28} className="text-ash-600 mb-2" />
               <p className="text-ash-500 text-xs uppercase tracking-widest">{t('walkman.library.empty')}</p>
               <p className="text-ash-600 text-[10px] mt-1">
                 {t('walkman.library.emptyHint')}
@@ -79,18 +80,21 @@ export default React.memo(function TapeLibrary({
                 return (
                   <React.Fragment key={item.id}>
                     {showGroupHeader && (
-                      <div className="px-3 py-1.5 bg-surface-sunken border-b border-border sticky top-0 z-10">
-                        <span className="text-[9px] text-accent-80 font-bold uppercase tracking-widest">
+                      <div className="px-3 py-1.5 bg-surface-sunken border-b border-border sticky top-0 z-10 flex items-center gap-1.5 text-accent-80">
+                        <IntelTypeIcon type={item.type} size={11} />
+                        <span className="text-[9px] font-bold uppercase tracking-widest">
                           {item.getTypeLabel()}
                         </span>
                       </div>
                     )}
-                    <motion.div
+                    <motion.button
+                      type="button"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                       onClick={() => onIntelSelect(item)}
-                      className={`p-2 border-b border-border-subtle cursor-pointer transition-colors duration-150 ease-limbo flex justify-between items-center ${item.id === currentIntelId ? 'bg-accent-10 border-border-accent' : 'hover:bg-surface-container active:bg-surface-container-high'}`}
+                      aria-current={item.id === currentIntelId ? 'true' : undefined}
+                      className={`w-full text-left p-2 border-b border-border-subtle cursor-pointer transition-colors duration-150 ease-limbo flex justify-between items-center focus-visible:-outline-offset-2 ${item.id === currentIntelId ? 'bg-accent-10 border-border-accent' : 'hover:bg-surface-container active:bg-surface-container-high'}`}
                     >
                       <div className="flex flex-col min-w-0 pr-2">
                         <span
@@ -111,20 +115,21 @@ export default React.memo(function TapeLibrary({
                           />
                         )}
                         <div
-                          className={`w-8 h-8 rounded-control border flex items-center justify-center text-sm ${
+                          title={item.getTypeLabel()}
+                          className={`w-8 h-8 rounded-control border flex items-center justify-center shadow-hairline ${
                             item.type === 'TEXT'
-                              ? 'bg-accent-20 border-border-accent glow-orange-subtle'
+                              ? 'bg-accent-20 border-border-accent text-accent'
                               : item.type === 'VISUAL'
-                                ? 'bg-tube-600/30 border-tube-500 shadow-[0_0_0_1px_rgba(106,139,155,0.25),0_0_8px_-2px_rgba(106,139,155,0.5)]'
+                                ? 'bg-tube-600/30 border-tube-500 text-tube-200'
                                 : item.type === 'META'
-                                  ? 'bg-yellow-600/30 border-yellow-500 shadow-[0_0_0_1px_rgba(234,179,8,0.25),0_0_8px_-2px_rgba(234,179,8,0.5)]'
-                                  : 'bg-surface-container border-border-strong shadow-hairline'
+                                  ? 'bg-yellow-600/30 border-yellow-500 text-yellow-300'
+                                  : 'bg-surface-container border-border-strong text-ash-300'
                           }`}
                         >
-                          {item.getTypeIcon()}
+                          <IntelTypeIcon type={item.type} size={15} />
                         </div>
                       </div>
-                    </motion.div>
+                    </motion.button>
                   </React.Fragment>
                 );
               })}

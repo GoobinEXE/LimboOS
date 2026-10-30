@@ -115,7 +115,7 @@ export default React.memo(function CassetteVisor({
               <React.Suspense fallback={
                 <div className="w-full h-full flex flex-col items-center justify-center p-4">
                   <RetroSpinner size="sm" className="mb-2" />
-                  <p className="text-accent text-[9px] font-bold uppercase tracking-widest animate-pulse mt-2">{t('walkman.visor.startingScanner')}</p>
+                  <p className="text-accent text-[9px] font-bold uppercase tracking-widest animate-led mt-2">{t('walkman.visor.startingScanner')}</p>
                 </div>
               }>
                 <QrScanner
@@ -129,7 +129,7 @@ export default React.memo(function CassetteVisor({
                 {isLoading ? (
                   <div className="flex flex-col items-center gap-2">
                     <RetroSpinner size="sm" />
-                    <p className="text-accent text-[9px] font-bold uppercase tracking-widest animate-pulse">{t('walkman.visor.loadingProof')}</p>
+                    <p className="text-accent text-[9px] font-bold uppercase tracking-widest animate-led">{t('walkman.visor.loadingProof')}</p>
                   </div>
                 ) : (
                   <>

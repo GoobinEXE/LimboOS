@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'motion/react';
-import { SPRING_DRAWER } from '../../lib/motion';
+import { FADE, SPRING_DRAWER } from '../../lib/motion';
 import { LogOut, User, X, ShieldAlert, Users, ChevronRight, type LucideIcon } from 'lucide-react';
 
 interface SecurityMenuProps {
@@ -65,12 +65,26 @@ export const SecurityMenu = ({ onClose, onLogout, onShowProfile, onChangeCharact
   }, [onClose]);
 
   return (
+    <>
+    {/* Desktop: painel ancorado sob o botão de menu, com véu que fecha ao clicar fora */}
     <motion.div
+      aria-hidden
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={FADE}
+      onClick={onClose}
+      className="hidden lg:block absolute inset-0 z-99 bg-surface-scrim"
+    />
+    <motion.div
+      role="dialog"
+      aria-modal="true"
+      aria-label={`${t('security.title')} ${t('security.titleAccent')}`}
       initial={{ y: '-100%' }}
       animate={{ y: 0 }}
       exit={{ y: '-100%' }}
       transition={SPRING_DRAWER}
-      className="absolute inset-0 z-100 bg-surface/98 flex flex-col border-b border-border-accent shadow-2xl overflow-hidden touch-none"
+      className="absolute inset-0 lg:inset-auto lg:top-20 lg:left-6 lg:w-[32rem] lg:max-h-[calc(100%-7rem)] lg:rounded-panel lg:border lg:border-border-strong z-100 bg-surface/98 flex flex-col border-b border-border-accent shadow-2xl overflow-hidden touch-none"
     >
       <div className="noise-overlay" />
       <div className="scanlines" />
@@ -78,7 +92,7 @@ export const SecurityMenu = ({ onClose, onLogout, onShowProfile, onChangeCharact
 
       <header className="px-6 sm:px-8 pt-[max(1.5rem,env(safe-area-inset-top))] pb-6 border-b border-border flex justify-between items-center bg-surface-raised/60 relative z-20">
         <div className="flex items-center gap-4 min-w-0">
-          <div className="w-14 h-14 rounded-control bg-accent-10 border border-border-accent flex items-center justify-center text-primary shrink-0 glow-orange-subtle">
+          <div className="w-14 h-14 rounded-control bg-accent-10 border border-border-accent flex items-center justify-center text-primary shrink-0">
             <ShieldAlert size={28} />
           </div>
           <div className="min-w-0">
@@ -111,5 +125,6 @@ export const SecurityMenu = ({ onClose, onLogout, onShowProfile, onChangeCharact
         </div>
       </footer>
     </motion.div>
+    </>
   );
 };

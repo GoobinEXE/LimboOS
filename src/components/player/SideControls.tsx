@@ -16,8 +16,8 @@ export default React.memo(function SideControls({ volume, setVolume, onModeChang
   const firedRef = useRef(false);
   const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const upArrowColor = useTransform(dragY, (v: number) => v < -5 ? '#FF8C00' : '#6b6b6b');
-  const downArrowColor = useTransform(dragY, (v: number) => v > 5 ? '#FF8C00' : '#6b6b6b');
+  const upArrowColor = useTransform(dragY, (v: number) => v < -5 ? 'var(--color-accent)' : 'var(--color-ash-500)');
+  const downArrowColor = useTransform(dragY, (v: number) => v > 5 ? 'var(--color-accent)' : 'var(--color-ash-500)');
   
   const lastLoggedVolume = useRef(volume);
   const volumeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -51,6 +51,27 @@ export default React.memo(function SideControls({ volume, setVolume, onModeChang
     }, 1000);
   };
 
+  // Teclado: Enter/Espaço geram click sem pointerup; nudge do seletor emula o arraste
+  const nudgeMode = (dir: 'up' | 'down') => {
+    onModeChange(dir);
+    activityLogger.logAction('player', `Alterado modo de exibição (${dir === 'up' ? 'Cima' : 'Baixo'})`);
+    analyticsTracker.incrementStat('fidgetClicks');
+    dragY.set(dir === 'up' ? -10 : 10);
+    animate(dragY, 0, SPRING_MECHANICAL);
+  };
+
+  const handleVolumeKey = (e: React.KeyboardEvent) => {
+    const step = e.key === 'PageUp' || e.key === 'PageDown' ? 10 : 5;
+    let next: number | null = null;
+    if (e.key === 'ArrowUp' || e.key === 'ArrowRight' || e.key === 'PageUp') next = volume + step;
+    else if (e.key === 'ArrowDown' || e.key === 'ArrowLeft' || e.key === 'PageDown') next = volume - step;
+    else if (e.key === 'Home') next = 0;
+    else if (e.key === 'End') next = 100;
+    if (next === null) return;
+    e.preventDefault();
+    setVolume(Math.max(0, Math.min(100, next)));
+  };
+
   const handleProfilePointerUp = () => {
     if (longPressTimer.current) {
       clearTimeout(longPressTimer.current);
@@ -77,7 +98,9 @@ export default React.memo(function SideControls({ volume, setVolume, onModeChang
           }
         }}
         className={`${landscape ? 'w-9 h-9 min-h-9' : 'w-10 h-10'} rounded-full bg-radial-[at_35%_30%] from-surface-bright to-surface-container-highest border-2 border-surface-sunken shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_4px_10px_-3px_rgba(0,0,0,0.9)] flex items-center justify-center hover:from-accent-20 hover:to-surface-container-highest transition duration-150 ease-limbo shrink-0 active:scale-90 active:shadow-[inset_0_2px_5px_rgba(0,0,0,0.7)]`}
+        onClick={(e) => { if (e.detail === 0) onProfileOpen(); }}
         title={t('walkman.profileTitle')}
+        aria-label={t('walkman.profileTitle')}
       >
         <User size={landscape ? 14 : 16} className="text-accent" />
       </button>
@@ -90,6 +113,13 @@ export default React.memo(function SideControls({ volume, setVolume, onModeChang
         </motion.div>
         <motion.div
           style={{ y: dragY, touchAction: 'none' }}
+          role="button"
+          tabIndex={0}
+          aria-label={t('walkman.modeDial')}
+          onKeyDown={(e) => {
+            if (e.key === 'ArrowUp') { e.preventDefault(); nudgeMode('up'); }
+            else if (e.key === 'ArrowDown') { e.preventDefault(); nudgeMode('down'); }
+          }}
           className={`relative ${landscape ? 'w-12 h-12 border-[3px]' : 'w-14 h-14 border-4'} rounded-full bg-radial-[at_35%_25%] from-surface-bright to-surface-container-highest border-surface-sunken shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_6px_14px_-4px_rgba(0,0,0,0.9)] flex items-center justify-center group cursor-ns-resize`}
           onPointerDown={(e) => {
             e.preventDefault();
@@ -128,7 +158,7 @@ export default React.memo(function SideControls({ volume, setVolume, onModeChang
           }}>
           <div className="absolute inset-0 rounded-full border border-border pointer-events-none" />
           <div className={`${landscape ? 'w-8 h-8' : 'w-10 h-10'} rounded-full bg-surface-bright border-2 border-surface-container flex items-center justify-center shadow-inner pointer-events-none`}>
-            <div className={`${landscape ? 'w-4 h-4' : 'w-5 h-5'} rounded-full bg-accent border-2 border-surface-sunken glow-orange-subtle`} />
+            <div className={`${landscape ? 'w-4 h-4' : 'w-5 h-5'} rounded-full bg-accent border-2 border-surface-sunken`} />
           </div>
         </motion.div>
       </div>
@@ -137,7 +167,15 @@ export default React.memo(function SideControls({ volume, setVolume, onModeChang
         style={{ touchAction: 'none' }}
       >
         <span className="text-[10px] text-ash-400 font-bold mb-1">+</span>
-        <div className="flex-1 w-1 bg-surface-container rounded-full relative overflow-visible cursor-pointer"
+        <div className="flex-1 w-1 bg-surface-container rounded-full relative overflow-visible cursor-pointer focus-visible:outline-offset-4"
+          role="slider"
+          tabIndex={0}
+          aria-label={t('walkman.volume')}
+          aria-orientation="vertical"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={volume}
+          onKeyDown={handleVolumeKey}
           onClick={(e) => {
             analyticsTracker.incrementStat('fidgetClicks');
             const rect = e.currentTarget.getBoundingClientRect();

@@ -315,6 +315,11 @@
     "mhDosShort": "MH-DOS",
     "macos": "MACOS v7.1",
     "eq": "EQ",
+    "rewind": "Retroceder fita",
+    "play": "Tocar",
+    "pause": "Pausar",
+    "modeDial": "Modo de exibição da lista (setas para cima e para baixo)",
+    "volume": "Volume",
     "profileTitle": "Clique para perfil, segure para trocar agente"
   },
   "nokia": {

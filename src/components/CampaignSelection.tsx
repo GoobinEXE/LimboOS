@@ -134,7 +134,11 @@ export default function CampaignSelection({
       }
       if (e.key === 'ArrowLeft') snapTo(currentIndex - 1);
       else if (e.key === 'ArrowRight') snapTo(currentIndex + 1);
-      else if ((e.key === 'Enter' || e.key === ' ') && campaigns[currentIndex]?.status !== 'Bloqueada') onSelect(campaigns[currentIndex]);
+      else if (e.key === 'Enter' || e.key === ' ') {
+        // Enter num botão focado (voltar, menu) é do botão, não um "iniciar missão"
+        if (e.target instanceof HTMLElement && e.target.closest('button, a, input, textarea, select, [role="button"]')) return;
+        if (campaigns[currentIndex]?.status !== 'Bloqueada') onSelect(campaigns[currentIndex]);
+      }
     };
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
@@ -264,7 +268,7 @@ export default function CampaignSelection({
 
       <footer className="px-4 sm:px-8 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] flex justify-between items-center bg-surface-raised/80 border-t border-border-subtle relative z-30">
         <div className="flex items-center gap-2 sm:gap-3 text-protocol text-[8px] sm:text-[10px] text-ash-400 truncate">
-          <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-primary rounded-full animate-pulse glow-orange-subtle shrink-0" />
+          <span className="lmb-led text-accent animate-led" aria-hidden />
           {t('campaign.signal')}
         </div>
         <div className="text-mono-ui text-[8px] sm:text-[10px] text-ash-600 shrink-0 ml-2">

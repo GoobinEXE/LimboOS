@@ -776,12 +776,20 @@
   background: var(--color-lcd-ink) !important;
   color: var(--color-lcd-paper) !important;
 }
+.nokia-theme-active button:hover:not(:disabled) * {
+  color: var(--color-lcd-paper) !important;
+}
 
 /* Foco de teclado no LCD: inversão de vídeo, como o cursor do aparelho */
-.nokia-theme-active button:focus-visible {
+.nokia-theme-active button:focus-visible,
+.nokia-theme-active [role="button"]:focus-visible {
   background: var(--color-lcd-ink) !important;
   color: var(--color-lcd-paper) !important;
   outline: none !important;
+}
+.nokia-theme-active button:focus-visible *,
+.nokia-theme-active [role="button"]:focus-visible * {
+  color: var(--color-lcd-paper) !important;
 }
 
 .nokia-theme-active button:disabled {

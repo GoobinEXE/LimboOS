@@ -190,17 +190,17 @@ export default function IntelCatalogPane({
                       </p>
                       <div className="flex flex-wrap gap-1 mt-1.5">
                         <span
-                          className={`text-[7px] font-display font-bold uppercase tracking-widest px-1.5 py-0.5 border rounded-sm ${intelCatalogStatusClass(catalogStatus)}`}
+                          className={`text-[9px] font-display font-bold uppercase tracking-widest px-1.5 py-0.5 border rounded-sm ${intelCatalogStatusClass(catalogStatus)}`}
                         >
                           {intelCatalogStatusLabel(catalogStatus)}
                         </span>
                         <span
-                          className={`text-[7px] font-display font-bold uppercase tracking-widest px-1.5 py-0.5 border rounded-sm ${accessLevelClass(item.level)}`}
+                          className={`text-[9px] font-display font-bold uppercase tracking-widest px-1.5 py-0.5 border rounded-sm ${accessLevelClass(item.level)}`}
                         >
                           {accessLevelLabel(item.level)}
                         </span>
                         {asset?.size ? (
-                          <span className="text-[7px] font-mono text-ash-500 uppercase px-1">
+                          <span className="text-[9px] font-mono text-ash-500 uppercase px-1">
                             {formatFileSize(asset.size)}
                           </span>
                         ) : null}

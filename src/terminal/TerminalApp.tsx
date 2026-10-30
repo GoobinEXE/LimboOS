@@ -132,7 +132,7 @@ export default function App() {
                     <button
                       type="submit"
                       disabled={isLoggingIn}
-                      className="w-full sm:w-auto bg-primary hover:bg-primary-container text-black font-display font-bold text-xs uppercase tracking-[0.2em] py-4 px-10 rounded-sm transition flex items-center justify-center gap-3 group disabled:opacity-50 disabled:cursor-not-allowed glow-orange hover:glow-orange-strong active:scale-[0.97]"
+                      className="w-full sm:w-auto bg-primary hover:bg-primary-container text-black font-display font-bold text-xs uppercase tracking-[0.2em] py-4 px-10 rounded-sm transition flex items-center justify-center gap-3 group disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.97]"
                     >
                       {isLoggingIn ? (
                         <>
@@ -156,7 +156,7 @@ export default function App() {
                     <div
                       key={i}
                       className={`w-1.5 h-3 ${
-                        isLoggingIn ? 'animate-pulse bg-primary' : 'bg-industrial-silver/20'
+                        isLoggingIn ? 'animate-led bg-primary' : 'bg-industrial-silver/20'
                       }`}
                       style={{ animationDelay: `${i * 0.1}s` }}
                     />
@@ -180,7 +180,7 @@ export default function App() {
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ type: 'spring', damping: 12 }}
-                className="w-24 h-24 bg-primary rounded-full flex items-center justify-center glow-orange-strong"
+                className="w-24 h-24 bg-primary rounded-full flex items-center justify-center"
               >
                 <ShieldCheck size={48} className="text-black" />
               </motion.div>

@@ -22,7 +22,7 @@ function platformBorder(platform: PlayerPlatform, earned: boolean): string {
 function TierBadge({ tier }: { tier: AchievementTier }) {
   const { t } = useTranslation('common');
   return (
-    <span className="text-[7px] uppercase tracking-widest text-amber-500/60 font-mono shrink-0">
+    <span className="text-[9px] uppercase tracking-widest text-amber-500/80 font-mono shrink-0">
       {t(`achievement.tier.${tier}`)}
     </span>
   );
@@ -76,7 +76,7 @@ function AchievementCard({
       className={`relative rounded-card p-3 border flex flex-col gap-1.5 transition-colors ${
         earned
           ? `bg-accent-05 ${platformBorder(ach.primaryPlatform, true)}`
-          : `bg-surface-raised ${platformBorder(ach.primaryPlatform, false)} opacity-60`
+          : `bg-surface-raised ${platformBorder(ach.primaryPlatform, false)} opacity-75`
       }`}
     >
       <div className="flex items-center justify-between gap-1">
@@ -94,7 +94,7 @@ function AchievementCard({
         {description}
       </p>
       {earned && (
-        <p className="text-[7px] uppercase tracking-widest text-ash-500 font-mono">
+        <p className="text-[9px] uppercase tracking-widest text-ash-500 font-mono">
           {t(`achievement.platform.${ach.primaryPlatform}`)}
           {campaignLabel ? ` · ${campaignLabel}` : ''}
         </p>

@@ -208,7 +208,7 @@ export default function ProfileScreen({
             {tCommon('actions.backBracket')}
           </button>
           <span className="text-[8px] flex items-center gap-1">
-            <span className="w-1.5 h-1.5 bg-lcd-ink animate-pulse" />
+            <span className="w-1.5 h-1.5 bg-lcd-ink animate-led" />
             {t('profile.header.nokia')}
           </span>
           <button onClick={onLogout} className="hover:bg-lcd-ink hover:text-lcd-paper px-1 active:scale-[0.97] transition">
@@ -310,7 +310,7 @@ export default function ProfileScreen({
                   className="w-full bg-lcd-paper border border-lcd-ink px-1 py-1 text-[9px] text-lcd-ink focus:outline-none placeholder:text-lcd-ink/50"
                   autoFocus
                 />
-                {spotifyError && <p className="text-[8px] animate-pulse">{tCommon('error')}: {spotifyError}</p>}
+                {spotifyError && <p role="alert" className="text-[9px]">{tCommon('error')}: {spotifyError}</p>}
                 <div className="flex gap-1 justify-end">
                   <button onClick={handleCancelEdit} className="border border-lcd-ink px-2 py-0.5 hover:bg-lcd-ink hover:text-lcd-paper active:scale-[0.97] transition text-[8px]">{tCommon('actions.cancelShort')}</button>
                   <button onClick={handleSaveSpotify} className="border border-lcd-ink px-2 py-0.5 hover:bg-lcd-ink hover:text-lcd-paper active:scale-[0.97] transition font-black text-[8px]">{tCommon('actions.saveShort')}</button>
@@ -408,7 +408,7 @@ export default function ProfileScreen({
         {/* Identidade */}
         <section className="relative z-10 px-4 pt-5 pb-4 shrink-0">
           <div className="flex items-center gap-4">
-            <div className="relative w-20 h-20 rounded-card overflow-hidden border border-border-strong bg-surface-sunken shrink-0 flex items-center justify-center glow-orange-subtle">
+            <div className="relative w-20 h-20 rounded-card overflow-hidden border border-border-strong bg-surface-sunken shrink-0 flex items-center justify-center">
               {profile.character.profilePhotoUrl ? (
                 <img src={profile.character.profilePhotoUrl} alt={tCommon('profileAlt')} className="w-full h-full object-cover" />
               ) : (
@@ -421,7 +421,7 @@ export default function ProfileScreen({
               <h1 className="text-display text-[22px] text-white uppercase truncate">{profile.character.codinome}</h1>
               <div className="mt-2 flex items-center gap-2 flex-wrap">
                 <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-inset border bg-surface-raised text-protocol text-[8px] ${statusCfg.border} ${statusCfg.color}`}>
-                  <span className={`w-1.5 h-1.5 rounded-full ${statusCfg.dot} animate-pulse`} />
+                  <span className={`w-1.5 h-1.5 rounded-full ${statusCfg.dot} animate-led`} />
                   {statusCfg.label}
                 </span>
                 <span className="text-mono-ui text-[10px] text-ash-500">
@@ -534,7 +534,7 @@ export default function ProfileScreen({
                   initial={{ opacity: 0, scale: 0.97 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.97 }}
-                  className="rounded-card overflow-hidden border border-border bg-surface-sunken shadow-[0_0_24px_-8px_rgba(29,185,84,0.25)]"
+                  className="rounded-card overflow-hidden border border-border bg-surface-sunken"
                 >
                   <iframe
                     src={embedUrl}
@@ -583,7 +583,7 @@ export default function ProfileScreen({
                 <div className="flex items-center justify-between gap-3">
                   <span className="text-mono-ui text-sm text-white">{profile.character.phoneNumber}</span>
                   <span className="inline-flex items-center gap-1.5 text-protocol text-[8px] text-primary">
-                    <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" /> {tCommon('active')}
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary animate-led" /> {tCommon('active')}
                   </span>
                 </div>
               ) : (
@@ -594,7 +594,7 @@ export default function ProfileScreen({
                   <button
                     type="button"
                     onClick={handleGeneratePhone}
-                    className="w-full py-2.5 rounded-control bg-accent text-black text-protocol hover:bg-primary-container active:scale-[0.98] transition glow-orange-subtle"
+                    className="w-full py-2.5 rounded-control bg-accent text-black text-protocol hover:bg-primary-container active:scale-[0.98] transition"
                   >
                     {t('profile.contact.generate')}
                   </button>

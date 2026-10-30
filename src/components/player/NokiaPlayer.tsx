@@ -599,11 +599,11 @@ export default function NokiaPlayer({
       <div className="flex-grow overflow-hidden relative flex flex-col">
         {isScanning ? (
           <div className="w-full h-full flex flex-col justify-between bg-black relative overflow-hidden flex-grow">
-            <div className="absolute top-1 left-2 z-20 text-lcd-paper font-black text-[9px] uppercase tracking-widest bg-lcd-ink px-1 animate-pulse">
+            <div className="absolute top-1 left-2 z-20 text-lcd-paper font-black text-[9px] uppercase tracking-widest bg-lcd-ink px-1 animate-led">
               {t('nokia.scannerActive')}
             </div>
             <div className="flex-grow w-full bg-[#222] relative flex items-center justify-center min-h-0">
-              <React.Suspense fallback={<div className="text-lcd-paper text-[10px] animate-pulse">{t('nokia.cameraStarting')}</div>}>
+              <React.Suspense fallback={<div className="text-lcd-paper text-[10px] animate-led">{t('nokia.cameraStarting')}</div>}>
                 <QrScanner onDetected={onQrDetected} onCancel={onCancelScan} />
               </React.Suspense>
               {/* ASCII Crosshair */}
@@ -930,11 +930,14 @@ export default function NokiaPlayer({
                 ) : (
                   <motion.div
                     key="qr-scan"
-                    initial={{ opacity: 0, scaleY: 0, originY: 0 }}
+                    role="button"
+                    tabIndex={0}
+                    initial={{ opacity: 0, scaleY: 0.8, originY: 0 }}
                     animate={{ opacity: 1, scaleY: 1 }}
-                    exit={{ opacity: 0, scaleY: 0 }}
+                    exit={{ opacity: 0, scaleY: 0.8 }}
                     onClick={onScanClick}
-                    className="border-2 border-dashed border-lcd-ink p-4 flex flex-col justify-center items-center cursor-pointer hover:bg-lcd-ink/5 active:bg-lcd-ink/10 gap-2 transition-colors"
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onScanClick(); } }}
+                    className="w-full border-2 border-dashed border-lcd-ink p-4 flex flex-col justify-center items-center cursor-pointer hover:bg-lcd-ink/5 active:bg-lcd-ink/10 gap-2 transition-colors"
                   >
                     <PixelIcon.Camera />
                     <span className="text-[11px] font-black uppercase tracking-[0.2em]">{t('nokia.scanCode')}</span>
@@ -1191,9 +1194,14 @@ export default function NokiaPlayer({
                     const videoFormat = isVideo && item instanceof VideoIntel ? item.format : null;
 
                     return (
+                      // div com papel de botão: o tema LCD reescreve <button> com !important
                       <div
                         key={item.id}
+                        role="button"
+                        tabIndex={0}
                         onClick={() => handleItemTap(item)}
+                        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleItemTap(item); } }}
+                        aria-current={isCurrent ? 'true' : undefined}
                         className={`text-[12px] py-2 px-3 cursor-pointer flex items-center gap-3 font-bold transition border-2 shadow-[1px_1px_0px_#111e14] active:translate-y-[1px] active:shadow-none ${
                           isCurrent
                             ? 'bg-lcd-ink text-lcd-paper border-lcd-ink'
@@ -1214,7 +1222,7 @@ export default function NokiaPlayer({
                             {isPlaying ? (
                               <div className="flex gap-[1px]">
                                 {[1, 2, 3].map(i => (
-                                  <div key={i} className={`w-1 h-3 bg-current animate-pulse`} style={{ animationDelay: `${i * 0.2}s` }} />
+                                  <div key={i} className={`w-1 h-3 bg-current animate-led`} style={{ animationDelay: `${i * 0.2}s` }} />
                                 ))}
                               </div>
                             ) : (

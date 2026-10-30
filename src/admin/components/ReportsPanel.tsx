@@ -133,7 +133,7 @@ function OperationalPanorama({
           onClick={goAcesso}
           className="bg-surface-container-low border border-primary/20 p-5 text-left hover:border-primary/40 transition"
         >
-          <p className="font-display text-[10px] uppercase font-bold tracking-[0.2em] text-industrial-silver/50 mb-2">
+          <p className="font-display text-[10px] uppercase font-bold tracking-[0.2em] text-ash-400 mb-2">
             {t('reports.hardware')}
           </p>
           <p className="text-sm font-display font-bold text-primary uppercase tracking-widest">{t('reports.openAccess')}</p>
@@ -147,7 +147,7 @@ function SectionDivider({ title }: { title: string }) {
   return (
     <div className="flex items-center gap-3 mb-6">
       <div className="h-px flex-1 bg-linear-to-r from-transparent to-primary/20" />
-      <h3 className="text-industrial-silver/40 font-display text-[10px] uppercase font-bold tracking-[0.3em]">{title}</h3>
+      <h3 className="text-ash-500 font-display text-[10px] uppercase font-bold tracking-[0.3em]">{title}</h3>
       <div className="h-px flex-1 bg-linear-to-l from-transparent to-primary/20" />
     </div>
   );
@@ -156,7 +156,7 @@ function SectionDivider({ title }: { title: string }) {
 function MetricGroup({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="space-y-3">
-      <p className="font-display text-[9px] uppercase font-bold tracking-[0.25em] text-industrial-silver/30">{title}</p>
+      <p className="font-display text-[9px] uppercase font-bold tracking-[0.25em] text-ash-600">{title}</p>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-4">{children}</div>
     </div>
   );
@@ -192,14 +192,12 @@ function StatCard({
   const content = (
     <>
       {onClick && (
-        <span className="absolute top-3 right-3 material-symbols-outlined text-sm text-primary/0 group-hover:text-primary/50 transition">
+        <span className="absolute top-3 right-3 material-symbols-outlined text-sm text-primary/0 group-hover:text-primary/60 group-focus-visible:text-primary/60 transition-colors">
           arrow_forward
         </span>
       )}
-      <div className="absolute -right-2 -bottom-2 opacity-10 group-hover:opacity-20 transition group-hover:scale-110">
-        <span className={`material-symbols-outlined text-6xl ${iconColorMap[color] ?? iconColorMap.primary}`}>{icon}</span>
-      </div>
-      <p className="font-display text-[10px] uppercase font-bold tracking-[0.2em] text-industrial-silver/50 mb-2">
+      <p className="flex items-center gap-1.5 font-display text-[10px] uppercase font-bold tracking-[0.2em] text-ash-400 mb-2">
+        <span className={`material-symbols-outlined text-[14px] ${iconColorMap[color] ?? iconColorMap.primary}`} aria-hidden>{icon}</span>
         {label}
       </p>
       <p className="text-4xl font-display font-bold text-bone tracking-tighter">{value}</p>
@@ -236,19 +234,17 @@ function StatusCard({
   const content = (
     <>
       {onClick && (
-        <span className="absolute top-3 right-3 material-symbols-outlined text-sm text-primary/0 group-hover:text-primary/50 transition">
+        <span className="absolute top-3 right-3 material-symbols-outlined text-sm text-primary/0 group-hover:text-primary/60 group-focus-visible:text-primary/60 transition-colors">
           arrow_forward
         </span>
       )}
-      <div className="absolute -right-2 -bottom-2 opacity-10 group-hover:opacity-20 transition group-hover:scale-110">
-        <span className={`material-symbols-outlined text-6xl ${active ? 'text-red-500/20' : 'text-phosphor-500/20'}`}>
+      <p className="flex items-center gap-1.5 font-display text-[10px] uppercase font-bold tracking-[0.2em] text-ash-400 mb-2">
+        <span className={`material-symbols-outlined text-[14px] ${active ? 'text-red-400' : 'text-phosphor-400'}`} aria-hidden>
           {icon}
         </span>
-      </div>
-      <p className="font-display text-[10px] uppercase font-bold tracking-[0.2em] text-industrial-silver/50 mb-2">
         {label}
       </p>
-      <p className="text-2xl font-display font-bold tracking-tight">{value}</p>
+      <p className="text-2xl font-display font-bold tracking-tight tabular-nums">{value}</p>
     </>
   );
 

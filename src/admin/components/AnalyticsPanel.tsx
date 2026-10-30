@@ -106,13 +106,13 @@ export default function AnalyticsPanel({ onNavigate }: AnalyticsPanelProps = {})
           <div className="w-1 h-9 bg-accent shrink-0" />
           <div>
             <h2 className="font-display font-bold uppercase tracking-widest text-lg text-bone">{t('analytics.title')}</h2>
-            <p className="text-[10px] font-display font-bold text-industrial-silver/40 uppercase tracking-widest mt-1">{t('analytics.subtitle')}</p>
+            <p className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-widest mt-1">{t('analytics.subtitle')}</p>
           </div>
         </div>
         <button
           onClick={handleReset}
           disabled={isResetting}
-          className={`px-6 py-3 ${isResetting ? 'bg-surface-container-high text-industrial-silver/20' : 'bg-red-500/5 text-red-500/60 hover:bg-red-500/10 hover:text-red-500'} border border-red-500/10 text-[10px] font-display font-bold uppercase tracking-widest transition flex items-center gap-3 rounded-sm active:scale-[0.97]`}
+          className={`px-6 py-3 ${isResetting ? 'bg-surface-container-high text-ash-600' : 'bg-red-500/5 text-red-500/60 hover:bg-red-500/10 hover:text-red-500'} border border-red-500/10 text-[10px] font-display font-bold uppercase tracking-widest transition flex items-center gap-3 rounded-sm active:scale-[0.97]`}
         >
           <span className="material-symbols-outlined text-base">delete_forever</span>
           {isResetting ? 'Executando Reset...' : 'Zerar Banco de Dados BI'}
@@ -137,11 +137,11 @@ export default function AnalyticsPanel({ onNavigate }: AnalyticsPanelProps = {})
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               <span className="material-symbols-outlined text-secondary text-base">cloud_done</span>
-              <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-industrial-silver/40">{t('analytics.storage')}</h3>
+              <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-500">{t('analytics.storage')}</h3>
             </div>
-            <span className="text-[10px] font-display font-bold text-industrial-silver/60">{(analytics.totalStorageSize / (1024 * 1024)).toFixed(1)} MB / 5 GB</span>
+            <span className="text-[10px] font-display font-bold text-ash-400">{(analytics.totalStorageSize / (1024 * 1024)).toFixed(1)} MB / 5 GB</span>
           </div>
-          <div className="h-2 w-full bg-black/40 rounded-full overflow-hidden border border-white/5">
+          <div className="h-2 w-full bg-black/40 rounded-full overflow-hidden border border-border-subtle">
             <div className="h-full bg-secondary shadow-[0_0_10px_rgba(198,198,198,0.2)] transition-[width,color,background-color,border-color,opacity,transform,box-shadow] duration-1000" style={{ width: `${Math.min(analytics.storagePercentage, 100)}%` }} />
           </div>
         </ClickableSection>
@@ -150,11 +150,11 @@ export default function AnalyticsPanel({ onNavigate }: AnalyticsPanelProps = {})
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               <span className="material-symbols-outlined text-primary text-base">check_circle</span>
-              <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-industrial-silver/40">{t('analytics.completionRate')}</h3>
+              <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-500">{t('analytics.completionRate')}</h3>
             </div>
-            <span className="text-[10px] font-display font-bold text-industrial-silver/60">{displayAnalytics.completionRate.toFixed(1)}% Concluído</span>
+            <span className="text-[10px] font-display font-bold text-ash-400">{displayAnalytics.completionRate.toFixed(1)}% Concluído</span>
           </div>
-          <div className="h-2 w-full bg-black/40 rounded-full overflow-hidden border border-white/5">
+          <div className="h-2 w-full bg-black/40 rounded-full overflow-hidden border border-border-subtle">
             <div className="h-full bg-primary shadow-[0_0_10px_rgba(255,140,0,0.2)] transition-[width,color,background-color,border-color,opacity,transform,box-shadow] duration-1000" style={{ width: `${displayAnalytics.completionRate}%` }} />
           </div>
         </section>
@@ -164,19 +164,19 @@ export default function AnalyticsPanel({ onNavigate }: AnalyticsPanelProps = {})
         <section className="bg-surface-container-low border border-primary/10 p-6 shadow-xl lg:col-span-2">
           <div className="flex items-center gap-3 mb-8">
             <span className="material-symbols-outlined text-primary text-base">timeline</span>
-            <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-industrial-silver/40">Atividade Temporal (30d)</h3>
+            <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-500">Atividade Temporal (30d)</h3>
           </div>
           <div className="flex items-end gap-1 h-40">
             {displayAnalytics.dailyPlaysSorted.map(([date, count]: [string, any]) => (
               <div key={date} className="flex-1 flex flex-col items-center group relative">
-                <div className="absolute -top-10 bg-surface-container-high border border-primary/20 text-primary text-[9px] font-display font-bold px-3 py-1.5 rounded-sm opacity-0 group-hover:opacity-100 transition-[height,color,background-color,border-color,opacity,transform,box-shadow] whitespace-nowrap z-20 shadow-2xl scale-90 group-hover:scale-100 translate-y-2 group-hover:translate-y-0">
+                <div className="absolute -top-10 bg-surface-container-high border border-primary/20 text-primary text-[9px] font-display font-bold px-3 py-1.5 rounded-sm opacity-0 group-hover:opacity-100 transition-[opacity,transform] duration-(--duration-fast) whitespace-nowrap z-20 shadow-xl scale-[0.97] group-hover:scale-100 translate-y-1 group-hover:translate-y-0 origin-bottom pointer-events-none">
                   {date.split('-').slice(1).reverse().join('/')} : {count} plays
                 </div>
                 <div className="w-full bg-primary/20 group-hover:bg-primary transition-[height,color,background-color,border-color,opacity,transform,box-shadow] rounded-t-sm" style={{ height: `${(count / displayAnalytics.maxDailyPlays) * 100}%`, minHeight: count > 0 ? '4px' : '1px' }}></div>
               </div>
             ))}
           </div>
-          <div className="flex justify-between mt-4 text-[9px] font-display font-bold text-industrial-silver/20 tracking-widest uppercase border-t border-white/5 pt-4">
+          <div className="flex justify-between mt-4 text-[9px] font-display font-bold text-ash-600 tracking-widest uppercase border-t border-border-subtle pt-4">
             <span>{displayAnalytics.dailyPlaysSorted[0]?.[0] || '---'}</span>
             <span>{displayAnalytics.dailyPlaysSorted[displayAnalytics.dailyPlaysSorted.length - 1]?.[0] || '---'}</span>
           </div>
@@ -185,16 +185,16 @@ export default function AnalyticsPanel({ onNavigate }: AnalyticsPanelProps = {})
         <section className="bg-surface-container-low border border-primary/10 p-6 shadow-xl">
           <div className="flex items-center gap-3 mb-8">
             <span className="material-symbols-outlined text-primary text-base">schedule</span>
-            <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-industrial-silver/40">{t('analytics.peakHours')}</h3>
+            <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-500">{t('analytics.peakHours')}</h3>
           </div>
           <div className="grid grid-cols-6 gap-3">
             {analytics.peakHours.map(({ hour, count }) => (
               <div key={hour} className="flex flex-col items-center group relative">
-                <div className="absolute -top-10 bg-surface-container-high border border-primary/20 text-primary text-[9px] font-display font-bold px-3 py-1.5 rounded-sm opacity-0 group-hover:opacity-100 transition whitespace-nowrap z-20 shadow-2xl scale-90 group-hover:scale-100">
+                <div className="absolute -top-10 bg-surface-container-high border border-primary/20 text-primary text-[9px] font-display font-bold px-3 py-1.5 rounded-sm opacity-0 group-hover:opacity-100 transition-[opacity,transform] duration-(--duration-fast) whitespace-nowrap z-20 shadow-xl scale-[0.97] group-hover:scale-100 origin-bottom pointer-events-none">
                   {hour}h: {count} eventos
                 </div>
-                <div className="w-full aspect-square rounded-sm border border-white/5 transition group-hover:scale-110 group-hover:border-primary/40 shadow-inner" style={{ backgroundColor: count === 0 ? 'rgba(255,255,255,0.02)' : `rgba(255, 183, 125, ${0.1 + (count / analytics.maxHourCount) * 0.9})`, boxShadow: count > 0 ? `0 0 15px rgba(255, 183, 125, ${(count / analytics.maxHourCount) * 0.3})` : 'none' }} />
-                <span className="text-[8px] text-industrial-silver/20 mt-2 font-display font-bold">{hour}h</span>
+                <div className="w-full aspect-square rounded-sm border border-border-subtle transition-colors group-hover:border-primary/40 shadow-inner" style={{ backgroundColor: count === 0 ? 'rgba(255,255,255,0.02)' : `rgba(255, 183, 125, ${0.1 + (count / analytics.maxHourCount) * 0.9})`, boxShadow: count > 0 ? `0 0 15px rgba(255, 183, 125, ${(count / analytics.maxHourCount) * 0.3})` : 'none' }} />
+                <span className="text-[8px] text-ash-600 mt-2 font-display font-bold">{hour}h</span>
               </div>
             ))}
           </div>
@@ -205,22 +205,22 @@ export default function AnalyticsPanel({ onNavigate }: AnalyticsPanelProps = {})
         <ClickableSection onClick={() => onNavigate?.('media')} className="bg-surface-container-low border border-primary/10 p-6 shadow-xl">
           <div className="flex items-center gap-3 mb-8">
             <span className="material-symbols-outlined text-primary text-base">leaderboard</span>
-            <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-industrial-silver/40">Top Conteúdo (Plays)</h3>
+            <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-500">Top Conteúdo (Plays)</h3>
           </div>
           <div className="space-y-5">
-            {displayAnalytics.mostPlayed.length === 0 ? (<p className="text-industrial-silver/20 text-[10px] font-display font-bold uppercase tracking-widest py-8 text-center border border-dashed border-white/5 rounded-sm">{t('analytics.empty')}</p>) : (
+            {displayAnalytics.mostPlayed.length === 0 ? (<p className="text-ash-600 text-[10px] font-display font-bold uppercase tracking-widest py-8 text-center border border-dashed border-border-subtle rounded-sm">{t('analytics.empty')}</p>) : (
               displayAnalytics.mostPlayed.map(([tapeId, count]: [string, any], idx: number) => {
                 const maxCount = displayAnalytics.mostPlayed[0][1] as number;
                 const tapeName = intelTitleLabel(tapeId, audios);
                 return (
                   <div key={tapeId} className="flex items-center gap-4 group">
-                    <span className={`font-display font-bold text-xs w-6 text-right ${idx < 3 ? 'text-primary' : 'text-industrial-silver/20'}`}>0{idx + 1}</span>
+                    <span className={`font-display font-bold text-xs w-6 text-right ${idx < 3 ? 'text-primary' : 'text-ash-600'}`}>0{idx + 1}</span>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between mb-1.5">
-                        <span className="text-[11px] font-display font-bold text-industrial-silver/80 truncate uppercase tracking-wider group-hover:text-primary transition-colors">{tapeName}</span>
+                        <span className="text-[11px] font-display font-bold text-ash-300 truncate uppercase tracking-wider group-hover:text-primary transition-colors">{tapeName}</span>
                         <span className="text-[10px] font-display font-bold text-primary ml-2">{count}×</span>
                       </div>
-                      <div className="h-1.5 w-full bg-black/40 rounded-full border border-white/5 overflow-hidden">
+                      <div className="h-1.5 w-full bg-black/40 rounded-full border border-border-subtle overflow-hidden">
                         <div className="h-full bg-primary/40 group-hover:bg-primary transition-[width,color,background-color,border-color,opacity,transform,box-shadow]" style={{ width: `${(count / maxCount) * 100}%` }}></div>
                       </div>
                     </div>
@@ -234,23 +234,23 @@ export default function AnalyticsPanel({ onNavigate }: AnalyticsPanelProps = {})
         <ClickableSection onClick={() => onNavigate?.('players')} className="bg-surface-container-low border border-primary/10 p-6 shadow-xl">
           <div className="flex items-center gap-3 mb-8">
             <span className="material-symbols-outlined text-primary text-base">person_play</span>
-            <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-industrial-silver/40">{t('analytics.mostActive')}</h3>
+            <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-500">{t('analytics.mostActive')}</h3>
           </div>
           <div className="space-y-5">
-            {analytics.mostActiveUsers.length === 0 ? (<p className="text-industrial-silver/20 text-[10px] font-display font-bold uppercase tracking-widest py-8 text-center border border-dashed border-white/5 rounded-sm">{t('analytics.empty')}</p>) : (
+            {analytics.mostActiveUsers.length === 0 ? (<p className="text-ash-600 text-[10px] font-display font-bold uppercase tracking-widest py-8 text-center border border-dashed border-border-subtle rounded-sm">{t('analytics.empty')}</p>) : (
               analytics.mostActiveUsers.map((user, idx) => {
                 const maxCount = analytics.mostActiveUsers[0].count;
                 return (
                   <div key={user.uid} className="flex items-center gap-4 group">
-                    <div className={`w-10 h-10 border flex items-center justify-center text-[10px] font-display font-bold transition rounded-sm ${idx < 3 ? 'border-primary bg-primary/10 text-primary shadow-[0_0_10px_rgba(255,140,0,0.1)]' : 'border-white/5 bg-black/20 text-industrial-silver/20 group-hover:border-white/20'}`}>
+                    <div className={`w-10 h-10 border flex items-center justify-center text-[10px] font-display font-bold transition rounded-sm ${idx < 3 ? 'border-primary bg-primary/10 text-primary shadow-[0_0_10px_rgba(255,140,0,0.1)]' : 'border-border-subtle bg-black/20 text-ash-600 group-hover:border-border-strong'}`}>
                       {idx + 1}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between mb-1.5">
-                        <span className="text-[11px] font-display font-bold text-industrial-silver/80 truncate uppercase tracking-wider group-hover:text-primary transition-colors">{user.name}</span>
+                        <span className="text-[11px] font-display font-bold text-ash-300 truncate uppercase tracking-wider group-hover:text-primary transition-colors">{user.name}</span>
                         <span className="text-[10px] font-display font-bold text-tertiary ml-2">{user.count} plays</span>
                       </div>
-                      <div className="h-1.5 w-full bg-black/40 rounded-full border border-white/5 overflow-hidden">
+                      <div className="h-1.5 w-full bg-black/40 rounded-full border border-border-subtle overflow-hidden">
                         <div className="h-full bg-tertiary/40 group-hover:bg-tertiary transition-[width,color,background-color,border-color,opacity,transform,box-shadow]" style={{ width: `${(user.count / maxCount) * 100}%` }}></div>
                       </div>
                     </div>
@@ -266,12 +266,12 @@ export default function AnalyticsPanel({ onNavigate }: AnalyticsPanelProps = {})
         <ClickableSection onClick={() => onNavigate?.('systems', { intelSubTab: 'conquistas' })} className="bg-surface-container-low border border-primary/10 p-6 shadow-xl">
           <div className="flex items-center gap-3 mb-8">
             <span className="material-symbols-outlined text-primary text-base">stars</span>
-            <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-industrial-silver/40">{t('analytics.rareAchievements')}</h3>
+            <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-500">{t('analytics.rareAchievements')}</h3>
           </div>
           <div className="space-y-6">
             {analytics.rarityList.slice(0, 5).map((ach) => (
               <div key={ach.id} className="flex items-center gap-4 group">
-                <div className="w-12 h-12 bg-black/40 border border-white/5 flex items-center justify-center shrink-0 group-hover:border-primary/30 transition rounded-sm shadow-inner overflow-hidden group-hover:scale-110">
+                <div className="w-12 h-12 bg-black/40 border border-border-subtle flex items-center justify-center shrink-0 group-hover:border-primary/30 transition rounded-sm shadow-inner overflow-hidden">
                   {ach.icon?.startsWith('/') || ach.icon?.endsWith('.png') ? (
                     <img src={ach.icon} alt="" className="w-full h-full object-cover" />
                   ) : (
@@ -280,10 +280,10 @@ export default function AnalyticsPanel({ onNavigate }: AnalyticsPanelProps = {})
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between items-start mb-2">
-                    <h4 className="text-[11px] font-display font-bold text-industrial-silver/80 truncate uppercase tracking-tight group-hover:text-primary transition-colors">{ach.title}</h4>
+                    <h4 className="text-[11px] font-display font-bold text-ash-300 truncate uppercase tracking-tight group-hover:text-primary transition-colors">{ach.title}</h4>
                     <span className="text-[9px] font-display font-bold px-2 py-0.5 bg-primary/5 text-primary/60 border border-primary/10 rounded-sm">{ach.percentage.toFixed(1)}%</span>
                   </div>
-                  <div className="h-1 w-full bg-black/40 rounded-full overflow-hidden border border-white/5">
+                  <div className="h-1 w-full bg-black/40 rounded-full overflow-hidden border border-border-subtle">
                     <div className="h-full bg-primary/40 group-hover:bg-primary transition-[width,color,background-color,border-color,opacity,transform,box-shadow]" style={{ width: `${ach.percentage}%` }} />
                   </div>
                 </div>
@@ -296,15 +296,15 @@ export default function AnalyticsPanel({ onNavigate }: AnalyticsPanelProps = {})
           <ClickableSection onClick={() => onNavigate?.('players')} className="bg-surface-container-low border border-primary/10 p-6 shadow-xl">
             <div className="flex items-center gap-3 mb-8">
               <span className="material-symbols-outlined text-primary text-base">group_add</span>
-              <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-industrial-silver/40">Crescimento de Rede (Semanal)</h3>
+              <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-500">Crescimento de Rede (Semanal)</h3>
             </div>
-            {analytics.weeklyGrowth.size === 0 ? (<p className="text-industrial-silver/20 text-[10px] font-display font-bold uppercase tracking-widest py-8 text-center">{t('analytics.noRecords')}</p>) : (
+            {analytics.weeklyGrowth.size === 0 ? (<p className="text-ash-600 text-[10px] font-display font-bold uppercase tracking-widest py-8 text-center">{t('analytics.noRecords')}</p>) : (
               <div className="flex items-end gap-2 h-24">
                 {Array.from(analytics.weeklyGrowth.entries()).sort(([a], [b]) => a.localeCompare(b)).slice(-12).map(([week, count]) => {
                   const maxWeekly = Math.max(...analytics.weeklyGrowth.values(), 1);
                   return (
                     <div key={week} className="flex-1 flex flex-col items-center group relative">
-                      <div className="absolute -top-10 bg-surface-container-high border border-primary/20 text-secondary text-[9px] font-display font-bold px-3 py-1.5 rounded-sm opacity-0 group-hover:opacity-100 transition-[height,color,background-color,border-color,opacity,transform,box-shadow] whitespace-nowrap z-20 shadow-2xl">
+                      <div className="absolute -top-10 bg-surface-container-high border border-primary/20 text-secondary text-[9px] font-display font-bold px-3 py-1.5 rounded-sm opacity-0 group-hover:opacity-100 transition-[opacity,transform] duration-(--duration-fast) whitespace-nowrap z-20 shadow-xl scale-[0.97] group-hover:scale-100 origin-bottom pointer-events-none">
                         Semana {week.slice(5)}: +{count} agentes
                       </div>
                       <div className="w-full bg-secondary/20 group-hover:bg-secondary transition-[height,color,background-color,border-color,opacity,transform,box-shadow] rounded-t-sm" style={{ height: `${((count as number) / maxWeekly) * 100}%`, minHeight: '4px' }}></div>
@@ -318,7 +318,7 @@ export default function AnalyticsPanel({ onNavigate }: AnalyticsPanelProps = {})
           <section className="bg-surface-container-low border border-primary/10 p-6 shadow-xl">
             <div className="flex items-center gap-3 mb-6">
               <span className="material-symbols-outlined text-primary text-base">analytics</span>
-              <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-industrial-silver/40">{t('analytics.engagement')}</h3>
+              <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-500">{t('analytics.engagement')}</h3>
             </div>
             <div className="grid grid-cols-2 gap-x-8 gap-y-6">
               <MetricRow label={t('analytics.avgPlays')} value={users.length > 0 ? ((aggregatedData?.totalPlays ?? playEvents.length) / users.length).toFixed(1) : '0'} />
@@ -353,20 +353,19 @@ function KPICard({
   const content = (
     <>
       {onClick && (
-        <span className="absolute top-3 right-3 material-symbols-outlined text-sm text-primary/0 group-hover:text-primary/50 transition z-20">
+        <span className="absolute top-3 right-3 material-symbols-outlined text-sm text-primary/0 group-hover:text-primary/60 transition-colors z-20">
           arrow_forward
         </span>
       )}
       <div className="flex items-center justify-between relative z-10">
         <div>
-          <p className="text-[10px] font-display font-bold uppercase tracking-widest text-industrial-silver/40 mb-2">{label.replaceAll('_', ' ')}</p>
-          <p className={`text-3xl font-display font-bold tracking-tighter ${color}`}>{value}</p>
+          <p className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-500 mb-2">{label.replaceAll('_', ' ')}</p>
+          <p className={`text-3xl font-display font-bold tracking-tight tabular-nums ${color}`}>{value}</p>
         </div>
-        <div className="w-12 h-12 bg-black/20 rounded-sm flex items-center justify-center border border-white/5 group-hover:border-primary/20 transition">
+        <div className="w-12 h-12 bg-black/20 rounded-sm flex items-center justify-center border border-border-subtle group-hover:border-primary/20 transition">
           <span className={`material-symbols-outlined text-2xl opacity-40 group-hover:opacity-100 transition ${color}`}>{icon}</span>
         </div>
       </div>
-      <div className="absolute -bottom-1 -right-1 w-16 h-16 bg-white/5 rounded-full blur-2xl group-hover:bg-primary/5 transition" />
     </>
   );
 
@@ -403,8 +402,8 @@ function ClickableSection({
 
 function MetricRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex flex-col gap-1 border-b border-white/5 pb-3">
-      <span className="text-[9px] font-display font-bold uppercase tracking-widest text-industrial-silver/30">{label}</span>
+    <div className="flex flex-col gap-1 border-b border-border-subtle pb-3">
+      <span className="text-[9px] font-display font-bold uppercase tracking-widest text-ash-600">{label}</span>
       <span className="text-sm font-display font-bold text-bone tracking-widest">{value}</span>
     </div>
   );

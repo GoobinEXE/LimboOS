@@ -228,7 +228,7 @@ export default function CampaignsPanel({
                   <img
                     src={campaign.imageUrl}
                     alt={campaign.name}
-                    className="w-full h-full object-cover opacity-40 grayscale group-hover:grayscale-0 group-hover:scale-105 transition duration-700"
+                    className="w-full h-full object-cover opacity-40 grayscale group-hover:grayscale-0 group-hover:opacity-60 transition-[filter,opacity] duration-300"
                     onError={(e) => {
                       e.currentTarget.src =
                         'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=800&auto=format&fit=crop';

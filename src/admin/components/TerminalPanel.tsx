@@ -133,14 +133,14 @@ export default function TerminalPanel({ embedded = false }: TerminalPanelProps) 
             <div className="w-1 h-9 bg-accent shrink-0" />
             <h2 className="font-bold uppercase tracking-widest text-lg text-bone">{t('hardware.title')}</h2>
           </div>
-          <p className="text-[10px] font-bold uppercase tracking-widest text-industrial-silver/40 pl-6">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-ash-500 pl-6">
             {t('hardware.subtitle')}
           </p>
         </div>
       )}
 
       {embedded && (
-        <p className="text-[10px] font-bold uppercase tracking-widest text-industrial-silver/40">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-ash-500">
           {t('hardware.embeddedHint')}
         </p>
       )}
@@ -150,7 +150,7 @@ export default function TerminalPanel({ embedded = false }: TerminalPanelProps) 
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <h3 className="text-[11px] font-bold uppercase tracking-widest text-bone">{t('hardware.authTitle')}</h3>
-              <p className="text-[9px] font-bold uppercase tracking-widest text-industrial-silver/40 mt-1">
+              <p className="text-[9px] font-bold uppercase tracking-widest text-ash-500 mt-1">
                 {t('hardware.authSubtitle')}
               </p>
             </div>
@@ -168,7 +168,7 @@ export default function TerminalPanel({ embedded = false }: TerminalPanelProps) 
                       toast.error(t('hardware.toast.revokeDosFail'));
                     }
                   }}
-                  className="px-3 py-1.5 text-[9px] font-black uppercase tracking-widest bg-[#333] border border-white/5 text-ash-300 hover:bg-[#444] disabled:opacity-30"
+                  className="px-3 py-1.5 text-[9px] font-black uppercase tracking-widest bg-[#333] border border-border-subtle text-ash-300 hover:bg-[#444] disabled:opacity-30"
                 >
                   {t('hardware.revokeDos')}
                 </button>
@@ -184,7 +184,7 @@ export default function TerminalPanel({ embedded = false }: TerminalPanelProps) 
                       toast.error(t('hardware.toast.revokeMacFail'));
                     }
                   }}
-                  className="px-3 py-1.5 text-[9px] font-black uppercase tracking-widest bg-[#333] border border-white/5 text-ash-300 hover:bg-[#444] disabled:opacity-30"
+                  className="px-3 py-1.5 text-[9px] font-black uppercase tracking-widest bg-[#333] border border-border-subtle text-ash-300 hover:bg-[#444] disabled:opacity-30"
                 >
                   {t('hardware.revokeMac')}
                 </button>
@@ -198,7 +198,7 @@ export default function TerminalPanel({ embedded = false }: TerminalPanelProps) 
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={t('hardware.search')}
-              className="flex-1 bg-black/50 border border-white/10 px-4 py-2.5 text-xs font-bold uppercase tracking-wide text-bone placeholder:text-ash-700 focus:outline-none focus:border-primary/40"
+              className="flex-1 bg-black/50 border border-border px-4 py-2.5 text-xs font-bold uppercase tracking-wide text-bone placeholder:text-ash-700 focus:outline-none focus:border-primary/40"
             />
             <div className="flex flex-wrap gap-1.5">
               {(
@@ -217,7 +217,7 @@ export default function TerminalPanel({ embedded = false }: TerminalPanelProps) 
                   className={`px-3 py-2 text-[9px] font-black uppercase tracking-widest border transition-colors ${
                     filter === id
                       ? 'border-primary bg-primary/15 text-primary'
-                      : 'border-white/5 text-ash-600 hover:text-ash-300'
+                      : 'border-border-subtle text-ash-600 hover:text-ash-300'
                   }`}
                 >
                   {label}
@@ -227,7 +227,7 @@ export default function TerminalPanel({ embedded = false }: TerminalPanelProps) 
           </div>
         </div>
 
-        <div className="px-5 py-2 border-b border-white/5 bg-black/20 flex items-center justify-between gap-3">
+        <div className="px-5 py-2 border-b border-border-subtle bg-black/20 flex items-center justify-between gap-3">
           <button
             type="button"
             onClick={selectFiltered}

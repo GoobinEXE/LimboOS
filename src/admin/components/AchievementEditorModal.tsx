@@ -181,7 +181,7 @@ type Props = {
 };
 
 const fieldClass =
-  'w-full bg-black/50 border border-white/10 text-[11px] font-bold uppercase px-3 py-2.5 text-bone outline-none focus:border-secondary rounded-sm';
+  'w-full bg-black/50 border border-border text-[11px] font-bold uppercase px-3 py-2.5 text-bone outline-none focus:border-secondary rounded-sm';
 const labelClass = 'text-[9px] font-black uppercase tracking-widest text-ash-500 mb-1.5 block';
 
 export default function AchievementEditorModal({
@@ -250,13 +250,13 @@ export default function AchievementEditorModal({
 
   return (
     <div
-      className="fixed inset-0 z-[9000] flex items-center justify-center bg-black/90 backdrop-blur-md p-4"
+      className="fixed inset-0 z-[9000] flex items-center justify-center bg-surface-scrim p-4"
       onMouseDown={(e) => {
         if (e.target === e.currentTarget && !saving) onClose();
       }}
     >
-      <div className="bg-seam border-2 border-white/10 w-full max-w-2xl max-h-[90vh] overflow-hidden rounded-xl shadow-2xl flex flex-col font-chakra">
-        <div className="px-6 py-4 border-b border-white/10 flex items-center justify-between bg-black/40">
+      <div className="bg-seam border-2 border-border w-full max-w-2xl max-h-[90vh] overflow-hidden rounded-card shadow-2xl flex flex-col">
+        <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-black/40">
           <h3 className="text-xs font-black uppercase tracking-[0.2em] text-bone">
             {isEdit ? 'Editar conquista' : 'Nova conquista'}
           </h3>
@@ -413,7 +413,7 @@ export default function AchievementEditorModal({
                   className={`text-[9px] font-black uppercase tracking-widest px-3 py-1.5 border rounded-sm ${
                     form.platforms.includes(p)
                       ? 'border-secondary text-secondary bg-secondary/10'
-                      : 'border-white/10 text-ash-500'
+                      : 'border-border text-ash-500'
                   }`}
                 >
                   {PLATFORM_LABELS[p]}
@@ -431,7 +431,7 @@ export default function AchievementEditorModal({
                 className={`text-[9px] font-black uppercase tracking-widest px-3 py-1.5 border rounded-sm ${
                   form.campaignMode === 'global'
                     ? 'border-secondary text-secondary bg-secondary/10'
-                    : 'border-white/10 text-ash-500'
+                    : 'border-border text-ash-500'
                 }`}
               >
                 Global
@@ -442,7 +442,7 @@ export default function AchievementEditorModal({
                 className={`text-[9px] font-black uppercase tracking-widest px-3 py-1.5 border rounded-sm ${
                   form.campaignMode === 'list'
                     ? 'border-secondary text-secondary bg-secondary/10'
-                    : 'border-white/10 text-ash-500'
+                    : 'border-border text-ash-500'
                 }`}
               >
                 Específicas
@@ -458,7 +458,7 @@ export default function AchievementEditorModal({
                     className={`text-[8px] font-black uppercase tracking-widest px-2.5 py-1 border rounded-sm ${
                       form.campaignIds.includes(c.id)
                         ? 'border-primary text-primary bg-primary/10'
-                        : 'border-white/10 text-ash-500'
+                        : 'border-border text-ash-500'
                     }`}
                   >
                     {c.name || c.id}
@@ -468,7 +468,7 @@ export default function AchievementEditorModal({
             )}
           </div>
 
-          <div className="border-t border-white/5 pt-4 space-y-3">
+          <div className="border-t border-border-subtle pt-4 space-y-3">
             <label className={labelClass}>Regra de desbloqueio</label>
             <select
               className={fieldClass}
@@ -574,7 +574,7 @@ export default function AchievementEditorModal({
                     className={`text-[8px] font-mono px-2 py-1 border rounded-sm ${
                       form.ruleFlagKeys.includes(k)
                         ? 'border-secondary text-secondary'
-                        : 'border-white/10 text-ash-600'
+                        : 'border-border text-ash-600'
                     }`}
                   >
                     {k}
@@ -585,7 +585,7 @@ export default function AchievementEditorModal({
           </div>
         </div>
 
-        <div className="px-6 py-4 border-t border-white/10 flex gap-3 bg-black/40">
+        <div className="px-6 py-4 border-t border-border flex gap-3 bg-black/40">
           <button
             type="button"
             disabled={saving}

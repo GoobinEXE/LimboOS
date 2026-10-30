@@ -31,7 +31,7 @@ const TYPE_COLORS: Record<string, string> = {
   error:      'text-red-400 bg-red-500/5 border-red-500/10',
   admin:      'text-primary bg-primary/5 border-primary/10',
   auth:       'text-yellow-400 bg-yellow-500/5 border-yellow-500/10',
-  trace:      'text-industrial-silver/40 bg-white/5 border-white/5',
+  trace:      'text-ash-500 bg-white/5 border-border-subtle',
 };
 
 const TYPE_ICONS: Record<string, string> = {
@@ -46,12 +46,12 @@ const TYPE_ICONS: Record<string, string> = {
 
 const SEVERITY: Record<string, { label: string; color: string }> = {
   error:  { label: 'CRITICAL', color: 'text-red-500' },
-  system: { label: 'INFO',     color: 'text-industrial-silver/40' },
+  system: { label: 'INFO',     color: 'text-ash-500' },
   admin:  { label: 'PRIVILEGED', color: 'text-primary' },
   action: { label: 'EVENT',    color: 'text-tube-500' },
   navigation: { label: 'NAV',  color: 'text-phosphor-500' },
   auth:   { label: 'ACCESS',   color: 'text-yellow-500' },
-  trace:  { label: 'TRACE',    color: 'text-industrial-silver/20' },
+  trace:  { label: 'TRACE',    color: 'text-ash-600' },
 };
 
 const LogRow = React.memo(({
@@ -90,7 +90,7 @@ const LogRow = React.memo(({
       animate="visible"
       exit="exit"
       transition={{ ...ADMIN_FADE, delay: staggerDelay(index, 0.02, 0.15) }}
-      className="border-b border-white/5"
+      className="border-b border-border-subtle"
     >
       <button
         onClick={() => onToggle(entry.id)}
@@ -98,7 +98,7 @@ const LogRow = React.memo(({
           entry.type === 'error' ? 'bg-red-500/5' : ''
         }`}
       >
-        <span className={`material-symbols-outlined text-base text-industrial-silver/20 transition-transform ${isExpanded ? 'rotate-90 text-primary' : ''}`}>
+        <span className={`material-symbols-outlined text-base text-ash-600 transition-transform ${isExpanded ? 'rotate-90 text-primary' : ''}`}>
           chevron_right
         </span>
         
@@ -106,7 +106,7 @@ const LogRow = React.memo(({
           {severity.label}
         </span>
 
-        <span className="text-[10px] font-mono text-industrial-silver/30 shrink-0 w-32 tabular-nums">
+        <span className="text-[10px] font-mono text-ash-600 shrink-0 w-32 tabular-nums">
           {formatTimestamp(entry.timestamp)}
         </span>
 
@@ -121,29 +121,29 @@ const LogRow = React.memo(({
 
         <span className={`text-[11px] font-sans flex-1 truncate ${
           entry.type === 'admin' ? 'text-primary/80 font-bold' : 
-          entry.type === 'trace' ? 'text-industrial-silver/20' : 
+          entry.type === 'trace' ? 'text-ash-600' : 
           entry.type === 'error' ? 'text-red-400' :
-          'text-industrial-silver/60'
+          'text-ash-400'
         }`}>
           {entry.message}
         </span>
 
-        <span className="text-[8px] font-display font-bold text-industrial-silver/20 tracking-widest shrink-0 uppercase border border-white/5 px-2 py-0.5 rounded-sm">
+        <span className="text-[8px] font-display font-bold text-ash-600 tracking-widest shrink-0 uppercase border border-border-subtle px-2 py-0.5 rounded-sm">
           {entry.category}
         </span>
       </button>
 
       {isExpanded && (
-        <div className="px-16 py-6 bg-black/40 border-t border-white/5 animate-in slide-in-from-top-2 duration-300">
+        <div className="px-16 py-6 bg-black/40 border-t border-border-subtle animate-fade-in">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-[11px] font-mono mb-6">
             <div className="space-y-1">
-              <p className="text-[8px] font-display font-bold text-industrial-silver/20 uppercase tracking-widest">{t('logs.sessionId')}</p>
-              <p className="text-industrial-silver/60 break-all">
+              <p className="text-[8px] font-display font-bold text-ash-600 uppercase tracking-widest">{t('logs.sessionId')}</p>
+              <p className="text-ash-400 break-all">
                 {masterAccountLabelByUid(entry.uid, users, entry.uid || 'SISTEMA')}
               </p>
             </div>
             <div className="space-y-1">
-              <p className="text-[8px] font-display font-bold text-industrial-silver/20 uppercase tracking-widest">{t('logs.agentVector')}</p>
+              <p className="text-[8px] font-display font-bold text-ash-600 uppercase tracking-widest">{t('logs.agentVector')}</p>
               <p className="text-primary/60">
                 {entry.characterId
                   ? characterLabelByKey(entry.uid, entry.characterId, characterMap, t('logs.unidentified'))
@@ -151,14 +151,14 @@ const LogRow = React.memo(({
               </p>
             </div>
             <div className="space-y-1">
-              <p className="text-[8px] font-display font-bold text-industrial-silver/20 uppercase tracking-widest">{t('logs.source')}</p>
-              <p className="text-industrial-silver/60 uppercase">{entry.source} // {entry.category}</p>
+              <p className="text-[8px] font-display font-bold text-ash-600 uppercase tracking-widest">{t('logs.source')}</p>
+              <p className="text-ash-400 uppercase">{entry.source} // {entry.category}</p>
             </div>
           </div>
           {entry.metadata && Object.keys(entry.metadata).length > 0 && (
             <div className="space-y-2">
-              <p className="text-[8px] font-display font-bold text-industrial-silver/20 uppercase tracking-widest">{t('logs.telemetry')}</p>
-              <pre className="text-[10px] font-mono text-primary/40 bg-surface-container-lowest border border-white/5 p-4 rounded-sm overflow-x-auto max-h-60 shadow-inner">
+              <p className="text-[8px] font-display font-bold text-ash-600 uppercase tracking-widest">{t('logs.telemetry')}</p>
+              <pre className="text-[10px] font-mono text-primary/40 bg-surface-container-lowest border border-border-subtle p-4 rounded-sm overflow-x-auto max-h-60 shadow-inner">
                 {JSON.stringify(entry.metadata, null, 2)}
               </pre>
             </div>
@@ -346,7 +346,7 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
               {compact ? 'Log Recente' : 'Fluxo de Telemetria em Tempo Real'}
             </h2>
           </div>
-          <span className="text-[10px] font-display font-bold text-industrial-silver/20 tracking-[0.2em] uppercase">
+          <span className="text-[10px] font-display font-bold text-ash-600 tracking-[0.2em] uppercase">
             {filtered.length} de {entries.length} Sinais Captados
           </span>
           {errorCount > 0 && (
@@ -361,7 +361,7 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
             <>
               <button
                 onClick={handleExportJSON}
-                className="px-6 py-2 text-[10px] font-display font-bold uppercase tracking-widest bg-white/5 border border-white/5 text-industrial-silver/40 hover:bg-white/10 hover:text-bone transition flex items-center gap-2 rounded-sm shadow-lg"
+                className="px-6 py-2 text-[10px] font-display font-bold uppercase tracking-widest bg-white/5 border border-border-subtle text-ash-500 hover:bg-white/10 hover:text-bone transition flex items-center gap-2 rounded-sm shadow-lg"
               >
                 <span className="material-symbols-outlined text-base">download</span>
                 Exportar JSON
@@ -385,7 +385,7 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
                 disabled={isClearing}
                 className={`px-6 py-2 text-[10px] font-display font-bold uppercase tracking-widest border transition flex items-center gap-2 rounded-sm shadow-lg ${
                   isClearing
-                    ? 'bg-white/5 text-industrial-silver/10 border-white/5'
+                    ? 'bg-white/5 text-ash-700 border-border-subtle'
                     : 'bg-red-500/5 text-red-500/60 border-red-500/10 hover:bg-red-500/10 hover:text-red-500'
                 }`}
               >
@@ -397,16 +397,16 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
         </div>
       </div>
 
-      <div className="flex items-center gap-4 px-8 py-4 bg-black/20 border-b border-white/5 shrink-0 flex-wrap">
+      <div className="flex items-center gap-4 px-8 py-4 bg-black/20 border-b border-border-subtle shrink-0 flex-wrap">
         <div className="flex items-center gap-3 mr-4">
-          <span className="material-symbols-outlined text-industrial-silver/20 text-base">filter_list</span>
-          <span className="text-[9px] font-display font-bold text-industrial-silver/30 tracking-widest uppercase">{t('logs.filters')}</span>
+          <span className="material-symbols-outlined text-ash-600 text-base">filter_list</span>
+          <span className="text-[9px] font-display font-bold text-ash-600 tracking-widest uppercase">{t('logs.filters')}</span>
         </div>
         
         <select
           value={filterSource}
           onChange={(e) => setFilterSource(e.target.value)}
-          className="bg-surface-container-lowest border border-white/5 text-[10px] font-display font-bold uppercase tracking-widest text-primary px-4 py-2 outline-none rounded-sm transition cursor-pointer shadow-inner"
+          className="bg-surface-container-lowest border border-border-subtle text-[10px] font-display font-bold uppercase tracking-widest text-primary px-4 py-2 outline-none rounded-sm transition cursor-pointer shadow-inner"
         >
           <option value="all">{t('logs.origin.all')}</option>
           <option value="player">{t('logs.origin.player')}</option>
@@ -416,7 +416,7 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
         <select
           value={filterType}
           onChange={(e) => setFilterType(e.target.value)}
-          className="bg-surface-container-lowest border border-white/5 text-[10px] font-display font-bold uppercase tracking-widest text-primary px-4 py-2 outline-none rounded-sm transition cursor-pointer shadow-inner"
+          className="bg-surface-container-lowest border border-border-subtle text-[10px] font-display font-bold uppercase tracking-widest text-primary px-4 py-2 outline-none rounded-sm transition cursor-pointer shadow-inner"
         >
           <option value="all">{t('logs.type.all')}</option>
           <option value="navigation">{t('logs.type.navigation')}</option>
@@ -431,20 +431,20 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
         <div className="flex-1" />
         
         <div className="relative group w-72">
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-industrial-silver/20 text-base group-focus-within:text-primary transition-colors pointer-events-none">search</span>
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-ash-600 text-base group-focus-within:text-primary transition-colors pointer-events-none">search</span>
           <input
             type="text"
             placeholder={t('logs.search')}
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
-            className="bg-surface-container-lowest border border-white/5 text-[10px] font-display font-bold uppercase tracking-widest text-bone placeholder:text-industrial-silver/10 pl-10 pr-4 py-2.5 w-full focus:border-primary/40 outline-none rounded-sm transition shadow-inner"
+            className="bg-surface-container-lowest border border-border-subtle text-[10px] font-display font-bold uppercase tracking-widest text-bone placeholder:text-ash-700 pl-10 pr-4 py-2.5 w-full focus:border-primary/40 outline-none rounded-sm transition shadow-inner"
           />
         </div>
       </div>
 
       <div className="flex-1 overflow-y-auto min-h-0 bg-black/10 custom-scrollbar">
         {filtered.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-industrial-silver/10 gap-6 py-20">
+          <div className="flex flex-col items-center justify-center h-full text-ash-700 gap-6 py-20">
             <span className="material-symbols-outlined text-7xl animate-pulse">radar</span>
             <p className="font-display font-bold text-[14px] uppercase tracking-[0.6em]">{t('logs.waiting')}</p>
           </div>
@@ -465,19 +465,19 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
         )}
       </div>
 
-      <div className="flex items-center justify-between px-8 py-4 bg-black/40 border-t border-white/5 shrink-0">
+      <div className="flex items-center justify-between px-8 py-4 bg-black/40 border-t border-border-subtle shrink-0">
         <div className="flex items-center gap-3">
            <div className="h-1 w-12 bg-white/5 rounded-full overflow-hidden">
               <div className="h-full bg-primary/20 animate-loading-bar w-1/2" />
            </div>
-           <span className="text-[10px] font-display font-bold text-industrial-silver/20 tracking-widest uppercase">
+           <span className="text-[10px] font-display font-bold text-ash-600 tracking-widest uppercase">
              Monitorando Atividade de Grid em Tempo Real
            </span>
         </div>
         
         <div className="flex items-center gap-4">
-          <span className="text-[9px] font-display font-bold text-industrial-silver/20 uppercase tracking-widest">{t('logs.density')}</span>
-          <div className="flex bg-black/40 p-1 rounded-sm border border-white/5">
+          <span className="text-[9px] font-display font-bold text-ash-600 uppercase tracking-widest">{t('logs.density')}</span>
+          <div className="flex bg-black/40 p-1 rounded-sm border border-border-subtle">
             {[200, 500, 1000].map((n) => (
               <button
                 key={n}
@@ -485,7 +485,7 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
                 className={`px-4 py-1 text-[10px] font-display font-bold tracking-tighter transition rounded-sm ${
                   maxEntries === n
                     ? 'text-primary bg-primary/10 shadow-lg'
-                    : 'text-industrial-silver/20 hover:text-bone hover:bg-white/5'
+                    : 'text-ash-600 hover:text-bone hover:bg-white/5'
                 }`}
               >
                 {n}

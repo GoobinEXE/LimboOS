@@ -70,7 +70,7 @@ export default function RedirectsPanel({ embedded = false }: { embedded?: boolea
   );
 
   return (
-    <section className="space-y-8 font-chakra">
+    <section className="space-y-8">
       {modal}
       {!embedded && (
       <div className="flex items-center gap-4">
@@ -84,7 +84,7 @@ export default function RedirectsPanel({ embedded = false }: { embedded?: boolea
       </div>
       )}
       {embedded && (
-        <p className="text-[10px] font-display font-bold text-industrial-silver/40 uppercase tracking-widest">
+        <p className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-widest">
           Mapear QR físico → intel · {redirects.length} mapeamentos ativos
         </p>
       )}
@@ -92,8 +92,8 @@ export default function RedirectsPanel({ embedded = false }: { embedded?: boolea
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Form Column */}
         <div className="lg:col-span-1">
-          <div className="bg-seam border-4 border-seam p-8 rounded-xl shadow-xl space-y-8 relative overflow-hidden">
-            <div className="flex items-center gap-3 border-b border-white/5 pb-6">
+          <div className="bg-seam border-4 border-seam p-8 rounded-card shadow-xl space-y-8 relative overflow-hidden">
+            <div className="flex items-center gap-3 border-b border-border-subtle pb-6">
               <span className="material-symbols-outlined text-phosphor-500 text-2xl">add_link</span>
               <h3 className="font-black text-xs uppercase tracking-widest text-bone">{t('redirects.inject')}</h3>
             </div>
@@ -128,7 +128,7 @@ export default function RedirectsPanel({ embedded = false }: { embedded?: boolea
                   onChange={(e) => setNewReason(e.target.value)}
                   placeholder="MOTIVO DO REDIRECIONAMENTO..."
                   rows={2}
-                  className="w-full bg-black/40 border-2 border-seam text-[10px] font-bold text-bone px-4 py-3 focus:border-white/20 outline-none rounded-sm resize-none transition"
+                  className="w-full bg-black/40 border-2 border-seam text-[10px] font-bold text-bone px-4 py-3 focus:border-border-strong outline-none rounded-sm resize-none transition"
                 />
               </div>
               <button
@@ -140,7 +140,7 @@ export default function RedirectsPanel({ embedded = false }: { embedded?: boolea
               </button>
             </form>
 
-            <div className="bg-black/60 border-2 border-seam p-5 rounded-xl">
+            <div className="bg-black/60 border-2 border-seam p-5 rounded-card">
               <p className="text-[10px] text-ash-600 leading-relaxed font-bold uppercase tracking-wide">
                 <span className="text-phosphor-500 font-black">LOG:</span> {t('redirects.help')}
               </p>
@@ -150,7 +150,7 @@ export default function RedirectsPanel({ embedded = false }: { embedded?: boolea
 
         {/* List Column */}
         <div className="lg:col-span-2">
-          <div className="bg-seam border-4 border-seam rounded-xl shadow-2xl flex flex-col min-h-[500px] overflow-hidden">
+          <div className="bg-seam border-4 border-seam rounded-card shadow-2xl flex flex-col min-h-[500px] overflow-hidden">
             <div className="p-6 border-b-4 border-seam bg-black/40 flex items-center justify-between">
               <h3 className="font-black text-[10px] uppercase tracking-[0.3em] text-ash-600">{t('redirects.activeGrid')}</h3>
               <div className="relative">

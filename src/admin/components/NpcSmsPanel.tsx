@@ -9,7 +9,7 @@ import { useModal } from './ConfirmModal';
 type TabId = 'contacts' | 'dialogues';
 
 const fieldClass =
-  'w-full bg-black/50 border border-white/10 text-[11px] font-bold uppercase px-3 py-2.5 text-bone outline-none focus:border-secondary rounded-sm';
+  'w-full bg-black/50 border border-border text-[11px] font-bold uppercase px-3 py-2.5 text-bone outline-none focus:border-secondary rounded-sm';
 const labelClass = 'text-[9px] font-black uppercase tracking-widest text-ash-500 mb-1.5 block';
 
 function emptyContact(): NpcContact {
@@ -306,7 +306,7 @@ export default function NpcSmsPanel({ embedded = false }: { embedded?: boolean }
   };
 
   return (
-    <section className="space-y-8 font-chakra">
+    <section className="space-y-8">
       {modal}
       {!embedded && (
         <div className="flex items-center gap-4">
@@ -327,7 +327,7 @@ export default function NpcSmsPanel({ embedded = false }: { embedded?: boolean }
                   className={`text-[9px] font-black uppercase tracking-widest px-4 py-2 border rounded-sm ${
                     tab === id
                       ? 'border-secondary text-secondary bg-secondary/10'
-                      : 'border-white/10 text-ash-500'
+                      : 'border-border text-ash-500'
                   }`}
                 >
                   {id === 'contacts' ? t('npcSms.tabContacts') : t('npcSms.tabDialogues')}
@@ -370,7 +370,7 @@ export default function NpcSmsPanel({ embedded = false }: { embedded?: boolean }
                 placeholder={t('npcSms.filter')}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full bg-black/40 border-2 border-white/5 text-[11px] font-black uppercase px-12 py-3 text-bone outline-none focus:border-secondary rounded-sm"
+                className="w-full bg-black/40 border-2 border-border-subtle text-[11px] font-black uppercase px-12 py-3 text-bone outline-none focus:border-secondary rounded-sm"
               />
             </div>
             {tab === 'dialogues' && (
@@ -395,8 +395,8 @@ export default function NpcSmsPanel({ embedded = false }: { embedded?: boolean }
             filteredContacts.map((c) => (
               <div
                 key={c.id}
-                className={`bg-black border-2 p-4 rounded-xl flex items-center gap-4 ${
-                  c.enabled === false ? 'border-white/5 opacity-50' : 'border-seam'
+                className={`bg-black border-2 p-4 rounded-card flex items-center gap-4 ${
+                  c.enabled === false ? 'border-border-subtle opacity-50' : 'border-seam'
                 }`}
               >
                 <div className="w-12 h-12 rounded-lg border border-secondary/20 overflow-hidden bg-black shrink-0 flex items-center justify-center">
@@ -423,7 +423,7 @@ export default function NpcSmsPanel({ embedded = false }: { embedded?: boolean }
                     type="button"
                     disabled={!hasRemoteContacts}
                     onClick={() => openEditContact(c)}
-                    className="text-[8px] font-black uppercase tracking-widest px-3 py-2 border border-white/10 text-ash-400 hover:text-bone rounded-sm disabled:opacity-30"
+                    className="text-[8px] font-black uppercase tracking-widest px-3 py-2 border border-border text-ash-400 hover:text-bone rounded-sm disabled:opacity-30"
                   >
                     {t('npcSms.edit')}
                   </button>
@@ -431,7 +431,7 @@ export default function NpcSmsPanel({ embedded = false }: { embedded?: boolean }
                     type="button"
                     disabled={!hasRemoteContacts}
                     onClick={() => toggleContact(c)}
-                    className="text-[8px] font-black uppercase tracking-widest px-3 py-2 border border-white/10 text-ash-400 rounded-sm disabled:opacity-30"
+                    className="text-[8px] font-black uppercase tracking-widest px-3 py-2 border border-border text-ash-400 rounded-sm disabled:opacity-30"
                   >
                     {c.enabled === false ? t('npcSms.enable') : t('npcSms.disable')}
                   </button>
@@ -453,8 +453,8 @@ export default function NpcSmsPanel({ embedded = false }: { embedded?: boolean }
               return (
                 <div
                   key={d.id}
-                  className={`bg-black border-2 p-4 rounded-xl ${
-                    d.enabled === false ? 'border-white/5 opacity-50' : 'border-seam'
+                  className={`bg-black border-2 p-4 rounded-card ${
+                    d.enabled === false ? 'border-border-subtle opacity-50' : 'border-seam'
                   }`}
                 >
                   <div className="flex items-start justify-between gap-4">
@@ -478,7 +478,7 @@ export default function NpcSmsPanel({ embedded = false }: { embedded?: boolean }
                         type="button"
                         disabled={!hasRemoteDialogues}
                         onClick={() => openEditDialogue(d)}
-                        className="text-[8px] font-black uppercase tracking-widest px-3 py-2 border border-white/10 text-ash-400 hover:text-bone rounded-sm disabled:opacity-30"
+                        className="text-[8px] font-black uppercase tracking-widest px-3 py-2 border border-border text-ash-400 hover:text-bone rounded-sm disabled:opacity-30"
                       >
                         {t('npcSms.edit')}
                       </button>
@@ -486,7 +486,7 @@ export default function NpcSmsPanel({ embedded = false }: { embedded?: boolean }
                         type="button"
                         disabled={!hasRemoteDialogues}
                         onClick={() => toggleDialogue(d)}
-                        className="text-[8px] font-black uppercase tracking-widest px-3 py-2 border border-white/10 text-ash-400 rounded-sm disabled:opacity-30"
+                        className="text-[8px] font-black uppercase tracking-widest px-3 py-2 border border-border text-ash-400 rounded-sm disabled:opacity-30"
                       >
                         {d.enabled === false ? t('npcSms.enable') : t('npcSms.disable')}
                       </button>
@@ -517,13 +517,13 @@ export default function NpcSmsPanel({ embedded = false }: { embedded?: boolean }
       {/* Contact editor */}
       {contactEditor && (
         <div
-          className="fixed inset-0 z-[9000] flex items-center justify-center bg-black/90 backdrop-blur-md p-4"
+          className="fixed inset-0 z-[9000] flex items-center justify-center bg-surface-scrim p-4"
           onMouseDown={(e) => {
             if (e.target === e.currentTarget && !saving) setContactEditor(null);
           }}
         >
-          <div className="bg-seam border-2 border-white/10 w-full max-w-lg rounded-xl shadow-2xl overflow-hidden">
-            <div className="px-6 py-4 border-b border-white/10 flex justify-between items-center bg-black/40">
+          <div className="bg-seam border-2 border-border w-full max-w-lg rounded-card shadow-2xl overflow-hidden">
+            <div className="px-6 py-4 border-b border-border flex justify-between items-center bg-black/40">
               <h3 className="text-xs font-black uppercase tracking-[0.2em] text-bone">
                 {isEdit ? t('npcSms.editContact') : t('npcSms.createContact')}
               </h3>
@@ -599,7 +599,7 @@ export default function NpcSmsPanel({ embedded = false }: { embedded?: boolean }
                 </div>
               </div>
             </div>
-            <div className="px-6 py-4 border-t border-white/10 flex gap-3 bg-black/40">
+            <div className="px-6 py-4 border-t border-border flex gap-3 bg-black/40">
               <button
                 type="button"
                 disabled={saving}
@@ -624,13 +624,13 @@ export default function NpcSmsPanel({ embedded = false }: { embedded?: boolean }
       {/* Dialogue editor */}
       {dialogueEditor && (
         <div
-          className="fixed inset-0 z-[9000] flex items-center justify-center bg-black/90 backdrop-blur-md p-4"
+          className="fixed inset-0 z-[9000] flex items-center justify-center bg-surface-scrim p-4"
           onMouseDown={(e) => {
             if (e.target === e.currentTarget && !saving) setDialogueEditor(null);
           }}
         >
-          <div className="bg-seam border-2 border-white/10 w-full max-w-2xl max-h-[90vh] flex flex-col rounded-xl shadow-2xl overflow-hidden">
-            <div className="px-6 py-4 border-b border-white/10 flex justify-between items-center bg-black/40 shrink-0">
+          <div className="bg-seam border-2 border-border w-full max-w-2xl max-h-[90vh] flex flex-col rounded-card shadow-2xl overflow-hidden">
+            <div className="px-6 py-4 border-b border-border flex justify-between items-center bg-black/40 shrink-0">
               <h3 className="text-xs font-black uppercase tracking-[0.2em] text-bone">
                 {isEdit ? t('npcSms.editDialogue') : t('npcSms.createDialogue')}
               </h3>
@@ -691,7 +691,7 @@ export default function NpcSmsPanel({ embedded = false }: { embedded?: boolean }
                   </button>
                 </div>
                 {dialogueEditor.messages.map((m, i) => (
-                  <div key={i} className="bg-black/40 border border-white/5 p-3 rounded-sm space-y-2">
+                  <div key={i} className="bg-black/40 border border-border-subtle p-3 rounded-sm space-y-2">
                     <div className="flex items-center gap-2">
                       <select
                         className={`${fieldClass} max-w-[120px]`}
@@ -735,7 +735,7 @@ export default function NpcSmsPanel({ embedded = false }: { embedded?: boolean }
                 {t('npcSms.active')}
               </label>
             </div>
-            <div className="px-6 py-4 border-t border-white/10 flex gap-3 bg-black/40 shrink-0">
+            <div className="px-6 py-4 border-t border-border flex gap-3 bg-black/40 shrink-0">
               <button
                 type="button"
                 disabled={saving}

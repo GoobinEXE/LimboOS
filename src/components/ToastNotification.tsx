@@ -197,7 +197,7 @@ function AchievementToast({
           {toast.title}
         </p>
         {toast.subtitle && (
-          <p className="text-[11px] text-industrial-silver/70 mt-1 leading-snug wrap-break-word font-sans">
+          <p className="text-[11px] text-ash-300 mt-1 leading-snug wrap-break-word font-sans">
             {toast.subtitle}
           </p>
         )}

@@ -258,6 +258,27 @@
     -webkit-tap-highlight-color: transparent;
   }
 
+  /* Cor do contorno já em repouso: o utilitário `transition` anima
+     outline-color, e sem isso o anel de foco nasceria na cor do texto e
+     só chegaria ao âmbar 160ms depois. O foco liga apenas estilo/largura. */
+  :where(
+    a[href],
+    button,
+    summary,
+    [role="button"],
+    [role="tab"],
+    [role="menuitem"],
+    [role="option"],
+    [role="switch"],
+    [role="checkbox"],
+    [tabindex]
+  ):not(:where(.focus-bare, .focus-bare *, .nokia-theme-active *)) {
+    outline-color: var(--focus-ring);
+  }
+  :where(input, textarea, select):not(:where(.focus-bare, .focus-bare *, .nokia-theme-active *)) {
+    outline-color: var(--color-accent-60);
+  }
+
   /* Números de painel sempre alinhados em coluna */
   table,
   kbd,

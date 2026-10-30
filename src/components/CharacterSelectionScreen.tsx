@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { EASE_OUT, dialogPop, overlayFade, staggerDelay } from '../lib/motion';
 import { useTranslation } from 'react-i18next';
 import { UserPlus, Shield, User, ChevronRight, AlertCircle, Skull, Search, LogOut } from 'lucide-react';
 import { fetchCharacters, createCharacter } from '../store/firestore';
@@ -97,14 +98,14 @@ export default function CharacterSelectionScreen({ account, onSelect, onLogout }
       <div className="noise-overlay" />
       <div className="scanlines" />
 
-      <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }} className="w-full max-w-2xl z-10">
+      <motion.div initial={{ opacity: 0, transform: 'translateY(12px)' }} animate={{ opacity: 1, transform: 'translateY(0px)' }} transition={{ duration: 0.3, ease: EASE_OUT }} className="w-full max-w-2xl xl:max-w-3xl z-10">
         <header className="mb-8 border-b border-border-accent pb-6 flex justify-between items-end">
           <div>
-            <div className="text-protocol text-industrial-silver/40 mb-2">{t('character.eyebrow')}</div>
-            <h1 className="text-display text-4xl text-white uppercase">
+            <div className="text-protocol text-ash-500 mb-2">{t('character.eyebrow')}</div>
+            <h1 className="text-display text-4xl text-bone uppercase">
               {t('character.title')} <span className="text-accent">{t('character.titleAccent')}</span>
             </h1>
-            <p className="text-mono-ui text-industrial-silver/50 mt-1">
+            <p className="text-mono-ui text-ash-400 mt-1">
               {t('character.operator', { name: account.displayName || account.masterName || account.email, count: characters.length })}
             </p>
           </div>
@@ -113,13 +114,13 @@ export default function CharacterSelectionScreen({ account, onSelect, onLogout }
               <LogOut size={16} />
             </button>
             <button onClick={() => setIsCreating(true)} className="bg-accent/10 hover:bg-accent/20 text-accent border border-accent/30 px-4 py-2 rounded-control text-protocol transition-colors duration-(--duration-fast) flex items-center gap-2 group active:scale-[0.97]">
-              <UserPlus size={14} className="group-hover:scale-110 transition-transform" /> {t('character.recruit')}
+              <UserPlus size={14} /> {t('character.recruit')}
             </button>
           </div>
         </header>
 
         {errorMsg && (
-          <div className="mb-4 bg-error-container/30 border border-error/40 rounded-control p-3 flex items-center gap-3 text-error animate-pulse">
+          <div role="alert" className="mb-4 bg-error-container/30 border border-error/40 rounded-control p-3 flex items-center gap-3 text-error">
             <AlertCircle size={18} />
             <span className="text-protocol">{errorMsg}</span>
           </div>
@@ -128,36 +129,38 @@ export default function CharacterSelectionScreen({ account, onSelect, onLogout }
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <AnimatePresence mode="popLayout">
             {characters.map((char, i) => (
-              <motion.div key={char.id} initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.05, duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+              <motion.button key={char.id} type="button" initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: staggerDelay(i, 0.05, 0.3), duration: 0.24, ease: EASE_OUT }}
                 onClick={() => handleSelect(char)}
-                className="bg-surface-raised border border-border hover:border-accent/60 rounded-card p-5 cursor-pointer transition-colors duration-(--duration-fast) group relative overflow-hidden shadow-hairline"
+                disabled={Boolean(selectedCharId) && selectedCharId !== char.id}
+                aria-busy={selectedCharId === char.id}
+                className="w-full text-left bg-surface-raised border border-border hover:border-accent-60 hover:bg-surface-panel rounded-card p-5 cursor-pointer transition-colors duration-(--duration-fast) group relative overflow-hidden shadow-hairline active:scale-[0.99] disabled:opacity-50 disabled:cursor-wait"
               >
                 <div className="flex items-center gap-4 relative z-10">
                   <div className={`w-16 h-16 rounded-card overflow-hidden bg-surface-panel border ${char.agentStatus === 'morto' ? 'border-red-500/50' : 'border-border'} flex items-center justify-center`}>
                     {char.profilePhotoUrl ? (
                       <img src={char.profilePhotoUrl} alt={char.codinome} className="w-full h-full object-cover" />
                     ) : (
-                      <User size={32} className="text-industrial-silver/30" />
+                      <User size={32} className="text-ash-600" />
                     )}
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-display text-xl text-white uppercase group-hover:text-accent transition-colors duration-(--duration-fast)">
+                    <h3 className="text-display text-xl text-bone uppercase group-hover:text-accent transition-colors duration-(--duration-fast)">
                       {char.codinome}
                     </h3>
                     <div className="flex items-center gap-3 mt-1">
                       <div className="flex items-center gap-1.5">
-                        <div className={`w-1.5 h-1.5 rounded-full ${char.agentStatus === 'vivo' ? 'bg-phosphor-500 animate-pulse' : char.agentStatus === 'morto' ? 'bg-red-500' : 'bg-yellow-500'}`} />
+                        <span className={`lmb-led ${char.agentStatus === 'vivo' ? 'text-phosphor-400 animate-led' : char.agentStatus === 'morto' ? 'text-red-500' : 'text-yellow-500'}`} aria-hidden />
                         <span className={`text-protocol ${char.agentStatus === 'vivo' ? 'text-phosphor-500' : char.agentStatus === 'morto' ? 'text-red-500' : 'text-yellow-500'}`}>
                           {char.agentStatus}
                         </span>
                       </div>
-                      {char.agentId && <span className="text-mono-ui text-industrial-silver/40">RM-{char.agentId}</span>}
+                      {char.agentId && <span className="text-mono-ui text-ash-500">RM-{char.agentId}</span>}
                     </div>
                   </div>
                   {selectedCharId === char.id ? (
                     <RetroSpinner size="sm" className="text-accent" />
                   ) : (
-                    <ChevronRight size={20} className="text-industrial-silver/20 group-hover:text-accent transition duration-(--duration-fast) group-hover:translate-x-1" />
+                    <ChevronRight size={20} className="text-ash-600 group-hover:text-accent transition duration-(--duration-fast) group-hover:translate-x-0.5" />
                   )}
                 </div>
 
@@ -174,7 +177,7 @@ export default function CharacterSelectionScreen({ account, onSelect, onLogout }
                     <div key={idx} className={`w-1 h-3 rounded-inset ${idx < char.dangerLevel ? 'bg-accent/40' : 'bg-border-subtle'}`} />
                   ))}
                 </div>
-              </motion.div>
+              </motion.button>
             ))}
           </AnimatePresence>
 
@@ -190,42 +193,46 @@ export default function CharacterSelectionScreen({ account, onSelect, onLogout }
       {/* Create New Character Modal */}
       <AnimatePresence>
         {isCreating && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-            <motion.div initial={{ scale: 0.95, y: 16 }} animate={{ scale: 1, y: 0 }} transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }} className="w-full max-w-md bg-surface-raised border border-accent/30 rounded-card p-8 shadow-panel relative">
+          <motion.div variants={overlayFade} initial="hidden" animate="visible" exit="exit" className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-surface-scrim"
+            onMouseDown={(e) => { if (e.target === e.currentTarget && !creating) setIsCreating(false); }}
+            onKeyDown={(e) => { if (e.key === 'Escape' && !creating) setIsCreating(false); }}
+          >
+            <motion.div role="dialog" aria-modal="true" variants={dialogPop} initial="hidden" animate="visible" exit="exit" className="w-full max-w-md bg-surface-raised border border-accent/30 rounded-card p-8 shadow-2xl machined-edge relative">
               <div className="absolute -top-3 left-6 bg-accent px-2 py-0.5 text-[10px] font-display font-bold text-black tracking-widest uppercase rounded-inset">
                 {t('character.create.badge')}
               </div>
-              <h2 className="text-display text-2xl text-white uppercase mb-6">
+              <h2 className="text-display text-2xl text-bone uppercase mb-6">
                 {t('character.create.title')} <span className="text-accent">{t('character.create.titleAccent')}</span>
               </h2>
               <form onSubmit={handleCreate} className="space-y-6">
                 <div className="group">
-                  <label className="text-protocol text-industrial-silver/50 group-focus-within:text-accent transition-colors duration-(--duration-fast) mb-2 block">
+                  <label className="text-protocol text-ash-400 group-focus-within:text-accent transition-colors duration-(--duration-fast) mb-2 block">
                     {t('character.create.label')}
                   </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-industrial-silver/40 group-focus-within:text-accent transition-colors duration-(--duration-fast)">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-ash-500 group-focus-within:text-accent transition-colors duration-(--duration-fast)">
                       <Shield size={16} />
                     </div>
                     <input type="text" autoFocus required value={newCodinome} onChange={e => setNewCodinome(e.target.value)}
                       placeholder={t('character.create.placeholder')}
-                      className="w-full bg-surface-sunken border border-border rounded-control py-4 pl-12 pr-4 text-white font-sans text-base tracking-wide focus:ring-0 focus:border-border-accent placeholder:text-industrial-silver/20 outline-none uppercase transition-colors duration-(--duration-fast)" />
+                      autoComplete="off" spellCheck={false}
+                      className="focus-bare w-full bg-surface-sunken border border-border rounded-control py-4 pl-12 pr-4 text-bone shadow-pressed font-sans text-base tracking-wide focus:ring-0 focus:border-border-accent placeholder:text-ash-600 outline-none uppercase transition-colors duration-(--duration-fast)" />
                     <div className="absolute bottom-0 left-4 right-4 h-px bg-accent scale-x-0 origin-left transition-transform duration-(--duration-base) ease-limbo group-focus-within:scale-x-100" />
                   </div>
                 </div>
                 
                 <div className="bg-accent-05 border-l-2 border-accent/30 rounded-inset p-4 flex gap-3">
                   <AlertCircle size={18} className="text-accent shrink-0" />
-                  <p className="text-protocol text-industrial-silver/70 leading-relaxed">
+                  <p className="text-protocol text-ash-300 leading-relaxed">
                     {t('character.create.warning')}
                   </p>
                 </div>
 
                 <div className="flex gap-4">
-                  <button type="button" onClick={() => setIsCreating(false)} className="flex-1 py-4 text-protocol text-industrial-silver/50 hover:text-white transition-colors duration-(--duration-fast)">
+                  <button type="button" onClick={() => setIsCreating(false)} className="flex-1 py-4 text-protocol text-ash-400 hover:text-white transition-colors duration-(--duration-fast)">
                     {tCommon('cancel')}
                   </button>
-                  <button type="submit" disabled={creating} className="flex-2 bg-accent hover:brightness-110 text-black font-display font-bold text-xs uppercase tracking-[0.2em] py-4 px-8 rounded-control transition duration-(--duration-fast) flex items-center justify-center gap-3 disabled:opacity-50 glow-orange">
+                  <button type="submit" disabled={creating} className="flex-2 bg-accent hover:bg-primary text-[#1a0d00] active:scale-[0.97] font-display font-bold text-xs uppercase tracking-[0.2em] py-4 px-8 rounded-control transition duration-(--duration-fast) flex items-center justify-center gap-3 disabled:opacity-50 glow-orange">
                     {creating ? <RetroSpinner size="sm" /> : t('character.create.submit')}
                   </button>
                 </div>
@@ -238,35 +245,36 @@ export default function CharacterSelectionScreen({ account, onSelect, onLogout }
       {/* Mandatory Master Name Modal */}
       <AnimatePresence>
         {showMasterNamePrompt && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-black/95 backdrop-blur-md">
-            <motion.div initial={{ scale: 0.95, y: 16 }} animate={{ scale: 1, y: 0 }} transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }} className="w-full max-w-md bg-surface-raised border border-accent/50 rounded-card p-8 shadow-panel relative glow-orange-subtle">
-              <div className="absolute -top-3 left-6 bg-accent px-2 py-0.5 text-[10px] font-display font-bold text-black tracking-widest uppercase rounded-inset animate-pulse">
+          <motion.div variants={overlayFade} initial="hidden" animate="visible" exit="exit" className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-surface-sunken/95">
+            <motion.div role="dialog" aria-modal="true" variants={dialogPop} initial="hidden" animate="visible" exit="exit" className="w-full max-w-md bg-surface-raised border border-accent/50 rounded-card p-8 shadow-2xl machined-edge relative glow-orange-subtle">
+              <div className="absolute -top-3 left-6 bg-accent px-2 py-0.5 text-[10px] font-display font-bold text-black tracking-widest uppercase rounded-inset">
                 {t('character.master.badge')}
               </div>
-              <h2 className="text-display text-2xl text-white uppercase mb-4 mt-2">
+              <h2 className="text-display text-2xl text-bone uppercase mb-4 mt-2">
                 {t('character.master.title')} <span className="text-accent">{t('character.master.titleAccent')}</span>
               </h2>
-              <p className="text-mono-ui text-industrial-silver/70 mb-8 leading-relaxed">
+              <p className="text-mono-ui text-ash-300 mb-8 leading-relaxed">
                 {t('character.master.body')}
               </p>
               
               <form onSubmit={handleSaveMasterName} className="space-y-6">
                 <div className="group">
-                  <label className="text-protocol text-industrial-silver/50 group-focus-within:text-accent transition-colors duration-(--duration-fast) mb-2 block">
+                  <label className="text-protocol text-ash-400 group-focus-within:text-accent transition-colors duration-(--duration-fast) mb-2 block">
                     {t('character.master.label')}
                   </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-industrial-silver/40 group-focus-within:text-accent transition-colors duration-(--duration-fast)">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-ash-500 group-focus-within:text-accent transition-colors duration-(--duration-fast)">
                       <User size={16} />
                     </div>
                     <input type="text" autoFocus required value={newMasterName} onChange={e => setNewMasterName(e.target.value)}
                       placeholder={t('character.master.placeholder')}
-                      className="w-full bg-surface-sunken border border-border rounded-control py-4 pl-12 pr-4 text-white font-sans text-base tracking-wide focus:ring-0 focus:border-border-accent placeholder:text-industrial-silver/20 outline-none transition-colors duration-(--duration-fast)" />
+                      autoComplete="name"
+                      className="focus-bare w-full bg-surface-sunken border border-border rounded-control py-4 pl-12 pr-4 text-bone shadow-pressed font-sans text-base tracking-wide focus:ring-0 focus:border-border-accent placeholder:text-ash-600 outline-none transition-colors duration-(--duration-fast)" />
                     <div className="absolute bottom-0 left-4 right-4 h-px bg-accent scale-x-0 origin-left transition-transform duration-(--duration-base) ease-limbo group-focus-within:scale-x-100" />
                   </div>
                 </div>
 
-                <button type="submit" disabled={savingMasterName} className="w-full bg-accent hover:brightness-110 text-black font-display font-bold text-xs uppercase tracking-[0.2em] py-4 rounded-control transition duration-(--duration-fast) flex items-center justify-center gap-3 disabled:opacity-50 glow-orange">
+                <button type="submit" disabled={savingMasterName} className="w-full bg-accent hover:bg-primary text-[#1a0d00] active:scale-[0.97] font-display font-bold text-xs uppercase tracking-[0.2em] py-4 rounded-control transition duration-(--duration-fast) flex items-center justify-center gap-3 disabled:opacity-50 glow-orange">
                   {savingMasterName ? <RetroSpinner size="sm" /> : t('character.master.submit')}
                 </button>
               </form>

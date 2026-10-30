@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
+import { EASE_OUT } from '../../lib/motion';
 import { useTranslation } from 'react-i18next';
 import { useLandscapeLayout } from '../hooks/useLandscapeLayout';
 import type { AppScreen, WalkmanStatus } from '../../types/player';
@@ -144,7 +145,7 @@ export default function NokiaDeviceWrapper({
             <motion.div
               initial={{ opacity: 0, x: -8 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.28, ease: EASE_OUT }}
               className="w-11 shrink-0 flex flex-col justify-around items-stretch bg-lcd-paper border-r-2 border-lcd-ink py-1.5 px-0.5 gap-0.5 z-20 select-none text-lcd-ink"
             >
               {navButtons}

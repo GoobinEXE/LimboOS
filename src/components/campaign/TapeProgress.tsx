@@ -72,7 +72,7 @@ export const TapeProgress = ({ total, current, onChange }: TapeProgressProps) =>
         </div>
       </div>
 
-      <div className="mt-3 flex items-baseline gap-2 text-mono-ui text-[10px] text-industrial-silver/30 group-hover:text-industrial-silver/60 transition-colors">
+      <div className="mt-3 flex items-baseline gap-2 text-mono-ui text-[10px] text-ash-600 group-hover:text-ash-400 transition-colors">
         <span className="text-primary/80">{pad(Math.min(current + 1, Math.max(total, 1)))}</span>
         <span className="opacity-50">/</span>
         <span>{pad(total)}</span>

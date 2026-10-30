@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'motion/react';
+import { SPRING_DRAWER } from '../../lib/motion';
 import { LogOut, User, X, ShieldAlert, Users, ChevronRight, type LucideIcon } from 'lucide-react';
 
 interface SecurityMenuProps {
@@ -45,7 +46,7 @@ const ActionBtn = ({ onClick, icon: Icon, index, title, sub, tone = 'accent' }: 
         <h3 className={`text-display text-lg uppercase mt-0.5 truncate transition-colors ${isDanger ? 'text-red-400' : 'text-white group-hover:text-primary'}`}>
           {title}
         </h3>
-        <p className="text-protocol text-[9px] text-industrial-silver/40 mt-1 truncate group-hover:text-industrial-silver/60 transition-colors">{sub}</p>
+        <p className="text-protocol text-[9px] text-ash-500 mt-1 truncate group-hover:text-ash-400 transition-colors">{sub}</p>
       </div>
       <ChevronRight
         size={20}
@@ -68,8 +69,8 @@ export const SecurityMenu = ({ onClose, onLogout, onShowProfile, onChangeCharact
       initial={{ y: '-100%' }}
       animate={{ y: 0 }}
       exit={{ y: '-100%' }}
-      transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-      className="absolute inset-0 z-100 bg-surface/98 backdrop-blur-xl flex flex-col border-b border-border-accent shadow-2xl overflow-hidden touch-none"
+      transition={SPRING_DRAWER}
+      className="absolute inset-0 z-100 bg-surface/98 flex flex-col border-b border-border-accent shadow-2xl overflow-hidden touch-none"
     >
       <div className="noise-overlay" />
       <div className="scanlines" />
@@ -104,7 +105,7 @@ export const SecurityMenu = ({ onClose, onLogout, onShowProfile, onChangeCharact
       </div>
 
       <footer className="px-6 sm:px-8 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] border-t border-border-subtle bg-surface-raised/40 relative z-20">
-        <div className="flex justify-between items-center text-mono-ui text-[9px] text-industrial-silver/30">
+        <div className="flex justify-between items-center text-mono-ui text-[9px] text-ash-600">
           <span>{t('brand.smileCopyright', { ns: 'common' })}</span>
           <span>{t('security.grid')}</span>
         </div>

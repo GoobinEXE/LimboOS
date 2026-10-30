@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'motion/react';
+import { SPRING_SNAP } from '../../lib/motion';
 import { generateAgentId } from '../../store/firestore';
 
 interface AgentDossier {
@@ -38,7 +39,7 @@ const CornerMarks = () => (
 /** Linha de ficha: rótulo ..... valor (pontilhado tipo formulário datilografado). */
 const Row = ({ label, children }: { label: string; children: React.ReactNode }) => (
   <div className="flex items-baseline gap-2 min-w-0">
-    <span className="text-protocol text-[9px] text-industrial-silver/40 shrink-0">{label}</span>
+    <span className="text-protocol text-[9px] text-ash-500 shrink-0">{label}</span>
     <span aria-hidden className="flex-1 border-b border-dotted border-border-strong -translate-y-0.75" />
     <span className="text-mono-ui text-[11px] text-right min-w-0 truncate">{children}</span>
   </div>
@@ -84,13 +85,13 @@ export const MetadataOverlay = ({ onClose, agent }: MetadataOverlayProps) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-120 bg-surface-scrim backdrop-blur-md flex items-center justify-center p-6"
+      className="fixed inset-0 z-120 bg-surface-scrim flex items-center justify-center p-6"
       onClick={onClose}
     >
       <motion.div
         initial={{ scale: 0.94, y: 16 }}
         animate={{ scale: 1, y: 0 }}
-        transition={{ type: 'spring', stiffness: 320, damping: 28 }}
+        transition={SPRING_SNAP}
         className="bg-surface-panel border border-border-strong rounded-card shadow-panel w-full max-w-90 relative overflow-hidden"
         onClick={e => e.stopPropagation()}
       >
@@ -138,8 +139,8 @@ export const MetadataOverlay = ({ onClose, agent }: MetadataOverlayProps) => {
 
           <div className="space-y-2 pt-1">
             <div className="flex items-center justify-between">
-              <span className="text-protocol text-[9px] text-industrial-silver/40">{t('danger.label', { ns: 'common' })}</span>
-              <span className={`text-protocol text-[9px] ${dangerLevel >= 4 ? 'text-red-400' : dangerLevel >= 2 ? 'text-primary' : 'text-industrial-silver/40'}`}>
+              <span className="text-protocol text-[9px] text-ash-500">{t('danger.label', { ns: 'common' })}</span>
+              <span className={`text-protocol text-[9px] ${dangerLevel >= 4 ? 'text-red-400' : dangerLevel >= 2 ? 'text-primary' : 'text-ash-500'}`}>
                 {dangerLabel}
               </span>
             </div>
@@ -157,7 +158,7 @@ export const MetadataOverlay = ({ onClose, agent }: MetadataOverlayProps) => {
             </div>
           </div>
 
-          <p className="pt-4 border-t border-border-subtle text-[9px] leading-relaxed text-industrial-silver/30 italic font-sans">
+          <p className="pt-4 border-t border-border-subtle text-[9px] leading-relaxed text-ash-600 italic font-sans">
             "Informação classificada nível OMEGA. Distribuição não autorizada resulta em eliminação imediata."
           </p>
         </div>

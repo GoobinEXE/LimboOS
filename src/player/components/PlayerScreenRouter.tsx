@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { EASE_OUT } from '../../lib/motion';
 import { useTranslation } from 'react-i18next';
 import RetroLoading from '../../components/player/RetroLoading';
 import { usePlayerSession } from '../context/PlayerProviders';
@@ -15,7 +16,7 @@ const AgentDossierOverlay = React.lazy(() =>
 );
 const CampaignSelection = React.lazy(() => import('../../components/CampaignSelection'));
 
-const LIMBO_EASE = [0.22, 1, 0.36, 1] as const;
+const LIMBO_EASE = EASE_OUT;
 const EXIT_EASE = [0.4, 0, 1, 1] as const;
 
 // mode="wait" soma saída + entrada: a saída precisa ser curta para a troca

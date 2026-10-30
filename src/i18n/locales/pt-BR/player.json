@@ -38,7 +38,16 @@
     "linkNode": "Nó de Link: Ativo",
     "side": {
       "masterAccess": "Acesso Mestre"
-    }
+    },
+    "bootLog": [
+      "LIMBOOS v0.8b",
+      "(C) 1999-2000 Liminal Systems",
+      "BOOT: OK",
+      "COMPANION: ONLINE",
+      "> STATUS: LIMBO",
+      "> Y2K CHECK: DESCONHECIDO",
+      "> LOG: AGUARDANDO ENTRADA..."
+    ]
   },
   "character": {
     "loading": "Acessando Banco de Dados...",

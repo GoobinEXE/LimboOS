@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'motion/react';
+import { SPRING_INDICATOR, SPRING_SNAP } from '../../lib/motion';
 import { X, Trophy, Music, Shield, Radio, Camera, Pencil, Check } from 'lucide-react';
 import { updateCodinome, uploadProfilePhoto } from '../../store/firestore';
 import { AchievementCatalog } from '../achievements/AchievementCatalog';
@@ -50,7 +51,7 @@ const CornerMarks = () => (
 /** Linha de ficha datilografada: rótulo ..... valor */
 const Row = ({ label, children }: { label: string; children: React.ReactNode }) => (
   <div className="flex items-baseline gap-2 min-w-0">
-    <span className="text-protocol text-[9px] text-industrial-silver/40 shrink-0">{label}</span>
+    <span className="text-protocol text-[9px] text-ash-500 shrink-0">{label}</span>
     <span aria-hidden className="flex-1 border-b border-dotted border-border-strong -translate-y-0.75" />
     <span className="text-mono-ui text-[11px] text-right min-w-0 truncate">{children}</span>
   </div>
@@ -58,7 +59,7 @@ const Row = ({ label, children }: { label: string; children: React.ReactNode }) 
 
 const SectionLabel = ({ index, title, tone = 'text-primary' }: { index: string; title: string; tone?: string }) => (
   <div className="flex items-center gap-3">
-    <span className="text-mono-ui text-[10px] text-industrial-silver/30">{index}</span>
+    <span className="text-mono-ui text-[10px] text-ash-600">{index}</span>
     <h3 className={`text-protocol ${tone}`}>{title}</h3>
     <span aria-hidden className="flex-1 h-px bg-border-subtle" />
   </div>
@@ -174,7 +175,7 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager, onUpdat
       <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif" className="hidden" onChange={handlePhotoUpload} />
 
       {/* Cabeçalho — identidade */}
-      <header className="px-5 sm:px-6 pt-[max(1.25rem,env(safe-area-inset-top))] pb-5 border-b border-border flex justify-between items-center gap-4 bg-surface-raised/70 backdrop-blur-md relative z-20 shrink-0">
+      <header className="px-5 sm:px-6 pt-[max(1.25rem,env(safe-area-inset-top))] pb-5 border-b border-border flex justify-between items-center gap-4 bg-surface-raised/95 relative z-20 shrink-0">
         <div className="flex items-center gap-4 min-w-0">
           <button
             type="button"
@@ -220,7 +221,7 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager, onUpdat
                 <span className={`w-1.5 h-1.5 rounded-full ${stats.statusCfg.dot} animate-pulse`} />
                 {stats.statusCfg.label}
               </span>
-              {playerData.character.agentId && <span className="text-mono-ui text-[10px] text-industrial-silver/40">RM-{playerData.character.agentId}</span>}
+              {playerData.character.agentId && <span className="text-mono-ui text-[10px] text-ash-500">RM-{playerData.character.agentId}</span>}
             </div>
           </div>
         </div>
@@ -243,7 +244,7 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager, onUpdat
         ].map((s, i) => (
           <div key={i} className="flex-1 flex flex-col items-center py-3 border-r border-border-subtle last:border-r-0">
             <span className="text-mono-ui text-xl font-semibold text-primary leading-none">{String(s.val).padStart(2, '0')}</span>
-            <span className="text-protocol text-[8px] text-industrial-silver/40 mt-1.5">{s.lab}</span>
+            <span className="text-protocol text-[8px] text-ash-500 mt-1.5">{s.lab}</span>
           </div>
         ))}
       </div>
@@ -258,7 +259,7 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager, onUpdat
               type="button"
               onClick={() => setActiveTab(tab.id)}
               className={`relative flex-1 flex items-center justify-center gap-2 py-3.5 text-protocol text-[9px] transition-colors duration-200 ${
-                isActive ? 'text-primary' : 'text-industrial-silver/40 hover:text-industrial-silver/70'
+                isActive ? 'text-primary' : 'text-ash-500 hover:text-ash-300'
               }`}
             >
               <tab.Icon size={13} /> <span>{t(tab.labelKey)}</span>
@@ -266,7 +267,7 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager, onUpdat
                 <motion.span
                   layoutId="dossier-tab-indicator"
                   className="absolute inset-x-6 -bottom-px h-0.5 bg-primary glow-orange-subtle"
-                  transition={{ type: 'spring', stiffness: 420, damping: 34 }}
+                  transition={SPRING_INDICATOR}
                 />
               )}
             </button>
@@ -294,8 +295,8 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager, onUpdat
                 </div>
                 <div className="pt-4 border-t border-border-subtle">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-protocol text-[9px] text-industrial-silver/40">{t('danger.label', { ns: 'common' })}</span>
-                    <span className={`text-protocol text-[9px] ${stats.dangerLevel >= 4 ? 'text-red-400' : stats.dangerLevel >= 2 ? 'text-primary' : 'text-industrial-silver/40'}`}>{stats.dangerLabel}</span>
+                    <span className="text-protocol text-[9px] text-ash-500">{t('danger.label', { ns: 'common' })}</span>
+                    <span className={`text-protocol text-[9px] ${stats.dangerLevel >= 4 ? 'text-red-400' : stats.dangerLevel >= 2 ? 'text-primary' : 'text-ash-500'}`}>{stats.dangerLabel}</span>
                   </div>
                   <div className="flex gap-1.5">
                     {Array.from({ length: 5 }, (_, i) => (
@@ -320,7 +321,7 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager, onUpdat
                     <button
                       type="button"
                       onClick={startEditingSpotify}
-                      className="flex items-center gap-1 text-protocol text-[8px] text-industrial-silver/40 hover:text-[#1DB954] transition-colors shrink-0"
+                      className="flex items-center gap-1 text-protocol text-[8px] text-ash-500 hover:text-[#1DB954] transition-colors shrink-0"
                     >
                       <Pencil size={9} />
                       {stats.embedUrl ? t('profile.deck.edit') : t('profile.deck.connect')}
@@ -330,7 +331,7 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager, onUpdat
                 {isEditingSpotify ? (
                   <div className="space-y-2">
                     <div className="rounded-card border border-border bg-surface-raised p-3">
-                      <label className="text-protocol text-[8px] text-industrial-silver/40 block mb-2">
+                      <label className="text-protocol text-[8px] text-ash-500 block mb-2">
                         {t('profile.deck.label')}
                       </label>
                       <input
@@ -338,11 +339,11 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager, onUpdat
                         value={spotifyInput}
                         onChange={(e) => { setSpotifyInput(e.target.value); setSpotifyError(''); }}
                         placeholder={t('profile.deck.placeholder')}
-                        className="w-full bg-surface-sunken border border-border rounded-control px-3 py-2 text-base text-white placeholder:text-industrial-silver/20 focus:border-[#1DB954]/60 focus:outline-none transition-colors font-mono"
+                        className="w-full bg-surface-sunken border border-border rounded-control px-3 py-2 text-base text-white placeholder:text-ash-600 focus:border-[#1DB954]/60 focus:outline-none transition-colors font-mono"
                         autoFocus
                       />
                       {spotifyError && <p className="text-red-400 text-[10px] mt-1.5 font-sans">{spotifyError}</p>}
-                      <p className="text-[9px] text-industrial-silver/30 mt-2 leading-relaxed font-sans">
+                      <p className="text-[9px] text-ash-600 mt-2 leading-relaxed font-sans">
                         {t('profile.deck.hint')}
                       </p>
                     </div>
@@ -351,7 +352,7 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager, onUpdat
                         type="button"
                         onClick={cancelEditingSpotify}
                         disabled={savingSpotify}
-                        className="flex items-center gap-1 px-3 py-1.5 rounded-control border border-border bg-surface-raised text-industrial-silver/60 text-protocol text-[8px] hover:text-white transition-colors"
+                        className="flex items-center gap-1 px-3 py-1.5 rounded-control border border-border bg-surface-raised text-ash-400 text-protocol text-[8px] hover:text-white transition-colors"
                       >
                         <X size={10} /> {t('cancel', { ns: 'common' })}
                       </button>
@@ -378,7 +379,7 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager, onUpdat
                     className="w-full rounded-card border border-dashed border-border bg-surface-raised/40 p-6 text-center flex flex-col items-center gap-2 hover:border-[#1DB954]/40 hover:bg-[#1DB954]/5 transition-colors disabled:pointer-events-none"
                   >
                     <Music size={20} className="text-[#1DB954]/50" />
-                    <p className="text-protocol text-[9px] text-industrial-silver/40">{t('dossier.noPlaylist')}</p>
+                    <p className="text-protocol text-[9px] text-ash-500">{t('dossier.noPlaylist')}</p>
                     {onUpdateSpotify && (
                       <span className="text-protocol text-[8px] text-[#1DB954]/80 mt-1">{t('profile.deck.connectCta')}</span>
                     )}
@@ -406,7 +407,7 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager, onUpdat
                         <motion.span
                           layoutId="dossier-level-indicator"
                           className="absolute inset-0 rounded-control bg-accent glow-orange-subtle"
-                          transition={{ type: 'spring', stiffness: 420, damping: 34 }}
+                          transition={SPRING_INDICATOR}
                         />
                       )}
                       <span className="relative z-10 flex flex-col items-center leading-none gap-1">
@@ -419,13 +420,13 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager, onUpdat
               </div>
 
               <div className="flex items-center justify-between px-1">
-                <span className="text-protocol text-[8px] text-industrial-silver/40">{accessLabel(activeLevel)}</span>
-                <span className="text-mono-ui text-[10px] text-industrial-silver/30">{t('dossier.recordsCount', { n: String(levelItems.length).padStart(2, '0') })}</span>
+                <span className="text-protocol text-[8px] text-ash-500">{accessLabel(activeLevel)}</span>
+                <span className="text-mono-ui text-[10px] text-ash-600">{t('dossier.recordsCount', { n: String(levelItems.length).padStart(2, '0') })}</span>
               </div>
 
               <div className="space-y-2">
                 {levelItems.length === 0 ? (
-                  <div className="rounded-card border border-dashed border-border bg-surface-raised/40 p-10 text-center flex flex-col items-center gap-3 text-industrial-silver/30">
+                  <div className="rounded-card border border-dashed border-border bg-surface-raised/40 p-10 text-center flex flex-col items-center gap-3 text-ash-600">
                     <Radio size={28} />
                     <span className="text-protocol text-[9px]">{t('dossier.noRecords')}</span>
                   </div>
@@ -450,9 +451,9 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager, onUpdat
                         </div>
                         <div className="min-w-0 flex-1">
                           <p className="text-[11px] font-semibold text-white group-hover:text-primary transition-colors truncate uppercase tracking-wide">{item.title}</p>
-                          <p className="text-mono-ui text-[9px] text-industrial-silver/40 mt-0.5 truncate">{item.metadata?.npc || t('dossier.fieldSystem')} · {item.getTypeLabel()}</p>
+                          <p className="text-mono-ui text-[9px] text-ash-500 mt-0.5 truncate">{item.metadata?.npc || t('dossier.fieldSystem')} · {item.getTypeLabel()}</p>
                         </div>
-                        <span className="text-mono-ui text-[9px] text-industrial-silver/30 shrink-0">{String(i + 1).padStart(2, '0')}</span>
+                        <span className="text-mono-ui text-[9px] text-ash-600 shrink-0">{String(i + 1).padStart(2, '0')}</span>
                       </motion.button>
                     );
                   })
@@ -464,8 +465,8 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager, onUpdat
           {activeTab === 'conquistas' && (
             <motion.div key="conquistas" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} className="p-5 sm:p-6 space-y-4">
               <div className="flex items-center justify-between px-1">
-                <span className="text-protocol text-[8px] text-industrial-silver/40">{t('dossier.opsRecords')}</span>
-                <span className="text-mono-ui text-[10px] text-industrial-silver/30">{stats.earnedIds.size}/{achievements.length}</span>
+                <span className="text-protocol text-[8px] text-ash-500">{t('dossier.opsRecords')}</span>
+                <span className="text-mono-ui text-[10px] text-ash-600">{stats.earnedIds.size}/{achievements.length}</span>
               </div>
               <AchievementCatalog
                 grantDocIds={playerData.achievementIds || []}
@@ -480,10 +481,10 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager, onUpdat
       </main>
 
       <footer className="px-5 sm:px-6 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] flex justify-between items-center bg-surface-raised/80 border-t border-border-subtle shrink-0 relative z-20">
-        <div className="flex items-center gap-2 text-protocol text-[8px] text-industrial-silver/50">
+        <div className="flex items-center gap-2 text-protocol text-[8px] text-ash-400">
           <span className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse glow-orange-subtle" /> {t('dossier.secureConn')}
         </div>
-        <div className="text-mono-ui text-[9px] text-industrial-silver/25">{t('dossier.gridNode')}</div>
+        <div className="text-mono-ui text-[9px] text-ash-600">{t('dossier.gridNode')}</div>
       </footer>
 
       <AnimatePresence>
@@ -492,13 +493,13 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager, onUpdat
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 z-110 bg-surface-overlay backdrop-blur-md flex flex-col items-center justify-center p-5"
+            className="absolute inset-0 z-110 bg-surface-overlay flex flex-col items-center justify-center p-5"
             onClick={() => setSelectedIntel(null)}
           >
             <motion.div
               initial={{ scale: 0.92, opacity: 0, y: 16 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
-              transition={{ type: 'spring', stiffness: 320, damping: 28 }}
+              transition={SPRING_SNAP}
               className="relative max-w-sm w-full"
               onClick={e => e.stopPropagation()}
             >
@@ -506,7 +507,7 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager, onUpdat
                 <div aria-hidden className="absolute inset-x-0 top-0 h-0.75 bg-linear-to-r from-accent via-accent-60 to-transparent z-10" />
                 <div className="flex items-center justify-between px-4 pt-4">
                   <span className="text-protocol text-[8px] text-primary/70">{t('dossier.unlockedFile')}</span>
-                  <span className="text-mono-ui text-[9px] text-industrial-silver/30">{selectedIntel.getFormattedLevel()}</span>
+                  <span className="text-mono-ui text-[9px] text-ash-600">{selectedIntel.getFormattedLevel()}</span>
                 </div>
                 {selectedIntel instanceof VisualIntel ? (
                   <div className="p-4">
@@ -531,7 +532,7 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager, onUpdat
                 )}
                 <div className="px-4 pb-4 border-t border-border-subtle pt-3">
                   <p className="text-display text-base text-white uppercase">{selectedIntel.title}</p>
-                  <p className="text-industrial-silver/50 text-[10px] mt-1.5 leading-relaxed font-sans">{selectedIntel.description}</p>
+                  <p className="text-ash-400 text-[10px] mt-1.5 leading-relaxed font-sans">{selectedIntel.description}</p>
                 </div>
               </div>
               <button

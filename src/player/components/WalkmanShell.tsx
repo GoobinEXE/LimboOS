@@ -1,5 +1,7 @@
 import React, { memo, Suspense } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
+import { useTranslation } from 'react-i18next';
+import { EASE_OUT } from '../../lib/motion';
 import CassetteVisor from '../../components/player/CassetteVisor';
 import TapeLibrary from '../../components/player/TapeLibrary';
 import SideControls from '../../components/player/SideControls';
@@ -13,7 +15,7 @@ import type { PlayerData, WalkmanStatus, DisplayMode } from '../../types/player'
 const QrScanner = React.lazy(() => import('../../components/QrScanner'));
 
 const EMPTY_INTEL: IntelBase[] = [];
-const LIMBO_EASE = [0.22, 1, 0.36, 1] as const;
+const LIMBO_EASE = EASE_OUT;
 
 interface WalkmanShellProps {
   currentIntel: IntelBase | null;
@@ -60,6 +62,7 @@ function WalkmanShell({
   onTerminalOpen,
   onMacOpen,
 }: WalkmanShellProps) {
+  const { t } = useTranslation('player');
   const { isLandscape } = useLandscapeLayout();
   const isScanning = walkmanStatus === 'SCANNING';
   const landscapeScan = isLandscape && isScanning;
@@ -112,15 +115,15 @@ function WalkmanShell({
           >
             <div className="absolute top-2 left-3 z-50 pointer-events-none">
               <span className="text-[9px] font-black uppercase tracking-[0.25em] text-accent/80">
-                Scanner // Full-bleed
+                {t('nokia.scannerActive')}
               </span>
             </div>
             <Suspense
               fallback={
                 <div className="w-full h-full flex flex-col items-center justify-center gap-2">
                   <RetroSpinner size="sm" />
-                  <p className="text-accent text-[9px] font-bold uppercase tracking-widest animate-pulse">
-                    Iniciando scanner...
+                  <p className="text-accent text-[9px] font-bold uppercase tracking-widest animate-led">
+                    {t('walkman.visor.startingScanner')}
                   </p>
                 </div>
               }

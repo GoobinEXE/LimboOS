@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Lock, Terminal, Cpu, AlertTriangle, ChevronRight } from 'lucide-react';
 import { loginOrCreate, loginWithProvider } from '../store/profile';
 import type { MasterAccount } from '../types/player';
+import { EASE_OUT, EXIT_FAST } from '../lib/motion';
 
 interface LoginScreenProps {
   onLogin: (account: MasterAccount) => void;
@@ -68,50 +69,60 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
         <div className="absolute bottom-8 right-8 text-display text-[12vw] text-industrial-silver text-right">SYS-86</div>
       </div>
 
-      <motion.div key="login-panel" initial={{ opacity: 0, scale: 0.97, y: 16 }} animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 1.03, y: -16 }} transition={{ duration: 0.36, ease: [0.22, 1, 0.36, 1] }} className="w-full max-w-md relative">
+      <motion.div
+        key="login-panel"
+        initial={{ opacity: 0, transform: 'translateY(12px) scale(0.98)' }}
+        animate={{ opacity: 1, transform: 'translateY(0px) scale(1)' }}
+        exit={{ opacity: 0, transition: EXIT_FAST }}
+        transition={{ duration: 0.32, ease: EASE_OUT }}
+        className="w-full max-w-md relative"
+      >
         <div className="bg-surface-raised rounded-card border border-border shadow-panel relative overflow-hidden">
           <div className="absolute -top-3 right-6 bg-accent px-2 py-0.5 text-[10px] font-display font-bold text-black tracking-widest uppercase z-10 rounded-inset">
             {t('login.badge')}
           </div>
           <div className="p-8">
             <div className="mb-10 border-l-2 border-accent pl-6">
-              <div className="text-protocol text-industrial-silver/40 mb-3">{t('login.eyebrow')}</div>
-              <h1 className="text-display text-4xl sm:text-5xl text-white mb-2">
+              <div className="text-protocol text-ash-500 mb-3">{t('login.eyebrow')}</div>
+              <h1 className="text-display text-4xl sm:text-5xl text-bone mb-2">
                 {tCommon('brand.limbo')}<span className="text-accent">{tCommon('brand.os')}</span>
               </h1>
-              <p className="text-protocol text-industrial-silver/50">
+              <p className="text-protocol text-ash-400">
                 {t('login.subtitle')}
               </p>
             </div>
             <form onSubmit={handleLogin} className="space-y-8">
               <div className="space-y-6">
                 <div className="group">
-                  <label className="text-protocol text-industrial-silver/50 group-focus-within:text-accent transition-colors duration-(--duration-fast) mb-2 block">
+                  <label htmlFor="login-master-id" className="text-protocol text-ash-400 group-focus-within:text-accent transition-colors duration-(--duration-fast) mb-2 block">
                     {t('login.label.id')}
                   </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-industrial-silver/40 group-focus-within:text-accent transition-colors duration-(--duration-fast)">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-ash-500 group-focus-within:text-accent transition-colors duration-(--duration-fast)">
                       <Terminal size={16} />
                     </div>
-                    <input type="text" required value={masterId} onChange={e => setMasterId(e.target.value)}
+                    <input id="login-master-id" type="text" required value={masterId} onChange={e => setMasterId(e.target.value)}
                       placeholder={t('login.placeholder.id')}
-                      className="w-full bg-surface-sunken border border-border rounded-control py-4 pl-12 pr-4 text-white font-sans text-base tracking-wide focus:ring-0 focus:border-border-accent placeholder:text-industrial-silver/20 outline-none transition-colors duration-(--duration-fast)" />
+                      autoComplete="username" autoCapitalize="none" spellCheck={false}
+                      aria-invalid={Boolean(error)} aria-describedby={error ? 'login-error' : undefined}
+                      className="focus-bare w-full bg-surface-sunken border border-border rounded-control py-4 pl-12 pr-4 text-bone shadow-pressed font-sans text-base tracking-wide focus:ring-0 focus:border-border-accent placeholder:text-ash-600 outline-none transition-colors duration-(--duration-fast)" />
                     <div className="absolute bottom-0 left-4 right-4 h-px bg-accent scale-x-0 origin-left transition-transform duration-(--duration-base) ease-limbo group-focus-within:scale-x-100" />
                   </div>
                 </div>
 
                 <div className="group">
-                  <label className="text-protocol text-industrial-silver/50 group-focus-within:text-accent transition-colors duration-(--duration-fast) mb-2 block">
+                  <label htmlFor="login-password" className="text-protocol text-ash-400 group-focus-within:text-accent transition-colors duration-(--duration-fast) mb-2 block">
                     {t('login.label.password')}
                   </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-industrial-silver/40 group-focus-within:text-accent transition-colors duration-(--duration-fast)">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-ash-500 group-focus-within:text-accent transition-colors duration-(--duration-fast)">
                       <Lock size={16} />
                     </div>
-                    <input type="password" required value={password} onChange={e => setPassword(e.target.value)}
+                    <input id="login-password" type="password" required value={password} onChange={e => setPassword(e.target.value)}
                       placeholder="••••••••"
-                      className="w-full bg-surface-sunken border border-border rounded-control py-4 pl-12 pr-4 text-white font-sans text-base tracking-wide focus:ring-0 focus:border-border-accent placeholder:text-industrial-silver/20 outline-none transition-colors duration-(--duration-fast)" />
+                      autoComplete="current-password"
+                      aria-invalid={Boolean(error)} aria-describedby={error ? 'login-error' : undefined}
+                      className="focus-bare w-full bg-surface-sunken border border-border rounded-control py-4 pl-12 pr-4 text-bone shadow-pressed font-sans text-base tracking-wide focus:ring-0 focus:border-border-accent placeholder:text-ash-600 outline-none transition-colors duration-(--duration-fast)" />
                     <div className="absolute bottom-0 left-4 right-4 h-px bg-accent scale-x-0 origin-left transition-transform duration-(--duration-base) ease-limbo group-focus-within:scale-x-100" />
                   </div>
                 </div>
@@ -119,8 +130,9 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
 
               <AnimatePresence>
                 {error && (
-                  <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
-                    className="bg-error-container/30 border border-error/40 rounded-control p-3 flex items-center gap-3">
+                  <motion.div id="login-error" role="alert" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.2, ease: EASE_OUT }}
+                    className="bg-error-container/30 border border-error/40 rounded-control p-3 flex items-center gap-3 overflow-hidden">
                     <AlertTriangle size={14} className="text-error shrink-0" />
                     <span className="text-protocol text-error">{error}</span>
                   </motion.div>
@@ -128,18 +140,18 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
               </AnimatePresence>
 
               <div className="flex items-center justify-between gap-6 pt-2">
-                <p className="text-[9px] font-display text-industrial-silver/30 uppercase tracking-widest leading-relaxed">
+                <p className="text-[9px] font-display text-ash-600 uppercase tracking-widest leading-relaxed">
                   {t('login.hint.register')}
                 </p>
                 <button type="submit" disabled={isLoggingIn}
-                  className="shrink-0 bg-accent hover:brightness-110 text-black font-display font-bold text-xs uppercase tracking-[0.2em] py-4 px-8 rounded-control transition duration-(--duration-fast) flex items-center justify-center gap-3 group disabled:opacity-50 disabled:cursor-not-allowed glow-orange active:scale-[0.97]">
+                  className="shrink-0 bg-accent hover:bg-primary text-[#1a0d00] font-display font-bold text-xs uppercase tracking-[0.2em] py-4 px-8 rounded-control transition duration-(--duration-fast) flex items-center justify-center gap-3 group disabled:opacity-50 disabled:cursor-not-allowed glow-orange-subtle active:scale-[0.97]">
                   {isLoggingIn ? (
                     <>
                       <RetroSpinner size="sm" />
                       {t('login.syncing')}
                     </>
                   ) : (
-                    <>{t('login.submit')}<ChevronRight size={16} className="transition-transform group-hover:translate-x-1" /></>
+                    <>{t('login.submit')}<ChevronRight size={16} className="transition-transform group-hover:translate-x-0.5" /></>
                   )}
                 </button>
               </div>
@@ -147,7 +159,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
 
             <div className="mt-8 pt-6 border-t border-border space-y-4">
               <div className="text-center">
-                <span className="bg-surface-raised px-4 text-[9px] font-display font-bold uppercase tracking-[0.2em] text-industrial-silver/40">
+                <span className="bg-surface-raised px-4 text-[9px] font-display font-bold uppercase tracking-[0.2em] text-ash-500">
                   {t('login.orVia')}
                 </span>
               </div>
@@ -186,18 +198,52 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
                 <div key={i} className={`w-1.5 h-3 rounded-inset ${isLoggingIn ? 'animate-pulse bg-accent' : 'bg-border-strong'}`} style={{ animationDelay: `${i * 0.1}s` }} />
               ))}
             </div>
-            <div className="text-protocol text-industrial-silver/30">{t('login.linkNode')}</div>
+            <div className="text-protocol text-ash-600">{t('login.linkNode')}</div>
           </div>
         </div>
       </motion.div>
 
-      <div className="hidden lg:block absolute left-12 top-1/2 -translate-y-1/2 space-y-12">
-        <div className="space-y-4">
-          <div className="flex items-center gap-3"><Cpu size={14} className="text-accent" /><span className="text-protocol text-industrial-silver">{t('login.side.masterAccess')}</span></div>
-          <div className="w-48 h-1 bg-surface-panel rounded-inset overflow-hidden">
-            <motion.div animate={{ x: ['-100%', '100%'] }} transition={{ duration: 2, repeat: Infinity, ease: 'linear' }} className="w-1/3 h-full bg-accent" />
-          </div>
+      <BootLogColumn lines={t('login.bootLog', { returnObjects: true }) as string[]} label={t('login.side.masterAccess')} />
+    </div>
+  );
+}
+
+/** Coluna de CRT com o log de boot do hero (só em telas largas, onde há espaço lateral). */
+function BootLogColumn({ lines, label }: { lines: string[]; label: string }) {
+  return (
+    <div className="hidden xl:block absolute left-10 2xl:left-16 top-1/2 -translate-y-1/2 w-72" aria-hidden>
+      <div className="rounded-card border border-border bg-surface-sunken p-1.5 shadow-panel">
+        <div className="relative overflow-hidden rounded-inset bg-[#07110a] px-5 py-5 shadow-pressed">
+          <div className="scanline animate-scanline opacity-60" />
+          <motion.ul
+            initial="hidden"
+            animate="visible"
+            variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.11, delayChildren: 0.35 } } }}
+            className="space-y-1 font-mono text-[11px] leading-relaxed text-phosphor-300 [text-shadow:0_0_6px_rgba(118,212,104,0.45)]"
+          >
+            {lines.map((line, i) => (
+              <motion.li
+                key={i}
+                variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { duration: 0.01 } } }}
+                className={i === 2 ? 'pt-2' : i === 4 ? 'pt-2 border-t border-phosphor-500/20 mt-2' : undefined}
+              >
+                {line}
+              </motion.li>
+            ))}
+            <motion.li
+              variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { duration: 0.01 } } }}
+              className="pt-1"
+            >
+              ? <span className="inline-block w-2 h-3 align-middle bg-phosphor-300 animate-blink" />
+            </motion.li>
+          </motion.ul>
         </div>
+      </div>
+      <div className="mt-4 flex items-center gap-3 px-1">
+        <Cpu size={13} className="text-accent" />
+        <span className="text-protocol text-ash-400">{label}</span>
+        <span className="flex-1 h-px bg-border-subtle" />
+        <span className="lmb-led text-accent animate-led" />
       </div>
     </div>
   );

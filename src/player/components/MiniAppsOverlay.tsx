@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { motion } from 'motion/react';
+import { EASE_OUT } from '../../lib/motion';
 import { useTranslation } from 'react-i18next';
 import RetroLoading from '../../components/player/RetroLoading';
 import { analyticsTracker } from '../../services/AnalyticsTracker';
@@ -18,7 +19,7 @@ interface MiniAppsOverlayProps {
   setScreen: (screen: AppScreen) => void;
 }
 
-const LIMBO_EASE = [0.22, 1, 0.36, 1] as const;
+const LIMBO_EASE = EASE_OUT;
 
 export default function MiniAppsOverlay({ screen, playerData, limboStatus, setScreen }: MiniAppsOverlayProps) {
   const { t } = useTranslation('player');
@@ -53,7 +54,7 @@ export default function MiniAppsOverlay({ screen, playerData, limboStatus, setSc
           LIMBOOS // PORTAL
         </div>
         <div
-          className="absolute text-mono-ui text-[8px] text-industrial-silver/35 uppercase tracking-widest"
+          className="absolute text-mono-ui text-[8px] text-ash-500 uppercase tracking-widest"
           style={{
             top: 'max(0.75rem, env(safe-area-inset-top, 0px))',
             right: 'max(0.75rem, env(safe-area-inset-right, 0px))',

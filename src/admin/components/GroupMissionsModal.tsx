@@ -83,7 +83,7 @@ export default function GroupMissionsModal({
   return (
     <OverlayPortal open onClose={busy ? undefined : onClose}>
       <div
-        className="fixed inset-0 z-[120] flex justify-end bg-black/80 backdrop-blur-sm animate-fade-in"
+        className="fixed inset-0 z-[120] flex justify-end bg-surface-scrim animate-fade-in"
         onClick={() => {
           if (!busy) onClose();
         }}
@@ -93,7 +93,7 @@ export default function GroupMissionsModal({
           animate={{ x: 0 }}
           exit={{ x: '100%' }}
           transition={ADMIN_SPRING}
-          className="bg-[#222] border-l-8 border-seam w-full max-w-xl shadow-2xl flex flex-col h-full relative overflow-hidden font-chakra"
+          className="bg-surface-container-low border-l border-seam w-full max-w-xl shadow-2xl flex flex-col h-full relative overflow-hidden"
           onClick={(e) => e.stopPropagation()}
         >
           <Screw className="top-4 left-4" />
@@ -105,7 +105,7 @@ export default function GroupMissionsModal({
 
           <div className="p-8 border-b-4 border-seam bg-black/40 relative z-10 flex justify-between items-center">
             <div>
-              <h3 className="font-black text-xl text-white uppercase tracking-widest">
+              <h3 className="font-black text-xl text-bone uppercase tracking-widest">
                 Missões do Esquadrão
               </h3>
               <p className="text-[10px] text-ash-500 font-bold uppercase tracking-widest mt-1">
@@ -115,24 +115,24 @@ export default function GroupMissionsModal({
             <button
               onClick={onClose}
               disabled={busy}
-              className="p-2 text-ash-600 hover:text-white transition material-symbols-outlined rounded-sm disabled:opacity-40"
+              className="p-2 text-ash-600 hover:text-bone transition material-symbols-outlined rounded-sm disabled:opacity-40"
             >
               close
             </button>
           </div>
 
           <div className="flex-1 overflow-y-auto p-6 bg-black/10 relative z-10 custom-scrollbar space-y-8">
-            <p className="text-[9px] font-display font-bold text-industrial-silver/30 uppercase tracking-widest border border-white/5 bg-black/20 px-4 py-3 rounded-sm">
+            <p className="text-[9px] font-display font-bold text-ash-600 uppercase tracking-widest border border-border-subtle bg-black/20 px-4 py-3 rounded-sm">
               {t('groupMissions.authorizedHint')}{' '}
               {t('groupMissions.inFieldHint')}
             </p>
 
             <div className="space-y-2">
-              <p className="text-[8px] text-industrial-silver/30 font-display font-bold uppercase tracking-widest">
+              <p className="text-[8px] text-ash-600 font-display font-bold uppercase tracking-widest">
                 Autorizar Missão
               </p>
               <select
-                className="w-full bg-surface-container-lowest border border-white/5 text-[10px] font-display font-bold text-primary p-3 outline-none rounded-sm focus:border-primary/40 transition appearance-none cursor-pointer shadow-inner disabled:opacity-40"
+                className="w-full bg-surface-container-lowest border border-border-subtle text-[10px] font-display font-bold text-primary p-3 outline-none rounded-sm focus:border-primary/40 transition appearance-none cursor-pointer shadow-inner disabled:opacity-40"
                 disabled={busy || availableToUnlock.length === 0}
                 onChange={(e) => {
                   if (!e.target.value) return;
@@ -155,7 +155,7 @@ export default function GroupMissionsModal({
             </div>
 
             <div className="space-y-4">
-              <p className="text-[8px] text-industrial-silver/30 font-display font-bold uppercase tracking-widest border-b border-white/5 pb-2">
+              <p className="text-[8px] text-ash-600 font-display font-bold uppercase tracking-widest border-b border-border-subtle pb-2">
                 Missões Autorizadas
               </p>
               <div className="flex flex-wrap gap-2">
@@ -178,7 +178,7 @@ export default function GroupMissionsModal({
                   </div>
                 ))}
                 {unlocked.length === 0 && (
-                  <p className="text-[9px] text-industrial-silver/30 uppercase tracking-widest">
+                  <p className="text-[9px] text-ash-600 uppercase tracking-widest">
                     Nenhuma missão autorizada
                   </p>
                 )}
@@ -239,7 +239,7 @@ export default function GroupMissionsModal({
                   )}
                 </div>
               ) : (
-                <p className="text-[9px] text-industrial-silver/30 uppercase tracking-widest">
+                <p className="text-[9px] text-ash-600 uppercase tracking-widest">
                   Nenhuma missão em campo
                 </p>
               )}

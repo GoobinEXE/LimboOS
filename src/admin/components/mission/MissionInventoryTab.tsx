@@ -193,7 +193,7 @@ export default function MissionInventoryTab({
                     {(character.codinome || '?')[0].toUpperCase()}
                   </div>
                   <div>
-                    <h4 className="font-display font-bold text-sm text-white uppercase tracking-wider">
+                    <h4 className="font-display font-bold text-sm text-bone uppercase tracking-wider">
                       {character.codinome}
                     </h4>
                     <p className="text-[9px] font-mono font-bold text-industrial-silver/40 uppercase tracking-widest mt-0.5">
@@ -251,7 +251,7 @@ export default function MissionInventoryTab({
                           <span className="material-symbols-outlined text-xs">close</span>
                         </button>
                       </div>
-                      <p className="font-display font-bold text-[10px] text-white uppercase tracking-widest truncate group-hover/item:text-primary transition-colors">
+                      <p className="font-display font-bold text-[10px] text-bone uppercase tracking-widest truncate group-hover/item:text-primary transition-colors">
                         {intelTitleLabel(t.id, Object.entries(remoteIntelTitles).map(([id, title]) => ({ id, title })))}
                       </p>
                       <p className="text-[8px] font-mono text-industrial-silver/40 uppercase mt-1 truncate">

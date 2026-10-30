@@ -196,7 +196,7 @@ export default function IntelDistributionDrawer({
 
           <div className="p-8 border-b-4 border-seam bg-black/40 relative z-10 flex justify-between items-center">
             <div>
-              <h3 className="font-black text-xl text-white uppercase tracking-widest">
+              <h3 className="font-black text-xl text-bone uppercase tracking-widest">
                 {title || (broadcastMode ? t('intel.dist.videoTitle') : 'Distribuir Intel')}
               </h3>
               {character && (
@@ -212,7 +212,7 @@ export default function IntelDistributionDrawer({
             </div>
             <button
               onClick={requestClose}
-              className="p-2 text-ash-600 hover:text-white transition material-symbols-outlined rounded-sm"
+              className="p-2 text-ash-600 hover:text-bone transition material-symbols-outlined rounded-sm"
             >
               close
             </button>
@@ -246,7 +246,7 @@ export default function IntelDistributionDrawer({
                 placeholder={t('intel.dist.search')}
                 value={addSearch}
                 onChange={(e) => setAddSearch(e.target.value)}
-                className="w-full bg-black/60 border-2 border-seam text-[11px] font-bold uppercase px-12 py-4 text-white outline-none focus:ring-1 focus:ring-primary transition rounded-sm placeholder:text-ash-800 tracking-widest"
+                className="w-full bg-black/60 border-2 border-seam text-[11px] font-bold uppercase px-12 py-4 text-bone outline-none focus:ring-1 focus:ring-primary transition rounded-sm placeholder:text-ash-800 tracking-widest"
               />
             </div>
           </div>
@@ -307,7 +307,7 @@ export default function IntelDistributionDrawer({
                     <div className="flex-1 min-w-0">
                       <p
                         className={`text-[11px] font-black uppercase truncate ${
-                          isSelected ? 'text-primary' : 'text-ash-300 group-hover:text-white'
+                          isSelected ? 'text-primary' : 'text-ash-300 group-hover:text-bone'
                         }`}
                       >
                         {item.title}
@@ -344,7 +344,7 @@ export default function IntelDistributionDrawer({
               <button
                 onClick={requestClose}
                 disabled={loading}
-                className="flex-1 sm:flex-none px-6 py-4 text-[10px] font-black text-ash-600 hover:text-white transition-colors uppercase tracking-widest disabled:opacity-50"
+                className="flex-1 sm:flex-none px-6 py-4 text-[10px] font-black text-ash-600 hover:text-bone transition-colors uppercase tracking-widest disabled:opacity-50"
               >
                 CANCELAR
               </button>

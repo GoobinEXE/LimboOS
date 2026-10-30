@@ -313,10 +313,10 @@ export default function MediaLibraryPanel({
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <div
-              className={`w-1.5 h-8 bg-primary shadow-[0_0_15px_rgba(255,140,0,0.5)] ${uploading ? 'animate-pulse' : ''}`}
+              className={`w-1 h-9 bg-accent shrink-0 ${uploading ? 'animate-pulse' : ''}`}
             />
             <div>
-              <h2 className="font-display font-bold uppercase tracking-widest text-xl text-white">
+              <h2 className="font-display font-bold uppercase tracking-widest text-xl text-bone">
                 {t('media.title')}
               </h2>
               <p className="text-[10px] font-display font-bold text-industrial-silver/40 tracking-[0.2em] uppercase">
@@ -339,7 +339,7 @@ export default function MediaLibraryPanel({
                 placeholder={t('media.search')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="bg-surface-container-lowest border border-primary/10 text-[10px] font-display font-bold uppercase tracking-[0.2em] focus:border-primary/50 w-full placeholder:text-industrial-silver/20 text-white pl-10 pr-4 py-2.5 outline-none rounded-sm transition"
+                className="bg-surface-container-lowest border border-primary/10 text-[10px] font-display font-bold uppercase tracking-[0.2em] focus:border-primary/50 w-full placeholder:text-industrial-silver/20 text-bone pl-10 pr-4 py-2.5 outline-none rounded-sm transition"
               />
             </div>
             {showCatalog && (
@@ -542,7 +542,7 @@ export default function MediaLibraryPanel({
                           )}
 
                           <div className="absolute inset-0 z-10 bg-linear-to-t from-black via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-2 flex flex-col justify-end">
-                            <p className="text-[9px] font-display font-bold text-white uppercase truncate tracking-widest">
+                            <p className="text-[9px] font-display font-bold text-bone uppercase truncate tracking-widest">
                               {asset.metadata.title || asset.filename}
                             </p>
                             <p className="text-[8px] font-display text-industrial-silver/60 uppercase tracking-widest">
@@ -570,7 +570,7 @@ export default function MediaLibraryPanel({
                                   e.stopPropagation();
                                   void handleDelete(asset);
                                 }}
-                                className="p-1 bg-red-500/20 hover:bg-red-500 text-red-500 hover:text-white rounded-sm transition"
+                                className="p-1 bg-red-500/20 hover:bg-red-500 text-red-500 hover:text-bone rounded-sm transition"
                               >
                                 <span className="material-symbols-outlined text-sm">delete</span>
                               </button>
@@ -762,7 +762,7 @@ function UnifiedIntelCreateButton({
             >
               <span className="material-symbols-outlined text-primary text-base">edit_note</span>
               <span className="flex flex-col">
-                <span className="text-[10px] font-display font-bold uppercase tracking-widest text-white">
+                <span className="text-[10px] font-display font-bold uppercase tracking-widest text-bone">
                   Entrada em branco
                 </span>
                 <span className="text-[8px] font-display text-industrial-silver/40 uppercase tracking-wider">
@@ -778,7 +778,7 @@ function UnifiedIntelCreateButton({
             >
               <span className="material-symbols-outlined text-primary text-base">upload_file</span>
               <span className="flex flex-col">
-                <span className="text-[10px] font-display font-bold uppercase tracking-widest text-white">
+                <span className="text-[10px] font-display font-bold uppercase tracking-widest text-bone">
                   {t('media.uploadFile')}
                 </span>
                 <span className="text-[8px] font-display text-industrial-silver/40 uppercase tracking-wider">

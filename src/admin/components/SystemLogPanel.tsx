@@ -115,7 +115,7 @@ const LogRow = React.memo(({
           {entry.type.toUpperCase()}
         </span>
 
-        <span className="text-[11px] font-display font-bold text-white shrink-0 truncate max-w-30 tracking-wide">
+        <span className="text-[11px] font-display font-bold text-bone shrink-0 truncate max-w-30 tracking-wide">
           {entry.username?.trim() || masterAccountLabelByUid(entry.uid, users, 'SISTEMA')}
         </span>
 
@@ -361,7 +361,7 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
             <>
               <button
                 onClick={handleExportJSON}
-                className="px-6 py-2 text-[10px] font-display font-bold uppercase tracking-widest bg-white/5 border border-white/5 text-industrial-silver/40 hover:bg-white/10 hover:text-white transition flex items-center gap-2 rounded-sm shadow-lg"
+                className="px-6 py-2 text-[10px] font-display font-bold uppercase tracking-widest bg-white/5 border border-white/5 text-industrial-silver/40 hover:bg-white/10 hover:text-bone transition flex items-center gap-2 rounded-sm shadow-lg"
               >
                 <span className="material-symbols-outlined text-base">download</span>
                 Exportar JSON
@@ -437,7 +437,7 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
             placeholder={t('logs.search')}
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
-            className="bg-surface-container-lowest border border-white/5 text-[10px] font-display font-bold uppercase tracking-widest text-white placeholder:text-industrial-silver/10 pl-10 pr-4 py-2.5 w-full focus:border-primary/40 outline-none rounded-sm transition shadow-inner"
+            className="bg-surface-container-lowest border border-white/5 text-[10px] font-display font-bold uppercase tracking-widest text-bone placeholder:text-industrial-silver/10 pl-10 pr-4 py-2.5 w-full focus:border-primary/40 outline-none rounded-sm transition shadow-inner"
           />
         </div>
       </div>
@@ -485,7 +485,7 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
                 className={`px-4 py-1 text-[10px] font-display font-bold tracking-tighter transition rounded-sm ${
                   maxEntries === n
                     ? 'text-primary bg-primary/10 shadow-lg'
-                    : 'text-industrial-silver/20 hover:text-white hover:bg-white/5'
+                    : 'text-industrial-silver/20 hover:text-bone hover:bg-white/5'
                 }`}
               >
                 {n}

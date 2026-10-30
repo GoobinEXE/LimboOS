@@ -183,7 +183,7 @@ export default function MissionAccessTab({
                   onClick={() =>
                     handleUnlockForCharacter(c.account.uid, c.character.id, false)
                   }
-                  className="p-1 text-white/20 hover:text-red-500 material-symbols-outlined text-xs"
+                  className="p-1 text-bone/20 hover:text-red-500 material-symbols-outlined text-xs"
                 >
                   close
                 </button>

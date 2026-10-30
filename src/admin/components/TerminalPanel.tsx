@@ -130,8 +130,8 @@ export default function TerminalPanel({ embedded = false }: TerminalPanelProps) 
       {!embedded && (
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-4">
-            <div className="w-1.5 h-8 bg-primary shadow-[0_0_10px_rgba(255,140,0,0.4)]" />
-            <h2 className="font-bold uppercase tracking-widest text-lg text-white">{t('hardware.title')}</h2>
+            <div className="w-1 h-9 bg-accent shrink-0" />
+            <h2 className="font-bold uppercase tracking-widest text-lg text-bone">{t('hardware.title')}</h2>
           </div>
           <p className="text-[10px] font-bold uppercase tracking-widest text-industrial-silver/40 pl-6">
             {t('hardware.subtitle')}
@@ -149,7 +149,7 @@ export default function TerminalPanel({ embedded = false }: TerminalPanelProps) 
         <div className="p-5 border-b border-primary/10 bg-black/30 space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <h3 className="text-[11px] font-bold uppercase tracking-widest text-white">{t('hardware.authTitle')}</h3>
+              <h3 className="text-[11px] font-bold uppercase tracking-widest text-bone">{t('hardware.authTitle')}</h3>
               <p className="text-[9px] font-bold uppercase tracking-widest text-industrial-silver/40 mt-1">
                 {t('hardware.authSubtitle')}
               </p>
@@ -198,7 +198,7 @@ export default function TerminalPanel({ embedded = false }: TerminalPanelProps) 
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={t('hardware.search')}
-              className="flex-1 bg-black/50 border border-white/10 px-4 py-2.5 text-xs font-bold uppercase tracking-wide text-white placeholder:text-ash-700 focus:outline-none focus:border-primary/40"
+              className="flex-1 bg-black/50 border border-white/10 px-4 py-2.5 text-xs font-bold uppercase tracking-wide text-bone placeholder:text-ash-700 focus:outline-none focus:border-primary/40"
             />
             <div className="flex flex-wrap gap-1.5">
               {(

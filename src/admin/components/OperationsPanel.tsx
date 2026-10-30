@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
 import TerminalPanel from './TerminalPanel';
 import RedirectsPanel from './RedirectsPanel';
 import AchievementsPanel from './AchievementsPanel';
@@ -12,7 +12,8 @@ import ReportsPanel, {
   type EngagementMetrics,
 } from './ReportsPanel';
 import type { OperationsSubId } from '../lib/adminNavigation';
-import { ADMIN_FADE, ADMIN_SPRING_INDICATOR } from '../lib/motion';
+import { FADE_FAST } from '../../lib/motion';
+import AdminSubTabs from './AdminSubTabs';
 
 interface OperationsPanelProps {
   activeSub: OperationsSubId;
@@ -72,53 +73,33 @@ export default function OperationsPanel({
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center gap-4">
-          <div className="w-1.5 h-8 bg-primary shadow-[0_0_12px_rgba(255,140,0,0.45)]" />
-          <div>
-            <h2 className="font-display font-bold uppercase tracking-widest text-xl text-white">{t('systems.title')}</h2>
-            <p className="text-[10px] font-display font-bold text-industrial-silver/40 uppercase tracking-[0.2em] mt-1">
+      <header className="flex items-end justify-between gap-4">
+        <div className="flex items-center gap-4 min-w-0">
+          <span className="w-1 h-9 bg-accent shrink-0" aria-hidden />
+          <div className="min-w-0">
+            <h2 className="font-display font-bold uppercase tracking-[0.18em] text-xl text-bone leading-none">{t('systems.title')}</h2>
+            <p className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.2em] mt-2 truncate">
               {current.blurb}
             </p>
           </div>
         </div>
-      </div>
+      </header>
 
-      <div className="flex flex-wrap border-b border-primary/10 bg-black/20">
-        {SUBS.map((sub) => {
-          const isActive = activeSub === sub.id;
-          return (
-            <button
-              key={sub.id}
-              type="button"
-              onClick={() => onSubChange(sub.id)}
-              className={`relative flex items-center gap-2 px-5 py-3 text-[10px] font-display font-bold tracking-[0.2em] uppercase transition-colors border-r border-primary/10 ${
-                isActive
-                  ? 'text-primary'
-                  : 'text-industrial-silver/45 hover:bg-primary/5 hover:text-primary'
-              }`}
-            >
-              {isActive && (
-                <motion.span
-                  layoutId="admin-ops-sub"
-                  className="absolute inset-0 bg-primary/10 border-b-2 border-b-primary"
-                  transition={ADMIN_SPRING_INDICATOR}
-                />
-              )}
-              <span className="material-symbols-outlined text-base relative z-10">{sub.icon}</span>
-              <span className="relative z-10">{sub.label}</span>
-            </button>
-          );
-        })}
-      </div>
+      <AdminSubTabs
+        tabs={SUBS}
+        active={activeSub}
+        onChange={onSubChange}
+        indicatorId="admin-ops-sub"
+        ariaLabel={t('systems.title')}
+      />
 
-      <AnimatePresence mode="wait">
-        <motion.div
+      {/* Troca de sub-aba é frequente: troca imediata com fade curto, sem esperar saída */}
+      <motion.div
           key={activeSub}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -6 }}
-          transition={ADMIN_FADE}
+          role="tabpanel"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={FADE_FAST}
         >
           {activeSub === 'relatorios' && (
             <ReportsPanel
@@ -134,7 +115,6 @@ export default function OperationsPanel({
           {activeSub === 'conquistas' && <AchievementsPanel embedded />}
           {activeSub === 'sms' && <NpcSmsPanel embedded />}
         </motion.div>
-      </AnimatePresence>
     </div>
   );
 }

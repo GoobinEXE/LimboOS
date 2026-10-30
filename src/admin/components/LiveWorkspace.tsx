@@ -335,7 +335,7 @@ export default function LiveWorkspace({
             <select
               value={activeSession?.groupId || ''}
               onChange={(e) => handleGroupSelect(e.target.value)}
-              className="w-full bg-black/50 border border-border px-3 py-2.5 text-[10px] font-display font-bold uppercase tracking-widest text-white outline-none focus:border-phosphor-500/40"
+              className="w-full bg-black/50 border border-border px-3 py-2.5 text-[10px] font-display font-bold uppercase tracking-widest text-bone outline-none focus:border-phosphor-500/40"
             >
               <option value="">{t('live.session.noneSquad')}</option>
               {groups.map((g) => (
@@ -353,7 +353,7 @@ export default function LiveWorkspace({
               value={activeSession?.campaignId || ''}
               onChange={(e) => handleCampaignSelect(e.target.value)}
               disabled={!activeSession?.groupId}
-              className="w-full bg-black/50 border border-border px-3 py-2.5 text-[10px] font-display font-bold uppercase tracking-widest text-white outline-none focus:border-phosphor-500/40 disabled:opacity-30"
+              className="w-full bg-black/50 border border-border px-3 py-2.5 text-[10px] font-display font-bold uppercase tracking-widest text-bone outline-none focus:border-phosphor-500/40 disabled:opacity-30"
             >
               <option value="">{t('live.session.noneMission')}</option>
               {campaigns.map((c) => (
@@ -549,7 +549,7 @@ export default function LiveWorkspace({
                         )}
                       </button>
                       <div className="min-w-0">
-                        <p className="text-[11px] font-display font-bold uppercase tracking-widest text-white truncate">
+                        <p className="text-[11px] font-display font-bold uppercase tracking-widest text-bone truncate">
                           {row.label}
                           {row.agentName ? (
                             <span className="text-primary/80 font-normal"> // {row.agentName}</span>
@@ -801,7 +801,7 @@ function PresenceRowMenu({
         onClick={onToggle}
         aria-expanded={open}
         aria-haspopup="menu"
-        className="text-[8px] font-display font-bold uppercase tracking-wider px-2 py-1 border border-border text-ash-400 hover:text-white"
+        className="text-[8px] font-display font-bold uppercase tracking-wider px-2 py-1 border border-border text-ash-400 hover:text-bone"
       >
         ⋯
       </button>

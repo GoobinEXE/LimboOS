@@ -276,7 +276,7 @@ export default function GroupManager({
   );
 
   return (
-    <div className="space-y-8 font-chakra">
+    <div className="space-y-8">
       {!embedded && (
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -307,7 +307,7 @@ export default function GroupManager({
       )}
 
       {isCreating ? (
-        <div className="bg-seam border-4 border-seam p-8 rounded-xl shadow-2xl relative overflow-hidden">
+        <div className="bg-seam border-4 border-seam p-8 rounded-card shadow-2xl relative overflow-hidden">
           <div className="noise-overlay" /><div className="scanlines" />
           <form onSubmit={editingGroup ? handleUpdateGroup : handleCreateGroup} className="space-y-8 relative z-10">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
@@ -320,7 +320,7 @@ export default function GroupManager({
                     value={groupName}
                     onChange={(e) => setGroupName(e.target.value)}
                     placeholder={t('squads.idPlaceholder')}
-                    className="w-full bg-black/60 border-2 border-seam text-white px-4 py-3 text-[11px] font-bold focus:border-primary outline-none rounded-sm uppercase transition"
+                    className="w-full bg-black/60 border-2 border-seam text-bone px-4 py-3 text-[11px] font-bold focus:border-primary outline-none rounded-sm uppercase transition"
                     required
                   />
                 </div>
@@ -331,26 +331,26 @@ export default function GroupManager({
                   </p>
                 </div>
 
-                <div className="pt-4 border-t border-white/5">
+                <div className="pt-4 border-t border-border-subtle">
                   <label className="block font-black text-[10px] text-ash-500 mb-3 uppercase tracking-widest">{t('squads.sessions')}</label>
                   <div className="flex gap-2 mb-4">
                     <input 
                       type="date" 
                       value={sessionDate}
                       onChange={(e) => setSessionDate(e.target.value)}
-                      className="flex-1 bg-black/60 border-2 border-seam text-white px-4 py-3 text-[10px] font-bold focus:border-primary outline-none rounded-sm"
+                      className="flex-1 bg-black/60 border-2 border-seam text-bone px-4 py-3 text-[10px] font-bold focus:border-primary outline-none rounded-sm"
                     />
                     <button 
                       type="button"
                       onClick={addSession}
-                      className="bg-[#333] hover:bg-[#444] text-white px-6 py-2 text-[10px] font-black uppercase tracking-widest transition rounded-sm"
+                      className="bg-[#333] hover:bg-[#444] text-bone px-6 py-2 text-[10px] font-black uppercase tracking-widest transition rounded-sm"
                     >
                       ADD DATA
                     </button>
                   </div>
                   <div className="flex flex-wrap gap-2 min-h-10 bg-black/40 p-3 rounded-sm border border-seam">
                     {sessions.map(date => (
-                      <span key={date} className="bg-black border border-white/10 text-primary px-3 py-1.5 rounded-sm text-[9px] font-mono font-black flex items-center gap-3 shadow-lg">
+                      <span key={date} className="bg-black border border-border text-primary px-3 py-1.5 rounded-sm text-[9px] font-mono font-black flex items-center gap-3 shadow-lg">
                         {date}
                         <button type="button" onClick={() => removeSession(date)} className="text-ash-600 hover:text-red-500 transition-colors">×</button>
                       </span>
@@ -419,14 +419,14 @@ export default function GroupManager({
                   </div>
 
                   <div className="relative mb-3 group">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-industrial-silver/20 text-sm group-focus-within:text-primary transition">search</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-ash-600 text-sm group-focus-within:text-primary transition">search</span>
                     <input 
                       type="text" 
                       placeholder={t('squads.searchAgent')}
                       value={agentSearchQuery}
                       onChange={(e) => setAgentSearchQuery(e.target.value)}
                       onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAgentSearch())}
-                      className="w-full bg-black/40 border-2 border-seam text-white px-10 py-2.5 text-[9px] font-bold focus:border-primary/40 outline-none rounded-sm uppercase transition shadow-inner"
+                      className="w-full bg-black/40 border-2 border-seam text-bone px-10 py-2.5 text-[9px] font-bold focus:border-primary/40 outline-none rounded-sm uppercase transition shadow-inner"
                     />
                   </div>
 
@@ -445,7 +445,7 @@ export default function GroupManager({
                               {(item.char.codinome || '?')[0].toUpperCase()}
                             </div>
                             <div className="min-w-0">
-                              <p className="font-black text-[10px] text-ash-400 uppercase truncate group-hover:text-white transition-colors">
+                              <p className="font-black text-[10px] text-ash-400 uppercase truncate group-hover:text-bone transition-colors">
                                 {item.char.codinome}
                               </p>
                               <p className="text-[7px] font-mono text-ash-600 font-bold uppercase truncate mt-0.5">
@@ -466,7 +466,7 @@ export default function GroupManager({
             </div>
 
             <div className="flex justify-end gap-6 pt-8 border-t-4 border-seam">
-              <button type="button" onClick={resetForm} className="px-8 py-3 text-[10px] font-black text-ash-600 hover:text-white uppercase tracking-widest transition-colors">{t('squads.abort')}</button>
+              <button type="button" onClick={resetForm} className="px-8 py-3 text-[10px] font-black text-ash-600 hover:text-bone uppercase tracking-widest transition-colors">{t('squads.abort')}</button>
               <button 
                 type="submit" 
                 className="bg-primary hover:bg-primary-container text-black px-12 py-3 rounded-sm font-black text-[10px] tracking-widest uppercase transition active:scale-[0.97] glow-orange shadow-lg"
@@ -499,21 +499,21 @@ export default function GroupManager({
                 animate="visible"
                 exit="exit"
                 transition={{ ...ADMIN_FADE, delay: staggerDelay(index) }}
-                className="bg-seam border-4 border-seam p-6 group hover:border-primary/20 transition rounded-xl shadow-xl relative overflow-hidden active:scale-[0.99]"
+                className="bg-seam border-4 border-seam p-6 group hover:border-primary/20 transition rounded-card shadow-xl relative overflow-hidden active:scale-[0.99]"
               >
                 <div className="absolute top-0 right-0 w-12 h-12 bg-primary/5 rotate-45 translate-x-6 -translate-y-6 border-b border-primary/10" />
                 <div className="flex justify-between items-start mb-6">
                   <div>
-                    <h4 className="font-black text-white text-base uppercase tracking-tighter group-hover:text-primary transition-colors">{group.name}</h4>
+                    <h4 className="font-black text-bone text-base uppercase tracking-tighter group-hover:text-primary transition-colors">{group.name}</h4>
                     <div className="flex flex-wrap items-center gap-3 mt-2">
-                      <div className="flex items-center gap-1.5 bg-black/40 px-2 py-1 rounded-sm border border-white/5 shadow-inner">
+                      <div className="flex items-center gap-1.5 bg-black/40 px-2 py-1 rounded-sm border border-border-subtle shadow-inner">
                          <div className="flex gap-1.5">
                             <span className="flex items-center gap-1 text-[8px] font-black text-phosphor-500">🟩 {aliveCount}</span>
                             <span className="flex items-center gap-1 text-[8px] font-black text-yellow-500">🟨 {missingCount}</span>
                             <span className="flex items-center gap-1 text-[8px] font-black text-red-500">🟥 {deadCount}</span>
                          </div>
                       </div>
-                      <div className="flex items-center gap-1.5 bg-black/40 px-2 py-0.5 rounded-sm border border-white/5 shadow-inner">
+                      <div className="flex items-center gap-1.5 bg-black/40 px-2 py-0.5 rounded-sm border border-border-subtle shadow-inner">
                          <div className="w-1 h-1 bg-primary rounded-full animate-pulse" />
                          <p className="text-[8px] font-black text-ash-500 uppercase tracking-widest">
                            {slots.length} AGENTES
@@ -526,7 +526,7 @@ export default function GroupManager({
                         </span>
                       )}
                       {group.unlockedCampaigns && group.unlockedCampaigns.length > 0 && (
-                        <div className="flex items-center gap-1.5 bg-black/40 px-2 py-1 rounded-sm border border-white/5">
+                        <div className="flex items-center gap-1.5 bg-black/40 px-2 py-1 rounded-sm border border-border-subtle">
                           <span className="material-symbols-outlined text-[10px] text-ash-500">vpn_key</span>
                           <p className="text-[8px] font-black text-ash-500 uppercase tracking-widest">
                             {group.unlockedCampaigns.length} MISSÕES
@@ -538,21 +538,21 @@ export default function GroupManager({
                   <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition translate-x-2 group-hover:translate-x-0">
                     <button
                       onClick={() => setShowMissionsModal(group.id)}
-                      className="w-8 h-8 flex items-center justify-center bg-black/60 border border-white/10 rounded-sm text-phosphor-500 hover:bg-phosphor-500 hover:text-black transition active:scale-95"
+                      className="w-8 h-8 flex items-center justify-center bg-black/60 border border-border rounded-sm text-phosphor-500 hover:bg-phosphor-500 hover:text-black transition active:scale-95"
                       title={t('squads.manageMissions')}
                     >
                       <span className="material-symbols-outlined text-sm">rocket_launch</span>
                     </button>
-                    <button onClick={() => setShowSmsModal(group.id)} className="w-8 h-8 flex items-center justify-center bg-black/60 border border-white/10 rounded-sm text-primary hover:bg-primary hover:text-black transition active:scale-95" title={t('squads.smsTitle')}>
+                    <button onClick={() => setShowSmsModal(group.id)} className="w-8 h-8 flex items-center justify-center bg-black/60 border border-border rounded-sm text-primary hover:bg-primary hover:text-black transition active:scale-95" title={t('squads.smsTitle')}>
                       <span className="material-symbols-outlined text-sm">sms</span>
                     </button>
-                    <button onClick={() => setShowGrantModal(group.id)} className="w-8 h-8 flex items-center justify-center bg-black/60 border border-white/10 rounded-sm text-primary hover:bg-primary hover:text-black transition active:scale-95" title={t('squads.bulkIntelTitle')}>
+                    <button onClick={() => setShowGrantModal(group.id)} className="w-8 h-8 flex items-center justify-center bg-black/60 border border-border rounded-sm text-primary hover:bg-primary hover:text-black transition active:scale-95" title={t('squads.bulkIntelTitle')}>
                       <span className="material-symbols-outlined text-sm">wifi_tethering</span>
                     </button>
-                    <button onClick={() => startEdit(group)} className="w-8 h-8 flex items-center justify-center bg-black/60 border border-white/10 rounded-sm text-ash-600 hover:text-phosphor-400 transition active:scale-95">
+                    <button onClick={() => startEdit(group)} className="w-8 h-8 flex items-center justify-center bg-black/60 border border-border rounded-sm text-ash-600 hover:text-phosphor-400 transition active:scale-95">
                       <span className="material-symbols-outlined text-sm">edit</span>
                     </button>
-                    <button onClick={() => handleDeleteGroup(group.id)} className="w-8 h-8 flex items-center justify-center bg-black/60 border border-white/10 rounded-sm text-ash-600 hover:text-red-500 transition active:scale-95">
+                    <button onClick={() => handleDeleteGroup(group.id)} className="w-8 h-8 flex items-center justify-center bg-black/60 border border-border rounded-sm text-ash-600 hover:text-red-500 transition active:scale-95">
                       <span className="material-symbols-outlined text-sm">delete</span>
                     </button>
                   </div>
@@ -561,7 +561,7 @@ export default function GroupManager({
                 <div className="space-y-6">
                   <div className="flex flex-wrap gap-1.5">
                     {group.sessions?.slice(0, 4).map(date => (
-                      <span key={date} className="text-[8px] font-mono bg-black text-ash-600 px-2 py-1 rounded-sm border border-white/5 font-bold tracking-widest uppercase shadow-sm">
+                      <span key={date} className="text-[8px] font-mono bg-black text-ash-600 px-2 py-1 rounded-sm border border-border-subtle font-bold tracking-widest uppercase shadow-sm">
                         {date}
                       </span>
                     ))}
@@ -573,13 +573,13 @@ export default function GroupManager({
                       const item = allCharacters.find(c => c.uid === slot.uid && c.char.id === slot.characterId);
                       if (!item) return null;
                       return (
-                        <div key={`${slot.uid}_${slot.characterId}`} className="group/member flex items-center gap-2 bg-black/40 border border-white/5 px-2 py-1.5 rounded-sm min-w-30 relative">
+                        <div key={`${slot.uid}_${slot.characterId}`} className="group/member flex items-center gap-2 bg-black/40 border border-border-subtle px-2 py-1.5 rounded-sm min-w-30 relative">
                            <div className={`w-2 h-2 rounded-full ${item.char.agentStatus === 'vivo' ? 'bg-phosphor-500 shadow-[0_0_5px_rgba(86,185,75,0.5)]' : item.char.agentStatus === 'morto' ? 'bg-red-500' : 'bg-yellow-500'}`} />
                            <div className="min-w-0 flex-1">
                              <p className="font-black text-[9px] text-ash-300 uppercase truncate pr-4">{item.char.codinome}</p>
                              <p className="font-mono text-[8px] text-ash-600 truncate">{masterAccountLabelByUid(slot.uid, users, '???')}</p>
                            </div>
-                           <button onClick={() => handleQuickRemoveMember(group.id, item.char.id, item.char.codinome)} className="absolute right-1 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center text-ash-500 hover:text-red-500 hover:bg-red-500/10 rounded-sm opacity-0 group-hover/member:opacity-100 transition bg-black/80 backdrop-blur-sm z-10">
+                           <button onClick={() => handleQuickRemoveMember(group.id, item.char.id, item.char.codinome)} className="absolute right-1 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center text-ash-500 hover:text-red-500 hover:bg-red-500/10 rounded-sm opacity-0 group-hover/member:opacity-100 transition bg-black/80 z-10">
                              <span className="material-symbols-outlined text-[14px]">close</span>
                            </button>
                         </div>
@@ -597,7 +597,7 @@ export default function GroupManager({
                         placeholder={t('squads.searchAdd')}
                         value={quickAddSearch}
                         onChange={(e) => setQuickAddSearch(e.target.value)}
-                        className="w-full bg-black border-2 border-seam text-white px-3 py-2 text-[10px] font-bold focus:border-primary outline-none rounded-sm uppercase transition-[height,color,background-color,border-color,opacity,transform,box-shadow] mb-2"
+                        className="w-full bg-black border-2 border-seam text-bone px-3 py-2 text-[10px] font-bold focus:border-primary outline-none rounded-sm uppercase transition-[height,color,background-color,border-color,opacity,transform,box-shadow] mb-2"
                         autoFocus
                       />
                       <div className="max-h-32 overflow-y-auto space-y-1 custom-scrollbar">
@@ -611,11 +611,11 @@ export default function GroupManager({
                             (!quickAddSearch || c.char.codinome?.toLowerCase().includes(quickAddSearch.toLowerCase())) &&
                             !group.characterSlots?.some(s => s.characterId === c.char.id)
                           ).map(c => (
-                            <div key={c.char.id} className="flex items-center justify-between p-2 bg-black hover:bg-white/5 border border-white/5 rounded-sm transition group/add">
+                            <div key={c.char.id} className="flex items-center justify-between p-2 bg-black hover:bg-white/5 border border-border-subtle rounded-sm transition group/add">
                                <div className="flex items-center gap-2">
                                  <div className={`w-2 h-2 rounded-full ${c.char.agentStatus === 'vivo' ? 'bg-phosphor-500' : c.char.agentStatus === 'morto' ? 'bg-red-500' : 'bg-yellow-500'}`} />
                                  <div className="flex flex-col">
-                                   <span className="text-[10px] font-black text-white uppercase">{c.char.codinome}</span>
+                                   <span className="text-[10px] font-black text-bone uppercase">{c.char.codinome}</span>
                                    <span className="text-[8px] font-mono text-ash-600 uppercase">{masterAccountLabelByUid(c.uid, users, '???')}</span>
                                  </div>
                                </div>
@@ -632,7 +632,7 @@ export default function GroupManager({
           })}
           </AnimatePresence>
           {groups.length === 0 && (
-            <div className="col-span-full py-24 text-center border-4 border-dashed border-seam rounded-2xl opacity-20 flex flex-col items-center justify-center">
+            <div className="col-span-full py-24 text-center border-4 border-dashed border-seam rounded-panel opacity-20 flex flex-col items-center justify-center">
               <span className="material-symbols-outlined text-6xl text-ash-800 mb-4">groups_2</span>
               <p className="text-ash-700 font-black text-sm uppercase tracking-[0.4em]">{t('squads.empty')}</p>
             </div>

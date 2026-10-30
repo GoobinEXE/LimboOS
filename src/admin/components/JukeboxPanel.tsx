@@ -276,7 +276,7 @@ export default function JukeboxPanel({ embedded = false }: { embedded?: boolean 
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <div className="w-2 h-8 bg-primary rounded-full animate-pulse shadow-[0_0_10px_rgba(255,140,0,0.4)]" />
-          <h2 className="font-black uppercase tracking-widest text-lg text-white">{t('jukebox.title')}</h2>
+          <h2 className="font-black uppercase tracking-widest text-lg text-bone">{t('jukebox.title')}</h2>
           <span className="text-[10px] font-bold text-ash-600 tracking-widest uppercase">{tracks.length} FAIXAS NO BUFFER</span>
         </div>
         <div className={`flex items-center gap-3 px-4 py-1.5 border-2 text-[10px] font-black uppercase tracking-widest rounded-sm ${
@@ -310,7 +310,7 @@ export default function JukeboxPanel({ embedded = false }: { embedded?: boolean 
                <span className="material-symbols-outlined text-primary text-xl">music_note</span>
             </div>
             <div>
-              <p className="font-black text-sm tracking-tight text-white uppercase group-hover:text-primary transition-colors">
+              <p className="font-black text-sm tracking-tight text-bone uppercase group-hover:text-primary transition-colors">
                 {currentTrack ? currentTrack.title : t('jukebox.waiting')}
               </p>
               <p className="text-[9px] font-black uppercase text-ash-600 tracking-widest mt-1">
@@ -327,7 +327,7 @@ export default function JukeboxPanel({ embedded = false }: { embedded?: boolean 
               </span>
             </button>
             <button onClick={stopPlayback} disabled={!currentTrack}
-              className="w-12 h-12 rounded-sm border-2 border-red-500/20 flex items-center justify-center text-red-500 hover:bg-red-500 hover:text-white transition disabled:opacity-10 active:scale-95 shadow-lg">
+              className="w-12 h-12 rounded-sm border-2 border-red-500/20 flex items-center justify-center text-red-500 hover:bg-red-500 hover:text-bone transition disabled:opacity-10 active:scale-95 shadow-lg">
               <span className="material-symbols-outlined text-2xl fill" style={{ fontVariationSettings: "'FILL' 1" }}>stop</span>
             </button>
             <button onClick={() => setIsLooping(!isLooping)}
@@ -369,14 +369,14 @@ export default function JukeboxPanel({ embedded = false }: { embedded?: boolean 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
            <input type="text" placeholder={t('jukebox.titlePlaceholder')} value={titleInput}
              onChange={(e) => setTitleInput(e.target.value)}
-             className="w-full bg-black/60 border-2 border-seam text-[10px] font-black uppercase tracking-widest text-white px-4 py-3 focus:border-primary outline-none rounded-sm placeholder:text-ash-800 transition" />
+             className="w-full bg-black/60 border-2 border-seam text-[10px] font-black uppercase tracking-widest text-bone px-4 py-3 focus:border-primary outline-none rounded-sm placeholder:text-ash-800 transition" />
            <div className="flex gap-2">
              <input type="text" placeholder={t('jukebox.urlPlaceholder')} value={linkInput}
                onChange={(e) => setLinkInput(e.target.value)}
                onKeyDown={(e) => e.key === 'Enter' && handleAddLink()}
-               className="flex-1 bg-black/60 border-2 border-seam text-[10px] font-black uppercase tracking-widest text-white px-4 py-3 focus:border-red-500 outline-none rounded-sm placeholder:text-ash-800 transition" />
+               className="flex-1 bg-black/60 border-2 border-seam text-[10px] font-black uppercase tracking-widest text-bone px-4 py-3 focus:border-red-500 outline-none rounded-sm placeholder:text-ash-800 transition" />
              <button onClick={handleAddLink}
-               className="px-6 py-3 bg-red-950/20 text-red-500 border-2 border-red-500/20 text-[10px] font-black tracking-widest hover:bg-red-500 hover:text-white transition rounded-sm active:scale-[0.97]">
+               className="px-6 py-3 bg-red-950/20 text-red-500 border-2 border-red-500/20 text-[10px] font-black tracking-widest hover:bg-red-500 hover:text-bone transition rounded-sm active:scale-[0.97]">
                YOUTUBE
              </button>
            </div>
@@ -422,14 +422,14 @@ export default function JukeboxPanel({ embedded = false }: { embedded?: boolean 
                     </span>
                     <button onClick={() => playTrackAtIndex(idx)}
                       className={`w-10 h-10 rounded-sm flex items-center justify-center border-2 transition active:scale-95 ${
-                        isActive ? 'bg-primary text-black border-primary' : 'bg-black text-ash-600 border-seam group-hover:border-ash-700 hover:text-white'
+                        isActive ? 'bg-primary text-black border-primary' : 'bg-black text-ash-600 border-seam group-hover:border-ash-700 hover:text-bone'
                       }`}>
                       <span className="material-symbols-outlined text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>
                         {isActive && isPlaying ? 'equalizer' : 'play_arrow'}
                       </span>
                     </button>
                     <div className="min-w-0 flex-1">
-                      <p className={`font-black text-sm tracking-tight truncate uppercase ${isActive ? 'text-white' : 'text-ash-500 group-hover:text-ash-300'}`}>
+                      <p className={`font-black text-sm tracking-tight truncate uppercase ${isActive ? 'text-bone' : 'text-ash-500 group-hover:text-ash-300'}`}>
                         {track.title}
                       </p>
                       <div className="flex items-center gap-3 mt-1">

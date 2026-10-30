@@ -71,7 +71,7 @@ export default function IntelCatalogPane({
         <div className="flex items-center gap-2 min-w-0">
           <span className="material-symbols-outlined text-primary text-base">hub</span>
           <div className="min-w-0">
-            <p className="font-display font-bold text-[11px] text-white uppercase tracking-widest truncate">
+            <p className="font-display font-bold text-[11px] text-bone uppercase tracking-widest truncate">
               Catálogo Intel
             </p>
             <p className="text-[8px] font-display font-bold text-industrial-silver/40 uppercase tracking-[0.2em]">
@@ -108,7 +108,7 @@ export default function IntelCatalogPane({
             value={search}
             onChange={(e) => onSearch(e.target.value)}
             placeholder="BUSCAR INTEL…"
-            className="w-full bg-surface-container-lowest border border-white/5 text-[10px] font-display font-bold uppercase tracking-[0.15em] pl-8 pr-3 py-2 text-white outline-none focus:border-primary/40 rounded-sm"
+            className="w-full bg-surface-container-lowest border border-white/5 text-[10px] font-display font-bold uppercase tracking-[0.15em] pl-8 pr-3 py-2 text-bone outline-none focus:border-primary/40 rounded-sm"
           />
         </div>
         <div className="flex flex-wrap gap-1">
@@ -181,7 +181,7 @@ export default function IntelCatalogPane({
                       {INTEL_TYPE_OPTIONS.find((t) => t.value === item.type)?.icon || 'description'}
                     </span>
                     <div className="min-w-0 flex-1">
-                      <p className="text-[11px] font-display font-bold text-white uppercase tracking-wide truncate">
+                      <p className="text-[11px] font-display font-bold text-bone uppercase tracking-wide truncate">
                         {item.title}
                       </p>
                       <p className="text-[8px] font-mono text-industrial-silver/25 truncate uppercase">

@@ -180,9 +180,9 @@ export default function CampaignsPanel({
 
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <div className="w-1.5 h-8 bg-primary shadow-[0_0_10px_rgba(255,140,0,0.4)]" />
+          <div className="w-1 h-9 bg-accent shrink-0" />
           <div>
-            <h2 className="font-display font-bold uppercase tracking-widest text-lg text-white">
+            <h2 className="font-display font-bold uppercase tracking-widest text-lg text-bone">
               {t('missions.title')}
             </h2>
             <p className="text-[10px] font-display font-bold text-industrial-silver/40 uppercase tracking-widest mt-1">
@@ -248,7 +248,7 @@ export default function CampaignsPanel({
                       {campaign.rpgSystem}
                     </p>
                   </div>
-                  <h3 className="font-display font-bold text-3xl text-white uppercase tracking-tighter group-hover:text-primary transition-colors leading-none">
+                  <h3 className="font-display font-bold text-3xl text-bone uppercase tracking-tighter group-hover:text-primary transition-colors leading-none">
                     {campaign.name}
                   </h3>
                 </div>
@@ -356,7 +356,7 @@ export default function CampaignsPanel({
 
                 <div className="p-8 border-b-4 border-seam flex justify-between items-center bg-black/40 relative z-10">
                   <div className="mt-2">
-                    <h3 className="font-black text-xl text-white uppercase tracking-widest">
+                    <h3 className="font-black text-xl text-bone uppercase tracking-widest">
                       Retenção de <span className="text-primary">Recursos</span>
                     </h3>
                     <p className="text-[10px] font-bold text-industrial-silver/40 uppercase tracking-widest mt-1">
@@ -365,7 +365,7 @@ export default function CampaignsPanel({
                   </div>
                   <button
                     onClick={() => setShowItemsModal(false)}
-                    className="p-3 text-industrial-silver/20 hover:text-white transition material-symbols-outlined rounded-sm"
+                    className="p-3 text-industrial-silver/20 hover:text-bone transition material-symbols-outlined rounded-sm"
                   >
                     close
                   </button>
@@ -381,7 +381,7 @@ export default function CampaignsPanel({
                       placeholder={t('missions.persistent.search')}
                       value={itemSearch}
                       onChange={(e) => setItemSearch(e.target.value)}
-                      className="w-full bg-black/60 border-2 border-seam text-[11px] font-bold px-12 py-4 text-white outline-none rounded-sm uppercase tracking-widest transition shadow-inner focus:ring-1 focus:ring-primary placeholder:text-ash-700"
+                      className="w-full bg-black/60 border-2 border-seam text-[11px] font-bold px-12 py-4 text-bone outline-none rounded-sm uppercase tracking-widest transition shadow-inner focus:ring-1 focus:ring-primary placeholder:text-ash-700"
                     />
                   </div>
                 </div>
@@ -401,7 +401,7 @@ export default function CampaignsPanel({
                           className={`flex items-center justify-between p-4 text-left transition border-2 rounded-sm group ${
                             persistentItems.includes(item.id)
                               ? 'bg-primary/10 border-primary/30 text-primary shadow-inner'
-                              : 'bg-seam border-seam text-ash-500 hover:bg-white/5 hover:text-white hover:border-white/10'
+                              : 'bg-seam border-seam text-ash-500 hover:bg-white/5 hover:text-bone hover:border-white/10'
                           }`}
                         >
                           <div className="flex items-center gap-4">
@@ -446,7 +446,7 @@ export default function CampaignsPanel({
                 <div className="p-8 border-t-4 border-seam flex justify-end bg-black/40 relative z-10 shrink-0">
                   <button
                     onClick={() => setShowItemsModal(false)}
-                    className="bg-[#333] hover:bg-[#444] text-white px-12 py-4 text-[10px] font-black tracking-widest transition rounded-sm uppercase active:scale-[0.97]"
+                    className="bg-[#333] hover:bg-[#444] text-bone px-12 py-4 text-[10px] font-black tracking-widest transition rounded-sm uppercase active:scale-[0.97]"
                   >
                     Concluir Operação
                   </button>

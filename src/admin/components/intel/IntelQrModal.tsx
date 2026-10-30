@@ -93,7 +93,7 @@ export default function IntelQrModal({ item, onClose, onFeedback }: IntelQrModal
             <div className="absolute -top-3 left-6 bg-primary px-2 py-0.5 text-[10px] font-display font-bold text-black tracking-widest uppercase">
               ASSINATURA-DIGITAL-INTEL
             </div>
-            <h3 className="font-display font-bold text-xl mb-2 text-white uppercase tracking-widest text-center mt-2">
+            <h3 className="font-display font-bold text-xl mb-2 text-bone uppercase tracking-widest text-center mt-2">
               Gerar QR desta <span className="text-primary">{t('live.deliver.intel')}</span>
             </h3>
             <p className="text-[9px] font-display font-bold text-industrial-silver/40 uppercase tracking-widest text-center mb-6">
@@ -129,7 +129,7 @@ export default function IntelQrModal({ item, onClose, onFeedback }: IntelQrModal
             <button
               type="button"
               onClick={onClose}
-              className="px-10 py-4 text-[11px] font-display font-bold text-industrial-silver/40 hover:text-white transition w-full border-t border-primary/5 uppercase tracking-[0.3em]"
+              className="px-10 py-4 text-[11px] font-display font-bold text-industrial-silver/40 hover:text-bone transition w-full border-t border-primary/5 uppercase tracking-[0.3em]"
             >
               Fechar Terminal
             </button>

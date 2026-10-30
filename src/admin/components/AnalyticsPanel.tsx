@@ -103,9 +103,9 @@ export default function AnalyticsPanel({ onNavigate }: AnalyticsPanelProps = {})
       {modal}
       <motion.div variants={staggerItem} className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <div className="w-1.5 h-8 bg-primary shadow-[0_0_10px_rgba(255,140,0,0.4)]" />
+          <div className="w-1 h-9 bg-accent shrink-0" />
           <div>
-            <h2 className="font-display font-bold uppercase tracking-widest text-lg text-white">{t('analytics.title')}</h2>
+            <h2 className="font-display font-bold uppercase tracking-widest text-lg text-bone">{t('analytics.title')}</h2>
             <p className="text-[10px] font-display font-bold text-industrial-silver/40 uppercase tracking-widest mt-1">{t('analytics.subtitle')}</p>
           </div>
         </div>
@@ -405,7 +405,7 @@ function MetricRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex flex-col gap-1 border-b border-white/5 pb-3">
       <span className="text-[9px] font-display font-bold uppercase tracking-widest text-industrial-silver/30">{label}</span>
-      <span className="text-sm font-display font-bold text-white tracking-widest">{value}</span>
+      <span className="text-sm font-display font-bold text-bone tracking-widest">{value}</span>
     </div>
   );
 }

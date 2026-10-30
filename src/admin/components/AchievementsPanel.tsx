@@ -191,7 +191,7 @@ export default function AchievementsPanel({ embedded = false }: { embedded?: boo
       {!embedded && (
         <div className="flex items-center gap-4">
           <div className="w-2 h-8 bg-secondary rounded-full animate-pulse shadow-[0_0_10px_rgba(198,198,198,0.4)]" />
-          <h2 className="font-black uppercase tracking-widest text-lg text-white">
+          <h2 className="font-black uppercase tracking-widest text-lg text-bone">
             {t('achievements.title')}
           </h2>
         </div>
@@ -209,7 +209,7 @@ export default function AchievementsPanel({ embedded = false }: { embedded?: boo
                 placeholder={t('achievements.filter')}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full bg-black/40 border-2 border-white/5 text-[11px] font-black uppercase px-12 py-3 text-white outline-none focus:border-secondary transition rounded-sm"
+                className="w-full bg-black/40 border-2 border-white/5 text-[11px] font-black uppercase px-12 py-3 text-bone outline-none focus:border-secondary transition rounded-sm"
               />
             </div>
             <div className="flex items-center gap-2 flex-wrap">
@@ -243,7 +243,7 @@ export default function AchievementsPanel({ embedded = false }: { embedded?: boo
               className={`text-[9px] font-black uppercase tracking-widest px-3 py-1.5 border rounded-sm transition-colors ${
                 categoryFilter === 'all'
                   ? 'border-secondary text-secondary bg-secondary/10'
-                  : 'border-white/10 text-ash-500 hover:text-white'
+                  : 'border-white/10 text-ash-500 hover:text-bone'
               }`}
             >
               {t('achievements.allCategories')}
@@ -256,7 +256,7 @@ export default function AchievementsPanel({ embedded = false }: { embedded?: boo
                 className={`text-[9px] font-black uppercase tracking-widest px-3 py-1.5 border rounded-sm transition-colors ${
                   categoryFilter === cat
                     ? 'border-secondary text-secondary bg-secondary/10'
-                    : 'border-white/10 text-ash-500 hover:text-white'
+                    : 'border-white/10 text-ash-500 hover:text-bone'
                 }`}
               >
                 {ACHIEVEMENT_CATEGORY_LABELS[cat]}
@@ -293,7 +293,7 @@ export default function AchievementsPanel({ embedded = false }: { embedded?: boo
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2 flex-wrap mb-1">
-                          <h4 className="text-sm font-black text-white uppercase tracking-wider group-hover:text-secondary transition-colors">
+                          <h4 className="text-sm font-black text-bone uppercase tracking-wider group-hover:text-secondary transition-colors">
                             {ach.title}
                           </h4>
                           {tierBadge(ach.tier)}
@@ -341,7 +341,7 @@ export default function AchievementsPanel({ embedded = false }: { embedded?: boo
                         type="button"
                         onClick={() => openEdit(ach)}
                         disabled={!isRemote}
-                        className="flex-1 text-[8px] font-black uppercase tracking-widest py-2 border border-white/10 text-ash-400 hover:text-white hover:border-secondary/40 rounded-sm disabled:opacity-30"
+                        className="flex-1 text-[8px] font-black uppercase tracking-widest py-2 border border-white/10 text-ash-400 hover:text-bone hover:border-secondary/40 rounded-sm disabled:opacity-30"
                       >
                         {t('achievements.edit')}
                       </button>

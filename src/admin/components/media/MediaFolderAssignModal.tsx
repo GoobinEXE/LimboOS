@@ -76,7 +76,7 @@ export default function MediaFolderAssignModal({
                 <p className="text-[9px] font-display font-bold text-industrial-silver/40 uppercase tracking-[0.25em]">
                   Atribuir pastas
                 </p>
-                <h3 className="font-display font-bold text-white uppercase tracking-widest text-sm truncate mt-1">
+                <h3 className="font-display font-bold text-bone uppercase tracking-widest text-sm truncate mt-1">
                   {assetTitle}
                 </h3>
               </div>
@@ -119,7 +119,7 @@ export default function MediaFolderAssignModal({
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-4 py-2 text-[10px] font-display font-bold text-industrial-silver/40 hover:text-white uppercase tracking-widest"
+                  className="px-4 py-2 text-[10px] font-display font-bold text-industrial-silver/40 hover:text-bone uppercase tracking-widest"
                 >
                   {t('accounts.cancel')}
                 </button>

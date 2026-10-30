@@ -49,7 +49,7 @@ export default function MissionDataTab({
                 type="text"
                 value={campaign.id || ''}
                 onChange={(e) => onChange({ ...campaign, id: e.target.value })}
-                className="w-full bg-surface-container-lowest border-none text-white px-4 py-4 text-[11px] font-mono outline-none rounded-sm uppercase shadow-inner"
+                className="w-full bg-surface-container-lowest border-none text-bone px-4 py-4 text-[11px] font-mono outline-none rounded-sm uppercase shadow-inner"
                 placeholder="ex: neo-sampa-2099"
                 required
                 disabled={!isNew}
@@ -64,7 +64,7 @@ export default function MissionDataTab({
                 type="text"
                 value={campaign.name || ''}
                 onChange={(e) => onChange({ ...campaign, name: e.target.value })}
-                className="w-full bg-surface-container-lowest border-none text-white px-4 py-4 text-[11px] font-display font-bold outline-none rounded-sm uppercase shadow-inner"
+                className="w-full bg-surface-container-lowest border-none text-bone px-4 py-4 text-[11px] font-display font-bold outline-none rounded-sm uppercase shadow-inner"
                 required
               />
               <div className="h-0.5 w-0 bg-primary transition-[width,color,background-color,border-color,opacity,transform,box-shadow] duration-300 group-focus-within:w-full" />
@@ -77,7 +77,7 @@ export default function MissionDataTab({
                 type="text"
                 value={campaign.rpgSystem || ''}
                 onChange={(e) => onChange({ ...campaign, rpgSystem: e.target.value })}
-                className="w-full bg-surface-container-lowest border-none text-white px-4 py-4 text-[11px] font-display font-bold outline-none rounded-sm uppercase shadow-inner"
+                className="w-full bg-surface-container-lowest border-none text-bone px-4 py-4 text-[11px] font-display font-bold outline-none rounded-sm uppercase shadow-inner"
               />
               <div className="h-0.5 w-0 bg-primary transition-[width,color,background-color,border-color,opacity,transform,box-shadow] duration-300 group-focus-within:w-full" />
             </div>
@@ -90,7 +90,7 @@ export default function MissionDataTab({
                   type="text"
                   value={campaign.year || ''}
                   onChange={(e) => onChange({ ...campaign, year: e.target.value })}
-                  className="w-full bg-surface-container-lowest border-none text-white px-4 py-4 text-[11px] font-display font-bold outline-none rounded-sm uppercase shadow-inner"
+                  className="w-full bg-surface-container-lowest border-none text-bone px-4 py-4 text-[11px] font-display font-bold outline-none rounded-sm uppercase shadow-inner"
                 />
                 <div className="h-0.5 w-0 bg-primary transition-[width,color,background-color,border-color,opacity,transform,box-shadow] duration-300 group-focus-within:w-full" />
               </div>
@@ -138,7 +138,7 @@ export default function MissionDataTab({
               <textarea
                 value={campaign.description || ''}
                 onChange={(e) => onChange({ ...campaign, description: e.target.value })}
-                className="w-full h-28 bg-surface-container-lowest border-none text-white px-4 py-4 text-[11px] font-sans outline-none resize-none rounded-sm shadow-inner leading-relaxed"
+                className="w-full h-28 bg-surface-container-lowest border-none text-bone px-4 py-4 text-[11px] font-sans outline-none resize-none rounded-sm shadow-inner leading-relaxed"
               />
               <div className="h-0.5 w-0 bg-primary transition-[width,color,background-color,border-color,opacity,transform,box-shadow] duration-300 group-focus-within:w-full" />
             </div>
@@ -150,7 +150,7 @@ export default function MissionDataTab({
                 type="text"
                 value={campaign.location || ''}
                 onChange={(e) => onChange({ ...campaign, location: e.target.value })}
-                className="w-full bg-surface-container-lowest border-none text-white px-4 py-4 text-[11px] font-display font-bold outline-none rounded-sm uppercase shadow-inner"
+                className="w-full bg-surface-container-lowest border-none text-bone px-4 py-4 text-[11px] font-display font-bold outline-none rounded-sm uppercase shadow-inner"
               />
               <div className="h-0.5 w-0 bg-primary transition-[width,color,background-color,border-color,opacity,transform,box-shadow] duration-300 group-focus-within:w-full" />
             </div>
@@ -178,7 +178,7 @@ export default function MissionDataTab({
                   >
                     <span className="material-symbols-outlined text-sm">close</span>
                   </button>
-                  <p className="absolute bottom-2 left-3 text-[8px] font-display font-bold text-white/50 uppercase tracking-widest">
+                  <p className="absolute bottom-2 left-3 text-[8px] font-display font-bold text-bone/50 uppercase tracking-widest">
                     PREVIEW ATIVA
                   </p>
                 </div>
@@ -208,7 +208,7 @@ export default function MissionDataTab({
                 type="text"
                 value={campaign.imageUrl || ''}
                 onChange={(e) => onChange({ ...campaign, imageUrl: e.target.value })}
-                className="w-full bg-surface-container-lowest border-none text-white px-4 py-3 text-[11px] font-mono outline-none rounded-sm shadow-inner mt-2"
+                className="w-full bg-surface-container-lowest border-none text-bone px-4 py-3 text-[11px] font-mono outline-none rounded-sm shadow-inner mt-2"
                 placeholder="https://..."
               />
               <div className="h-0.5 w-0 bg-primary transition-[width,color,background-color,border-color,opacity,transform,box-shadow] duration-300 group-focus-within:w-full" />
@@ -220,7 +220,7 @@ export default function MissionDataTab({
           <button
             type="button"
             onClick={onCancel}
-            className="px-8 py-4 text-[10px] font-display font-bold text-industrial-silver/30 hover:text-white uppercase tracking-[0.3em] transition"
+            className="px-8 py-4 text-[10px] font-display font-bold text-industrial-silver/30 hover:text-bone uppercase tracking-[0.3em] transition"
           >
             Abortar Missão
           </button>

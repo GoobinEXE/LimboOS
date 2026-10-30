@@ -181,7 +181,7 @@ type Props = {
 };
 
 const fieldClass =
-  'w-full bg-black/50 border border-white/10 text-[11px] font-bold uppercase px-3 py-2.5 text-white outline-none focus:border-secondary rounded-sm';
+  'w-full bg-black/50 border border-white/10 text-[11px] font-bold uppercase px-3 py-2.5 text-bone outline-none focus:border-secondary rounded-sm';
 const labelClass = 'text-[9px] font-black uppercase tracking-widest text-ash-500 mb-1.5 block';
 
 export default function AchievementEditorModal({
@@ -257,14 +257,14 @@ export default function AchievementEditorModal({
     >
       <div className="bg-seam border-2 border-white/10 w-full max-w-2xl max-h-[90vh] overflow-hidden rounded-xl shadow-2xl flex flex-col font-chakra">
         <div className="px-6 py-4 border-b border-white/10 flex items-center justify-between bg-black/40">
-          <h3 className="text-xs font-black uppercase tracking-[0.2em] text-white">
+          <h3 className="text-xs font-black uppercase tracking-[0.2em] text-bone">
             {isEdit ? 'Editar conquista' : 'Nova conquista'}
           </h3>
           <button
             type="button"
             disabled={saving}
             onClick={onClose}
-            className="text-ash-500 hover:text-white material-symbols-outlined text-xl"
+            className="text-ash-500 hover:text-bone material-symbols-outlined text-xl"
           >
             close
           </button>
@@ -590,7 +590,7 @@ export default function AchievementEditorModal({
             type="button"
             disabled={saving}
             onClick={onClose}
-            className="flex-1 px-4 py-3 text-[10px] font-black uppercase tracking-widest text-ash-500 hover:text-white bg-[#333] rounded-sm"
+            className="flex-1 px-4 py-3 text-[10px] font-black uppercase tracking-widest text-ash-500 hover:text-bone bg-[#333] rounded-sm"
           >
             Cancelar
           </button>

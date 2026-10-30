@@ -202,7 +202,7 @@ function StatCard({
       <p className="font-display text-[10px] uppercase font-bold tracking-[0.2em] text-industrial-silver/50 mb-2">
         {label}
       </p>
-      <p className="text-4xl font-display font-bold text-white tracking-tighter">{value}</p>
+      <p className="text-4xl font-display font-bold text-bone tracking-tighter">{value}</p>
     </>
   );
 

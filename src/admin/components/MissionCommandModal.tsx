@@ -93,9 +93,9 @@ export default function MissionCommandModal({
 
           <div className="p-6 border-b border-white/5 flex justify-between items-center bg-black/40 shrink-0">
             <div className="flex items-center gap-4 mt-2">
-              <div className="w-1.5 h-8 bg-primary shadow-[0_0_10px_rgba(255,140,0,0.4)]" />
+              <div className="w-1 h-9 bg-accent shrink-0" />
               <div>
-                <h3 className="font-display font-bold text-xl text-white uppercase tracking-tighter">
+                <h3 className="font-display font-bold text-xl text-bone uppercase tracking-tighter">
                   {editingCampaign.name || t('missions.modal.newTitle')}
                 </h3>
                 <p className="text-[10px] font-display font-bold text-industrial-silver/40 uppercase tracking-widest mt-0.5">
@@ -105,7 +105,7 @@ export default function MissionCommandModal({
             </div>
             <button
               onClick={onClose}
-              className="p-3 text-industrial-silver/20 hover:text-white transition material-symbols-outlined rounded-sm"
+              className="p-3 text-industrial-silver/20 hover:text-bone transition material-symbols-outlined rounded-sm"
             >
               close
             </button>
@@ -125,7 +125,7 @@ export default function MissionCommandModal({
                       ? 'text-primary bg-primary/10 border-b-2 border-primary'
                       : locked
                         ? 'text-industrial-silver/15 cursor-not-allowed'
-                        : 'text-industrial-silver/40 hover:text-white hover:bg-white/5'
+                        : 'text-industrial-silver/40 hover:text-bone hover:bg-white/5'
                   }`}
                   title={locked ? t('missions.modal.saveFirst') : undefined}
                 >

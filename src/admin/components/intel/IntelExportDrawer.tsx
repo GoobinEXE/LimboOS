@@ -42,7 +42,7 @@ export default function IntelExportDrawer({
 
               <div className="p-8 border-b border-primary/10 flex justify-between items-center bg-black/40 relative z-10">
                 <div className="mt-2">
-                  <h3 className="font-display font-bold text-2xl text-white uppercase tracking-tighter">
+                  <h3 className="font-display font-bold text-2xl text-bone uppercase tracking-tighter">
                     Exportar <span className="text-primary">Registro Mestre</span>
                   </h3>
                   <p className="text-[10px] font-display font-bold text-industrial-silver/40 uppercase tracking-widest mt-1">
@@ -52,7 +52,7 @@ export default function IntelExportDrawer({
                 <button
                   type="button"
                   onClick={onClose}
-                  className="p-3 text-industrial-silver/40 hover:text-white material-symbols-outlined rounded-sm"
+                  className="p-3 text-industrial-silver/40 hover:text-bone material-symbols-outlined rounded-sm"
                 >
                   close
                 </button>

@@ -13,10 +13,10 @@ import {
 import type { IntelItem } from '../../../types/intel';
 
 const SELECT_CLASS =
-  'w-full bg-surface-container-lowest border border-white/5 py-4 px-4 text-white font-display font-bold text-sm tracking-widest outline-none uppercase cursor-pointer appearance-none focus:border-primary/40 transition rounded-sm';
+  'w-full bg-surface-container-lowest border border-white/5 py-4 px-4 text-bone font-display font-bold text-sm tracking-widest outline-none uppercase cursor-pointer appearance-none focus:border-primary/40 transition rounded-sm';
 
 const INPUT_CLASS =
-  'w-full bg-surface-container-lowest border border-transparent focus:border-primary/30 py-4 px-4 text-white outline-none transition rounded-sm';
+  'w-full bg-surface-container-lowest border border-transparent focus:border-primary/30 py-4 px-4 text-bone outline-none transition rounded-sm';
 
 interface IntelEditorModalProps {
   open: boolean;
@@ -71,7 +71,7 @@ export default function IntelEditorModal({
 
             <div className="p-8 border-b border-white/5 flex justify-between items-center bg-black/40">
               <div className="mt-2">
-                <h3 className="font-display font-bold text-2xl text-white uppercase tracking-tighter">
+                <h3 className="font-display font-bold text-2xl text-bone uppercase tracking-tighter">
                   {editingItem ? 'Ajustar' : 'Injetar'}{' '}
                   <span className="text-primary">{t('intel.editor.properties')}</span>
                 </h3>
@@ -84,7 +84,7 @@ export default function IntelEditorModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="p-3 text-industrial-silver/20 hover:text-white transition rounded-sm material-symbols-outlined"
+                className="p-3 text-industrial-silver/20 hover:text-bone transition rounded-sm material-symbols-outlined"
               >
                 close
               </button>
@@ -280,7 +280,7 @@ export default function IntelEditorModal({
                     <button
                       type="button"
                       onClick={onOpenLibrary}
-                      className="py-4 border border-white/10 bg-black/30 text-industrial-silver/60 hover:text-white transition rounded-sm flex items-center justify-center gap-2 font-display font-bold text-[9px] uppercase tracking-widest"
+                      className="py-4 border border-white/10 bg-black/30 text-industrial-silver/60 hover:text-bone transition rounded-sm flex items-center justify-center gap-2 font-display font-bold text-[9px] uppercase tracking-widest"
                     >
                       <span className="material-symbols-outlined text-base">perm_media</span>
                       {t('media.title')}
@@ -298,7 +298,7 @@ export default function IntelEditorModal({
                       <button
                         type="button"
                         onClick={onApplyYoutube}
-                        className="px-4 border border-red-500/30 bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition rounded-sm font-display font-bold text-[9px] uppercase tracking-widest shrink-0"
+                        className="px-4 border border-red-500/30 bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-bone transition rounded-sm font-display font-bold text-[9px] uppercase tracking-widest shrink-0"
                       >
                         YouTube
                       </button>
@@ -464,7 +464,7 @@ export default function IntelEditorModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="px-8 py-4 text-[10px] font-display font-bold text-industrial-silver/30 hover:text-white uppercase tracking-[0.3em]"
+                className="px-8 py-4 text-[10px] font-display font-bold text-industrial-silver/30 hover:text-bone uppercase tracking-[0.3em]"
               >
                 Abortar Missão
               </button>

@@ -150,7 +150,7 @@ function AchievementDeliverPane({
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder={t('deliver.searchAchievement')}
-          className="w-full bg-black/50 border border-border px-4 py-2.5 text-[10px] font-display font-bold uppercase tracking-widest text-white placeholder:text-ash-700 outline-none focus:border-primary/40"
+          className="w-full bg-black/50 border border-border px-4 py-2.5 text-[10px] font-display font-bold uppercase tracking-widest text-bone placeholder:text-ash-700 outline-none focus:border-primary/40"
         />
       </div>
       <div className="flex-1 overflow-y-auto custom-scrollbar divide-y divide-white/5">
@@ -165,7 +165,7 @@ function AchievementDeliverPane({
           >
             <img src={a.icon} alt="" className="w-10 h-10 object-cover rounded-sm border border-border shrink-0" />
             <div className="min-w-0 flex-1">
-              <p className="text-[11px] font-display font-bold uppercase tracking-widest text-white truncate">
+              <p className="text-[11px] font-display font-bold uppercase tracking-widest text-bone truncate">
                 {a.title}
               </p>
               <p className="text-[9px] font-mono text-ash-600 truncate mt-0.5">{a.id}</p>
@@ -186,7 +186,7 @@ function AchievementDeliverPane({
           type="button"
           disabled={loading}
           onClick={onClose}
-          className="px-4 py-2 text-[10px] font-display font-bold uppercase tracking-widest text-ash-500 hover:text-white"
+          className="px-4 py-2 text-[10px] font-display font-bold uppercase tracking-widest text-ash-500 hover:text-bone"
         >
           {t('accounts.cancel')}
         </button>
@@ -330,7 +330,7 @@ function SmsDeliverPane({
               key={`${t.uid}_${t.characterId}`}
               className="flex justify-between px-3 py-2 bg-black/40 border border-border-subtle text-[10px] font-display font-bold uppercase tracking-widest"
             >
-              <span className="text-white">{t.label}</span>
+              <span className="text-bone">{t.label}</span>
               <span className="text-primary/60">{t.group?.name}</span>
             </div>
           ))}
@@ -346,7 +346,7 @@ function SmsDeliverPane({
           type="button"
           disabled={loading}
           onClick={onClose}
-          className="px-4 py-2 text-[10px] font-display font-bold uppercase tracking-widest text-ash-500 hover:text-white"
+          className="px-4 py-2 text-[10px] font-display font-bold uppercase tracking-widest text-ash-500 hover:text-bone"
         >
           {t('accounts.cancel')}
         </button>
@@ -419,7 +419,7 @@ function DeliverShell({
 
               <div className="p-6 border-b-4 border-seam bg-black/40 relative z-10 flex justify-between items-start gap-4">
                 <div className="min-w-0">
-                  <h3 className="font-black text-xl text-white uppercase tracking-widest truncate">{title}</h3>
+                  <h3 className="font-black text-xl text-bone uppercase tracking-widest truncate">{title}</h3>
                   <p className="text-[10px] text-ash-500 font-bold uppercase tracking-widest mt-1 truncate">
                     {targets.length} alvo(s): {targets.map((t) => t.label).join(', ')}
                   </p>
@@ -428,7 +428,7 @@ function DeliverShell({
                   <button
                     type="button"
                     onClick={requestClose}
-                    className="p-2 text-ash-600 hover:text-white material-symbols-outlined shrink-0"
+                    className="p-2 text-ash-600 hover:text-bone material-symbols-outlined shrink-0"
                   >
                     close
                   </button>

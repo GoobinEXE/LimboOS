@@ -135,7 +135,7 @@ export default function MediaFolderSidebar({
                 if (e.key === 'Escape') setCreating(false);
               }}
               placeholder="NOME PASTA"
-              className="flex-1 min-w-0 bg-surface-container-lowest border border-primary/20 text-[9px] font-display font-bold uppercase tracking-widest text-white px-2 py-1.5 outline-none focus:border-primary/50"
+              className="flex-1 min-w-0 bg-surface-container-lowest border border-primary/20 text-[9px] font-display font-bold uppercase tracking-widest text-bone px-2 py-1.5 outline-none focus:border-primary/50"
             />
             <button
               type="button"
@@ -160,7 +160,7 @@ export default function MediaFolderSidebar({
                     if (e.key === 'Enter') void submitRename(folder);
                     if (e.key === 'Escape') setRenamingId(null);
                   }}
-                  className="flex-1 min-w-0 bg-surface-container-lowest border border-primary/20 text-[9px] font-display font-bold uppercase tracking-widest text-white px-2 py-1.5 outline-none focus:border-primary/50"
+                  className="flex-1 min-w-0 bg-surface-container-lowest border border-primary/20 text-[9px] font-display font-bold uppercase tracking-widest text-bone px-2 py-1.5 outline-none focus:border-primary/50"
                 />
                 <button
                   type="button"

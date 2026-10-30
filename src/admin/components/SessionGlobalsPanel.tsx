@@ -86,14 +86,14 @@ export default function SessionGlobalsPanel() {
           <p className="text-[9px] font-display font-black text-primary uppercase tracking-widest mb-1">
             {t('sessionGlobals.ipHint')}
           </p>
-          <p className="text-sm font-mono font-black text-white tracking-wider">212.45.1.1</p>
+          <p className="text-sm font-mono font-black text-bone tracking-wider">212.45.1.1</p>
         </div>
         <button
           type="button"
           onClick={toggleLimboMilitary}
           className={`px-5 py-2 border-2 font-display font-black uppercase text-[10px] tracking-widest transition rounded-sm self-start ${
             limboState.seized
-              ? 'bg-red-600 border-red-400 text-white'
+              ? 'bg-red-600 border-red-400 text-bone'
               : 'bg-[#333] border-border-subtle text-ash-400 hover:bg-[#444]'
           } active:scale-[0.97]`}
         >
@@ -107,7 +107,7 @@ export default function SessionGlobalsPanel() {
         </h3>
         <div className="flex items-center justify-between p-4 bg-black/40 border border-border-subtle rounded-sm">
           <div>
-            <p className="font-display font-black text-sm text-white uppercase">{t('sessionGlobals.diskRepair')}</p>
+            <p className="font-display font-black text-sm text-bone uppercase">{t('sessionGlobals.diskRepair')}</p>
             <p className="text-[9px] text-ash-600 font-bold uppercase mt-1">{t('sessionGlobals.diskRepairDesc')}</p>
           </div>
           <button

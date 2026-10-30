@@ -53,7 +53,7 @@ export default function MediaSelectorModal({
               <div className="px-6 py-4 border-b border-primary/10 flex items-center justify-between bg-black/30 shrink-0">
                 <div className="flex items-center gap-3">
                   <span className="material-symbols-outlined text-primary text-lg">perm_media</span>
-                  <h3 className="font-display font-bold text-white uppercase tracking-widest text-sm">
+                  <h3 className="font-display font-bold text-bone uppercase tracking-widest text-sm">
                     {resolvedTitle}
                   </h3>
                 </div>
@@ -82,7 +82,7 @@ export default function MediaSelectorModal({
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-5 py-2 text-[10px] font-display font-bold text-industrial-silver/40 hover:text-white uppercase tracking-widest transition-colors"
+                  className="px-5 py-2 text-[10px] font-display font-bold text-industrial-silver/40 hover:text-bone uppercase tracking-widest transition-colors"
                 >
                   {t('accounts.cancel')}
                 </button>

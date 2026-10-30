@@ -213,7 +213,7 @@ export default function NpcSmsDistributionModal({
 
           <div className="p-8 border-b-4 border-seam bg-black/40 relative z-10 flex justify-between items-center">
             <div>
-              <h3 className="font-black text-xl text-white uppercase tracking-widest">
+              <h3 className="font-black text-xl text-bone uppercase tracking-widest">
                 {t('squads.smsTitle')}
               </h3>
               <p className="text-[10px] text-ash-500 font-bold uppercase tracking-widest mt-1">
@@ -223,7 +223,7 @@ export default function NpcSmsDistributionModal({
             <button
               onClick={onClose}
               disabled={loading}
-              className="p-2 text-ash-600 hover:text-white transition material-symbols-outlined rounded-sm"
+              className="p-2 text-ash-600 hover:text-bone transition material-symbols-outlined rounded-sm"
             >
               close
             </button>
@@ -312,7 +312,7 @@ export default function NpcSmsDistributionModal({
                           className="mt-1"
                         />
                         <div className="min-w-0">
-                          <p className="text-[11px] font-bold text-white uppercase truncate">
+                          <p className="text-[11px] font-bold text-bone uppercase truncate">
                             {d.title}
                           </p>
                           <p className="text-[9px] text-ash-500 line-clamp-1 italic">
@@ -358,7 +358,7 @@ export default function NpcSmsDistributionModal({
                             {asg.characterName}
                           </span>
                         </div>
-                        <h4 className="text-[11px] font-bold text-white uppercase mt-2 tracking-wide truncate">
+                        <h4 className="text-[11px] font-bold text-bone uppercase mt-2 tracking-wide truncate">
                           {asg.dialogue.title}
                         </h4>
                         <p className="text-[9px] text-ash-500 line-clamp-1 italic mt-1">
@@ -385,7 +385,7 @@ export default function NpcSmsDistributionModal({
               <button
                 onClick={onClose}
                 disabled={loading}
-                className="flex-1 sm:flex-none px-6 py-4 text-[10px] font-black text-ash-600 hover:text-white transition-colors uppercase tracking-widest disabled:opacity-50"
+                className="flex-1 sm:flex-none px-6 py-4 text-[10px] font-black text-ash-600 hover:text-bone transition-colors uppercase tracking-widest disabled:opacity-50"
               >
                 CANCELAR
               </button>

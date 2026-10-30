@@ -75,7 +75,7 @@ export default function RedirectsPanel({ embedded = false }: { embedded?: boolea
       {!embedded && (
       <div className="flex items-center gap-4">
         <div className="w-2 h-8 bg-phosphor-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(86,185,75,0.4)]" />
-        <h2 className="font-black uppercase tracking-widest text-lg text-white">
+        <h2 className="font-black uppercase tracking-widest text-lg text-bone">
           Interface de Redirecionamento de Sinal QR
         </h2>
         <span className="text-[10px] font-bold text-ash-600 tracking-widest uppercase">
@@ -95,7 +95,7 @@ export default function RedirectsPanel({ embedded = false }: { embedded?: boolea
           <div className="bg-seam border-4 border-seam p-8 rounded-xl shadow-xl space-y-8 relative overflow-hidden">
             <div className="flex items-center gap-3 border-b border-white/5 pb-6">
               <span className="material-symbols-outlined text-phosphor-500 text-2xl">add_link</span>
-              <h3 className="font-black text-xs uppercase tracking-widest text-white">{t('redirects.inject')}</h3>
+              <h3 className="font-black text-xs uppercase tracking-widest text-bone">{t('redirects.inject')}</h3>
             </div>
             
             <form onSubmit={handleAddRedirect} className="space-y-6 relative z-10">
@@ -128,13 +128,13 @@ export default function RedirectsPanel({ embedded = false }: { embedded?: boolea
                   onChange={(e) => setNewReason(e.target.value)}
                   placeholder="MOTIVO DO REDIRECIONAMENTO..."
                   rows={2}
-                  className="w-full bg-black/40 border-2 border-seam text-[10px] font-bold text-white px-4 py-3 focus:border-white/20 outline-none rounded-sm resize-none transition"
+                  className="w-full bg-black/40 border-2 border-seam text-[10px] font-bold text-bone px-4 py-3 focus:border-white/20 outline-none rounded-sm resize-none transition"
                 />
               </div>
               <button
                 type="submit"
                 disabled={isSaving}
-                className="w-full bg-phosphor-600 hover:bg-phosphor-500 text-white py-4 font-black text-[10px] uppercase tracking-[0.3em] transition rounded-sm active:scale-[0.97] shadow-[0_0_15px_rgba(86,185,75,0.2)] disabled:opacity-20"
+                className="w-full bg-phosphor-600 hover:bg-phosphor-500 text-bone py-4 font-black text-[10px] uppercase tracking-[0.3em] transition rounded-sm active:scale-[0.97] shadow-[0_0_15px_rgba(86,185,75,0.2)] disabled:opacity-20"
               >
                 {isSaving ? 'SINC DADOS...' : t('redirects.linkAction')}
               </button>
@@ -160,7 +160,7 @@ export default function RedirectsPanel({ embedded = false }: { embedded?: boolea
                    placeholder="LOCALIZAR VETOR..."
                    value={search}
                    onChange={(e) => setSearch(e.target.value)}
-                   className="bg-black/60 border-2 border-seam text-[9px] font-black uppercase tracking-widest focus:ring-1 focus:ring-phosphor-500 placeholder:text-ash-900 text-white px-10 py-2 w-56 rounded-sm transition"
+                   className="bg-black/60 border-2 border-seam text-[9px] font-black uppercase tracking-widest focus:ring-1 focus:ring-phosphor-500 placeholder:text-ash-900 text-bone px-10 py-2 w-56 rounded-sm transition"
                  />
               </div>
             </div>

@@ -25,11 +25,11 @@ interface ProfileScreenProps {
 type AgentStatusKey = 'vivo' | 'morto' | 'desaparecido';
 
 const STATUS_STYLE: Map<AgentStatusKey, { color: string; dot: string; border: string }> = new Map([
-  ['vivo', { color: 'text-green-400', dot: 'bg-green-400', border: 'border-green-500/30' }],
+  ['vivo', { color: 'text-phosphor-400', dot: 'bg-phosphor-400', border: 'border-phosphor-500/30' }],
   ['morto', { color: 'text-red-400', dot: 'bg-red-400', border: 'border-red-500/30' }],
   ['desaparecido', { color: 'text-yellow-400', dot: 'bg-yellow-400', border: 'border-yellow-500/30' }],
 ]);
-const DEFAULT_STATUS_STYLE = { color: 'text-green-400', dot: 'bg-green-400', border: 'border-green-500/30' };
+const DEFAULT_STATUS_STYLE = { color: 'text-phosphor-400', dot: 'bg-phosphor-400', border: 'border-phosphor-500/30' };
 
 const STATUS_LABEL_KEY: Record<AgentStatusKey, 'ativo' | 'eliminado' | 'desaparecido'> = {
   vivo: 'ativo',
@@ -128,8 +128,8 @@ const NokiaSection = ({
   action?: React.ReactNode;
   children: React.ReactNode;
 }) => (
-  <section className="border-2 border-[#111e14] p-1.5 shadow-[2px_2px_0px_#111e14] bg-[#edfeed]">
-    <div className="flex justify-between items-center mb-1.5 pb-1 border-b border-dotted border-[#111e14]/60">
+  <section className="border-2 border-lcd-ink p-1.5 shadow-[2px_2px_0px_#111e14] bg-lcd-paper">
+    <div className="flex justify-between items-center mb-1.5 pb-1 border-b border-dotted border-lcd-ink/60">
       <span className="text-[8px] font-black flex items-center gap-1.5">
         <span className="opacity-50">{index}</span>
         <span>{title}</span>
@@ -201,17 +201,17 @@ export default function ProfileScreen({
 
   if (variant === 'nokia') {
     return (
-      <div className="w-full h-full bg-[#edfeed] text-[#111e14] flex flex-col p-1 font-mono uppercase text-[10px] select-none tracking-widest relative">
+      <div className="w-full h-full bg-lcd-paper text-lcd-ink flex flex-col p-1 font-mono uppercase text-[10px] select-none tracking-widest relative">
         {/* Header */}
-        <div className="flex justify-between items-center border-b-2 border-[#111e14] pb-1 shrink-0 font-bold mb-2">
-          <button onClick={onBack} className="hover:bg-[#111e14] hover:text-[#edfeed] px-1 active:scale-95 transition-all">
+        <div className="flex justify-between items-center border-b-2 border-lcd-ink pb-1 shrink-0 font-bold mb-2">
+          <button onClick={onBack} className="hover:bg-lcd-ink hover:text-lcd-paper px-1 active:scale-95 transition-all">
             {tCommon('actions.backBracket')}
           </button>
           <span className="text-[8px] flex items-center gap-1">
-            <span className="w-1.5 h-1.5 bg-[#111e14] animate-pulse" />
+            <span className="w-1.5 h-1.5 bg-lcd-ink animate-pulse" />
             {t('profile.header.nokia')}
           </span>
-          <button onClick={onLogout} className="hover:bg-[#111e14] hover:text-[#edfeed] px-1 active:scale-95 transition-all">
+          <button onClick={onLogout} className="hover:bg-lcd-ink hover:text-lcd-paper px-1 active:scale-95 transition-all">
             {tCommon('actions.exitBracket')}
           </button>
         </div>
@@ -219,10 +219,10 @@ export default function ProfileScreen({
         <div className="flex-1 overflow-y-auto min-h-0 space-y-2.5 pb-2 pr-1" style={{ scrollbarWidth: 'none' }}>
 
           {/* Identidade */}
-          <div className="border-2 border-[#111e14] p-2 relative overflow-hidden shadow-[2px_2px_0px_#111e14]">
-            <span className="absolute top-1 right-1 text-[6px] font-black border border-[#111e14] px-1 -rotate-3 opacity-70">{tCommon('classified')}</span>
+          <div className="border-2 border-lcd-ink p-2 relative overflow-hidden shadow-[2px_2px_0px_#111e14]">
+            <span className="absolute top-1 right-1 text-[6px] font-black border border-lcd-ink px-1 -rotate-3 opacity-70">{tCommon('classified')}</span>
             <div className="flex gap-3 mb-2">
-              <div className="w-12 h-12 border-2 border-[#111e14] bg-[#edfeed] shrink-0 flex items-center justify-center font-black text-[16px] relative overflow-hidden shadow-[1px_1px_0px_#111e14]">
+              <div className="w-12 h-12 border-2 border-lcd-ink bg-lcd-paper shrink-0 flex items-center justify-center font-black text-[16px] relative overflow-hidden shadow-[1px_1px_0px_#111e14]">
                 {profile.character.profilePhotoUrl ? (
                   <img
                     src={profile.character.profilePhotoUrl}
@@ -240,13 +240,13 @@ export default function ProfileScreen({
                   <div className="text-[12px] font-black leading-none truncate pr-14">{profile.character.codinome}</div>
                   <div className="text-[8px] opacity-60 font-bold tracking-tighter">{tCommon('id')}: {agentCode}</div>
                 </div>
-                <div className={`self-start px-1.5 py-0.5 border border-[#111e14] text-[7px] font-black ${profile.character.agentStatus === 'vivo' || !profile.character.agentStatus ? 'bg-[#111e14] text-[#edfeed]' : ''}`}>
+                <div className={`self-start px-1.5 py-0.5 border border-lcd-ink text-[7px] font-black ${profile.character.agentStatus === 'vivo' || !profile.character.agentStatus ? 'bg-lcd-ink text-lcd-paper' : ''}`}>
                   {t('profile.statusPrefix', { status: statusCfg.label })}
                 </div>
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-2 border-y border-dotted border-[#111e14]/60 py-2 my-2">
+            <div className="grid grid-cols-3 gap-2 border-y border-dotted border-lcd-ink/60 py-2 my-2">
               {[
                 { label: t('profile.stat.proofsUpper'), value: profile.unlockedIntelIds.length },
                 { label: t('profile.stat.medalsUpper'), value: profile.achievementIds.length },
@@ -266,7 +266,7 @@ export default function ProfileScreen({
               </div>
               <div className="flex gap-0.5 h-1.5">
                 {Array.from({ length: 5 }).map((_, i) => (
-                  <div key={i} className={`flex-1 border border-[#111e14] ${i < dangerLevel ? 'bg-[#111e14]' : ''}`} />
+                  <div key={i} className={`flex-1 border border-lcd-ink ${i < dangerLevel ? 'bg-lcd-ink' : ''}`} />
                 ))}
               </div>
             </div>
@@ -274,11 +274,11 @@ export default function ProfileScreen({
 
           {/* Ações */}
           <div className="space-y-1">
-            <button onClick={onChangeMission} className="w-full border-2 border-[#111e14] flex justify-between px-2 py-2 hover:bg-[#111e14] hover:text-[#edfeed] font-black active:scale-95 transition-all shadow-[1px_1px_0px_#111e14]">
+            <button onClick={onChangeMission} className="w-full border-2 border-lcd-ink flex justify-between px-2 py-2 hover:bg-lcd-ink hover:text-lcd-paper font-black active:scale-95 transition-all shadow-[1px_1px_0px_#111e14]">
               <span>{t('profile.action.missionNokia')}</span>
               <span>&raquo;</span>
             </button>
-            <button onClick={onChangeCharacter} className="w-full border-2 border-[#111e14] flex justify-between px-2 py-2 hover:bg-[#111e14] hover:text-[#edfeed] font-black active:scale-95 transition-all shadow-[1px_1px_0px_#111e14]">
+            <button onClick={onChangeCharacter} className="w-full border-2 border-lcd-ink flex justify-between px-2 py-2 hover:bg-lcd-ink hover:text-lcd-paper font-black active:scale-95 transition-all shadow-[1px_1px_0px_#111e14]">
               <span>{t('profile.action.agentNokia')}</span>
               <span>&raquo;</span>
             </button>
@@ -294,7 +294,7 @@ export default function ProfileScreen({
             title={t('profile.deck.nokia')}
             action={
               onUpdateSpotify && !isEditingSpotify ? (
-                <button onClick={startEditingSpotify} className="hover:bg-[#111e14] hover:text-[#edfeed] px-1 active:scale-95 transition-all text-[8px] border border-[#111e14]">
+                <button onClick={startEditingSpotify} className="hover:bg-lcd-ink hover:text-lcd-paper px-1 active:scale-95 transition-all text-[8px] border border-lcd-ink">
                   {embedUrl ? t('profile.deck.editShort') : t('profile.deck.linkShort')}
                 </button>
               ) : undefined
@@ -307,21 +307,21 @@ export default function ProfileScreen({
                   value={spotifyInput}
                   onChange={(e) => { setSpotifyInput(e.target.value); setSpotifyError(''); }}
                   placeholder={t('profile.deck.placeholderNokia')}
-                  className="w-full bg-[#edfeed] border border-[#111e14] px-1 py-1 text-[9px] text-[#111e14] focus:outline-none placeholder:text-[#111e14]/50"
+                  className="w-full bg-lcd-paper border border-lcd-ink px-1 py-1 text-[9px] text-lcd-ink focus:outline-none placeholder:text-lcd-ink/50"
                   autoFocus
                 />
                 {spotifyError && <p className="text-[8px] animate-pulse">{tCommon('error')}: {spotifyError}</p>}
                 <div className="flex gap-1 justify-end">
-                  <button onClick={handleCancelEdit} className="border border-[#111e14] px-2 py-0.5 hover:bg-[#111e14] hover:text-[#edfeed] active:scale-95 transition-all text-[8px]">{tCommon('actions.cancelShort')}</button>
-                  <button onClick={handleSaveSpotify} className="border border-[#111e14] px-2 py-0.5 hover:bg-[#111e14] hover:text-[#edfeed] active:scale-95 transition-all font-black text-[8px]">{tCommon('actions.saveShort')}</button>
+                  <button onClick={handleCancelEdit} className="border border-lcd-ink px-2 py-0.5 hover:bg-lcd-ink hover:text-lcd-paper active:scale-95 transition-all text-[8px]">{tCommon('actions.cancelShort')}</button>
+                  <button onClick={handleSaveSpotify} className="border border-lcd-ink px-2 py-0.5 hover:bg-lcd-ink hover:text-lcd-paper active:scale-95 transition-all font-black text-[8px]">{tCommon('actions.saveShort')}</button>
                 </div>
               </div>
             ) : embedUrl ? (
-              <div className="border border-dashed border-[#111e14] p-0.5 opacity-90">
+              <div className="border border-dashed border-lcd-ink p-0.5 opacity-90">
                 <iframe src={embedUrl} width="100%" height="80" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" title={t('profile.deck.iframeTitle')} />
               </div>
             ) : (
-              <div className="text-[8px] text-center border border-dashed border-[#111e14] py-3 opacity-60 font-bold italic">
+              <div className="text-[8px] text-center border border-dashed border-lcd-ink py-3 opacity-60 font-bold italic">
                 {t('profile.deck.noAudioNokia')}
               </div>
             )}
@@ -330,14 +330,14 @@ export default function ProfileScreen({
           {/* Handset */}
           <NokiaSection index="02" title={t('profile.contact.nokia')}>
             {profile.character.phoneNumber ? (
-              <div className="flex justify-between items-center bg-[#111e14] text-[#edfeed] p-1.5">
+              <div className="flex justify-between items-center bg-lcd-ink text-lcd-paper p-1.5">
                 <span className="text-[8px] font-black">{t('profile.contact.line')}</span>
                 <span className="text-[10px] font-mono tracking-tighter">{profile.character.phoneNumber}</span>
               </div>
             ) : (
               <button
                 onClick={handleGeneratePhone}
-                className="w-full border-2 border-[#111e14] py-1.5 text-center hover:bg-[#111e14] hover:text-[#edfeed] active:scale-95 transition-all text-[9px] font-black"
+                className="w-full border-2 border-lcd-ink py-1.5 text-center hover:bg-lcd-ink hover:text-lcd-paper active:scale-95 transition-all text-[9px] font-black"
               >
                 {t('profile.contact.generateNokia')}
               </button>

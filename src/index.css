@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+/* ═══════════════════════════════════════════════════════════════════
+   LimboOS — tokens de design
+   Direção de arte (docs/readme/*.png): bancada escura de 1999, fuligem
+   quente, âmbar da fenda e dos LEDs, fósforo verde de CRT, brilho frio
+   de tubo de TV e branco-osso do letreiro. Nada de vidro fosco, halos
+   difusos ou gradientes decorativos.
+   ═══════════════════════════════════════════════════════════════════ */
+
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Space Grotesk", sans-serif;
@@ -9,22 +17,23 @@
   --font-label: "Space Grotesk", sans-serif;
 
   --color-retro-orange: #FF8C00;
-  --color-industrial-silver: #C0C0C0;
-  --color-deep-carbon: #131313;
+  --color-industrial-silver: #C4BEB6;
+  --color-deep-carbon: #131210;
+  --color-bone: #E8E0D0;
 
-  /* Unified Surface Colors */
-  --color-surface: #131313;
-  --color-surface-dim: #131313;
-  --color-surface-bright: #393939;
-  --color-surface-container-lowest: #0e0e0e;
-  --color-surface-container-low: #1c1b1b;
-  --color-surface-container: #20201f;
-  --color-surface-container-high: #2a2a2a;
-  --color-surface-container-highest: #353535;
-  --color-surface-variant: #353535;
+  /* Superfícies: preto de fuligem com leve temperatura quente (hue ~60) */
+  --color-surface: #131210;
+  --color-surface-dim: #131210;
+  --color-surface-bright: #3b3834;
+  --color-surface-container-lowest: #0c0b0a;
+  --color-surface-container-low: #1b1917;
+  --color-surface-container: #201e1b;
+  --color-surface-container-high: #2a2724;
+  --color-surface-container-highest: #35322e;
+  --color-surface-variant: #35322e;
   --color-surface-tint: #ffb77d;
-  --color-inverse-surface: #e5e2e1;
-  --color-inverse-on-surface: #313030;
+  --color-inverse-surface: #e8e0d0;
+  --color-inverse-on-surface: #312e2a;
 
   /* Primary */
   --color-primary: #ffb77d;
@@ -38,14 +47,14 @@
   --color-on-primary-fixed-variant: #6e3900;
 
   /* Secondary */
-  --color-secondary: #c6c6c6;
-  --color-on-secondary: #2f3131;
-  --color-secondary-container: #484949;
-  --color-on-secondary-container: #b8b8b8;
-  --color-secondary-fixed: #e3e2e2;
-  --color-secondary-fixed-dim: #c6c6c6;
-  --color-on-secondary-fixed: #1a1c1c;
-  --color-on-secondary-fixed-variant: #464747;
+  --color-secondary: #c9c3ba;
+  --color-on-secondary: #302d29;
+  --color-secondary-container: #4a4640;
+  --color-on-secondary-container: #bab4ab;
+  --color-secondary-fixed: #e5dfd6;
+  --color-secondary-fixed-dim: #c9c3ba;
+  --color-on-secondary-fixed: #1b1916;
+  --color-on-secondary-fixed-variant: #48443e;
 
   /* Tertiary */
   --color-tertiary: #ffba38;
@@ -58,8 +67,8 @@
   --color-on-tertiary-fixed-variant: #604100;
 
   /* Background elements */
-  --color-background: #131313;
-  --color-on-background: #e5e2e1;
+  --color-background: #131210;
+  --color-on-background: #e8e0d0;
   --color-on-surface-variant: #ddc1ae;
 
   /* Error */
@@ -72,21 +81,23 @@
   --color-outline: #a48c7a;
   --color-outline-variant: #564334;
 
-  /* Superfícies estruturais (refresh visual)
-     Escala de elevação usada por painéis, cartões e overlays do player. */
-  --color-surface-sunken: #0a0a0a;
-  --color-surface-raised: #191919;
-  --color-surface-panel: #1f1f1f;
-  --color-surface-overlay: #0d0d0dee;
-  --color-surface-scrim: #05050599;
+  /* Elevação estrutural: painéis, cartões e overlays */
+  --color-surface-sunken: #0a0908;
+  --color-surface-raised: #191715;
+  --color-surface-panel: #1f1d1a;
+  --color-surface-overlay: #0d0c0bf0;
+  --color-surface-scrim: #050404b3;
 
-  /* Bordas (hairlines) — hierarquia de contorno em 3 níveis + acento */
-  --color-border-subtle: #ffffff0f;
-  --color-border: #ffffff1a;
-  --color-border-strong: #ffffff2e;
+  /* Junta entre painéis usinados (substitui #1a1a1a solto no admin) */
+  --color-seam: #24211d;
+
+  /* Bordas (hairlines): três níveis + acento */
+  --color-border-subtle: #fff5e60d;
+  --color-border: #fff5e61a;
+  --color-border-strong: #fff5e62e;
   --color-border-accent: #ff8c0059;
 
-  /* Acento em opacidades — evita rgba() solto pelos componentes */
+  /* Acento em opacidades: evita rgba() solto pelos componentes */
   --color-accent: #ff8c00;
   --color-accent-05: #ff8c000d;
   --color-accent-10: #ff8c001a;
@@ -95,25 +106,104 @@
   --color-accent-60: #ff8c0099;
   --color-accent-80: #ff8c00cc;
 
-  /* Raios — nomeados por função para não sobrescrever a escala do Tailwind */
-  --radius-inset: 3px;
-  --radius-control: 6px;
-  --radius-card: 10px;
-  --radius-panel: 16px;
+  /* Cinza de cinzas: neutros quentes no lugar de zinc/gray (frios) */
+  --color-ash-50: #f7f5f2;
+  --color-ash-100: #efebe6;
+  --color-ash-200: #ddd7cf;
+  --color-ash-300: #c4bdb3;
+  --color-ash-400: #9d958b;
+  --color-ash-500: #756e65;
+  --color-ash-600: #58524b;
+  --color-ash-700: #433e38;
+  --color-ash-800: #2a2622;
+  --color-ash-900: #1a1815;
+  --color-ash-950: #0c0b09;
+
+  /* Fósforo P1 do CRT (hero): estados "online", sucesso, sinal ativo */
+  --color-phosphor-50: #effbea;
+  --color-phosphor-100: #dcf7d3;
+  --color-phosphor-200: #bdeeb0;
+  --color-phosphor-300: #98e288;
+  --color-phosphor-400: #76d468;
+  --color-phosphor-500: #56b94b;
+  --color-phosphor-600: #42963a;
+  --color-phosphor-700: #33742e;
+  --color-phosphor-800: #2a5a27;
+  --color-phosphor-900: #214621;
+  --color-phosphor-950: #0f2610;
+
+  /* Brilho frio de tubo (TV ao fundo do walkman): informativo, mídia visual */
+  --color-tube-50: #f1f5f7;
+  --color-tube-100: #e0e9ee;
+  --color-tube-200: #c6d5dd;
+  --color-tube-300: #a7bfcb;
+  --color-tube-400: #86a5b4;
+  --color-tube-500: #6a8b9b;
+  --color-tube-600: #557282;
+  --color-tube-700: #465d6a;
+  --color-tube-800: #3b4d58;
+  --color-tube-900: #2e3c45;
+  --color-tube-950: #1b252c;
+
+  /* Telas de aparelho */
+  --color-crt: #33ff33;
+  --color-lcd-ink: #111e14;
+  --color-lcd-paper: #edfeed;
+
+  /* Raios nomeados por função (não sobrescrevem a escala do Tailwind) */
+  --radius-inset: 2px;
+  --radius-control: 4px;
+  --radius-card: 6px;
+  --radius-panel: 10px;
   --radius-device: 24px;
 
-  /* Glow controlado — brilho curto e denso, sem halo difuso */
+  /* Glow controlado: brilho curto e denso, sem halo difuso */
   --shadow-glow-xs: 0 0 0 1px #ff8c0033, 0 1px 6px -2px #ff8c0040;
-  --shadow-glow: 0 0 12px -2px #ff8c0059, 0 1px 2px #00000080;
-  --shadow-glow-lg: 0 0 24px -6px #ff8c0080, 0 2px 8px #000000a6;
-  --shadow-panel: 0 1px 0 0 #ffffff0d inset, 0 12px 32px -12px #000000cc;
-  --shadow-hairline: 0 1px 0 0 #ffffff0f inset, 0 -1px 0 0 #00000066 inset;
+  --shadow-glow: 0 0 10px -2px #ff8c0059, 0 1px 2px #00000080;
+  --shadow-glow-lg: 0 0 20px -6px #ff8c0080, 0 2px 8px #000000a6;
+  --shadow-panel: 0 1px 0 0 #fff5e60d inset, 0 12px 32px -14px #000000d9;
+  --shadow-hairline: 0 1px 0 0 #fff5e60f inset, 0 -1px 0 0 #00000066 inset;
+  --shadow-pressed: 0 1px 2px 0 #000000b3 inset, 0 0 0 1px #00000066 inset;
 
-  /* Easing de movimento (gera utilitários ease-*) */
+  /* Sombras genéricas do Tailwind re-afinadas: queda curta e seca,
+     como peça apoiada na bancada, sem nuvem difusa */
+  --shadow-sm: 0 1px 2px 0 #00000099;
+  --shadow-md: 0 3px 8px -3px #000000b3;
+  --shadow-lg: 0 8px 18px -8px #000000c7;
+  --shadow-xl: 0 14px 30px -12px #000000d9;
+  --shadow-2xl: 0 24px 48px -18px #000000eb;
+
+  /* Curvas de movimento (geram utilitários ease-*) */
   --ease-limbo: cubic-bezier(0.22, 1, 0.36, 1);
-  --ease-limbo-in: cubic-bezier(0.55, 0, 1, 0.45);
   --ease-limbo-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-limbo-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
   --ease-mechanical: cubic-bezier(0.34, 1.32, 0.64, 1);
+
+  /* Transição padrão de qualquer utilitário transition-*: curta e decidida */
+  --default-transition-duration: 160ms;
+  --default-transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Animações nomeadas */
+  --animate-led: led-breathe 2.4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-blink: caret-blink 1.06s steps(1, end) infinite;
+  --animate-flicker: tube-flicker 4s linear infinite;
+
+  @keyframes led-breathe {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.45; }
+  }
+  @keyframes caret-blink {
+    0%, 49% { opacity: 1; }
+    50%, 100% { opacity: 0; }
+  }
+  @keyframes tube-flicker {
+    0%, 100% { opacity: 1; }
+    92% { opacity: 1; }
+    93% { opacity: 0.82; }
+    94% { opacity: 1; }
+    97% { opacity: 0.9; }
+  }
 
   /* Custom utility variables for v4 */
   --spacing-12: 3rem;
@@ -121,30 +211,63 @@
 }
 
 /* Tokens de movimento e textura consumidos por CSS/JS (Motion, transitions).
-   Ficam fora de @theme por não pertencerem a um namespace de utilitário. */
+   Espelhados em src/lib/motion.ts. Ficam fora de @theme por não
+   pertencerem a um namespace de utilitário. */
 :root {
   --duration-instant: 80ms;
-  --duration-fast: 140ms;
+  --duration-press: 120ms;
+  --duration-fast: 160ms;
   --duration-base: 220ms;
-  --duration-slow: 360ms;
+  --duration-slow: 320ms;
   --duration-deliberate: 600ms;
 
   --easing-standard: cubic-bezier(0.22, 1, 0.36, 1);
   --easing-enter: cubic-bezier(0.16, 1, 0.3, 1);
-  --easing-exit: cubic-bezier(0.55, 0, 1, 0.45);
+  --easing-exit: cubic-bezier(0.4, 0, 1, 1);
+  --easing-move: cubic-bezier(0.77, 0, 0.175, 1);
+  --easing-drawer: cubic-bezier(0.32, 0.72, 0, 1);
   --easing-mechanical: cubic-bezier(0.34, 1.32, 0.64, 1);
 
   --noise-opacity: 0.022;
   --scanline-opacity: 0.035;
   --vignette-strength: 0.55;
+
+  --focus-ring: var(--color-accent);
+  --focus-ring-offset: 2px;
+
+  color-scheme: dark;
+  scrollbar-color: var(--color-ash-700) transparent;
 }
 
 @layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+
   body {
     @apply bg-surface text-industrial-silver font-sans selection:bg-retro-orange selection:text-black;
-    background-image: radial-gradient(circle at 2px 2px, rgba(255, 140, 0, 0.05) 1px, transparent 0);
-    background-size: 24px 24px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: "cv11", "ss03";
     -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Números de painel sempre alinhados em coluna */
+  table,
+  kbd,
+  time {
+    font-variant-numeric: tabular-nums;
+  }
+
+  kbd {
+    font-family: var(--font-mono);
+  }
+
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  summary {
+    cursor: pointer;
   }
 
   /* Prevent iOS Safari auto-zoom on input focus */
@@ -155,8 +278,181 @@
   }
 }
 
+@layer components {
+  /* ── Controles base do console ─────────────────────────────────────
+     Botões retangulares de painel: aresta seca, rótulo em protocolo,
+     resposta tátil por escala no :active. Variantes por intenção. */
+  .lmb-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 2.25rem;
+    padding: 0 0.875rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-inset);
+    background: var(--color-surface-container-low);
+    color: var(--color-industrial-silver);
+    font-family: var(--font-display);
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    line-height: 1;
+    text-transform: uppercase;
+    white-space: nowrap;
+    user-select: none;
+    transition:
+      background-color var(--duration-fast) var(--easing-standard),
+      border-color var(--duration-fast) var(--easing-standard),
+      color var(--duration-fast) var(--easing-standard),
+      box-shadow var(--duration-fast) var(--easing-standard),
+      transform var(--duration-press) var(--easing-standard);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .lmb-btn:hover:not(:disabled) {
+      border-color: var(--color-border-strong);
+      background: var(--color-surface-container);
+      color: var(--color-bone);
+    }
+  }
+  .lmb-btn:active:not(:disabled) {
+    transform: scale(0.97);
+    box-shadow: var(--shadow-pressed);
+  }
+  .lmb-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .lmb-btn-primary {
+    border-color: var(--color-accent-60);
+    background: var(--color-accent-10);
+    color: var(--color-primary);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .lmb-btn-primary:hover:not(:disabled) {
+      border-color: var(--color-accent);
+      background: var(--color-accent-20);
+      color: var(--color-primary-fixed);
+    }
+  }
+
+  .lmb-btn-solid {
+    border-color: var(--color-accent);
+    background: var(--color-accent);
+    color: #1a0d00;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .lmb-btn-solid:hover:not(:disabled) {
+      border-color: var(--color-primary);
+      background: var(--color-primary);
+      color: #1a0d00;
+    }
+  }
+
+  .lmb-btn-danger {
+    border-color: rgb(239 68 68 / 0.3);
+    background: rgb(239 68 68 / 0.06);
+    color: rgb(248 113 113 / 0.85);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .lmb-btn-danger:hover:not(:disabled) {
+      border-color: rgb(239 68 68 / 0.6);
+      background: rgb(239 68 68 / 0.14);
+      color: rgb(254 202 202);
+    }
+  }
+
+  .lmb-btn-ghost {
+    border-color: transparent;
+    background: transparent;
+  }
+
+  .lmb-btn-icon {
+    width: 2.25rem;
+    padding: 0;
+  }
+
+  /* Campo de entrada recuado no painel */
+  .lmb-field {
+    width: 100%;
+    min-height: 2.25rem;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-inset);
+    background: var(--color-surface-sunken);
+    color: var(--color-bone);
+    font-size: 0.8125rem;
+    box-shadow: var(--shadow-pressed);
+    transition:
+      border-color var(--duration-fast) var(--easing-standard),
+      background-color var(--duration-fast) var(--easing-standard);
+  }
+  .lmb-field::placeholder {
+    color: var(--color-ash-600);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .lmb-field:hover:not(:focus) {
+      border-color: var(--color-border-strong);
+    }
+  }
+  .lmb-field:focus {
+    border-color: var(--color-accent-60);
+    background: var(--color-surface-container-lowest);
+  }
+
+  /* Tecla física (atalhos) */
+  .lmb-kbd {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.125rem;
+    min-width: 1.25rem;
+    height: 1.125rem;
+    padding: 0 0.3rem;
+    border: 1px solid var(--color-border);
+    border-bottom-width: 2px;
+    border-radius: var(--radius-inset);
+    background: var(--color-surface-container-lowest);
+    color: var(--color-ash-400);
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    font-weight: 500;
+    line-height: 1;
+  }
+
+  /* LED de status: ponto denso com brilho curto, sem halo */
+  .lmb-led {
+    display: inline-block;
+    width: 0.375rem;
+    height: 0.375rem;
+    flex-shrink: 0;
+    border-radius: 9999px;
+    background: currentColor;
+    box-shadow: 0 0 0 1px rgb(0 0 0 / 0.5), 0 0 6px -1px currentColor;
+  }
+
+  /* Rótulo de seção em protocolo, com fio à direita */
+  .lmb-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-family: var(--font-display);
+    font-size: 0.5625rem;
+    font-weight: 700;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--color-ash-500);
+  }
+  .lmb-eyebrow::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--color-border-subtle);
+  }
+}
+
 @layer utilities {
-  /* Tipografia — três vozes: display (títulos), protocol (rótulos/UI), mono (dados) */
+  /* Tipografia: três vozes, display (títulos), protocol (rótulos/UI), mono (dados) */
   .text-display {
     font-family: var(--font-display);
     font-weight: 700;
@@ -182,6 +478,14 @@
     font-feature-settings: "zero" 1;
   }
 
+  /* Resposta tátil para qualquer elemento clicável */
+  .press {
+    transition: transform var(--duration-press) var(--easing-standard);
+  }
+  .press:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+
   .glow-orange {
     box-shadow: var(--shadow-glow);
   }
@@ -195,38 +499,21 @@
     text-shadow: 0 0 6px rgba(255, 140, 0, 0.35);
   }
   .glow-green {
-    box-shadow: 0 0 15px rgba(34, 197, 94, 0.3);
+    box-shadow: 0 0 0 1px rgb(0 0 0 / 0.5), 0 0 6px -1px rgb(118 212 104 / 0.6);
   }
   .glow-red {
-    box-shadow: 0 0 15px rgba(239, 68, 68, 0.3);
+    box-shadow: 0 0 0 1px rgb(0 0 0 / 0.5), 0 0 6px -1px rgb(239 68 68 / 0.6);
   }
   .glow-yellow {
-    box-shadow: 0 0 15px rgba(234, 179, 8, 0.3);
+    box-shadow: 0 0 0 1px rgb(0 0 0 / 0.5), 0 0 6px -1px rgb(234 179 8 / 0.6);
   }
+
   /* Grão fino e dessaturado: textura de filme, não sujeira */
   .noise-overlay {
     @apply fixed inset-0 pointer-events-none z-0;
     opacity: var(--noise-opacity);
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
     background-size: 160px 160px;
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .noise-overlay {
-      background-image: none;
-      opacity: 0.015;
-      background-color: rgba(255, 255, 255, 0.015);
-    }
-    .scanlines {
-      display: none;
-    }
-    *,
-    *::before,
-    *::after {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
-      scroll-behavior: auto !important;
-    }
   }
   /* Linhas de varredura de 3px, escuras (subtrativas) em vez de leitosas */
   .scanlines {
@@ -257,7 +544,7 @@
     z-index: 10;
   }
   .machined-edge {
-    box-shadow: inset 0 1px 0 0 rgba(255,255,255,0.05), 0 1px 0 0 rgba(0,0,0,0.5);
+    box-shadow: inset 0 1px 0 0 rgba(255, 245, 230, 0.05), 0 1px 0 0 rgba(0, 0, 0, 0.5);
   }
   .v-u-meter-segment {
     height: 4px;
@@ -273,13 +560,102 @@
   .animate-scanline {
     animation: scanline-anim 8s linear infinite;
   }
+
+  /* Rolagem fina no tom da carcaça (painéis admin, listas longas) */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-ash-700) transparent;
+    scrollbar-gutter: stable;
+  }
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: var(--color-ash-800);
+    border: 2px solid transparent;
+    border-radius: 2px;
+    background-clip: padding-box;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-ash-600);
+  }
+
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .noise-overlay {
+      background-image: none;
+      opacity: 0.015;
+      background-color: rgba(255, 255, 255, 0.015);
+    }
+    .scanlines {
+      display: none;
+    }
+    .press:active:not(:disabled) {
+      transform: none;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   Foco de teclado
+   Fora de @layer de propósito: regras sem camada vencem utilitários
+   como `outline-none`, que apagavam o foco em ~70 controles.
+   Opt-out: `.focus-bare` (terminais com caret próprio, superfícies de OS
+   fictício que desenham o foco por conta própria).
+   ═══════════════════════════════════════════════════ */
+:where(
+  a[href],
+  button,
+  summary,
+  [role="button"],
+  [role="tab"],
+  [role="menuitem"],
+  [role="option"],
+  [role="switch"],
+  [role="checkbox"],
+  [tabindex]:not([tabindex="-1"])
+):focus-visible:not(:where(.focus-bare, .focus-bare *, .nokia-theme-active *)) {
+  outline: 1px solid var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+:where(
+  input:not([type="checkbox"], [type="radio"], [type="range"], [type="file"], [type="color"]),
+  textarea,
+  select
+):focus-visible:not(:where(.focus-bare, .focus-bare *, .nokia-theme-active *)) {
+  outline: 1px solid var(--color-accent-60);
+  outline-offset: -1px;
+}
+
+:where(input[type="checkbox"], input[type="radio"], input[type="range"]):focus-visible:not(:where(.focus-bare, .focus-bare *)) {
+  outline: 1px solid var(--focus-ring);
+  outline-offset: 2px;
 }
 
 .indented-box {
   background: var(--color-surface-container-lowest);
   box-shadow:
     inset 2px 2px 6px rgba(0,0,0,0.4),
-    inset -1px -1px 2px rgba(255,255,255,0.05);
+    inset -1px -1px 2px rgba(255,245,230,0.05);
   border-radius: 4px;
 }
 
@@ -323,34 +699,41 @@
    ═══════════════════════════════════════════════════ */
 
 .nokia-theme-active {
-  background-color: #edfeed !important;
-  color: #111e14 !important;
+  background-color: var(--color-lcd-paper) !important;
+  color: var(--color-lcd-ink) !important;
   font-family: 'JetBrains Mono', ui-monospace, 'Courier New', monospace !important;
 }
 
 .nokia-theme-active * {
-  color: #111e14 !important;
-  border-color: #111e14 !important;
+  color: var(--color-lcd-ink) !important;
+  border-color: var(--color-lcd-ink) !important;
   background-image: none !important;
   text-shadow: none !important;
 }
 
 .nokia-theme-active button {
   background: transparent !important;
-  color: #111e14 !important;
-  border: 1px solid #111e14 !important;
+  color: var(--color-lcd-ink) !important;
+  border: 1px solid var(--color-lcd-ink) !important;
   border-radius: 2px !important;
   padding: 0.25rem 0.5rem !important;
   cursor: pointer !important;
   font-family: 'JetBrains Mono', monospace !important;
   font-weight: bold !important;
   text-transform: uppercase !important;
-  transition: all 0.1s ease-in-out !important;
+  transition: background-color 0.1s linear, color 0.1s linear !important;
 }
 
 .nokia-theme-active button:hover:not(:disabled) {
-  background: #111e14 !important;
-  color: #edfeed !important;
+  background: var(--color-lcd-ink) !important;
+  color: var(--color-lcd-paper) !important;
+}
+
+/* Foco de teclado no LCD: inversão de vídeo, como o cursor do aparelho */
+.nokia-theme-active button:focus-visible {
+  background: var(--color-lcd-ink) !important;
+  color: var(--color-lcd-paper) !important;
+  outline: none !important;
 }
 
 .nokia-theme-active button:disabled {
@@ -362,12 +745,18 @@
 .nokia-theme-active textarea,
 .nokia-theme-active select {
   background-color: transparent !important;
-  color: #111e14 !important;
-  border: 1px solid #111e14 !important;
+  color: var(--color-lcd-ink) !important;
+  border: 1px solid var(--color-lcd-ink) !important;
   border-radius: 2px !important;
   padding: 0.25rem 0.5rem !important;
   outline: none !important;
   font-family: 'JetBrains Mono', monospace !important;
+}
+
+.nokia-theme-active input:focus,
+.nokia-theme-active textarea:focus,
+.nokia-theme-active select:focus {
+  border-width: 2px !important;
 }
 
 .nokia-theme-active h1,
@@ -386,7 +775,7 @@
 .nokia-theme-active .backdrop-blur-sm,
 .nokia-theme-active .bg-opacity-50 {
   backdrop-filter: none !important;
-  background-color: #edfeed !important;
+  background-color: var(--color-lcd-paper) !important;
 }
 
 .nokia-theme-active *::-webkit-scrollbar {
@@ -399,7 +788,7 @@
 }
 
 .nokia-theme-active *::-webkit-scrollbar-thumb {
-  background-color: #111e14 !important;
+  background-color: var(--color-lcd-ink) !important;
   border-radius: 2px !important;
 }
 
@@ -410,27 +799,27 @@
 .nokia-theme-active .bg-surface-container-highest,
 .nokia-theme-active .bg-surface-variant {
   background-color: transparent !important;
-  border-color: #111e14 !important;
+  border-color: var(--color-lcd-ink) !important;
 }
 
 .nokia-theme-active .bg-primary,
 .nokia-theme-active .bg-primary\/10,
-.nokia-theme-active .bg-\[\#111e14\] {
-  background-color: #111e14 !important;
-  color: #edfeed !important;
+.nokia-theme-active .bg-lcd-ink {
+  background-color: var(--color-lcd-ink) !important;
+  color: var(--color-lcd-paper) !important;
 }
 
 .nokia-theme-active .bg-primary *,
-.nokia-theme-active .bg-\[\#111e14\] * {
-  color: #edfeed !important;
+.nokia-theme-active .bg-lcd-ink * {
+  color: var(--color-lcd-paper) !important;
 }
 
 .nokia-theme-active .text-primary {
-  color: #111e14 !important;
+  color: var(--color-lcd-ink) !important;
 }
 
 .nokia-theme-active .border-primary {
-  border-color: #111e14 !important;
+  border-color: var(--color-lcd-ink) !important;
 }
 
 .nokia-scroll-area {
@@ -493,7 +882,7 @@ html.webkit-lite .backdrop-blur-xl,
 html.webkit-lite .backdrop-blur {
   -webkit-backdrop-filter: none !important;
   backdrop-filter: none !important;
-  background-color: rgba(19, 19, 19, 0.92) !important;
+  background-color: rgba(19, 18, 16, 0.94) !important;
 }
 
 /* Qualquer utilitário Tailwind com backdrop-blur-* */
@@ -501,4 +890,3 @@ html.webkit-lite [class*='backdrop-blur'] {
   -webkit-backdrop-filter: none !important;
   backdrop-filter: none !important;
 }
-

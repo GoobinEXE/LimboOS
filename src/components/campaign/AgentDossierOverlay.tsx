@@ -13,7 +13,7 @@ import RetroSpinner from '../player/RetroSpinner';
 import { extractSpotifyEmbedUrl, isValidSpotifyPlaylistInput } from '../../lib/spotify';
 
 const STATUS_STYLE = {
-  vivo: { labelKey: 'status.ativo', color: 'text-green-400', dot: 'bg-green-400', border: 'border-green-500/30' },
+  vivo: { labelKey: 'status.ativo', color: 'text-phosphor-400', dot: 'bg-phosphor-400', border: 'border-phosphor-500/30' },
   morto: { labelKey: 'status.eliminado', color: 'text-red-400', dot: 'bg-red-400', border: 'border-red-500/30' },
   desaparecido: { labelKey: 'status.desaparecido', color: 'text-yellow-400', dot: 'bg-yellow-400', border: 'border-yellow-500/30' },
 } as const;
@@ -206,7 +206,7 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager, onUpdat
                   autoFocus
                   onKeyDown={e => e.key === 'Enter' && handleSaveName()}
                 />
-                <button type="button" onClick={handleSaveName} disabled={savingName} className="p-1.5 text-green-400 hover:bg-green-500/10 rounded-control transition-colors">{savingName ? <RetroSpinner size="sm" /> : <Check size={16} />}</button>
+                <button type="button" onClick={handleSaveName} disabled={savingName} className="p-1.5 text-phosphor-400 hover:bg-phosphor-500/10 rounded-control transition-colors">{savingName ? <RetroSpinner size="sm" /> : <Check size={16} />}</button>
                 <button type="button" onClick={() => { setIsEditingName(false); setEditName(currentUsername); }} className="p-1.5 text-red-400 hover:bg-red-500/10 rounded-control transition-colors"><X size={16} /></button>
               </div>
             ) : (

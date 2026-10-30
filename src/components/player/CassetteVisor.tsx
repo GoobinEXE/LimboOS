@@ -65,13 +65,13 @@ export default React.memo(function CassetteVisor({
             <div className={`mt-4 w-full max-w-70 bg-[#f4f1ea] rounded-md shadow-[0_2px_6px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.6)] relative flex flex-col p-3 border-t-12 border-accent transition-transform duration-300 ease-limbo group-hover:scale-[1.01] ${
               fluid ? 'h-[min(130px,55%)] min-h-24' : 'h-32.5'
             }`}>
-              <div className="text-[8px] font-bold flex justify-center gap-4 text-gray-500 mb-2 border-b border-gray-300/50 pb-1">
+              <div className="text-[8px] font-bold flex justify-center gap-4 text-ash-500 mb-2 border-b border-ash-300/50 pb-1">
                 <span>{currentIntel.metadata?.chapter}</span>
                 <span>{currentIntel instanceof AudioIntel ? currentIntel.metadata.artist : currentIntel.metadata?.npc}</span>
               </div>
               <div className="flex-1 flex flex-col text-center px-2">
-                <div className="text-[13px] font-black uppercase tracking-tight text-gray-800 truncate leading-tight">{currentIntel.title}</div>
-                <div className="text-[10px] font-bold text-gray-600 truncate mt-0.5">{currentIntel instanceof AudioIntel ? currentIntel.metadata.artist : currentIntel.metadata?.npc}</div>
+                <div className="text-[13px] font-black uppercase tracking-tight text-ash-800 truncate leading-tight">{currentIntel.title}</div>
+                <div className="text-[10px] font-bold text-ash-600 truncate mt-0.5">{currentIntel instanceof AudioIntel ? currentIntel.metadata.artist : currentIntel.metadata?.npc}</div>
               </div>
               <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-45 h-12.5 bg-surface-container rounded-t-lg border-t-2 border-l-2 border-r-2 border-surface-sunken" />
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/60 text-white text-[10px] font-bold px-3 py-1 rounded-full backdrop-blur-sm">{t('walkman.visor.eject')}</div>

@@ -144,7 +144,7 @@ export default React.memo(function SideControls({ volume, setVolume, onModeChang
             setVolume(Math.max(0, Math.min(100, pct)));
           }}>
           <div className="absolute bottom-0 w-full bg-accent rounded-full transition-[height] duration-75" style={{ height: `${volume}%` }} />
-          <div className="absolute left-1/2 -translate-x-1/2 w-6 h-8 bg-linear-to-b from-stone-200 to-stone-400 rounded border-2 border-stone-600 shadow-[0_3px_8px_-2px_rgba(0,0,0,0.9),inset_0_1px_0_rgba(255,255,255,0.5)] cursor-ns-resize flex flex-col justify-center items-center gap-0.5 z-10"
+          <div className="absolute left-1/2 -translate-x-1/2 w-6 h-8 bg-linear-to-b from-ash-200 to-ash-400 rounded border-2 border-ash-600 shadow-[0_3px_8px_-2px_rgba(0,0,0,0.9),inset_0_1px_0_rgba(255,255,255,0.5)] cursor-ns-resize flex flex-col justify-center items-center gap-0.5 z-10"
             style={{ bottom: `calc(${volume}% - 16px)`, touchAction: 'none' }}
             onPointerDown={(e) => {
               (e.target as Element).setPointerCapture(e.pointerId);
@@ -156,7 +156,7 @@ export default React.memo(function SideControls({ volume, setVolume, onModeChang
               const onUp = () => { window.removeEventListener('pointermove', onMove); window.removeEventListener('pointerup', onUp); };
               window.addEventListener('pointermove', onMove); window.addEventListener('pointerup', onUp);
             }}>
-            {[0,1,2].map(i => <div key={i} className="w-3 h-0.5 bg-stone-500 rounded-full" />)}
+            {[0,1,2].map(i => <div key={i} className="w-3 h-0.5 bg-ash-500 rounded-full" />)}
           </div>
         </div>
         <span className="text-[10px] text-industrial-silver/50 font-bold mt-1">-</span>

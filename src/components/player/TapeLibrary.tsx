@@ -115,7 +115,7 @@ export default React.memo(function TapeLibrary({
                             item.type === 'TEXT'
                               ? 'bg-accent-20 border-border-accent glow-orange-subtle'
                               : item.type === 'VISUAL'
-                                ? 'bg-cyan-600/30 border-cyan-500 shadow-[0_0_10px_rgba(6,182,212,0.3)]'
+                                ? 'bg-tube-600/30 border-tube-500 shadow-[0_0_10px_rgba(106,139,155,0.3)]'
                                 : item.type === 'META'
                                   ? 'bg-yellow-600/30 border-yellow-500 shadow-[0_0_10px_rgba(234,179,8,0.3)]'
                                   : 'bg-surface-container border-border-strong shadow-hairline'

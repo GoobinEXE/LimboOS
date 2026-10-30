@@ -4,6 +4,7 @@ import { clsx } from 'clsx';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion } from 'motion/react';
 import { ADMIN_SPRING_INDICATOR } from '../lib/motion';
+import { modKeyLabel } from '../lib/platform';
 
 interface SidebarProps {
   activeTab: string;
@@ -14,26 +15,27 @@ interface SidebarProps {
 
 export default function Sidebar({ activeTab, setActiveTab, isCollapsed, onToggleCollapse }: SidebarProps) {
   const { t } = useTranslation('admin');
+  const mod = modKeyLabel();
 
   const groups = [
     {
       title: t('sidebar.group.session'),
       items: [
-        { id: 'live', label: t('sidebar.live'), icon: 'sensors' },
-        { id: 'mesa', label: t('sidebar.mesa'), icon: 'groups' },
-        { id: 'missions', label: t('sidebar.missions'), icon: 'map' },
+        { id: 'live', label: t('sidebar.live'), icon: 'sensors', shortcut: '1' },
+        { id: 'mesa', label: t('sidebar.mesa'), icon: 'groups', shortcut: '2' },
+        { id: 'missions', label: t('sidebar.missions'), icon: 'map', shortcut: '3' },
       ],
     },
     {
       title: t('sidebar.group.arsenal'),
       items: [
-        { id: 'media', label: t('sidebar.media'), icon: 'folder_open' },
+        { id: 'media', label: t('sidebar.media'), icon: 'folder_open', shortcut: '4' },
       ],
     },
     {
       title: t('sidebar.group.core'),
       items: [
-        { id: 'systems', label: t('sidebar.systems'), icon: 'tune' },
+        { id: 'systems', label: t('sidebar.systems'), icon: 'tune', shortcut: '5' },
       ],
     },
   ];
@@ -41,137 +43,154 @@ export default function Sidebar({ activeTab, setActiveTab, isCollapsed, onToggle
   return (
     <aside
       className={clsx(
-        'bg-surface-container-low border-r border-primary/10 flex flex-col z-40 overflow-hidden shrink-0 transition-all duration-300 ease-in-out',
-        isCollapsed ? 'w-18' : 'w-64'
+        'bg-surface-container-low border-r border-seam flex flex-col z-40 overflow-hidden shrink-0',
+        'transition-[width] duration-300 ease-drawer motion-reduce:transition-none',
+        isCollapsed ? 'w-18' : 'w-60'
       )}
     >
+      {/* Marca: mesma altura do Header para alinhar a linha de horizonte */}
       <div
         className={clsx(
-          'border-b border-primary/10 bg-black/20 flex items-center shrink-0 transition-all duration-300',
-          isCollapsed ? 'px-0 py-5 justify-center' : 'px-8 py-6'
+          'h-14 border-b border-seam flex items-center shrink-0',
+          isCollapsed ? 'justify-center' : 'px-6'
         )}
       >
         {isCollapsed ? (
-          <div className="flex flex-col items-center gap-0.5">
-            <span className="text-primary font-display font-bold text-lg leading-none tracking-tighter">S</span>
-            <span className="text-white font-display font-bold text-[7px] tracking-[0.2em] uppercase leading-none">
-              {t('sidebar.brandCollapsed')}
+          <span className="font-display font-bold text-sm leading-none tracking-tight text-bone">
+            {t('sidebar.brandCollapsed')}
+          </span>
+        ) : (
+          <div className="flex items-baseline gap-2 whitespace-nowrap">
+            <span className="w-1.5 h-4 bg-accent self-center" aria-hidden />
+            <span className="text-lg font-bold tracking-tight text-bone font-display leading-none">
+              {t('sidebar.brand')}
             </span>
           </div>
-        ) : (
-          <h1 className="text-2xl font-bold tracking-tighter text-white font-display leading-none whitespace-nowrap">
-            SYS<span className="text-primary"> ADMIN</span>
-          </h1>
         )}
       </div>
 
       <nav
+        aria-label={t('sidebar.navLabel')}
         className={clsx(
-          'flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar transition-all duration-300',
-          isCollapsed ? 'px-2 py-4 space-y-4' : 'px-4 py-6 space-y-8'
+          'flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar',
+          isCollapsed ? 'px-2 py-4 space-y-3' : 'px-3 py-5 space-y-6'
         )}
       >
-        {groups.map((group, idx) => (
-          <div key={idx} className="space-y-2">
-            {!isCollapsed && (
-              <h3 className="px-4 text-[9px] font-display font-bold text-primary/40 uppercase tracking-[0.4em] mb-4 whitespace-nowrap overflow-hidden">
+        {groups.map((group) => (
+          <div key={group.title}>
+            {isCollapsed ? (
+              <div className="h-px bg-border-subtle mx-3 mb-3" aria-hidden />
+            ) : (
+              <h3 className="px-3 mb-2 text-[9px] font-display font-bold text-ash-500 uppercase tracking-[0.32em] whitespace-nowrap">
                 {group.title}
               </h3>
             )}
-            {isCollapsed && <div className="h-px bg-primary/10 mx-2 mb-2" />}
-            <div className="space-y-1">
+            <ul className="space-y-px">
               {group.items.map((item) => {
                 const isActive = activeTab === item.id;
                 return (
-                  <button
-                    key={item.id}
-                    onClick={() => setActiveTab(item.id)}
-                    title={isCollapsed ? item.label : undefined}
-                    className={clsx(
-                      'w-full flex items-center transition-colors duration-200 text-left relative group rounded-sm',
-                      isCollapsed ? 'justify-center px-0 py-3' : 'px-4 py-3 gap-3',
-                      isActive
-                        ? 'text-primary'
-                        : 'text-industrial-silver/40 hover:bg-white/5 hover:text-industrial-silver/80'
-                    )}
-                  >
-                    {isActive && (
-                      <motion.span
-                        layoutId="admin-sidebar-indicator"
-                        className="absolute inset-0 rounded-sm bg-primary/10 border-l-2 border-primary"
-                        transition={ADMIN_SPRING_INDICATOR}
-                      />
-                    )}
-                    <span
+                  <li key={item.id}>
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab(item.id)}
+                      aria-current={isActive ? 'page' : undefined}
+                      title={isCollapsed ? `${item.label} (${mod}${item.shortcut})` : undefined}
                       className={clsx(
-                        'material-symbols-outlined transition-transform group-hover:scale-110 relative z-10',
-                        isCollapsed ? 'text-xl' : 'text-lg',
-                        isActive ? 'text-primary' : 'text-industrial-silver/20'
+                        'w-full h-10 flex items-center text-left relative group rounded-inset transition-colors',
+                        isCollapsed ? 'justify-center' : 'px-3 gap-3',
+                        isActive
+                          ? 'text-primary'
+                          : 'text-ash-400 hover:text-bone hover:bg-white/[0.03]'
                       )}
                     >
-                      {item.icon}
-                    </span>
-                    {!isCollapsed && (
-                      <span className="relative z-10 font-display uppercase font-bold tracking-[0.2em] text-[10px] whitespace-nowrap overflow-hidden">
-                        {item.label}
+                      {isActive && (
+                        <motion.span
+                          layoutId="admin-sidebar-indicator"
+                          className="absolute inset-0 rounded-inset bg-accent-05"
+                          transition={ADMIN_SPRING_INDICATOR}
+                        >
+                          <span className="absolute left-0 top-2 bottom-2 w-0.5 bg-accent" />
+                        </motion.span>
+                      )}
+                      <span
+                        className={clsx(
+                          'material-symbols-outlined relative z-10 transition-colors',
+                          isCollapsed ? 'text-xl' : 'text-[18px]',
+                          isActive ? 'text-accent' : 'text-ash-600 group-hover:text-ash-300'
+                        )}
+                        aria-hidden
+                      >
+                        {item.icon}
                       </span>
-                    )}
-                    {isActive && !isCollapsed && (
-                      <div className="absolute right-4 z-10 w-1.5 h-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_8px_rgba(255,140,0,0.4)]" />
-                    )}
-                  </button>
+                      {!isCollapsed && (
+                        <>
+                          <span className="relative z-10 flex-1 font-display uppercase font-bold tracking-[0.18em] text-[10px] whitespace-nowrap overflow-hidden">
+                            {item.label}
+                          </span>
+                          <kbd
+                            className={clsx(
+                              'relative z-10 text-[9px] text-ash-600 transition-opacity',
+                              isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                            )}
+                          >
+                            {mod}
+                            {item.shortcut}
+                          </kbd>
+                        </>
+                      )}
+                    </button>
+                  </li>
                 );
               })}
-            </div>
+            </ul>
           </div>
         ))}
       </nav>
 
-      <div className="border-t border-primary/10 bg-black/10 shrink-0">
+      <div className="border-t border-seam shrink-0">
         <button
+          type="button"
           onClick={onToggleCollapse}
           className={clsx(
-            'w-full flex items-center gap-3 py-4 text-industrial-silver/30 hover:text-primary transition-all hover:bg-white/5 group',
-            isCollapsed ? 'justify-center px-0' : 'px-6'
+            'w-full h-11 flex items-center gap-3 text-ash-500 hover:text-bone hover:bg-white/[0.03] transition-colors group',
+            isCollapsed ? 'justify-center' : 'px-6'
           )}
-          title={isCollapsed ? t('sidebar.expandTitle') : t('sidebar.collapseTitle')}
+          title={`${isCollapsed ? t('sidebar.expandTitle') : t('sidebar.collapseTitle')} (${mod}\\)`}
+          aria-expanded={!isCollapsed}
         >
           {isCollapsed ? (
-            <ChevronRight size={18} className="group-hover:translate-x-0.5 transition-transform" />
+            <ChevronRight size={16} />
           ) : (
             <>
-              <ChevronLeft size={18} className="group-hover:-translate-x-0.5 transition-transform" />
-              <span className="font-display uppercase font-bold tracking-[0.2em] text-[9px] whitespace-nowrap">
+              <ChevronLeft size={16} />
+              <span className="flex-1 text-left font-display uppercase font-bold tracking-[0.2em] text-[9px] whitespace-nowrap">
                 {t('sidebar.collapse')}
               </span>
+              <kbd className="text-[9px] text-ash-600">{mod}\</kbd>
             </>
           )}
         </button>
       </div>
 
-      {!isCollapsed && (
-        <div className="p-4 border-t border-primary/10 bg-black/10 shrink-0">
-          <div className="bg-surface-container-lowest border border-primary/5 p-3 flex items-center gap-3">
-            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse glow-green shrink-0" />
-            <div>
-              <p className="text-[8px] text-industrial-silver/60 font-display font-bold tracking-[0.2em] uppercase leading-none">
-                {t('sidebar.statusLabel')}
-              </p>
-              <p className="text-[9px] text-green-500 font-display font-bold tracking-widest uppercase mt-1">
-                {t('sidebar.statusOnline')}
-              </p>
-            </div>
+      <div
+        className={clsx(
+          'border-t border-seam bg-surface-container-lowest shrink-0 flex items-center h-11',
+          isCollapsed ? 'justify-center' : 'px-6 gap-3'
+        )}
+        title={isCollapsed ? t('sidebar.statusOnlineTitle') : undefined}
+      >
+        <span className="lmb-led text-phosphor-400 animate-led" aria-hidden />
+        {!isCollapsed && (
+          <div className="min-w-0">
+            <p className="text-[8px] text-ash-500 font-display font-bold tracking-[0.2em] uppercase leading-none">
+              {t('sidebar.statusLabel')}
+            </p>
+            <p className="text-[9px] text-phosphor-400 font-display font-bold tracking-widest uppercase mt-1 leading-none">
+              {t('sidebar.statusOnline')}
+            </p>
           </div>
-        </div>
-      )}
-      {isCollapsed && (
-        <div className="p-3 border-t border-primary/10 bg-black/10 flex justify-center shrink-0">
-          <div
-            className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse glow-green"
-            title={t('sidebar.statusOnlineTitle')}
-          />
-        </div>
-      )}
+        )}
+      </div>
     </aside>
   );
 }

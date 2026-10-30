@@ -93,7 +93,7 @@ export default function GroupMissionsModal({
           animate={{ x: 0 }}
           exit={{ x: '100%' }}
           transition={ADMIN_SPRING}
-          className="bg-[#222] border-l-8 border-[#1a1a1a] w-full max-w-xl shadow-2xl flex flex-col h-full relative overflow-hidden font-chakra"
+          className="bg-[#222] border-l-8 border-seam w-full max-w-xl shadow-2xl flex flex-col h-full relative overflow-hidden font-chakra"
           onClick={(e) => e.stopPropagation()}
         >
           <Screw className="top-4 left-4" />
@@ -103,19 +103,19 @@ export default function GroupMissionsModal({
           <div className="noise-overlay" />
           <div className="scanlines" />
 
-          <div className="p-8 border-b-4 border-[#1a1a1a] bg-black/40 relative z-10 flex justify-between items-center">
+          <div className="p-8 border-b-4 border-seam bg-black/40 relative z-10 flex justify-between items-center">
             <div>
               <h3 className="font-black text-xl text-white uppercase tracking-widest">
                 Missões do Esquadrão
               </h3>
-              <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-1">
+              <p className="text-[10px] text-ash-500 font-bold uppercase tracking-widest mt-1">
                 Grupo: <span className="text-primary">{group.name}</span>
               </p>
             </div>
             <button
               onClick={onClose}
               disabled={busy}
-              className="p-2 text-zinc-600 hover:text-white transition-all material-symbols-outlined rounded-sm disabled:opacity-40"
+              className="p-2 text-ash-600 hover:text-white transition-all material-symbols-outlined rounded-sm disabled:opacity-40"
             >
               close
             </button>
@@ -186,11 +186,11 @@ export default function GroupMissionsModal({
             </div>
 
             <div className="space-y-4">
-              <p className="text-[8px] text-emerald-500/50 font-display font-bold uppercase tracking-widest border-b border-emerald-500/10 pb-2">
+              <p className="text-[8px] text-phosphor-500/50 font-display font-bold uppercase tracking-widest border-b border-phosphor-500/10 pb-2">
                 Missão Ativa (Em Campo)
               </p>
               <select
-                className="w-full bg-emerald-500/5 border border-emerald-500/20 text-[10px] font-display font-bold text-emerald-500 p-3 outline-none rounded-sm focus:border-emerald-500/40 transition-all appearance-none cursor-pointer disabled:opacity-40"
+                className="w-full bg-phosphor-500/5 border border-phosphor-500/20 text-[10px] font-display font-bold text-phosphor-500 p-3 outline-none rounded-sm focus:border-phosphor-500/40 transition-all appearance-none cursor-pointer disabled:opacity-40"
                 disabled={busy || availableToAssign.length === 0}
                 onChange={(e) => {
                   if (!e.target.value) return;
@@ -214,14 +214,14 @@ export default function GroupMissionsModal({
 
               {group.campaignId ? (
                 <div className="flex flex-wrap items-center gap-2">
-                  <div className="flex items-center gap-1 bg-emerald-500/10 text-emerald-500 border border-emerald-500/30 rounded-sm pr-1 animate-pulse">
+                  <div className="flex items-center gap-1 bg-phosphor-500/10 text-phosphor-500 border border-phosphor-500/30 rounded-sm pr-1 animate-pulse">
                     <span className="text-[9px] font-display font-bold px-3 py-1 uppercase tracking-wider">
                       OPERANDO: {campaignLabel(group.campaignId, campaigns)}
                     </span>
                     <button
                       disabled={busy}
                       onClick={handleUnassign}
-                      className="p-1 text-emerald-500/40 hover:text-red-500 material-symbols-outlined text-xs disabled:opacity-40"
+                      className="p-1 text-phosphor-500/40 hover:text-red-500 material-symbols-outlined text-xs disabled:opacity-40"
                       title="Remover do campo"
                     >
                       close
@@ -232,7 +232,7 @@ export default function GroupMissionsModal({
                       type="button"
                       disabled={busy}
                       onClick={() => onNavigateToMission(group.campaignId!)}
-                      className="text-[9px] font-black uppercase tracking-widest text-black bg-emerald-500 hover:bg-emerald-400 px-4 py-2 rounded-sm transition-colors disabled:opacity-40"
+                      className="text-[9px] font-black uppercase tracking-widest text-black bg-phosphor-500 hover:bg-phosphor-400 px-4 py-2 rounded-sm transition-colors disabled:opacity-40"
                     >
                       Abrir comando da missão →
                     </button>

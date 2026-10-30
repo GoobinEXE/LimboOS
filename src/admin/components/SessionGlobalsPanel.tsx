@@ -67,14 +67,14 @@ export default function SessionGlobalsPanel() {
               <ShieldBan size={18} /> {t('sessionGlobals.militaryLock')}
             </span>
           ) : (
-            <span className="text-emerald-500 flex items-center gap-2">
+            <span className="text-phosphor-500 flex items-center gap-2">
               <ShieldCheck size={18} /> {t('sessionGlobals.gridOpen')}
             </span>
           )}
         </div>
         <p
           className={`text-[10px] font-mono font-bold uppercase tracking-widest ${
-            limboState.seized ? 'text-red-500/70' : 'text-emerald-500/70'
+            limboState.seized ? 'text-red-500/70' : 'text-phosphor-500/70'
           }`}
         >
           {t('sessionGlobals.readGlobal', {
@@ -94,7 +94,7 @@ export default function SessionGlobalsPanel() {
           className={`px-5 py-2 border-2 font-display font-black uppercase text-[10px] tracking-widest transition-all rounded-sm self-start ${
             limboState.seized
               ? 'bg-red-600 border-red-400 text-white'
-              : 'bg-[#333] border-white/5 text-zinc-400 hover:bg-[#444]'
+              : 'bg-[#333] border-white/5 text-ash-400 hover:bg-[#444]'
           } active:scale-95`}
         >
           {limboState.seized ? t('sessionGlobals.normalize') : t('sessionGlobals.forceUsarmy')}
@@ -108,7 +108,7 @@ export default function SessionGlobalsPanel() {
         <div className="flex items-center justify-between p-4 bg-black/40 border border-white/5 rounded-sm">
           <div>
             <p className="font-display font-black text-sm text-white uppercase">{t('sessionGlobals.diskRepair')}</p>
-            <p className="text-[9px] text-zinc-600 font-bold uppercase mt-1">{t('sessionGlobals.diskRepairDesc')}</p>
+            <p className="text-[9px] text-ash-600 font-bold uppercase mt-1">{t('sessionGlobals.diskRepairDesc')}</p>
           </div>
           <button
             type="button"
@@ -116,7 +116,7 @@ export default function SessionGlobalsPanel() {
             className={`relative w-14 h-7 rounded-full transition-all border-2 ${
               diskRepairAllowed
                 ? 'bg-primary/20 border-primary shadow-[0_0_10px_rgba(255,140,0,0.2)]'
-                : 'bg-zinc-900 border-zinc-800'
+                : 'bg-ash-900 border-ash-800'
             }`}
             aria-label="Toggle DiskRepair"
           >
@@ -124,12 +124,12 @@ export default function SessionGlobalsPanel() {
               className={`absolute top-1 left-1 w-4 h-4 rounded-full transition-transform duration-300 ${
                 diskRepairAllowed
                   ? 'translate-x-7 bg-primary shadow-[0_0_8px_rgba(255,140,0,0.8)]'
-                  : 'translate-x-0 bg-zinc-800'
+                  : 'translate-x-0 bg-ash-800'
               }`}
             />
           </button>
         </div>
-        <p className="text-[9px] text-zinc-600 font-display font-bold uppercase tracking-wide leading-relaxed">
+        <p className="text-[9px] text-ash-600 font-display font-bold uppercase tracking-wide leading-relaxed">
           {t('sessionGlobals.hint')}
         </p>
       </div>

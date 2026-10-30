@@ -14,7 +14,7 @@ import { useAchievementCatalog } from '../../hooks/useAchievementCatalog';
 
 function platformBorder(platform: PlayerPlatform, earned: boolean): string {
   if (!earned) return 'border-border-subtle';
-  if (platform === 'nokia') return 'border-emerald-500/45';
+  if (platform === 'nokia') return 'border-phosphor-500/45';
   if (platform === 'walkman') return 'border-orange-500/45';
   return 'border-amber-400/45';
 }
@@ -116,13 +116,13 @@ function NokiaAchievementRow({
   const title = earned || revealed ? ach.title : t('achievement.lockedNokia');
   return (
     <div
-      className={`p-1.5 border border-[#111e14] flex gap-2 items-center ${!earned ? 'opacity-40 border-dashed' : ''}`}
+      className={`p-1.5 border border-lcd-ink flex gap-2 items-center ${!earned ? 'opacity-40 border-dashed' : ''}`}
     >
       <span className="text-[11px] shrink-0 font-black">{earned ? '[X]' : '[ ]'}</span>
       {earned ? (
-        <img src={ach.icon} alt="" className="w-5 h-5 object-cover rounded-sm shrink-0 border border-[#111e14]" />
+        <img src={ach.icon} alt="" className="w-5 h-5 object-cover rounded-sm shrink-0 border border-lcd-ink" />
       ) : (
-        <span className="w-5 h-5 shrink-0 border border-dashed border-[#111e14]" />
+        <span className="w-5 h-5 shrink-0 border border-dashed border-lcd-ink" />
       )}
       <div className="leading-tight truncate min-w-0">
         <div className="font-black truncate text-[9px] tracking-tighter flex items-center gap-1.5">
@@ -189,7 +189,7 @@ export function AchievementCatalog({
 
   const platformChrome =
     platform === 'nokia'
-      ? 'text-emerald-400/70'
+      ? 'text-phosphor-400/70'
       : platform === 'walkman'
         ? 'text-orange-400/70'
         : 'text-amber-400/70';
@@ -230,7 +230,7 @@ export function AchievementCatalog({
         <div className="space-y-3">
           {groups.map((group) => (
             <div key={group.category} className="space-y-1">
-              <div className="text-[7px] font-black uppercase tracking-[0.2em] opacity-50 border-b border-[#111e14] pb-0.5">
+              <div className="text-[7px] font-black uppercase tracking-[0.2em] opacity-50 border-b border-lcd-ink pb-0.5">
                 {t(`achievement.category.${group.category}`)}
               </div>
               {group.items.map((ach) => (

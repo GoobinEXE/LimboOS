@@ -184,7 +184,7 @@ export default function IntelDistributionDrawer({
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={ADMIN_SPRING}
-              className="bg-[#222] border-l-8 border-[#1a1a1a] w-full max-w-2xl shadow-2xl flex flex-col h-full relative overflow-hidden font-chakra"
+              className="bg-[#222] border-l-8 border-seam w-full max-w-2xl shadow-2xl flex flex-col h-full relative overflow-hidden font-chakra"
               onClick={(e) => e.stopPropagation()}
             >
           <Screw className="top-4 left-4" />
@@ -194,32 +194,32 @@ export default function IntelDistributionDrawer({
           <div className="noise-overlay" />
           <div className="scanlines" />
 
-          <div className="p-8 border-b-4 border-[#1a1a1a] bg-black/40 relative z-10 flex justify-between items-center">
+          <div className="p-8 border-b-4 border-seam bg-black/40 relative z-10 flex justify-between items-center">
             <div>
               <h3 className="font-black text-xl text-white uppercase tracking-widest">
                 {title || (broadcastMode ? t('intel.dist.videoTitle') : 'Distribuir Intel')}
               </h3>
               {character && (
-                <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-1">
+                <p className="text-[10px] text-ash-500 font-bold uppercase tracking-widest mt-1">
                   Alvo: <span className="text-primary">{character.codinome}</span>
                 </p>
               )}
               {!character && targets.length > 0 && (
-                <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-1">
+                <p className="text-[10px] text-ash-500 font-bold uppercase tracking-widest mt-1">
                   Destinos: <span className="text-primary">{targets.length}</span> agente(s)
                 </p>
               )}
             </div>
             <button
               onClick={requestClose}
-              className="p-2 text-zinc-600 hover:text-white transition-all material-symbols-outlined rounded-sm"
+              className="p-2 text-ash-600 hover:text-white transition-all material-symbols-outlined rounded-sm"
             >
               close
             </button>
           </div>
 
           {!broadcastMode && (
-            <div className="flex border-b-2 border-[#1a1a1a] bg-black/20 relative z-10 shrink-0 overflow-x-auto">
+            <div className="flex border-b-2 border-seam bg-black/20 relative z-10 shrink-0 overflow-x-auto">
               {filterTabs.map((tab) => (
                 <button
                   key={tab}
@@ -227,7 +227,7 @@ export default function IntelDistributionDrawer({
                   className={`flex-1 min-w-[72px] py-4 text-[10px] font-black uppercase tracking-[0.15em] transition-all ${
                     addTab === tab
                       ? 'text-primary bg-primary/10 border-b-2 border-primary'
-                      : 'text-zinc-600 hover:text-zinc-400'
+                      : 'text-ash-600 hover:text-ash-400'
                   }`}
                 >
                   {INTEL_FILTER_TAB_LABELS[tab]}
@@ -236,9 +236,9 @@ export default function IntelDistributionDrawer({
             </div>
           )}
 
-          <div className="p-6 border-b-2 border-[#1a1a1a] bg-black/40 relative z-10 shrink-0">
+          <div className="p-6 border-b-2 border-seam bg-black/40 relative z-10 shrink-0">
             <div className="relative group">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-zinc-700 text-sm">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-ash-700 text-sm">
                 search
               </span>
               <input
@@ -246,13 +246,13 @@ export default function IntelDistributionDrawer({
                 placeholder={t('intel.dist.search')}
                 value={addSearch}
                 onChange={(e) => setAddSearch(e.target.value)}
-                className="w-full bg-black/60 border-2 border-[#1a1a1a] text-[11px] font-bold uppercase px-12 py-4 text-white outline-none focus:ring-1 focus:ring-primary transition-all rounded-sm placeholder:text-zinc-800 tracking-widest"
+                className="w-full bg-black/60 border-2 border-seam text-[11px] font-bold uppercase px-12 py-4 text-white outline-none focus:ring-1 focus:ring-primary transition-all rounded-sm placeholder:text-ash-800 tracking-widest"
               />
             </div>
           </div>
 
           {broadcastMode && (
-            <div className="px-6 py-4 border-b border-[#1a1a1a] bg-black/20 relative z-10">
+            <div className="px-6 py-4 border-b border-seam bg-black/20 relative z-10">
               <label className="flex items-center gap-3 cursor-pointer">
                 <input
                   type="checkbox"
@@ -260,7 +260,7 @@ export default function IntelDistributionDrawer({
                   onChange={(e) => setGrantIntelOnBroadcast(e.target.checked)}
                   className="accent-primary"
                 />
-                <span className="text-[10px] text-zinc-500 uppercase tracking-wider">
+                <span className="text-[10px] text-ash-500 uppercase tracking-wider">
                   Desbloquear automaticamente para quem ainda não possui
                 </span>
               </label>
@@ -281,12 +281,12 @@ export default function IntelDistributionDrawer({
                         ? 'opacity-30 grayscale border-transparent cursor-not-allowed bg-[#111]'
                         : isSelected
                           ? 'bg-primary/10 border-primary/40 cursor-pointer'
-                          : 'bg-[#1a1a1a] border-[#1a1a1a] hover:border-primary/20 hover:bg-white/5 cursor-pointer group'
+                          : 'bg-seam border-seam hover:border-primary/20 hover:bg-white/5 cursor-pointer group'
                     }`}
                   >
                     <span
                       className={`material-symbols-outlined text-lg shrink-0 ${
-                        isSelected ? 'text-primary' : 'text-zinc-600 group-hover:text-zinc-400'
+                        isSelected ? 'text-primary' : 'text-ash-600 group-hover:text-ash-400'
                       }`}
                     >
                       {intelTypeIcon(item.type)}
@@ -295,7 +295,7 @@ export default function IntelDistributionDrawer({
                       className={`w-6 h-6 border-2 rounded-sm flex items-center justify-center transition-all shrink-0 ${
                         isSelected
                           ? 'bg-primary border-primary shadow-[0_0_8px_rgba(255,140,0,0.4)]'
-                          : 'border-zinc-800 group-hover:border-zinc-600'
+                          : 'border-ash-800 group-hover:border-ash-600'
                       }`}
                     >
                       {isSelected && (
@@ -307,17 +307,17 @@ export default function IntelDistributionDrawer({
                     <div className="flex-1 min-w-0">
                       <p
                         className={`text-[11px] font-black uppercase truncate ${
-                          isSelected ? 'text-primary' : 'text-zinc-300 group-hover:text-white'
+                          isSelected ? 'text-primary' : 'text-ash-300 group-hover:text-white'
                         }`}
                       >
                         {item.title}
                       </p>
-                      <p className="text-[9px] font-mono text-zinc-600 font-bold uppercase tracking-widest mt-1">
+                      <p className="text-[9px] font-mono text-ash-600 font-bold uppercase tracking-widest mt-1">
                         {item.metadata?.chapter || item.metadata?.npc || item.type}
                       </p>
                     </div>
                     {alreadyHas && (
-                      <span className="text-[8px] font-black uppercase bg-black/60 text-zinc-500 px-3 py-1 border border-white/5 rounded-sm">
+                      <span className="text-[8px] font-black uppercase bg-black/60 text-ash-500 px-3 py-1 border border-white/5 rounded-sm">
                         PRESENTE
                       </span>
                     )}
@@ -325,15 +325,15 @@ export default function IntelDistributionDrawer({
                 );
               })}
               {filteredItems.length === 0 && (
-                <div className="py-16 text-center text-zinc-600 text-[10px] font-black uppercase tracking-widest">
+                <div className="py-16 text-center text-ash-600 text-[10px] font-black uppercase tracking-widest">
                   Nenhum item no acervo
                 </div>
               )}
             </div>
           </div>
 
-          <div className="p-8 border-t-4 border-[#1a1a1a] flex flex-col sm:flex-row justify-between items-center bg-black/40 gap-6 relative z-10 shrink-0">
-            <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">
+          <div className="p-8 border-t-4 border-seam flex flex-col sm:flex-row justify-between items-center bg-black/40 gap-6 relative z-10 shrink-0">
+            <span className="text-[10px] font-black text-ash-500 uppercase tracking-widest">
               {broadcastMode
                 ? selectedToAdd.size === 1
                   ? t('intel.dist.videoSelected')
@@ -344,7 +344,7 @@ export default function IntelDistributionDrawer({
               <button
                 onClick={requestClose}
                 disabled={loading}
-                className="flex-1 sm:flex-none px-6 py-4 text-[10px] font-black text-zinc-600 hover:text-white transition-colors uppercase tracking-widest disabled:opacity-50"
+                className="flex-1 sm:flex-none px-6 py-4 text-[10px] font-black text-ash-600 hover:text-white transition-colors uppercase tracking-widest disabled:opacity-50"
               >
                 CANCELAR
               </button>
@@ -367,7 +367,7 @@ export default function IntelDistributionDrawer({
           </div>
 
           {feedback && (
-            <div className="absolute top-6 left-1/2 -translate-x-1/2 bg-black/90 backdrop-blur-sm border border-emerald-500/50 px-6 py-3 rounded-full text-[10px] font-black text-emerald-400 uppercase z-50 flex items-center gap-2 shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+            <div className="absolute top-6 left-1/2 -translate-x-1/2 bg-black/90 backdrop-blur-sm border border-phosphor-500/50 px-6 py-3 rounded-full text-[10px] font-black text-phosphor-400 uppercase z-50 flex items-center gap-2 shadow-[0_0_15px_rgba(86,185,75,0.3)]">
               <span className="material-symbols-outlined text-sm">check_circle</span>
               {feedback}
             </div>

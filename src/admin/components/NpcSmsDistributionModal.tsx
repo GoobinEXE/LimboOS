@@ -201,7 +201,7 @@ export default function NpcSmsDistributionModal({
           animate={{ x: 0 }}
           exit={{ x: '100%' }}
           transition={ADMIN_SPRING}
-          className="bg-[#222] border-l-8 border-[#1a1a1a] w-full max-w-2xl shadow-2xl flex flex-col h-full relative overflow-hidden font-chakra"
+          className="bg-[#222] border-l-8 border-seam w-full max-w-2xl shadow-2xl flex flex-col h-full relative overflow-hidden font-chakra"
           onClick={(e) => e.stopPropagation()}
         >
           <Screw className="top-4 left-4" />
@@ -211,31 +211,31 @@ export default function NpcSmsDistributionModal({
           <div className="noise-overlay" />
           <div className="scanlines" />
 
-          <div className="p-8 border-b-4 border-[#1a1a1a] bg-black/40 relative z-10 flex justify-between items-center">
+          <div className="p-8 border-b-4 border-seam bg-black/40 relative z-10 flex justify-between items-center">
             <div>
               <h3 className="font-black text-xl text-white uppercase tracking-widest">
                 {t('squads.smsTitle')}
               </h3>
-              <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-1">
+              <p className="text-[10px] text-ash-500 font-bold uppercase tracking-widest mt-1">
                 Grupo: <span className="text-primary">{group.name}</span>
               </p>
             </div>
             <button
               onClick={onClose}
               disabled={loading}
-              className="p-2 text-zinc-600 hover:text-white transition-all material-symbols-outlined rounded-sm"
+              className="p-2 text-ash-600 hover:text-white transition-all material-symbols-outlined rounded-sm"
             >
               close
             </button>
           </div>
 
-          <div className="flex flex-wrap border-b-2 border-[#1a1a1a] bg-black/20 relative z-10 shrink-0">
+          <div className="flex flex-wrap border-b-2 border-seam bg-black/20 relative z-10 shrink-0">
             <button
               onClick={() => setSelectedNpc('all')}
               className={`flex-1 min-w-[80px] py-4 text-[9px] font-black uppercase tracking-widest transition-all ${
                 selectedNpc === 'all'
                   ? 'text-primary bg-primary/10 border-b-2 border-primary'
-                  : 'text-zinc-600 hover:text-zinc-400'
+                  : 'text-ash-600 hover:text-ash-400'
               }`}
             >
               {t('deliver.npcAll')}
@@ -247,7 +247,7 @@ export default function NpcSmsDistributionModal({
                 className={`flex-1 min-w-[80px] py-4 text-[9px] font-black uppercase tracking-widest transition-all ${
                   selectedNpc === npc.id
                     ? 'text-primary bg-primary/10 border-b-2 border-primary'
-                    : 'text-zinc-600 hover:text-zinc-400'
+                    : 'text-ash-600 hover:text-ash-400'
                 }`}
               >
                 {npc.name}
@@ -262,7 +262,7 @@ export default function NpcSmsDistributionModal({
               className={`text-[9px] font-black uppercase tracking-widest px-3 py-1.5 border rounded-sm ${
                 mode === 'shuffle'
                   ? 'border-secondary text-secondary bg-secondary/10'
-                  : 'border-white/10 text-zinc-500'
+                  : 'border-white/10 text-ash-500'
               }`}
             >
               {t('npcSms.shuffleMode')}
@@ -273,7 +273,7 @@ export default function NpcSmsDistributionModal({
               className={`text-[9px] font-black uppercase tracking-widest px-3 py-1.5 border rounded-sm ${
                 mode === 'pick'
                   ? 'border-secondary text-secondary bg-secondary/10'
-                  : 'border-white/10 text-zinc-500'
+                  : 'border-white/10 text-ash-500'
               }`}
             >
               {t('npcSms.pickMode')}
@@ -282,7 +282,7 @@ export default function NpcSmsDistributionModal({
 
           <div className="flex-1 overflow-y-auto p-6 bg-black/10 relative z-10 custom-scrollbar flex flex-col gap-4">
             {groupCharacters.length === 0 ? (
-              <div className="text-center py-20 border-2 border-dashed border-[#333] rounded-sm text-zinc-600 uppercase tracking-widest font-black text-xs">
+              <div className="text-center py-20 border-2 border-dashed border-[#333] rounded-sm text-ash-600 uppercase tracking-widest font-black text-xs">
                 <span className="material-symbols-outlined text-4xl block mb-2">person_off</span>
                 Nenhum agente vinculado a este grupo
               </div>
@@ -290,11 +290,11 @@ export default function NpcSmsDistributionModal({
               <>
                 {mode === 'pick' && (
                   <div className="space-y-2">
-                    <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">
+                    <span className="text-[10px] font-black text-ash-400 uppercase tracking-widest">
                       {t('npcSms.selectDialogues')}
                     </span>
                     {availableDialogues.length === 0 && (
-                      <p className="text-[10px] text-zinc-600 uppercase">{t('npcSms.noDialogues')}</p>
+                      <p className="text-[10px] text-ash-600 uppercase">{t('npcSms.noDialogues')}</p>
                     )}
                     {availableDialogues.map((d) => (
                       <label
@@ -315,7 +315,7 @@ export default function NpcSmsDistributionModal({
                           <p className="text-[11px] font-bold text-white uppercase truncate">
                             {d.title}
                           </p>
-                          <p className="text-[9px] text-zinc-500 line-clamp-1 italic">
+                          <p className="text-[9px] text-ash-500 line-clamp-1 italic">
                             &ldquo;{d.messages[0]?.text || ''}&rdquo;
                           </p>
                         </div>
@@ -324,8 +324,8 @@ export default function NpcSmsDistributionModal({
                   </div>
                 )}
 
-                <div className="flex justify-between items-center bg-[#1a1a1a] border border-[#333] px-4 py-3 rounded-sm">
-                  <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">
+                <div className="flex justify-between items-center bg-seam border border-[#333] px-4 py-3 rounded-sm">
+                  <span className="text-[10px] font-black text-ash-400 uppercase tracking-widest">
                     {t('npcSms.preview')}
                   </span>
                   {mode === 'shuffle' && (
@@ -348,10 +348,10 @@ export default function NpcSmsDistributionModal({
                     >
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
-                          <span className="text-[9px] font-mono bg-zinc-800 text-zinc-400 px-2 py-0.5 rounded-sm font-bold uppercase">
+                          <span className="text-[9px] font-mono bg-ash-800 text-ash-400 px-2 py-0.5 rounded-sm font-bold uppercase">
                             NPC: {asg.npcName}
                           </span>
-                          <span className="material-symbols-outlined text-zinc-600 text-xs">
+                          <span className="material-symbols-outlined text-ash-600 text-xs">
                             arrow_forward
                           </span>
                           <span className="text-[10px] font-black text-primary uppercase">
@@ -361,12 +361,12 @@ export default function NpcSmsDistributionModal({
                         <h4 className="text-[11px] font-bold text-white uppercase mt-2 tracking-wide truncate">
                           {asg.dialogue.title}
                         </h4>
-                        <p className="text-[9px] text-zinc-500 line-clamp-1 italic mt-1">
+                        <p className="text-[9px] text-ash-500 line-clamp-1 italic mt-1">
                           &ldquo;{asg.dialogue.messages[0]?.text || ''}&rdquo;
                         </p>
                       </div>
                       <div className="text-right ml-4 shrink-0">
-                        <span className="text-[9px] text-zinc-600 font-bold font-mono">
+                        <span className="text-[9px] text-ash-600 font-bold font-mono">
                           {asg.dialogue.messages.length} SMS
                         </span>
                       </div>
@@ -377,15 +377,15 @@ export default function NpcSmsDistributionModal({
             )}
           </div>
 
-          <div className="p-8 border-t-4 border-[#1a1a1a] flex flex-col sm:flex-row justify-between items-center bg-black/40 gap-6 relative z-10 shrink-0">
-            <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">
+          <div className="p-8 border-t-4 border-seam flex flex-col sm:flex-row justify-between items-center bg-black/40 gap-6 relative z-10 shrink-0">
+            <span className="text-[10px] font-black text-ash-500 uppercase tracking-widest">
               {assignments.length} Diálogos vinculados ({groupCharacters.length} agentes)
             </span>
             <div className="flex gap-4 w-full sm:w-auto">
               <button
                 onClick={onClose}
                 disabled={loading}
-                className="flex-1 sm:flex-none px-6 py-4 text-[10px] font-black text-zinc-600 hover:text-white transition-colors uppercase tracking-widest disabled:opacity-50"
+                className="flex-1 sm:flex-none px-6 py-4 text-[10px] font-black text-ash-600 hover:text-white transition-colors uppercase tracking-widest disabled:opacity-50"
               >
                 CANCELAR
               </button>
@@ -404,7 +404,7 @@ export default function NpcSmsDistributionModal({
               className={`absolute top-6 left-1/2 -translate-x-1/2 bg-black/90 backdrop-blur-sm border px-6 py-3 rounded-full text-[10px] font-black uppercase z-50 flex items-center gap-2 shadow-lg ${
                 feedback.startsWith('ERRO')
                   ? 'border-red-500/50 text-red-400'
-                  : 'border-emerald-500/50 text-emerald-400'
+                  : 'border-phosphor-500/50 text-phosphor-400'
               }`}
             >
               <span className="material-symbols-outlined text-sm">

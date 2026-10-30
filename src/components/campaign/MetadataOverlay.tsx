@@ -19,7 +19,7 @@ interface MetadataOverlayProps {
 }
 
 const STATUS_STYLE = {
-  vivo: { color: 'text-green-400', dot: 'bg-green-400', labelKey: 'status.ativo' },
+  vivo: { color: 'text-phosphor-400', dot: 'bg-phosphor-400', labelKey: 'status.ativo' },
   morto: { color: 'text-red-400', dot: 'bg-red-400', labelKey: 'status.eliminado' },
   desaparecido: { color: 'text-yellow-400', dot: 'bg-yellow-400', labelKey: 'status.desaparecido' },
 } as const;

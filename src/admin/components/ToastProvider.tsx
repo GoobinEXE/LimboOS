@@ -83,7 +83,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
 function getToastStyles(type: ToastType): string {
   switch (type) {
     case 'success':
-      return 'bg-surface-container-low/95 border-emerald-500/30 text-emerald-400';
+      return 'bg-surface-container-low/95 border-phosphor-500/30 text-phosphor-400';
     case 'error':
       return 'bg-surface-container-low/95 border-red-500/30 text-red-400';
     case 'info':
@@ -93,7 +93,7 @@ function getToastStyles(type: ToastType): string {
 
 function getProgressColor(type: ToastType): string {
   switch (type) {
-    case 'success': return 'bg-emerald-500';
+    case 'success': return 'bg-phosphor-500';
     case 'error': return 'bg-red-500';
     case 'info': return 'bg-primary';
   }

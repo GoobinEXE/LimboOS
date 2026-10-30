@@ -186,8 +186,8 @@ export default function MissionInventoryTab({
               <div className="flex justify-between items-center mb-6 border-b border-white/5 pb-4">
                 <div className="flex items-center gap-4">
                   <div
-                    className={`w-10 h-10 rounded-sm bg-black border border-[#1a1a1a] flex items-center justify-center font-black text-sm ${
-                      character.agentStatus === 'vivo' ? 'text-emerald-500' : 'text-red-500'
+                    className={`w-10 h-10 rounded-sm bg-black border border-seam flex items-center justify-center font-black text-sm ${
+                      character.agentStatus === 'vivo' ? 'text-phosphor-500' : 'text-red-500'
                     }`}
                   >
                     {(character.codinome || '?')[0].toUpperCase()}
@@ -228,9 +228,9 @@ export default function MissionInventoryTab({
                             intel?.type === 'AUDIO'
                               ? 'text-amber-500'
                               : intel?.type === 'VISUAL'
-                                ? 'text-cyan-500'
+                                ? 'text-tube-500'
                                 : intel?.type === 'TEXT'
-                                  ? 'text-emerald-500'
+                                  ? 'text-phosphor-500'
                                   : 'text-primary'
                           }`}
                         >

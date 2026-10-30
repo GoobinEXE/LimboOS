@@ -146,8 +146,8 @@ export default function CharacterSelectionScreen({ account, onSelect, onLogout }
                     </h3>
                     <div className="flex items-center gap-3 mt-1">
                       <div className="flex items-center gap-1.5">
-                        <div className={`w-1.5 h-1.5 rounded-full ${char.agentStatus === 'vivo' ? 'bg-green-500 animate-pulse' : char.agentStatus === 'morto' ? 'bg-red-500' : 'bg-yellow-500'}`} />
-                        <span className={`text-protocol ${char.agentStatus === 'vivo' ? 'text-green-500' : char.agentStatus === 'morto' ? 'text-red-500' : 'text-yellow-500'}`}>
+                        <div className={`w-1.5 h-1.5 rounded-full ${char.agentStatus === 'vivo' ? 'bg-phosphor-500 animate-pulse' : char.agentStatus === 'morto' ? 'bg-red-500' : 'bg-yellow-500'}`} />
+                        <span className={`text-protocol ${char.agentStatus === 'vivo' ? 'text-phosphor-500' : char.agentStatus === 'morto' ? 'text-red-500' : 'text-yellow-500'}`}>
                           {char.agentStatus}
                         </span>
                       </div>

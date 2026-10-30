@@ -25,8 +25,8 @@ interface LogEntry {
 }
 
 const TYPE_COLORS: Record<string, string> = {
-  navigation: 'text-emerald-400 bg-emerald-500/5 border-emerald-500/10',
-  action:     'text-sky-400 bg-sky-500/5 border-sky-500/10',
+  navigation: 'text-phosphor-400 bg-phosphor-500/5 border-phosphor-500/10',
+  action:     'text-tube-400 bg-tube-500/5 border-tube-500/10',
   system:     'text-orange-400 bg-orange-500/5 border-orange-500/10',
   error:      'text-red-400 bg-red-500/5 border-red-500/10',
   admin:      'text-primary bg-primary/5 border-primary/10',
@@ -48,8 +48,8 @@ const SEVERITY: Record<string, { label: string; color: string }> = {
   error:  { label: 'CRITICAL', color: 'text-red-500' },
   system: { label: 'INFO',     color: 'text-industrial-silver/40' },
   admin:  { label: 'PRIVILEGED', color: 'text-primary' },
-  action: { label: 'EVENT',    color: 'text-sky-500' },
-  navigation: { label: 'NAV',  color: 'text-emerald-500' },
+  action: { label: 'EVENT',    color: 'text-tube-500' },
+  navigation: { label: 'NAV',  color: 'text-phosphor-500' },
   auth:   { label: 'ACCESS',   color: 'text-yellow-500' },
   trace:  { label: 'TRACE',    color: 'text-industrial-silver/20' },
 };

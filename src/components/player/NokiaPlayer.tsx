@@ -598,16 +598,16 @@ export default function NokiaPlayer({
       <div className="flex-grow overflow-hidden relative flex flex-col">
         {isScanning ? (
           <div className="w-full h-full flex flex-col justify-between bg-black relative overflow-hidden flex-grow">
-            <div className="absolute top-1 left-2 z-20 text-[#edfeed] font-black text-[9px] uppercase tracking-widest bg-[#111e14] px-1 animate-pulse">
+            <div className="absolute top-1 left-2 z-20 text-lcd-paper font-black text-[9px] uppercase tracking-widest bg-lcd-ink px-1 animate-pulse">
               {t('nokia.scannerActive')}
             </div>
             <div className="flex-grow w-full bg-[#222] relative flex items-center justify-center min-h-0">
-              <React.Suspense fallback={<div className="text-[#edfeed] text-[10px] animate-pulse">{t('nokia.cameraStarting')}</div>}>
+              <React.Suspense fallback={<div className="text-lcd-paper text-[10px] animate-pulse">{t('nokia.cameraStarting')}</div>}>
                 <QrScanner onDetected={onQrDetected} onCancel={onCancelScan} />
               </React.Suspense>
               {/* ASCII Crosshair */}
-              <div className="absolute w-32 h-32 border border-dashed border-[#edfeed]/40 pointer-events-none flex items-center justify-center opacity-50">
-                <div className="absolute inset-0 flex items-center justify-center text-[#edfeed] text-[20px] font-mono">
+              <div className="absolute w-32 h-32 border border-dashed border-lcd-paper/40 pointer-events-none flex items-center justify-center opacity-50">
+                <div className="absolute inset-0 flex items-center justify-center text-lcd-paper text-[20px] font-mono">
                   +
                 </div>
                 <div className="absolute top-0 left-0">┌</div>
@@ -616,24 +616,24 @@ export default function NokiaPlayer({
                 <div className="absolute bottom-0 right-0">┘</div>
               </div>
             </div>
-            <div className="h-10 bg-[#edfeed] text-[#111e14] border-t-2 border-[#111e14] px-3 flex items-center justify-between text-[11px] font-black shrink-0">
+            <div className="h-10 bg-lcd-paper text-lcd-ink border-t-2 border-lcd-ink px-3 flex items-center justify-between text-[11px] font-black shrink-0">
               <span className="flex items-center gap-2"><PixelIcon.Camera /> {t('nokia.alignCode')}</span>
-              <button onClick={onCancelScan} className="uppercase px-2 py-1 border border-[#111e14] active:bg-[#111e14] active:text-[#edfeed]">{t('nokia.exit')}</button>
+              <button onClick={onCancelScan} className="uppercase px-2 py-1 border border-lcd-ink active:bg-lcd-ink active:text-lcd-paper">{t('nokia.exit')}</button>
             </div>
           </div>
         ) : showVolumeBar ? (
-          <div className="w-full h-full flex flex-col justify-center items-center gap-6 px-4 select-none bg-[#edfeed] flex-grow">
+          <div className="w-full h-full flex flex-col justify-center items-center gap-6 px-4 select-none bg-lcd-paper flex-grow">
             <div className="text-[14px] font-black uppercase flex flex-col items-center gap-2">
               <PixelIcon.Volume />
               <span>{t('nokia.volume')}</span>
             </div>
-            <div className="w-full border-2 border-[#111e14] p-1.5 flex gap-1 h-12 items-center bg-[#edfeed] shadow-[2px_2px_0px_#111e14]">
+            <div className="w-full border-2 border-lcd-ink p-1.5 flex gap-1 h-12 items-center bg-lcd-paper shadow-[2px_2px_0px_#111e14]">
               {Array.from({ length: 10 }).map((_, i) => (
                 <div
                   key={i}
                   onClick={() => handleVolumeChange((i + 1) * 10)}
-                  className={`h-full flex-1 border border-[#111e14] cursor-pointer transition-all active:scale-90 ${
-                    volume >= (i + 1) * 10 ? 'bg-[#111e14]' : 'bg-transparent'
+                  className={`h-full flex-1 border border-lcd-ink cursor-pointer transition-all active:scale-90 ${
+                    volume >= (i + 1) * 10 ? 'bg-lcd-ink' : 'bg-transparent'
                   }`}
                 />
               ))}
@@ -644,7 +644,7 @@ export default function NokiaPlayer({
           </div>
         ) : (
           <div
-            className={`bg-[#edfeed] p-1 px-2 flex-grow min-h-0 ${
+            className={`bg-lcd-paper p-1 px-2 flex-grow min-h-0 ${
               isLandscape ? 'landscape-split gap-2 h-full' : 'flex flex-col h-full'
             }`}
           >
@@ -655,7 +655,7 @@ export default function NokiaPlayer({
                     {hasTerminalAccess && onTerminalOpen && (
                       <button
                         onClick={onTerminalOpen}
-                        className="flex-1 py-1 border-2 border-[#111e14] text-[8px] font-black uppercase active:bg-[#111e14] active:text-[#edfeed]"
+                        className="flex-1 py-1 border-2 border-lcd-ink text-[8px] font-black uppercase active:bg-lcd-ink active:text-lcd-paper"
                       >
                         {t('nokia.mhDos')}
                       </button>
@@ -663,7 +663,7 @@ export default function NokiaPlayer({
                     {hasMacAccess && onMacOpen && (
                       <button
                         onClick={onMacOpen}
-                        className="flex-1 py-1 border-2 border-[#111e14] text-[8px] font-black uppercase active:bg-[#111e14] active:text-[#edfeed]"
+                        className="flex-1 py-1 border-2 border-lcd-ink text-[8px] font-black uppercase active:bg-lcd-ink active:text-lcd-paper"
                       >
                         {t('nokia.macos')}
                       </button>
@@ -679,7 +679,7 @@ export default function NokiaPlayer({
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-                        className="border-2 border-[#111e14] p-1.5 bg-[#edfeed] shadow-[2px_2px_0px_#111e14] h-full flex flex-col min-h-0 nokia-scroll-area"
+                        className="border-2 border-lcd-ink p-1.5 bg-lcd-paper shadow-[2px_2px_0px_#111e14] h-full flex flex-col min-h-0 nokia-scroll-area"
                       >
                         <div className="text-center mb-1 shrink-0">
                           <div className="text-[11px] font-black uppercase truncate leading-none mb-0.5">
@@ -695,7 +695,7 @@ export default function NokiaPlayer({
                         </div>
 
                         {isVideoIntel && currentIntel instanceof VideoIntel ? (
-                          <div className="relative mb-1 border-2 border-[#111e14] aspect-video max-h-[42%] min-h-0 overflow-hidden shadow-[2px_2px_0px_#111e14] shrink">
+                          <div className="relative mb-1 border-2 border-lcd-ink aspect-video max-h-[42%] min-h-0 overflow-hidden shadow-[2px_2px_0px_#111e14] shrink">
                             <NokiaVideoSurface
                               ref={videoSurfaceRef}
                               intel={currentIntel}
@@ -706,19 +706,19 @@ export default function NokiaPlayer({
                           </div>
                         ) : (
                           <div className="flex justify-center mb-1 shrink-0">
-                            <div className="w-24 h-10 bg-[#edfeed] border-2 border-[#111e14] relative flex items-center justify-around px-3">
-                              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-1.5 border-b-2 border-[#111e14]" />
+                            <div className="w-24 h-10 bg-lcd-paper border-2 border-lcd-ink relative flex items-center justify-around px-3">
+                              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-1.5 border-b-2 border-lcd-ink" />
                               {[0, 1].map((ri) => (
                                 <div
                                   key={ri}
-                                  className="w-5 h-5 border-2 border-[#111e14] flex items-center justify-center relative bg-white/20"
+                                  className="w-5 h-5 border-2 border-lcd-ink flex items-center justify-center relative bg-white/20"
                                 >
                                   <div
-                                    className={`w-full h-0.5 bg-[#111e14] absolute ${isPlaying ? 'animate-spin' : ''}`}
+                                    className={`w-full h-0.5 bg-lcd-ink absolute ${isPlaying ? 'animate-spin' : ''}`}
                                     style={{ animationDuration: '4s' }}
                                   />
                                   <div
-                                    className={`w-0.5 h-full bg-[#111e14] absolute ${isPlaying ? 'animate-spin' : ''}`}
+                                    className={`w-0.5 h-full bg-lcd-ink absolute ${isPlaying ? 'animate-spin' : ''}`}
                                     style={{ animationDuration: '4s' }}
                                   />
                                 </div>
@@ -735,14 +735,14 @@ export default function NokiaPlayer({
                             </span>
                             <span>{durationTimeStr}</span>
                           </div>
-                          <div className="w-full border-2 border-[#111e14] h-3 p-[1px] flex gap-[1px] items-center bg-[#edfeed]">
+                          <div className="w-full border-2 border-lcd-ink h-3 p-[1px] flex gap-[1px] items-center bg-lcd-paper">
                             {Array.from({ length: 16 }).map((_, i) => {
                               const pct = (i + 1) / 16;
                               const isFilled = audioDuration > 0 && audioProgress / audioDuration >= pct;
                               return (
                                 <div
                                   key={i}
-                                  className={`h-full flex-1 ${isFilled ? 'bg-[#111e14]' : 'bg-transparent'}`}
+                                  className={`h-full flex-1 ${isFilled ? 'bg-lcd-ink' : 'bg-transparent'}`}
                                 />
                               );
                             })}
@@ -752,25 +752,25 @@ export default function NokiaPlayer({
                         <div className="flex justify-center items-center gap-1.5 mt-auto shrink-0">
                           <button
                             onClick={handleRewindTap}
-                            className={`w-8 h-8 min-h-8 border-2 border-[#111e14] flex items-center justify-center active:bg-[#111e14] active:text-[#edfeed] active:scale-95 ${status === 'REWINDING' ? 'bg-[#111e14] text-[#edfeed]' : ''}`}
+                            className={`w-8 h-8 min-h-8 border-2 border-lcd-ink flex items-center justify-center active:bg-lcd-ink active:text-lcd-paper active:scale-95 ${status === 'REWINDING' ? 'bg-lcd-ink text-lcd-paper' : ''}`}
                           >
                             <PixelIcon.Rewind />
                           </button>
                           <button
                             onClick={handlePlayToggle}
-                            className="w-10 h-9 min-h-9 border-2 border-[#111e14] flex items-center justify-center bg-[#111e14] text-[#edfeed] active:scale-95"
+                            className="w-10 h-9 min-h-9 border-2 border-lcd-ink flex items-center justify-center bg-lcd-ink text-lcd-paper active:scale-95"
                           >
                             {isPlaying ? <PixelIcon.Pause /> : <PixelIcon.Play />}
                           </button>
                           <button
                             onClick={handleEject}
-                            className="w-8 h-8 min-h-8 border-2 border-[#111e14] flex items-center justify-center active:bg-[#111e14] active:text-[#edfeed] active:scale-95"
+                            className="w-8 h-8 min-h-8 border-2 border-lcd-ink flex items-center justify-center active:bg-lcd-ink active:text-lcd-paper active:scale-95"
                           >
                             <PixelIcon.Close />
                           </button>
                           <button
                             onClick={handleVolumeTap}
-                            className="w-8 h-8 min-h-8 border-2 border-[#111e14] flex items-center justify-center active:bg-[#111e14] active:text-[#edfeed] active:scale-95"
+                            className="w-8 h-8 min-h-8 border-2 border-lcd-ink flex items-center justify-center active:bg-lcd-ink active:text-lcd-paper active:scale-95"
                           >
                             <PixelIcon.Volume />
                           </button>
@@ -784,7 +784,7 @@ export default function NokiaPlayer({
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
                         onClick={onScanClick}
-                        className="border-2 border-dashed border-[#111e14] p-3 h-full flex flex-col justify-center items-center cursor-pointer gap-2 active:bg-[#111e14]/10"
+                        className="border-2 border-dashed border-lcd-ink p-3 h-full flex flex-col justify-center items-center cursor-pointer gap-2 active:bg-lcd-ink/10"
                       >
                         <PixelIcon.Camera />
                         <span className="text-[9px] font-black uppercase tracking-[0.15em] text-center">{t('nokia.scanCode')}</span>
@@ -806,7 +806,7 @@ export default function NokiaPlayer({
                     initial={{ opacity: 0, scaleY: 0, originY: 0 }}
                     animate={{ opacity: 1, scaleY: 1 }}
                     exit={{ opacity: 0, scaleY: 0 }}
-                    className="border-2 border-[#111e14] p-2 bg-[#edfeed] shadow-[2px_2px_0px_#111e14]"
+                    className="border-2 border-lcd-ink p-2 bg-lcd-paper shadow-[2px_2px_0px_#111e14]"
                   >
                     <div className="text-center mb-2">
                       <div className="text-[13px] font-black uppercase truncate leading-none mb-1">
@@ -823,7 +823,7 @@ export default function NokiaPlayer({
 
                     {isVideoIntel && currentIntel instanceof VideoIntel ? (
                       <>
-                        <div className="relative mb-2 border-2 border-[#111e14] aspect-video overflow-hidden shadow-[2px_2px_0px_#111e14]">
+                        <div className="relative mb-2 border-2 border-lcd-ink aspect-video overflow-hidden shadow-[2px_2px_0px_#111e14]">
                           <NokiaVideoSurface
                             ref={videoSurfaceRef}
                             intel={currentIntel}
@@ -834,17 +834,17 @@ export default function NokiaPlayer({
                         </div>
                         <div className="flex justify-center mb-2">
                           {currentIntel.format === 'DVD' ? (
-                            <div className="w-16 h-16 rounded-full border-2 border-[#111e14] flex items-center justify-center relative bg-[#edfeed] shadow-[2px_2px_0px_#111e14]">
-                              <div className="w-5 h-5 rounded-full border-2 border-[#111e14] bg-[#111e14]/10" />
-                              <div className={`absolute inset-1 rounded-full border border-dashed border-[#111e14]/30 ${isPlaying ? 'animate-spin' : ''}`} style={{ animationDuration: '6s' }} />
+                            <div className="w-16 h-16 rounded-full border-2 border-lcd-ink flex items-center justify-center relative bg-lcd-paper shadow-[2px_2px_0px_#111e14]">
+                              <div className="w-5 h-5 rounded-full border-2 border-lcd-ink bg-lcd-ink/10" />
+                              <div className={`absolute inset-1 rounded-full border border-dashed border-lcd-ink/30 ${isPlaying ? 'animate-spin' : ''}`} style={{ animationDuration: '6s' }} />
                             </div>
                           ) : (
-                            <div className="w-24 h-14 bg-[#edfeed] border-2 border-[#111e14] relative flex items-center justify-around px-3 shadow-[2px_2px_0px_#111e14]">
-                              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-10 h-2 border-b-2 border-[#111e14]" />
+                            <div className="w-24 h-14 bg-lcd-paper border-2 border-lcd-ink relative flex items-center justify-around px-3 shadow-[2px_2px_0px_#111e14]">
+                              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-10 h-2 border-b-2 border-lcd-ink" />
                               {[0, 1].map((ri) => (
-                                <div key={ri} className="w-5 h-5 border-2 border-[#111e14] flex items-center justify-center relative">
-                                  <div className={`w-full h-0.5 bg-[#111e14] absolute ${isPlaying ? 'animate-spin' : ''}`} style={{ animationDuration: '3s' }} />
-                                  <div className={`w-0.5 h-full bg-[#111e14] absolute ${isPlaying ? 'animate-spin' : ''}`} style={{ animationDuration: '3s' }} />
+                                <div key={ri} className="w-5 h-5 border-2 border-lcd-ink flex items-center justify-center relative">
+                                  <div className={`w-full h-0.5 bg-lcd-ink absolute ${isPlaying ? 'animate-spin' : ''}`} style={{ animationDuration: '3s' }} />
+                                  <div className={`w-0.5 h-full bg-lcd-ink absolute ${isPlaying ? 'animate-spin' : ''}`} style={{ animationDuration: '3s' }} />
                                 </div>
                               ))}
                               <span className="absolute bottom-0.5 right-1 text-[7px] font-black">VHS</span>
@@ -854,19 +854,19 @@ export default function NokiaPlayer({
                       </>
                     ) : (
                       <div className="flex justify-center mb-2">
-                        <div className="w-28 h-12 bg-[#edfeed] border-2 border-[#111e14] relative flex items-center justify-around px-4">
-                          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-2 border-b-2 border-[#111e14]" />
+                        <div className="w-28 h-12 bg-lcd-paper border-2 border-lcd-ink relative flex items-center justify-around px-4">
+                          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-2 border-b-2 border-lcd-ink" />
                           {[0, 1].map((ri) => (
                             <div
                               key={ri}
-                              className="w-6 h-6 border-2 border-[#111e14] flex items-center justify-center relative bg-white/20"
+                              className="w-6 h-6 border-2 border-lcd-ink flex items-center justify-center relative bg-white/20"
                             >
                               <div
-                                className={`w-full h-0.5 bg-[#111e14] absolute ${isPlaying ? 'animate-spin' : ''}`}
+                                className={`w-full h-0.5 bg-lcd-ink absolute ${isPlaying ? 'animate-spin' : ''}`}
                                 style={{ animationDuration: '4s' }}
                               />
                               <div
-                                className={`w-0.5 h-full bg-[#111e14] absolute ${isPlaying ? 'animate-spin' : ''}`}
+                                className={`w-0.5 h-full bg-lcd-ink absolute ${isPlaying ? 'animate-spin' : ''}`}
                                 style={{ animationDuration: '4s' }}
                               />
                             </div>
@@ -884,14 +884,14 @@ export default function NokiaPlayer({
                         </span>
                         <span>{durationTimeStr}</span>
                       </div>
-                      <div className="w-full border-2 border-[#111e14] h-4 p-[1px] flex gap-[1px] items-center bg-[#edfeed]">
+                      <div className="w-full border-2 border-lcd-ink h-4 p-[1px] flex gap-[1px] items-center bg-lcd-paper">
                         {Array.from({ length: 20 }).map((_, i) => {
                           const pct = (i + 1) / 20;
                           const isFilled = audioDuration > 0 && (audioProgress / audioDuration) >= pct;
                           return (
                             <div
                               key={i}
-                              className={`h-full flex-1 ${isFilled ? 'bg-[#111e14]' : 'bg-transparent'}`}
+                              className={`h-full flex-1 ${isFilled ? 'bg-lcd-ink' : 'bg-transparent'}`}
                             />
                           );
                         })}
@@ -902,25 +902,25 @@ export default function NokiaPlayer({
                     <div className="flex justify-center items-center gap-3">
                       <button
                         onClick={handleRewindTap}
-                        className={`w-10 h-9 border-2 border-[#111e14] flex items-center justify-center active:bg-[#111e14] active:text-[#edfeed] shadow-[1px_1px_0px_#111e14] ${status === 'REWINDING' ? 'bg-[#111e14] text-[#edfeed]' : ''}`}
+                        className={`w-10 h-9 border-2 border-lcd-ink flex items-center justify-center active:bg-lcd-ink active:text-lcd-paper shadow-[1px_1px_0px_#111e14] ${status === 'REWINDING' ? 'bg-lcd-ink text-lcd-paper' : ''}`}
                       >
                         <PixelIcon.Rewind />
                       </button>
                       <button
                         onClick={handlePlayToggle}
-                        className="w-12 h-10 border-2 border-[#111e14] flex items-center justify-center bg-[#111e14] text-[#edfeed] shadow-[1px_1px_0px_#111e14] active:translate-y-[1px] active:shadow-none"
+                        className="w-12 h-10 border-2 border-lcd-ink flex items-center justify-center bg-lcd-ink text-lcd-paper shadow-[1px_1px_0px_#111e14] active:translate-y-[1px] active:shadow-none"
                       >
                         {isPlaying ? <PixelIcon.Pause /> : <PixelIcon.Play />}
                       </button>
                       <button
                         onClick={handleEject}
-                        className="w-10 h-9 border-2 border-[#111e14] flex items-center justify-center active:bg-[#111e14] active:text-[#edfeed] shadow-[1px_1px_0px_#111e14]"
+                        className="w-10 h-9 border-2 border-lcd-ink flex items-center justify-center active:bg-lcd-ink active:text-lcd-paper shadow-[1px_1px_0px_#111e14]"
                       >
                         <PixelIcon.Close />
                       </button>
                       <button
                         onClick={handleVolumeTap}
-                        className="w-10 h-9 border-2 border-[#111e14] flex items-center justify-center active:bg-[#111e14] active:text-[#edfeed] shadow-[1px_1px_0px_#111e14]"
+                        className="w-10 h-9 border-2 border-lcd-ink flex items-center justify-center active:bg-lcd-ink active:text-lcd-paper shadow-[1px_1px_0px_#111e14]"
                       >
                         <PixelIcon.Volume />
                       </button>
@@ -933,7 +933,7 @@ export default function NokiaPlayer({
                     animate={{ opacity: 1, scaleY: 1 }}
                     exit={{ opacity: 0, scaleY: 0 }}
                     onClick={onScanClick}
-                    className="border-2 border-dashed border-[#111e14] p-4 flex flex-col justify-center items-center cursor-pointer hover:bg-[#111e14]/5 active:bg-[#111e14]/10 gap-2 transition-colors"
+                    className="border-2 border-dashed border-lcd-ink p-4 flex flex-col justify-center items-center cursor-pointer hover:bg-lcd-ink/5 active:bg-lcd-ink/10 gap-2 transition-colors"
                   >
                     <PixelIcon.Camera />
                     <span className="text-[11px] font-black uppercase tracking-[0.2em]">{t('nokia.scanCode')}</span>
@@ -948,7 +948,7 @@ export default function NokiaPlayer({
                 {hasTerminalAccess && onTerminalOpen && (
                   <button
                     onClick={onTerminalOpen}
-                    className="flex-1 py-1 border-2 border-[#111e14] text-[8px] font-black uppercase active:bg-[#111e14] active:text-[#edfeed]"
+                    className="flex-1 py-1 border-2 border-lcd-ink text-[8px] font-black uppercase active:bg-lcd-ink active:text-lcd-paper"
                   >
                     {t('nokia.mhDosFull')}
                   </button>
@@ -956,7 +956,7 @@ export default function NokiaPlayer({
                 {hasMacAccess && onMacOpen && (
                   <button
                     onClick={onMacOpen}
-                    className="flex-1 py-1 border-2 border-[#111e14] text-[8px] font-black uppercase active:bg-[#111e14] active:text-[#edfeed]"
+                    className="flex-1 py-1 border-2 border-lcd-ink text-[8px] font-black uppercase active:bg-lcd-ink active:text-lcd-paper"
                   >
                     {t('nokia.macosFull')}
                   </button>
@@ -965,15 +965,15 @@ export default function NokiaPlayer({
             )}
 
             {/* ─── FILTER TABS ─── */}
-            <div className="flex border-2 border-[#111e14] shrink-0 mb-2 overflow-hidden shadow-[1px_1px_0px_#111e14] bg-[#edfeed]">
+            <div className="flex border-2 border-lcd-ink shrink-0 mb-2 overflow-hidden shadow-[1px_1px_0px_#111e14] bg-lcd-paper">
               {tabs.map((tab) => (
                 <button
                   key={tab.key}
                   onClick={() => handleTabChange(tab.key)}
                   className={`flex-1 py-1.5 flex flex-col items-center justify-center gap-1 transition-all ${
                     activeTab === tab.key
-                      ? 'bg-[#111e14] text-[#edfeed]'
-                      : 'bg-[#edfeed] text-[#111e14] hover:bg-[#111e14]/5'
+                      ? 'bg-lcd-ink text-lcd-paper'
+                      : 'bg-lcd-paper text-lcd-ink hover:bg-lcd-ink/5'
                   }`}
                 >
                   <div className="scale-75">{tab.icon}</div>
@@ -993,7 +993,7 @@ export default function NokiaPlayer({
               {activeTab === 'SMS' ? (
                 <div className="flex flex-col flex-grow min-h-0">
                   {!activeCharacter?.phoneNumber ? (
-                    <div className="flex flex-col items-center justify-center p-4 border-2 border-[#111e14] bg-[#edfeed] gap-3 text-center my-2 shadow-[1px_1px_0px_#111e14]">
+                    <div className="flex flex-col items-center justify-center p-4 border-2 border-lcd-ink bg-lcd-paper gap-3 text-center my-2 shadow-[1px_1px_0px_#111e14]">
                       <div className="scale-125"><PixelIcon.SMS /></div>
                       <span className="font-black text-[10px] uppercase">{t('nokia.sms.registerTitle')}</span>
                       <p className="text-[9px] opacity-80 leading-normal font-bold">
@@ -1004,7 +1004,7 @@ export default function NokiaPlayer({
                           const num = generateRandomUSPhoneNumber();
                           onUpdatePhoneNumber?.(num);
                         }}
-                        className="w-full py-2 border-2 border-[#111e14] bg-[#111e14] text-[#edfeed] font-black uppercase active:bg-[#edfeed] active:text-[#111e14] text-[10px] tracking-wider"
+                        className="w-full py-2 border-2 border-lcd-ink bg-lcd-ink text-lcd-paper font-black uppercase active:bg-lcd-paper active:text-lcd-ink text-[10px] tracking-wider"
                       >
                         {t('nokia.sms.generate')}
                       </button>
@@ -1022,7 +1022,7 @@ export default function NokiaPlayer({
                     </div>
                   ) : (
                     <div className="flex flex-col flex-grow min-h-0">
-                      <div className="flex justify-between items-center bg-[#111e14]/5 border-b border-[#111e14]/20 p-1.5 text-[9px] font-black shrink-0 mb-1.5">
+                      <div className="flex justify-between items-center bg-lcd-ink/5 border-b border-lcd-ink/20 p-1.5 text-[9px] font-black shrink-0 mb-1.5">
                         <div className="flex items-center gap-1">
                           <span className="opacity-60">{t('nokia.sms.from')}</span>
                           <span className="font-mono">{activeCharacter.phoneNumber}</span>
@@ -1050,12 +1050,12 @@ export default function NokiaPlayer({
                                   shouldStickToBottomRef.current = true;
                                   setActiveConversationId(conv.contactId);
                                 }}
-                                className="w-full text-left flex flex-col p-2 border-2 border-[#111e14] bg-[#edfeed] hover:bg-[#111e14]/5 active:scale-[0.98] transition-all shadow-[1px_1px_0px_#111e14]"
+                                className="w-full text-left flex flex-col p-2 border-2 border-lcd-ink bg-lcd-paper hover:bg-lcd-ink/5 active:scale-[0.98] transition-all shadow-[1px_1px_0px_#111e14]"
                               >
                                 <div className="flex justify-between items-center text-[9px] font-black uppercase mb-1">
                                   <span className="flex items-center gap-1.5 min-w-0">
                                     {!readConversationIds.has(conv.contactId) && (
-                                      <span className="w-2 h-2 bg-[#111e14] shrink-0" aria-hidden />
+                                      <span className="w-2 h-2 bg-lcd-ink shrink-0" aria-hidden />
                                     )}
                                     <span className="truncate">{conv.contactName}</span>
                                   </span>
@@ -1077,13 +1077,13 @@ export default function NokiaPlayer({
                         /* ACTIVE CONVERSATION MESSAGES */
                         <div className="flex flex-col flex-grow min-h-0">
                           {/* Chat Header */}
-                          <div className="flex items-center gap-2 pb-2 mb-2 border-b-2 border-[#111e14] border-dotted shrink-0">
+                          <div className="flex items-center gap-2 pb-2 mb-2 border-b-2 border-lcd-ink border-dotted shrink-0">
                             <button
                               onClick={() => {
                                 getSfx().playBack();
                                 setActiveConversationId(null);
                               }}
-                              className="border border-[#111e14] px-1.5 py-0.5 font-black text-[9px] hover:bg-[#111e14] hover:text-[#edfeed] active:scale-95 uppercase transition-all"
+                              className="border border-lcd-ink px-1.5 py-0.5 font-black text-[9px] hover:bg-lcd-ink hover:text-lcd-paper active:scale-95 uppercase transition-all"
                             >
                               {tc('actions.backBracket')}
                             </button>
@@ -1117,10 +1117,10 @@ export default function NokiaPlayer({
                                 return (
                                   <div
                                     key={msg.id}
-                                    className={`text-[11px] p-2 border-2 border-[#111e14] flex flex-col gap-0.5 shadow-[1px_1px_0px_#111e14] ${
+                                    className={`text-[11px] p-2 border-2 border-lcd-ink flex flex-col gap-0.5 shadow-[1px_1px_0px_#111e14] ${
                                       isMe 
-                                        ? 'bg-[#111e14] text-[#edfeed] ml-4' 
-                                        : 'bg-[#edfeed] mr-4'
+                                        ? 'bg-lcd-ink text-lcd-paper ml-4' 
+                                        : 'bg-lcd-paper mr-4'
                                     }`}
                                   >
                                     <div className="flex justify-between items-center text-[8px] font-black opacity-70 mb-0.5">
@@ -1149,12 +1149,12 @@ export default function NokiaPlayer({
                               value={newMessageText}
                               onChange={(e) => setNewMessageText(e.target.value)}
                               placeholder={t('nokia.sms.placeholder')}
-                              className="flex-1 bg-[#edfeed] border-2 border-[#111e14] px-1.5 py-1 text-[10px] text-[#111e14] placeholder:text-[#111e14]/50 focus:outline-none font-bold uppercase"
+                              className="flex-1 bg-lcd-paper border-2 border-lcd-ink px-1.5 py-1 text-[10px] text-lcd-ink placeholder:text-lcd-ink/50 focus:outline-none font-bold uppercase"
                             />
                             <button
                               type="submit"
                               disabled={!newMessageText.trim()}
-                              className="border-2 border-[#111e14] bg-[#111e14] text-[#edfeed] font-black px-2 py-1 text-[10px] active:scale-95 disabled:opacity-40 transition-all uppercase"
+                              className="border-2 border-lcd-ink bg-lcd-ink text-lcd-paper font-black px-2 py-1 text-[10px] active:scale-95 disabled:opacity-40 transition-all uppercase"
                             >
                               {t('nokia.sms.send')}
                             </button>
@@ -1177,9 +1177,9 @@ export default function NokiaPlayer({
                     if (item.__divider) {
                       return (
                         <div key={`div-${idx}`} className="flex items-center gap-2 py-2 px-1">
-                          <div className="flex-1 border-t-2 border-[#111e14]/20 border-dotted" />
+                          <div className="flex-1 border-t-2 border-lcd-ink/20 border-dotted" />
                           <span className="text-[9px] font-black opacity-50 uppercase tracking-[0.2em] shrink-0">{item.label}</span>
-                          <div className="flex-1 border-t-2 border-[#111e14]/20 border-dotted" />
+                          <div className="flex-1 border-t-2 border-lcd-ink/20 border-dotted" />
                         </div>
                       );
                     }
@@ -1195,8 +1195,8 @@ export default function NokiaPlayer({
                         onClick={() => handleItemTap(item)}
                         className={`text-[12px] py-2 px-3 cursor-pointer flex items-center gap-3 font-bold transition-all border-2 shadow-[1px_1px_0px_#111e14] active:translate-y-[1px] active:shadow-none ${
                           isCurrent
-                            ? 'bg-[#111e14] text-[#edfeed] border-[#111e14]'
-                            : 'bg-[#edfeed] text-[#111e14] border-[#111e14] hover:bg-[#111e14]/5'
+                            ? 'bg-lcd-ink text-lcd-paper border-lcd-ink'
+                            : 'bg-lcd-paper text-lcd-ink border-lcd-ink hover:bg-lcd-ink/5'
                         }`}
                       >
                         <div className="shrink-0 scale-90">

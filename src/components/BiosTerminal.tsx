@@ -45,8 +45,8 @@ function TerminalResponse({ text, variant = 'normal' }: { text: string; variant?
     <div
       className={`my-2 pl-3 border-l-2 ${
         variant === 'error'
-          ? 'border-[#33FF33]/50 text-[#33FF33]/80'
-          : 'border-[#33FF33]/25 text-[#33FF33]/90'
+          ? 'border-crt/50 text-crt/80'
+          : 'border-crt/25 text-crt/90'
       }`}
     >
       <TerminalBlock>{text}</TerminalBlock>
@@ -57,10 +57,10 @@ function TerminalResponse({ text, variant = 'normal' }: { text: string; variant?
 function TerminalCommand({ cmd }: { cmd: string }) {
   return (
     <div className="mt-3 mb-1 font-mono text-[13px] sm:text-[14px] tracking-wide">
-      <span className="text-[#33FF33] font-bold" style={{ textShadow: `0 0 6px ${PHOSPHOR}60` }}>
+      <span className="text-crt font-bold" style={{ textShadow: `0 0 6px ${PHOSPHOR}60` }}>
         C:\&gt;
       </span>
-      <span className="text-[#33FF33] ml-0.5">{cmd}</span>
+      <span className="text-crt ml-0.5">{cmd}</span>
     </div>
   );
 }
@@ -102,7 +102,7 @@ function TerminalKeyboard({
                   e.preventDefault();
                   onKey(val);
                 }}
-                className={`${keyHeight} border border-[#33FF33]/60 text-[#33FF33] flex items-center justify-center ${fontSize} font-bold tracking-wider active:bg-[#33FF33] active:text-[#050505] active:shadow-[0_0_15px_#33ff33] active:border-[#33FF33] rounded-none transition-colors ${widthClass}`}
+                className={`${keyHeight} border border-crt/60 text-crt flex items-center justify-center ${fontSize} font-bold tracking-wider active:bg-crt active:text-[#050505] active:shadow-[0_0_15px_#33ff33] active:border-crt rounded-none transition-colors ${widthClass}`}
                 style={{ textShadow: `0 0 3px ${PHOSPHOR}50` }}
               >
                 {label}
@@ -264,7 +264,7 @@ export default function BiosTerminal({
       exit={{ opacity: 0 }}
       transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
       layout
-      className="fixed inset-0 z-50 flex flex-col bg-[#050505] overflow-hidden text-[#33FF33] font-mono select-none player-viewport"
+      className="fixed inset-0 z-50 flex flex-col bg-[#050505] overflow-hidden text-crt font-mono select-none player-viewport"
       style={{ fontFamily: '"Terminal", "Fixedsys", "Lucida Console", "Courier New", monospace' }}
     >
       <style>{`
@@ -288,7 +288,7 @@ export default function BiosTerminal({
         <button
           type="button"
           onClick={() => setKeyboardVisible((v) => !v)}
-          className="pointer-events-auto touch-manipulation text-[#33FF33]/70 font-bold text-sm hover:text-[#33FF33] transition-colors px-2 py-1 min-h-11 border border-[#33FF33]/20 hover:border-[#33FF33]/50"
+          className="pointer-events-auto touch-manipulation text-crt/70 font-bold text-sm hover:text-crt transition-colors px-2 py-1 min-h-11 border border-crt/20 hover:border-crt/50"
           style={{ textShadow: `0 0 4px ${PHOSPHOR}40` }}
           title={keyboardVisible ? t('bios.hideKeyboard') : t('bios.showKeyboard')}
         >
@@ -297,7 +297,7 @@ export default function BiosTerminal({
         <button
           type="button"
           onClick={handleClose}
-          className="pointer-events-auto touch-manipulation text-[#33FF33]/70 font-bold text-lg hover:text-[#33FF33] transition-colors px-2 py-1 min-h-11 border border-[#33FF33]/20 hover:border-[#33FF33]/50"
+          className="pointer-events-auto touch-manipulation text-crt/70 font-bold text-lg hover:text-crt transition-colors px-2 py-1 min-h-11 border border-crt/20 hover:border-crt/50"
           style={{ textShadow: `0 0 4px ${PHOSPHOR}40` }}
           aria-label={t('bios.closeAria')}
         >
@@ -338,20 +338,20 @@ export default function BiosTerminal({
             compactUi ? 'px-3 py-3 max-w-none' : 'px-4 py-5 sm:px-8 sm:py-6 max-w-3xl mx-auto'
           }`}
         >
-          <div className={`${compactUi ? 'mb-3 pb-2' : 'mb-5 pb-4'} border-b border-[#33FF33]/15`}>
-            <TerminalBlock className={`text-[#33FF33] ${compactUi ? 'text-[12px]' : ''}`}>
+          <div className={`${compactUi ? 'mb-3 pb-2' : 'mb-5 pb-4'} border-b border-crt/15`}>
+            <TerminalBlock className={`text-crt ${compactUi ? 'text-[12px]' : ''}`}>
               {compactUi ? t('bios.header.compact') : t('bios.header.full')}
             </TerminalBlock>
             {!compactUi && (
               <>
                 <div className="h-3" />
-                <TerminalBlock className="text-[#33FF33]/85">{t('bios.version')}</TerminalBlock>
+                <TerminalBlock className="text-crt/85">{t('bios.version')}</TerminalBlock>
               </>
             )}
           </div>
 
           <div
-            className={`${compactUi ? 'mb-3 px-2 py-2' : 'mb-5 px-3 py-3 sm:px-4'} border border-[#33FF33]/20 bg-[#33FF33]/3`}
+            className={`${compactUi ? 'mb-3 px-2 py-2' : 'mb-5 px-3 py-3 sm:px-4'} border border-crt/20 bg-crt/3`}
             style={{ boxShadow: `inset 0 0 20px ${PHOSPHOR}08` }}
           >
             {!compactUi && (
@@ -375,12 +375,12 @@ export default function BiosTerminal({
           <div
             className={`mt-4 flex items-center font-mono tracking-wide ${compactUi ? 'text-[12px]' : 'text-[13px] sm:text-[14px]'}`}
           >
-            <span className="text-[#33FF33] font-bold" style={{ textShadow: `0 0 6px ${PHOSPHOR}60` }}>
+            <span className="text-crt font-bold" style={{ textShadow: `0 0 6px ${PHOSPHOR}60` }}>
               C:\&gt;
             </span>
-            <span className="text-[#33FF33] ml-0.5">{currentLine}</span>
+            <span className="text-crt ml-0.5">{currentLine}</span>
             <span
-              className="inline-block w-2 h-4 bg-[#33FF33] ml-1"
+              className="inline-block w-2 h-4 bg-crt ml-1"
               style={{ animation: 'blinker 1s step-end infinite', boxShadow: `0 0 6px ${PHOSPHOR}` }}
             />
           </div>
@@ -395,7 +395,7 @@ export default function BiosTerminal({
             animate={{ opacity: 1, x: 0, y: 0 }}
             exit={isLandscape ? { opacity: 0, x: 12 } : { opacity: 0, y: 12 }}
             transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-            className={`border-[#33FF33]/15 bg-surface-sunken/80 backdrop-blur-sm z-20 touch-none shrink-0 ${
+            className={`border-crt/15 bg-surface-sunken/80 backdrop-blur-sm z-20 touch-none shrink-0 ${
               isLandscape
                 ? 'border-l w-52 sm:w-56 overflow-y-auto py-2 pl-1 pr-[max(0.5rem,env(safe-area-inset-right))]'
                 : 'border-t p-2 pb-[max(1.5rem,env(safe-area-inset-bottom))]'

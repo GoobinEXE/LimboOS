@@ -281,7 +281,7 @@ export default function GroupManager({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
            <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-           <h3 className="text-zinc-600 font-black text-[10px] uppercase tracking-[0.3em]">{t('squads.title')}</h3>
+           <h3 className="text-ash-600 font-black text-[10px] uppercase tracking-[0.3em]">{t('squads.title')}</h3>
         </div>
         {!isCreating && (
           <button 
@@ -307,20 +307,20 @@ export default function GroupManager({
       )}
 
       {isCreating ? (
-        <div className="bg-[#1a1a1a] border-4 border-[#1a1a1a] p-8 rounded-xl shadow-2xl relative overflow-hidden">
+        <div className="bg-seam border-4 border-seam p-8 rounded-xl shadow-2xl relative overflow-hidden">
           <div className="noise-overlay" /><div className="scanlines" />
           <form onSubmit={editingGroup ? handleUpdateGroup : handleCreateGroup} className="space-y-8 relative z-10">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
               {/* Coluna 1: Info Básica */}
               <div className="space-y-6">
                 <div>
-                  <label className="block font-black text-[10px] text-zinc-500 mb-3 uppercase tracking-widest">{t('squads.idLabel')}</label>
+                  <label className="block font-black text-[10px] text-ash-500 mb-3 uppercase tracking-widest">{t('squads.idLabel')}</label>
                   <input 
                     type="text" 
                     value={groupName}
                     onChange={(e) => setGroupName(e.target.value)}
                     placeholder={t('squads.idPlaceholder')}
-                    className="w-full bg-black/60 border-2 border-[#1a1a1a] text-white px-4 py-3 text-[11px] font-bold focus:border-primary outline-none rounded-sm uppercase transition-all"
+                    className="w-full bg-black/60 border-2 border-seam text-white px-4 py-3 text-[11px] font-bold focus:border-primary outline-none rounded-sm uppercase transition-all"
                     required
                   />
                 </div>
@@ -332,13 +332,13 @@ export default function GroupManager({
                 </div>
 
                 <div className="pt-4 border-t border-white/5">
-                  <label className="block font-black text-[10px] text-zinc-500 mb-3 uppercase tracking-widest">{t('squads.sessions')}</label>
+                  <label className="block font-black text-[10px] text-ash-500 mb-3 uppercase tracking-widest">{t('squads.sessions')}</label>
                   <div className="flex gap-2 mb-4">
                     <input 
                       type="date" 
                       value={sessionDate}
                       onChange={(e) => setSessionDate(e.target.value)}
-                      className="flex-1 bg-black/60 border-2 border-[#1a1a1a] text-white px-4 py-3 text-[10px] font-bold focus:border-primary outline-none rounded-sm"
+                      className="flex-1 bg-black/60 border-2 border-seam text-white px-4 py-3 text-[10px] font-bold focus:border-primary outline-none rounded-sm"
                     />
                     <button 
                       type="button"
@@ -348,14 +348,14 @@ export default function GroupManager({
                       ADD DATA
                     </button>
                   </div>
-                  <div className="flex flex-wrap gap-2 min-h-10 bg-black/40 p-3 rounded-sm border border-[#1a1a1a]">
+                  <div className="flex flex-wrap gap-2 min-h-10 bg-black/40 p-3 rounded-sm border border-seam">
                     {sessions.map(date => (
                       <span key={date} className="bg-black border border-white/10 text-primary px-3 py-1.5 rounded-sm text-[9px] font-mono font-black flex items-center gap-3 shadow-lg">
                         {date}
-                        <button type="button" onClick={() => removeSession(date)} className="text-zinc-600 hover:text-red-500 transition-colors">×</button>
+                        <button type="button" onClick={() => removeSession(date)} className="text-ash-600 hover:text-red-500 transition-colors">×</button>
                       </span>
                     ))}
-                    {sessions.length === 0 && <p className="text-zinc-800 text-[9px] font-black uppercase tracking-widest italic pt-1">{t('squads.noSessions')}</p>}
+                    {sessions.length === 0 && <p className="text-ash-800 text-[9px] font-black uppercase tracking-widest italic pt-1">{t('squads.noSessions')}</p>}
                   </div>
                 </div>
               </div>
@@ -365,9 +365,9 @@ export default function GroupManager({
                 {/* Membros Atuais */}
                 <div>
                   <div className="flex justify-between items-center mb-3">
-                    <label className="block font-black text-[10px] text-zinc-500 uppercase tracking-widest">Membros do Esquadrão ({selectedCharacters.length})</label>
+                    <label className="block font-black text-[10px] text-ash-500 uppercase tracking-widest">Membros do Esquadrão ({selectedCharacters.length})</label>
                   </div>
-                  <div className="bg-black/40 border-2 border-[#1a1a1a] h-36 overflow-y-auto p-3 space-y-2 custom-scrollbar rounded-sm">
+                  <div className="bg-black/40 border-2 border-seam h-36 overflow-y-auto p-3 space-y-2 custom-scrollbar rounded-sm">
                     {squadMembers.map(item => {
                       const user = users.find(u => u.uid === item.uid);
                       return (
@@ -376,14 +376,14 @@ export default function GroupManager({
                           className="flex items-center justify-between p-2 bg-primary/5 border border-primary/20 rounded-sm"
                         >
                           <div className="flex items-center gap-3 min-w-0">
-                            <div className={`w-6 h-6 rounded-sm bg-black border border-[#1a1a1a] flex items-center justify-center font-black text-xs ${item.char.agentStatus === 'vivo' ? 'text-emerald-500' : 'text-red-500'}`}>
+                            <div className={`w-6 h-6 rounded-sm bg-black border border-seam flex items-center justify-center font-black text-xs ${item.char.agentStatus === 'vivo' ? 'text-phosphor-500' : 'text-red-500'}`}>
                               {(item.char.codinome || '?')[0].toUpperCase()}
                             </div>
                             <div className="min-w-0">
                               <p className="font-black text-[10px] text-primary uppercase truncate">
                                 {item.char.codinome}
                               </p>
-                              <p className="text-[7px] font-mono text-zinc-600 font-bold uppercase truncate mt-0.5">
+                              <p className="text-[7px] font-mono text-ash-600 font-bold uppercase truncate mt-0.5">
                                 {masterAccountLabel(user, '?')}
                               </p>
                             </div>
@@ -391,7 +391,7 @@ export default function GroupManager({
                           <button
                             type="button"
                             onClick={() => toggleCharacter(item.uid, item.char.id)}
-                            className="w-5 h-5 flex items-center justify-center text-zinc-600 hover:text-red-500 transition-all rounded-xs hover:bg-red-500/10 cursor-pointer"
+                            className="w-5 h-5 flex items-center justify-center text-ash-600 hover:text-red-500 transition-all rounded-xs hover:bg-red-500/10 cursor-pointer"
                             title={t('squads.removeTitle')}
                           >
                             <span className="material-symbols-outlined text-sm font-black">close</span>
@@ -400,7 +400,7 @@ export default function GroupManager({
                       );
                     })}
                     {selectedCharacters.length === 0 && (
-                      <div className="h-full flex flex-col items-center justify-center text-zinc-700 py-8 opacity-40">
+                      <div className="h-full flex flex-col items-center justify-center text-ash-700 py-8 opacity-40">
                         <span className="material-symbols-outlined text-2xl mb-1">group_off</span>
                         <p className="text-[8px] font-black uppercase tracking-widest">{t('squads.noSelected')}</p>
                       </div>
@@ -411,10 +411,10 @@ export default function GroupManager({
                 {/* Agentes Disponíveis para Seleção */}
                 <div>
                   <div className="flex justify-between items-center mb-3">
-                     <label className="block font-black text-[10px] text-zinc-500 uppercase tracking-widest">{t('squads.available')}</label>
+                     <label className="block font-black text-[10px] text-ash-500 uppercase tracking-widest">{t('squads.available')}</label>
                      <label className="flex items-center gap-2 cursor-pointer group">
                        <input type="checkbox" checked={showArchived} onChange={(e) => setShowArchived(e.target.checked)} className="hidden" />
-                       <span className={`text-[8px] font-black uppercase tracking-widest transition-colors ${showArchived ? 'text-primary' : 'text-zinc-600 group-hover:text-zinc-400'}`}>{t('squads.includeArchived')}</span>
+                       <span className={`text-[8px] font-black uppercase tracking-widest transition-colors ${showArchived ? 'text-primary' : 'text-ash-600 group-hover:text-ash-400'}`}>{t('squads.includeArchived')}</span>
                      </label>
                   </div>
 
@@ -426,11 +426,11 @@ export default function GroupManager({
                       value={agentSearchQuery}
                       onChange={(e) => setAgentSearchQuery(e.target.value)}
                       onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAgentSearch())}
-                      className="w-full bg-black/40 border-2 border-[#1a1a1a] text-white px-10 py-2.5 text-[9px] font-bold focus:border-primary/40 outline-none rounded-sm uppercase transition-all shadow-inner"
+                      className="w-full bg-black/40 border-2 border-seam text-white px-10 py-2.5 text-[9px] font-bold focus:border-primary/40 outline-none rounded-sm uppercase transition-all shadow-inner"
                     />
                   </div>
 
-                  <div className="bg-black/60 border-2 border-[#1a1a1a] h-44 overflow-y-auto p-3 space-y-2 custom-scrollbar rounded-sm">
+                  <div className="bg-black/60 border-2 border-seam h-44 overflow-y-auto p-3 space-y-2 custom-scrollbar rounded-sm">
                     {availableAgents.map(item => {
                       const user = users.find(u => u.uid === item.uid);
                       return (
@@ -441,32 +441,32 @@ export default function GroupManager({
                           className="w-full flex items-center justify-between p-2 text-left transition-all border border-transparent hover:border-primary/20 hover:bg-primary/5 rounded-sm group cursor-pointer"
                         >
                           <div className="flex items-center gap-3 min-w-0">
-                            <div className={`w-8 h-8 rounded-sm bg-black border border-[#1a1a1a] flex items-center justify-center font-black text-sm ${item.char.agentStatus === 'vivo' ? 'text-emerald-500' : 'text-red-500'}`}>
+                            <div className={`w-8 h-8 rounded-sm bg-black border border-seam flex items-center justify-center font-black text-sm ${item.char.agentStatus === 'vivo' ? 'text-phosphor-500' : 'text-red-500'}`}>
                               {(item.char.codinome || '?')[0].toUpperCase()}
                             </div>
                             <div className="min-w-0">
-                              <p className="font-black text-[10px] text-zinc-400 uppercase truncate group-hover:text-white transition-colors">
+                              <p className="font-black text-[10px] text-ash-400 uppercase truncate group-hover:text-white transition-colors">
                                 {item.char.codinome}
                               </p>
-                              <p className="text-[7px] font-mono text-zinc-600 font-bold uppercase truncate mt-0.5">
+                              <p className="text-[7px] font-mono text-ash-600 font-bold uppercase truncate mt-0.5">
                                 JOGADOR: {masterAccountLabel(user, '?')}
                               </p>
                             </div>
                           </div>
-                          <span className="material-symbols-outlined text-sm text-zinc-800 group-hover:text-primary transition-colors pr-1">person_add</span>
+                          <span className="material-symbols-outlined text-sm text-ash-800 group-hover:text-primary transition-colors pr-1">person_add</span>
                         </button>
                       );
                     })}
                     {availableAgents.length === 0 && (
-                      <p className="text-zinc-600 text-[9px] font-black uppercase tracking-widest text-center py-8">{t('squads.noneAvailable')}</p>
+                      <p className="text-ash-600 text-[9px] font-black uppercase tracking-widest text-center py-8">{t('squads.noneAvailable')}</p>
                     )}
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="flex justify-end gap-6 pt-8 border-t-4 border-[#1a1a1a]">
-              <button type="button" onClick={resetForm} className="px-8 py-3 text-[10px] font-black text-zinc-600 hover:text-white uppercase tracking-widest transition-colors">{t('squads.abort')}</button>
+            <div className="flex justify-end gap-6 pt-8 border-t-4 border-seam">
+              <button type="button" onClick={resetForm} className="px-8 py-3 text-[10px] font-black text-ash-600 hover:text-white uppercase tracking-widest transition-colors">{t('squads.abort')}</button>
               <button 
                 type="submit" 
                 className="bg-primary hover:bg-primary-container text-black px-12 py-3 rounded-sm font-black text-[10px] tracking-widest uppercase transition-all active:scale-95 glow-orange shadow-lg"
@@ -499,7 +499,7 @@ export default function GroupManager({
                 animate="visible"
                 exit="exit"
                 transition={{ ...ADMIN_FADE, delay: staggerDelay(index) }}
-                className="bg-[#1a1a1a] border-4 border-[#1a1a1a] p-6 group hover:border-primary/20 transition-all rounded-xl shadow-xl relative overflow-hidden active:scale-[0.99]"
+                className="bg-seam border-4 border-seam p-6 group hover:border-primary/20 transition-all rounded-xl shadow-xl relative overflow-hidden active:scale-[0.99]"
               >
                 <div className="absolute top-0 right-0 w-12 h-12 bg-primary/5 rotate-45 translate-x-6 -translate-y-6 border-b border-primary/10" />
                 <div className="flex justify-between items-start mb-6">
@@ -508,27 +508,27 @@ export default function GroupManager({
                     <div className="flex flex-wrap items-center gap-3 mt-2">
                       <div className="flex items-center gap-1.5 bg-black/40 px-2 py-1 rounded-sm border border-white/5 shadow-inner">
                          <div className="flex gap-1.5">
-                            <span className="flex items-center gap-1 text-[8px] font-black text-emerald-500">🟩 {aliveCount}</span>
+                            <span className="flex items-center gap-1 text-[8px] font-black text-phosphor-500">🟩 {aliveCount}</span>
                             <span className="flex items-center gap-1 text-[8px] font-black text-yellow-500">🟨 {missingCount}</span>
                             <span className="flex items-center gap-1 text-[8px] font-black text-red-500">🟥 {deadCount}</span>
                          </div>
                       </div>
                       <div className="flex items-center gap-1.5 bg-black/40 px-2 py-0.5 rounded-sm border border-white/5 shadow-inner">
                          <div className="w-1 h-1 bg-primary rounded-full animate-pulse" />
-                         <p className="text-[8px] font-black text-zinc-500 uppercase tracking-widest">
+                         <p className="text-[8px] font-black text-ash-500 uppercase tracking-widest">
                            {slots.length} AGENTES
                          </p>
                       </div>
                       {group.campaignId && (
-                        <span className="text-[8px] font-black bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 px-2 py-1 rounded-sm uppercase tracking-widest flex items-center gap-1">
+                        <span className="text-[8px] font-black bg-phosphor-500/10 text-phosphor-500 border border-phosphor-500/20 px-2 py-1 rounded-sm uppercase tracking-widest flex items-center gap-1">
                           <span className="material-symbols-outlined text-[10px]">rocket_launch</span>
                           {campaignLabel(group.campaignId, campaigns)}
                         </span>
                       )}
                       {group.unlockedCampaigns && group.unlockedCampaigns.length > 0 && (
                         <div className="flex items-center gap-1.5 bg-black/40 px-2 py-1 rounded-sm border border-white/5">
-                          <span className="material-symbols-outlined text-[10px] text-zinc-500">vpn_key</span>
-                          <p className="text-[8px] font-black text-zinc-500 uppercase tracking-widest">
+                          <span className="material-symbols-outlined text-[10px] text-ash-500">vpn_key</span>
+                          <p className="text-[8px] font-black text-ash-500 uppercase tracking-widest">
                             {group.unlockedCampaigns.length} MISSÕES
                           </p>
                         </div>
@@ -538,7 +538,7 @@ export default function GroupManager({
                   <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0">
                     <button
                       onClick={() => setShowMissionsModal(group.id)}
-                      className="w-8 h-8 flex items-center justify-center bg-black/60 border border-white/10 rounded-sm text-emerald-500 hover:bg-emerald-500 hover:text-black transition-all active:scale-90"
+                      className="w-8 h-8 flex items-center justify-center bg-black/60 border border-white/10 rounded-sm text-phosphor-500 hover:bg-phosphor-500 hover:text-black transition-all active:scale-90"
                       title={t('squads.manageMissions')}
                     >
                       <span className="material-symbols-outlined text-sm">rocket_launch</span>
@@ -549,10 +549,10 @@ export default function GroupManager({
                     <button onClick={() => setShowGrantModal(group.id)} className="w-8 h-8 flex items-center justify-center bg-black/60 border border-white/10 rounded-sm text-primary hover:bg-primary hover:text-black transition-all active:scale-90" title={t('squads.bulkIntelTitle')}>
                       <span className="material-symbols-outlined text-sm">wifi_tethering</span>
                     </button>
-                    <button onClick={() => startEdit(group)} className="w-8 h-8 flex items-center justify-center bg-black/60 border border-white/10 rounded-sm text-zinc-600 hover:text-emerald-400 transition-all active:scale-90">
+                    <button onClick={() => startEdit(group)} className="w-8 h-8 flex items-center justify-center bg-black/60 border border-white/10 rounded-sm text-ash-600 hover:text-phosphor-400 transition-all active:scale-90">
                       <span className="material-symbols-outlined text-sm">edit</span>
                     </button>
-                    <button onClick={() => handleDeleteGroup(group.id)} className="w-8 h-8 flex items-center justify-center bg-black/60 border border-white/10 rounded-sm text-zinc-600 hover:text-red-500 transition-all active:scale-90">
+                    <button onClick={() => handleDeleteGroup(group.id)} className="w-8 h-8 flex items-center justify-center bg-black/60 border border-white/10 rounded-sm text-ash-600 hover:text-red-500 transition-all active:scale-90">
                       <span className="material-symbols-outlined text-sm">delete</span>
                     </button>
                   </div>
@@ -561,11 +561,11 @@ export default function GroupManager({
                 <div className="space-y-6">
                   <div className="flex flex-wrap gap-1.5">
                     {group.sessions?.slice(0, 4).map(date => (
-                      <span key={date} className="text-[8px] font-mono bg-black text-zinc-600 px-2 py-1 rounded-sm border border-white/5 font-bold tracking-widest uppercase shadow-sm">
+                      <span key={date} className="text-[8px] font-mono bg-black text-ash-600 px-2 py-1 rounded-sm border border-white/5 font-bold tracking-widest uppercase shadow-sm">
                         {date}
                       </span>
                     ))}
-                    {group.sessions?.length > 4 && <span className="text-[8px] font-black text-zinc-800 self-center">+{group.sessions.length - 4}</span>}
+                    {group.sessions?.length > 4 && <span className="text-[8px] font-black text-ash-800 self-center">+{group.sessions.length - 4}</span>}
                   </div>
                   
                   <div className="flex flex-wrap gap-3 pt-2">
@@ -574,12 +574,12 @@ export default function GroupManager({
                       if (!item) return null;
                       return (
                         <div key={`${slot.uid}_${slot.characterId}`} className="group/member flex items-center gap-2 bg-black/40 border border-white/5 px-2 py-1.5 rounded-sm min-w-30 relative">
-                           <div className={`w-2 h-2 rounded-full ${item.char.agentStatus === 'vivo' ? 'bg-emerald-500 shadow-[0_0_5px_rgba(16,185,129,0.5)]' : item.char.agentStatus === 'morto' ? 'bg-red-500' : 'bg-yellow-500'}`} />
+                           <div className={`w-2 h-2 rounded-full ${item.char.agentStatus === 'vivo' ? 'bg-phosphor-500 shadow-[0_0_5px_rgba(86,185,75,0.5)]' : item.char.agentStatus === 'morto' ? 'bg-red-500' : 'bg-yellow-500'}`} />
                            <div className="min-w-0 flex-1">
-                             <p className="font-black text-[9px] text-zinc-300 uppercase truncate pr-4">{item.char.codinome}</p>
-                             <p className="font-mono text-[8px] text-zinc-600 truncate">{masterAccountLabelByUid(slot.uid, users, '???')}</p>
+                             <p className="font-black text-[9px] text-ash-300 uppercase truncate pr-4">{item.char.codinome}</p>
+                             <p className="font-mono text-[8px] text-ash-600 truncate">{masterAccountLabelByUid(slot.uid, users, '???')}</p>
                            </div>
-                           <button onClick={() => handleQuickRemoveMember(group.id, item.char.id, item.char.codinome)} className="absolute right-1 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center text-zinc-500 hover:text-red-500 hover:bg-red-500/10 rounded-sm opacity-0 group-hover/member:opacity-100 transition-all bg-black/80 backdrop-blur-sm z-10">
+                           <button onClick={() => handleQuickRemoveMember(group.id, item.char.id, item.char.codinome)} className="absolute right-1 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center text-ash-500 hover:text-red-500 hover:bg-red-500/10 rounded-sm opacity-0 group-hover/member:opacity-100 transition-all bg-black/80 backdrop-blur-sm z-10">
                              <span className="material-symbols-outlined text-[14px]">close</span>
                            </button>
                         </div>
@@ -597,7 +597,7 @@ export default function GroupManager({
                         placeholder={t('squads.searchAdd')}
                         value={quickAddSearch}
                         onChange={(e) => setQuickAddSearch(e.target.value)}
-                        className="w-full bg-black border-2 border-[#1a1a1a] text-white px-3 py-2 text-[10px] font-bold focus:border-primary outline-none rounded-sm uppercase transition-all mb-2"
+                        className="w-full bg-black border-2 border-seam text-white px-3 py-2 text-[10px] font-bold focus:border-primary outline-none rounded-sm uppercase transition-all mb-2"
                         autoFocus
                       />
                       <div className="max-h-32 overflow-y-auto space-y-1 custom-scrollbar">
@@ -605,7 +605,7 @@ export default function GroupManager({
                           (!quickAddSearch || c.char.codinome?.toLowerCase().includes(quickAddSearch.toLowerCase())) &&
                           !group.characterSlots?.some(s => s.characterId === c.char.id)
                         ).length === 0 ? (
-                          <p className="text-[9px] text-zinc-500 uppercase font-black py-2 text-center">{t('squads.noneFound')}</p>
+                          <p className="text-[9px] text-ash-500 uppercase font-black py-2 text-center">{t('squads.noneFound')}</p>
                         ) : (
                           allCharacters.filter(c => 
                             (!quickAddSearch || c.char.codinome?.toLowerCase().includes(quickAddSearch.toLowerCase())) &&
@@ -613,10 +613,10 @@ export default function GroupManager({
                           ).map(c => (
                             <div key={c.char.id} className="flex items-center justify-between p-2 bg-black hover:bg-white/5 border border-white/5 rounded-sm transition-all group/add">
                                <div className="flex items-center gap-2">
-                                 <div className={`w-2 h-2 rounded-full ${c.char.agentStatus === 'vivo' ? 'bg-emerald-500' : c.char.agentStatus === 'morto' ? 'bg-red-500' : 'bg-yellow-500'}`} />
+                                 <div className={`w-2 h-2 rounded-full ${c.char.agentStatus === 'vivo' ? 'bg-phosphor-500' : c.char.agentStatus === 'morto' ? 'bg-red-500' : 'bg-yellow-500'}`} />
                                  <div className="flex flex-col">
                                    <span className="text-[10px] font-black text-white uppercase">{c.char.codinome}</span>
-                                   <span className="text-[8px] font-mono text-zinc-600 uppercase">{masterAccountLabelByUid(c.uid, users, '???')}</span>
+                                   <span className="text-[8px] font-mono text-ash-600 uppercase">{masterAccountLabelByUid(c.uid, users, '???')}</span>
                                  </div>
                                </div>
                                <button onClick={() => handleQuickAddMember(group.id, c.uid, c.char.id, c.char.codinome)} className="text-[9px] font-black bg-primary/10 text-primary px-3 py-1.5 rounded-sm uppercase hover:bg-primary hover:text-black transition-all opacity-0 group-hover/add:opacity-100">{t('squads.add')}</button>
@@ -632,9 +632,9 @@ export default function GroupManager({
           })}
           </AnimatePresence>
           {groups.length === 0 && (
-            <div className="col-span-full py-24 text-center border-4 border-dashed border-[#1a1a1a] rounded-2xl opacity-20 flex flex-col items-center justify-center">
-              <span className="material-symbols-outlined text-6xl text-zinc-800 mb-4">groups_2</span>
-              <p className="text-zinc-700 font-black text-sm uppercase tracking-[0.4em]">{t('squads.empty')}</p>
+            <div className="col-span-full py-24 text-center border-4 border-dashed border-seam rounded-2xl opacity-20 flex flex-col items-center justify-center">
+              <span className="material-symbols-outlined text-6xl text-ash-800 mb-4">groups_2</span>
+              <p className="text-ash-700 font-black text-sm uppercase tracking-[0.4em]">{t('squads.empty')}</p>
             </div>
           )}
         </div>

@@ -231,7 +231,7 @@ function StatusCard({
 }) {
   const className = `bg-surface-container-low border p-5 relative overflow-hidden group transition-all hover:bg-surface-container-high ${
     onClick ? 'cursor-pointer hover:border-primary/40 active:scale-[0.98]' : ''
-  } ${active ? 'border-red-500/30 text-red-400' : 'border-emerald-500/20 text-emerald-400'}`;
+  } ${active ? 'border-red-500/30 text-red-400' : 'border-phosphor-500/20 text-phosphor-400'}`;
 
   const content = (
     <>
@@ -241,7 +241,7 @@ function StatusCard({
         </span>
       )}
       <div className="absolute -right-2 -bottom-2 opacity-10 group-hover:opacity-20 transition-all group-hover:scale-110">
-        <span className={`material-symbols-outlined text-6xl ${active ? 'text-red-500/20' : 'text-emerald-500/20'}`}>
+        <span className={`material-symbols-outlined text-6xl ${active ? 'text-red-500/20' : 'text-phosphor-500/20'}`}>
           {icon}
         </span>
       </div>

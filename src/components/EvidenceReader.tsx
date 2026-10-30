@@ -194,7 +194,7 @@ export default function EvidenceReader({ evidence, onClose }: EvidenceReaderProp
   const isCorrupted = isText && (evidence as TextIntel).isCorrupted();
   
   const scheme = isVisual
-    ? { bg: 'bg-[#0a0a0f]', text: 'text-cyan-400', border: 'border-cyan-400', accent: 'cyan', selBg: 'selection:bg-cyan-400', selText: 'selection:text-[#0a0a0f]', scrollThumb: '#22d3ee' }
+    ? { bg: 'bg-[#0a0a0f]', text: 'text-tube-400', border: 'border-tube-400', accent: 'cyan', selBg: 'selection:bg-tube-400', selText: 'selection:text-[#0a0a0f]', scrollThumb: '#22d3ee' }
     : isVideo
       ? { bg: 'bg-[#0a0a0a]', text: 'text-orange-400', border: 'border-orange-400', accent: 'orange', selBg: 'selection:bg-orange-400', selText: 'selection:text-[#0a0a0a]', scrollThumb: '#fb923c' }
       : isMeta
@@ -313,18 +313,18 @@ export default function EvidenceReader({ evidence, onClose }: EvidenceReaderProp
               <video
                 src={details.url}
                 controls
-                className="w-full max-h-[50vh] rounded-lg border border-cyan-500/30 bg-black"
+                className="w-full max-h-[50vh] rounded-lg border border-tube-500/30 bg-black"
                 playsInline
               />
             ) : (
               <img
                 src={details.url}
                 alt={evidence.title}
-                className="w-full max-h-[50vh] object-contain rounded-lg border border-cyan-500/30"
+                className="w-full max-h-[50vh] object-contain rounded-lg border border-tube-500/30"
               />
             )}
             {evidence.description && (
-              <div className={`w-full text-sm leading-relaxed whitespace-pre-wrap ${scheme.selBg} ${scheme.selText} text-cyan-300/90`}>
+              <div className={`w-full text-sm leading-relaxed whitespace-pre-wrap ${scheme.selBg} ${scheme.selText} text-tube-300/90`}>
                 {evidence.description}
               </div>
             )}

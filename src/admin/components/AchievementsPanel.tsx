@@ -177,7 +177,7 @@ export default function AchievementsPanel({ embedded = false }: { embedded?: boo
         ? 'text-amber-300 border-amber-400/40 bg-amber-400/10'
         : tier === 'rare'
           ? 'text-yellow-300 border-yellow-500/30 bg-yellow-500/10'
-          : 'text-zinc-400 border-white/10 bg-white/5';
+          : 'text-ash-400 border-white/10 bg-white/5';
     return (
       <span className={`text-[8px] font-black uppercase tracking-widest px-2 py-0.5 border rounded-sm ${tone}`}>
         {ACHIEVEMENT_TIER_LABELS[tier]}
@@ -201,7 +201,7 @@ export default function AchievementsPanel({ embedded = false }: { embedded?: boo
         <div className="p-6 border-b border-primary/10 bg-black/40 flex flex-col gap-4 relative z-10">
           <div className="flex justify-between items-center gap-4 flex-wrap">
             <div className="relative w-full max-w-md">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-zinc-700 text-sm">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-ash-700 text-sm">
                 search
               </span>
               <input
@@ -213,7 +213,7 @@ export default function AchievementsPanel({ embedded = false }: { embedded?: boo
               />
             </div>
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-[10px] font-black text-zinc-600 uppercase tracking-widest shrink-0">
+              <span className="text-[10px] font-black text-ash-600 uppercase tracking-widest shrink-0">
                 {filteredDefs.length} {t('achievements.countLabel')}
                 {!isRemote && (
                   <span className="ml-2 text-amber-500/80">· {t('achievements.localHint')}</span>
@@ -243,7 +243,7 @@ export default function AchievementsPanel({ embedded = false }: { embedded?: boo
               className={`text-[9px] font-black uppercase tracking-widest px-3 py-1.5 border rounded-sm transition-colors ${
                 categoryFilter === 'all'
                   ? 'border-secondary text-secondary bg-secondary/10'
-                  : 'border-white/10 text-zinc-500 hover:text-white'
+                  : 'border-white/10 text-ash-500 hover:text-white'
               }`}
             >
               {t('achievements.allCategories')}
@@ -256,7 +256,7 @@ export default function AchievementsPanel({ embedded = false }: { embedded?: boo
                 className={`text-[9px] font-black uppercase tracking-widest px-3 py-1.5 border rounded-sm transition-colors ${
                   categoryFilter === cat
                     ? 'border-secondary text-secondary bg-secondary/10'
-                    : 'border-white/10 text-zinc-500 hover:text-white'
+                    : 'border-white/10 text-ash-500 hover:text-white'
                 }`}
               >
                 {ACHIEVEMENT_CATEGORY_LABELS[cat]}
@@ -274,7 +274,7 @@ export default function AchievementsPanel({ embedded = false }: { embedded?: boo
           )}
           {groups.map((group) => (
             <div key={group.category} className="space-y-4">
-              <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500">
+              <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-ash-500">
                 {group.label} // {group.defs.length}
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -284,7 +284,7 @@ export default function AchievementsPanel({ embedded = false }: { embedded?: boo
                     className={`bg-black border-2 p-6 rounded-xl flex flex-col gap-4 group transition-all shadow-lg ${
                       ach.enabled === false
                         ? 'border-white/5 opacity-50'
-                        : 'border-[#1a1a1a] hover:border-secondary/20'
+                        : 'border-seam hover:border-secondary/20'
                     }`}
                   >
                     <div className="flex items-start gap-5">
@@ -297,7 +297,7 @@ export default function AchievementsPanel({ embedded = false }: { embedded?: boo
                             {ach.title}
                           </h4>
                           {tierBadge(ach.tier)}
-                          <span className="text-[8px] font-black uppercase tracking-widest px-2 py-0.5 border rounded-sm text-zinc-400 border-white/10">
+                          <span className="text-[8px] font-black uppercase tracking-widest px-2 py-0.5 border rounded-sm text-ash-400 border-white/10">
                             {PLATFORM_LABELS[
                               ach.platforms.includes('walkman')
                                 ? 'walkman'
@@ -317,21 +317,21 @@ export default function AchievementsPanel({ embedded = false }: { embedded?: boo
                             </span>
                           )}
                         </div>
-                        <p className="text-[9px] font-mono text-zinc-600 font-bold uppercase mt-1 tracking-widest mb-2">
+                        <p className="text-[9px] font-mono text-ash-600 font-bold uppercase mt-1 tracking-widest mb-2">
                           ID: {ach.id}
                           {ach.campaignIds === 'global'
                             ? ' · CAMP: GLOBAL'
                             : ` · CAMP: ${ach.campaignIds.join(',')}`}
                         </p>
                         {ach.description && (
-                          <p className="text-[10px] text-zinc-400 font-bold leading-relaxed">
+                          <p className="text-[10px] text-ash-400 font-bold leading-relaxed">
                             {ach.description}
                           </p>
                         )}
-                        <p className="text-[9px] text-zinc-600 mt-2 leading-relaxed">
+                        <p className="text-[9px] text-ash-600 mt-2 leading-relaxed">
                           {ach.unlockCondition}
                         </p>
-                        <p className="text-[8px] text-zinc-700 mt-1 font-mono uppercase">
+                        <p className="text-[8px] text-ash-700 mt-1 font-mono uppercase">
                           rule: {ach.rule.type}
                         </p>
                       </div>
@@ -341,7 +341,7 @@ export default function AchievementsPanel({ embedded = false }: { embedded?: boo
                         type="button"
                         onClick={() => openEdit(ach)}
                         disabled={!isRemote}
-                        className="flex-1 text-[8px] font-black uppercase tracking-widest py-2 border border-white/10 text-zinc-400 hover:text-white hover:border-secondary/40 rounded-sm disabled:opacity-30"
+                        className="flex-1 text-[8px] font-black uppercase tracking-widest py-2 border border-white/10 text-ash-400 hover:text-white hover:border-secondary/40 rounded-sm disabled:opacity-30"
                       >
                         {t('achievements.edit')}
                       </button>
@@ -349,7 +349,7 @@ export default function AchievementsPanel({ embedded = false }: { embedded?: boo
                         type="button"
                         onClick={() => handleToggleEnabled(ach)}
                         disabled={!isRemote}
-                        className="flex-1 text-[8px] font-black uppercase tracking-widest py-2 border border-white/10 text-zinc-400 hover:text-amber-300 rounded-sm disabled:opacity-30"
+                        className="flex-1 text-[8px] font-black uppercase tracking-widest py-2 border border-white/10 text-ash-400 hover:text-amber-300 rounded-sm disabled:opacity-30"
                       >
                         {ach.enabled === false
                           ? t('achievements.enable')

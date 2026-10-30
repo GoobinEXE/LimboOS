@@ -284,10 +284,10 @@ export default function LiveWorkspace({
       {modal}
 
       {/* Sessão ativa */}
-      <section className="border border-emerald-500/20 bg-surface-container-low/60 p-4 sm:p-5 space-y-4">
+      <section className="border border-phosphor-500/20 bg-surface-container-low/60 p-4 sm:p-5 space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0">
-            <span className="material-symbols-outlined text-emerald-400 text-xl">event_available</span>
+            <span className="material-symbols-outlined text-phosphor-400 text-xl">event_available</span>
             <div className="min-w-0">
               <h2 className="font-display font-bold uppercase tracking-widest text-sm text-white">
                 {t('live.session.title')}
@@ -320,7 +320,7 @@ export default function LiveWorkspace({
               <button
                 type="button"
                 onClick={() => onSessionChange(null)}
-                className="text-[9px] font-display font-bold uppercase tracking-widest px-3 py-1.5 border border-white/10 text-zinc-500 hover:text-red-400 hover:border-red-500/30"
+                className="text-[9px] font-display font-bold uppercase tracking-widest px-3 py-1.5 border border-white/10 text-ash-500 hover:text-red-400 hover:border-red-500/30"
               >
                 {t('live.session.clear')}
               </button>
@@ -329,13 +329,13 @@ export default function LiveWorkspace({
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <label className="space-y-1.5">
-            <span className="text-[9px] font-display font-bold uppercase tracking-widest text-zinc-500">
+            <span className="text-[9px] font-display font-bold uppercase tracking-widest text-ash-500">
               {t('live.session.squad')}
             </span>
             <select
               value={activeSession?.groupId || ''}
               onChange={(e) => handleGroupSelect(e.target.value)}
-              className="w-full bg-black/50 border border-white/10 px-3 py-2.5 text-[10px] font-display font-bold uppercase tracking-widest text-white outline-none focus:border-emerald-500/40"
+              className="w-full bg-black/50 border border-white/10 px-3 py-2.5 text-[10px] font-display font-bold uppercase tracking-widest text-white outline-none focus:border-phosphor-500/40"
             >
               <option value="">{t('live.session.noneSquad')}</option>
               {groups.map((g) => (
@@ -346,14 +346,14 @@ export default function LiveWorkspace({
             </select>
           </label>
           <label className="space-y-1.5">
-            <span className="text-[9px] font-display font-bold uppercase tracking-widest text-zinc-500">
+            <span className="text-[9px] font-display font-bold uppercase tracking-widest text-ash-500">
               {t('live.session.mission')}
             </span>
             <select
               value={activeSession?.campaignId || ''}
               onChange={(e) => handleCampaignSelect(e.target.value)}
               disabled={!activeSession?.groupId}
-              className="w-full bg-black/50 border border-white/10 px-3 py-2.5 text-[10px] font-display font-bold uppercase tracking-widest text-white outline-none focus:border-emerald-500/40 disabled:opacity-30"
+              className="w-full bg-black/50 border border-white/10 px-3 py-2.5 text-[10px] font-display font-bold uppercase tracking-widest text-white outline-none focus:border-phosphor-500/40 disabled:opacity-30"
             >
               <option value="">{t('live.session.noneMission')}</option>
               {campaigns.map((c) => (
@@ -370,9 +370,9 @@ export default function LiveWorkspace({
               type="checkbox"
               checked={sessionOnly}
               onChange={(e) => setSessionOnly(e.target.checked)}
-              className="accent-emerald-500"
+              className="accent-phosphor-500"
             />
-            <span className="text-[9px] font-display font-bold uppercase tracking-widest text-industrial-silver/50 group-hover:text-emerald-400">
+            <span className="text-[9px] font-display font-bold uppercase tracking-widest text-industrial-silver/50 group-hover:text-phosphor-400">
               {t('live.session.onlySession')}
             </span>
           </label>
@@ -402,7 +402,7 @@ export default function LiveWorkspace({
         <div className="flex flex-col gap-3 px-4 sm:px-6 py-4 border-b border-primary/10 bg-black/20">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center gap-3 min-w-0">
-              <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+              <div className="w-2 h-2 rounded-full bg-phosphor-400 animate-pulse shrink-0" />
               <div className="min-w-0">
                 <h2 className="font-display font-bold uppercase tracking-widest text-sm text-white truncate">
                   {t('live.presence.title')}
@@ -462,7 +462,7 @@ export default function LiveWorkspace({
                   toast.error(t('live.toast.macFail'));
                 }
               }}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-zinc-200 text-black text-[9px] font-display font-bold uppercase tracking-widest hover:bg-white transition-colors disabled:opacity-20"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-ash-200 text-black text-[9px] font-display font-bold uppercase tracking-widest hover:bg-white transition-colors disabled:opacity-20"
             >
               <span className="material-symbols-outlined text-sm">laptop_mac</span>
               {t('live.deliver.macAll')}
@@ -501,13 +501,13 @@ export default function LiveWorkspace({
               <button
                 type="button"
                 onClick={selectAll}
-                className="text-[9px] font-display font-bold uppercase tracking-widest text-zinc-500 hover:text-primary"
+                className="text-[9px] font-display font-bold uppercase tracking-widest text-ash-500 hover:text-primary"
               >
                 {selectedUids.size === rows.length
                   ? t('live.presence.clearSelection', { n: selectedUids.size })
                   : t('live.presence.selectAll', { n: rows.length })}
               </button>
-              <span className="text-[9px] font-mono text-zinc-600 uppercase tracking-widest">
+              <span className="text-[9px] font-mono text-ash-600 uppercase tracking-widest">
                 {selectedUids.size > 0 ? t('live.presence.marked', { n: selectedUids.size }) : t('live.presence.noMark')}
               </span>
             </div>
@@ -540,7 +540,7 @@ export default function LiveWorkspace({
                         type="button"
                         onClick={() => toggleSelect(row.uid)}
                         className={`mt-0.5 w-5 h-5 border-2 rounded-sm shrink-0 flex items-center justify-center ${
-                          selected ? 'bg-primary border-primary' : 'border-zinc-700 hover:border-zinc-500'
+                          selected ? 'bg-primary border-primary' : 'border-ash-700 hover:border-ash-500'
                         }`}
                         aria-label="Selecionar"
                       >
@@ -572,12 +572,12 @@ export default function LiveWorkspace({
                           Push pendente
                         </span>
                       ) : row.hasTerminalAccess ? (
-                        <span className="text-[8px] font-display font-bold uppercase tracking-wider px-2 py-0.5 border border-emerald-500/30 text-emerald-500/80">
+                        <span className="text-[8px] font-display font-bold uppercase tracking-wider px-2 py-0.5 border border-phosphor-500/30 text-phosphor-500/80">
                           {t('hardware.filter.dos')}
                         </span>
                       ) : null}
                       {row.forceMac ? (
-                        <span className="text-[8px] font-display font-bold uppercase tracking-wider px-2 py-0.5 border border-cyan-400/40 text-cyan-400 animate-pulse">
+                        <span className="text-[8px] font-display font-bold uppercase tracking-wider px-2 py-0.5 border border-tube-400/40 text-tube-400 animate-pulse">
                           Push Mac
                         </span>
                       ) : row.hasMacAccess ? (
@@ -606,7 +606,7 @@ export default function LiveWorkspace({
                         type="button"
                         disabled={macBusy}
                         onClick={() => handlePushMac(row)}
-                        className="text-[8px] font-display font-bold uppercase tracking-wider px-2.5 py-1 bg-zinc-200 text-black hover:bg-white disabled:opacity-30"
+                        className="text-[8px] font-display font-bold uppercase tracking-wider px-2.5 py-1 bg-ash-200 text-black hover:bg-white disabled:opacity-30"
                       >
                         Mac
                       </button>
@@ -621,7 +621,7 @@ export default function LiveWorkspace({
                             setMenuUid(null);
                             openDeliver('achievements', [row.uid]);
                           }}
-                          className="w-full text-left px-3 py-2 text-[9px] font-display font-bold uppercase tracking-widest text-zinc-400 hover:bg-primary/10 hover:text-primary"
+                          className="w-full text-left px-3 py-2 text-[9px] font-display font-bold uppercase tracking-widest text-ash-400 hover:bg-primary/10 hover:text-primary"
                         >
                           Outorgar conquista
                         </button>
@@ -631,7 +631,7 @@ export default function LiveWorkspace({
                             setMenuUid(null);
                             openDeliver('sms', [row.uid]);
                           }}
-                          className="w-full text-left px-3 py-2 text-[9px] font-display font-bold uppercase tracking-widest text-zinc-400 hover:bg-primary/10 hover:text-primary"
+                          className="w-full text-left px-3 py-2 text-[9px] font-display font-bold uppercase tracking-widest text-ash-400 hover:bg-primary/10 hover:text-primary"
                         >
                           Enviar SMS
                         </button>
@@ -647,7 +647,7 @@ export default function LiveWorkspace({
                               toast.error(t('hardware.toast.revokeDosFail'));
                             }
                           }}
-                          className="w-full text-left px-3 py-2 text-[9px] font-display font-bold uppercase tracking-widest text-zinc-400 hover:bg-red-500/10 hover:text-red-400 disabled:opacity-20"
+                          className="w-full text-left px-3 py-2 text-[9px] font-display font-bold uppercase tracking-widest text-ash-400 hover:bg-red-500/10 hover:text-red-400 disabled:opacity-20"
                         >
                           Revogar DOS
                         </button>
@@ -663,7 +663,7 @@ export default function LiveWorkspace({
                               toast.error(t('hardware.toast.revokeMacFail'));
                             }
                           }}
-                          className="w-full text-left px-3 py-2 text-[9px] font-display font-bold uppercase tracking-widest text-zinc-400 hover:bg-red-500/10 hover:text-red-400 disabled:opacity-20"
+                          className="w-full text-left px-3 py-2 text-[9px] font-display font-bold uppercase tracking-widest text-ash-400 hover:bg-red-500/10 hover:text-red-400 disabled:opacity-20"
                         >
                           Revogar Mac
                         </button>
@@ -811,7 +811,7 @@ function PresenceRowMenu({
                 ? { position: 'fixed', top: coords.top, left: coords.left }
                 : { position: 'fixed', top: -9999, left: -9999, visibility: 'hidden' }
             }
-            className="z-[200] min-w-44 bg-[#1a1a1a] border border-white/10 shadow-2xl py-1"
+            className="z-[200] min-w-44 bg-seam border border-white/10 shadow-2xl py-1"
           >
             {children}
           </div>,
@@ -846,7 +846,7 @@ function MiniStat({
 }) {
   const color =
     accent === 'emerald'
-      ? 'text-emerald-400 border-emerald-500/20'
+      ? 'text-phosphor-400 border-phosphor-500/20'
       : accent === 'red'
         ? 'text-red-400 border-red-500/30'
         : 'text-primary border-primary/20';

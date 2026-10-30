@@ -141,7 +141,7 @@ const NokiaVideoSurface = forwardRef<NokiaVideoSurfaceHandle, NokiaVideoSurfaceP
             preload="metadata"
           />
         )}
-        <div className="absolute top-1 left-1 bg-[#edfeed] text-[#111e14] text-[8px] font-black px-1 border border-[#111e14] uppercase">
+        <div className="absolute top-1 left-1 bg-lcd-paper text-lcd-ink text-[8px] font-black px-1 border border-lcd-ink uppercase">
           {isYoutube ? 'YT' : intel.format}
         </div>
       </div>

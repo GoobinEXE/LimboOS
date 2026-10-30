@@ -46,13 +46,13 @@ export function ConfirmModal({ state, onConfirm, onCancel }: ConfirmModalProps) 
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.94, opacity: 0, y: 20 }}
             transition={ADMIN_SPRING_SNAP}
-            className="bg-[#222] border-8 border-[#1a1a1a] w-full max-w-md rounded-[32px] shadow-2xl flex flex-col relative overflow-hidden font-chakra"
+            className="bg-[#222] border-8 border-seam w-full max-w-md rounded-[32px] shadow-2xl flex flex-col relative overflow-hidden font-chakra"
           >
             <Screw className="top-4 left-4" /><Screw className="top-4 right-4 -rotate-90" /><Screw className="bottom-4 left-4 -rotate-90" /><Screw className="bottom-4 right-4" />
             <div className="noise-overlay" /><div className="scanlines" />
 
             {/* Header */}
-            <div className={`px-10 py-6 border-b-4 relative z-10 flex items-center gap-4 bg-black/40 ${isDanger ? 'border-red-800/30' : 'border-[#1a1a1a]'}`}>
+            <div className={`px-10 py-6 border-b-4 relative z-10 flex items-center gap-4 bg-black/40 ${isDanger ? 'border-red-800/30' : 'border-seam'}`}>
               <div className={`p-2 rounded-sm border-2 ${isDanger ? 'bg-red-500/10 border-red-500/20 text-red-500' : 'bg-primary/10 border-primary/20 text-primary'}`}>
                 <span className="material-symbols-outlined text-lg">
                   {isDanger ? 'report' : 'info'}
@@ -63,7 +63,7 @@ export function ConfirmModal({ state, onConfirm, onCancel }: ConfirmModalProps) 
 
             {/* Content */}
             <div className="px-10 py-8 relative z-10">
-              <p className="text-zinc-400 text-sm font-bold uppercase leading-relaxed tracking-wide">{state.message}</p>
+              <p className="text-ash-400 text-sm font-bold uppercase leading-relaxed tracking-wide">{state.message}</p>
             </div>
 
             {/* Actions */}
@@ -71,7 +71,7 @@ export function ConfirmModal({ state, onConfirm, onCancel }: ConfirmModalProps) 
               {state.variant === 'confirm' && (
                 <button
                   onClick={onCancel}
-                  className="flex-1 px-6 py-4 text-[10px] font-black uppercase tracking-widest text-zinc-600 hover:text-white transition-all bg-[#333] hover:bg-[#444] rounded-sm active:scale-95"
+                  className="flex-1 px-6 py-4 text-[10px] font-black uppercase tracking-widest text-ash-600 hover:text-white transition-all bg-[#333] hover:bg-[#444] rounded-sm active:scale-95"
                 >
                   {t('confirm.abort')}
                 </button>

@@ -24,7 +24,12 @@ export default function AdminTabPanel({ active, children }: AdminTabPanelProps) 
       return;
     }
     if (active && !wasActive.current && scope.current) {
-      void animate(scope.current, { opacity: [0, 1], y: [8, 0] }, ADMIN_FADE);
+      // Troca de aba é frequente (e via ⌘1–5): deslocamento mínimo, sem atraso perceptível
+      void animate(
+        scope.current,
+        { opacity: [0, 1], transform: ['translateY(4px)', 'translateY(0px)'] },
+        ADMIN_FADE
+      );
     }
     wasActive.current = active;
   }, [active, animate, scope]);

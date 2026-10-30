@@ -37,9 +37,9 @@ const THREADS: Thread[] = [
   {
     id: 'thread-jp', title: '2000年問題の結果について / O Pós-Bug (JP Board)', author: 'AkihabaraGhost', replies: 3,
     posts: [
-      { author: 'AkihabaraGhost', date: '01/01/2000 - 10:15:00', content: <><p>2000年になりましたが、世界は終わっていません。停電とATMのエラーがいくつかあっただけです。LIMBO_01のゲートは嘘だったのでしょうか？</p><p className="mt-1 italic text-green-700">[Tradução: Já estamos em 2000 e nada acabou. Só umas quedas de energia. O portão do LIMBO_01 era mentira?]</p></> },
-      { author: 'Neo_Tokyo_2000', date: '01/01/2000 - 11:30:22', content: <><p>私のPCも無事です。時計が00:00:00になっても何も起こらなかった。完全に騙されましたね。</p><p className="mt-1 italic text-green-700">[Tradução: Meu PC tá intacto. Meia-noite e nada aconteceu. Fomos totalmente enganados.]</p></> },
-      { author: 'Kansai_Coder', date: '01/01/2000 - 14:05:10', content: <><p>少しがっかりしています。アナログのノイズ対策でカセットテープまで用意したのに。ただの集団ヒステリーだったみたいですね。お疲れ様でした。</p><p className="mt-1 italic text-green-700">[Tradução: Tô decepcionado. Até preparei as fitas cassete pro ruído. Foi só histeria. Falou, galera.]</p></> },
+      { author: 'AkihabaraGhost', date: '01/01/2000 - 10:15:00', content: <><p>2000年になりましたが、世界は終わっていません。停電とATMのエラーがいくつかあっただけです。LIMBO_01のゲートは嘘だったのでしょうか？</p><p className="mt-1 italic text-phosphor-700">[Tradução: Já estamos em 2000 e nada acabou. Só umas quedas de energia. O portão do LIMBO_01 era mentira?]</p></> },
+      { author: 'Neo_Tokyo_2000', date: '01/01/2000 - 11:30:22', content: <><p>私のPCも無事です。時計が00:00:00になっても何も起こらなかった。完全に騙されましたね。</p><p className="mt-1 italic text-phosphor-700">[Tradução: Meu PC tá intacto. Meia-noite e nada aconteceu. Fomos totalmente enganados.]</p></> },
+      { author: 'Kansai_Coder', date: '01/01/2000 - 14:05:10', content: <><p>少しがっかりしています。アナログのノイズ対策でカセットテープまで用意したのに。ただの集団ヒステリーだったみたいですね。お疲れ様でした。</p><p className="mt-1 italic text-phosphor-700">[Tradução: Tô decepcionado. Até preparei as fitas cassete pro ruído. Foi só histeria. Falou, galera.]</p></> },
     ]
   },
   {
@@ -190,12 +190,12 @@ export default function LimboBoard({ uid, characterId = '', onClose, globalSeize
   const activeThread = THREADS.find(t => t.id === activeThreadId);
 
   const threadListPanel = (
-    <div className={`${isLandscape ? 'w-[38%] shrink-0 border-r border-[#33FF33]/30 overflow-y-auto min-h-0 pr-2' : ''}`}>
-      <h2 className="text-xs sm:text-sm font-bold border-b border-[#33FF33] pb-2 mb-4">&gt;&gt; BBS BOARD: DISCUSSÕES GERAIS E ANOMALIAS GLOBAIS</h2>
+    <div className={`${isLandscape ? 'w-[38%] shrink-0 border-r border-crt/30 overflow-y-auto min-h-0 pr-2' : ''}`}>
+      <h2 className="text-xs sm:text-sm font-bold border-b border-crt pb-2 mb-4">&gt;&gt; BBS BOARD: DISCUSSÕES GERAIS E ANOMALIAS GLOBAIS</h2>
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse text-xs sm:text-sm">
           <thead>
-            <tr className="bg-[#33FF33] text-black">
+            <tr className="bg-crt text-black">
               <th className="p-2 border border-dashed border-black">TÍTULO DO TÓPICO</th>
               {!isLandscape && <th className="p-2 border border-dashed border-black hidden sm:table-cell">AUTOR</th>}
               <th className="p-2 border border-dashed border-black text-center">RESP.</th>
@@ -205,12 +205,12 @@ export default function LimboBoard({ uid, characterId = '', onClose, globalSeize
             {THREADS.map((t) => (
               <tr
                 key={t.id}
-                className={`border-b border-dashed border-[#33FF33]/30 hover:bg-[#33FF33]/10 ${activeThreadId === t.id && isLandscape ? 'bg-[#33FF33]/15' : ''}`}
+                className={`border-b border-dashed border-crt/30 hover:bg-crt/10 ${activeThreadId === t.id && isLandscape ? 'bg-crt/15' : ''}`}
               >
                 <td className="p-2">
                   <button
                     onClick={() => openThread(t.id)}
-                    className={`text-left w-full hover:text-black hover:bg-[#33FF33] px-1 ${readThreadIds.includes(t.id) ? 'text-green-800 line-through' : 'text-[#33FF33] underline'}`}
+                    className={`text-left w-full hover:text-black hover:bg-crt px-1 ${readThreadIds.includes(t.id) ? 'text-phosphor-800 line-through' : 'text-crt underline'}`}
                   >
                     {readThreadIds.includes(t.id) ? '[X]' : '[+]'} {t.title}
                   </button>
@@ -228,7 +228,7 @@ export default function LimboBoard({ uid, characterId = '', onClose, globalSeize
   return (
     <motion.div
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 bg-[#050505] text-[#33FF33] font-mono overflow-hidden touch-manipulation p-2 sm:p-4 wrap-break-word player-viewport safe-area-pad"
+      className="fixed inset-0 z-50 bg-[#050505] text-crt font-mono overflow-hidden touch-manipulation p-2 sm:p-4 wrap-break-word player-viewport safe-area-pad"
       style={{ fontFamily: '"Terminal", "Fixedsys", "Lucida Console", monospace', WebkitFontSmoothing: 'none' }}
     >
       <style>{`
@@ -243,14 +243,14 @@ export default function LimboBoard({ uid, characterId = '', onClose, globalSeize
           {onBackToTerminal && (
              <button
                onClick={onBackToTerminal}
-               className={`border px-2 py-1 uppercase text-xs transition-colors ${effectiveView === 'military' ? 'text-red-500 border-red-500 hover:bg-red-500 hover:text-black' : 'text-[#33FF33] border-[#33FF33] hover:bg-[#33FF33] hover:text-[#050505]'}`}
+               className={`border px-2 py-1 uppercase text-xs transition-colors ${effectiveView === 'military' ? 'text-red-500 border-red-500 hover:bg-red-500 hover:text-black' : 'text-crt border-crt hover:bg-crt hover:text-[#050505]'}`}
              >
                [ VOLTAR AO PC_ ]
              </button>
           )}
           <button
             onClick={onClose}
-            className={`border px-2 py-1 uppercase text-xs transition-colors ${effectiveView === 'military' ? 'text-red-500 border-red-500 hover:bg-red-500 hover:text-black' : 'text-[#33FF33] border-[#33FF33] hover:bg-[#33FF33] hover:text-[#050505]'}`}
+            className={`border px-2 py-1 uppercase text-xs transition-colors ${effectiveView === 'military' ? 'text-red-500 border-red-500 hover:bg-red-500 hover:text-black' : 'text-crt border-crt hover:bg-crt hover:text-[#050505]'}`}
           >
             {effectiveView === 'military' ? '[ ABORTAR CONEXÃO ]' : '[ DESCONECTAR_ ]'}
           </button>
@@ -282,7 +282,7 @@ export default function LimboBoard({ uid, characterId = '', onClose, globalSeize
       )}
 
       {(effectiveView === 'forum' || effectiveView === 'thread') && (
-        <div className="max-w-4xl mx-auto border-2 border-[#33FF33] p-2 sm:p-6 mt-8 sm:mt-12 bg-black min-h-0 max-h-[calc(100dvh-2rem)] flex flex-col overflow-hidden">
+        <div className="max-w-4xl mx-auto border-2 border-crt p-2 sm:p-6 mt-8 sm:mt-12 bg-black min-h-0 max-h-[calc(100dvh-2rem)] flex flex-col overflow-hidden">
     
           <div className="text-center text-[9px] sm:text-sm mb-4 sm:mb-6 uppercase overflow-x-hidden">
             <pre className="overflow-x-auto">{`  _      _____ __  __ ____   ____     ___  __  
@@ -291,12 +291,12 @@ export default function LimboBoard({ uid, characterId = '', onClose, globalSeize
  | |      | | | |\\/| |  _ <| |  | | | | | || | 
  | |____ _| |_| |  | | |_) | |__| | | |_| || | 
  |______|_____|_|  |_|____/ \\____/   \\___/ |_| `}</pre>
-            <div className="mt-2 border-t border-b border-dashed border-[#33FF33] py-1 text-xs">
+            <div className="mt-2 border-t border-b border-dashed border-crt py-1 text-xs">
               STATUS DO SERVIDOR: CONECTADO 
             </div>
           </div>
     
-          <div className="bg-[#33FF33] text-black font-bold text-xs p-1 mb-3 sm:mb-4 overflow-hidden whitespace-nowrap">
+          <div className="bg-crt text-black font-bold text-xs p-1 mb-3 sm:mb-4 overflow-hidden whitespace-nowrap">
             <div className="inline-block animate-[marquee_20s_linear_infinite] sm:animate-none">
               [AVISO DO SYSOP] O BUG DO MILÊNIO NÃO É UMA FALHA, É UM RECURSO 
             </div>
@@ -310,7 +310,7 @@ export default function LimboBoard({ uid, characterId = '', onClose, globalSeize
           {effectiveView === 'forum' && isLandscape && (
             <div className="flex-1 min-h-0 landscape-split gap-3 overflow-hidden">
               {threadListPanel}
-              <div className="flex-1 flex items-center justify-center text-xs text-[#33FF33]/60 p-4 min-h-0">
+              <div className="flex-1 flex items-center justify-center text-xs text-crt/60 p-4 min-h-0">
                 &gt; Selecione um tópico para ler os posts
               </div>
             </div>
@@ -322,7 +322,7 @@ export default function LimboBoard({ uid, characterId = '', onClose, globalSeize
               <div className="flex-1 flex flex-col min-h-0 overflow-y-auto">
               <div className="flex justify-between items-start mb-4 gap-4">
                 <h2 className="text-xs sm:text-sm font-bold">&gt;&gt; TÓPICO: {activeThread.title}</h2>
-                <button onClick={closeThread} className="shrink-0 text-xs border border-[#33FF33] px-2 py-1 hover:bg-[#33FF33] hover:text-black">[VOLTAR]</button>
+                <button onClick={closeThread} className="shrink-0 text-xs border border-crt px-2 py-1 hover:bg-crt hover:text-black">[VOLTAR]</button>
               </div>
               <div className="flex-1 space-y-3 overflow-y-auto pr-1">
                 {activeThread.posts.map((post, i) => (
@@ -333,10 +333,10 @@ export default function LimboBoard({ uid, characterId = '', onClose, globalSeize
                         ? 'border-red-600 bg-[#1a0505] text-red-400'
                         : post.style === 'sysop'
                         ? 'border-yellow-500 bg-[#141000] text-yellow-300'
-                        : 'border-[#33FF33] bg-[#0a140a]'
+                        : 'border-crt bg-[#0a140a]'
                     }`}
                   >
-                    <div className={`border-b pb-1 mb-2 text-[10px] ${post.style === 'malware' ? 'border-red-600' : post.style === 'sysop' ? 'border-yellow-500' : 'border-dashed border-[#33FF33]'} text-gray-400`}>
+                    <div className={`border-b pb-1 mb-2 text-[10px] ${post.style === 'malware' ? 'border-red-600' : post.style === 'sysop' ? 'border-yellow-500' : 'border-dashed border-crt'} text-ash-400`}>
                       <strong>Usuário:</strong> {post.author} | <strong>Data:</strong> {post.date}
                     </div>
                     <div className={`leading-relaxed ${post.style === 'malware' ? 'animate-[glitch-anim_0.2s_linear_infinite]' : ''}`}>

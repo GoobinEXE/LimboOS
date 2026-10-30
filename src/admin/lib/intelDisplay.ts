@@ -123,7 +123,7 @@ export function intelCatalogStatusLabel(status: IntelCatalogStatus): string {
 
 export function intelCatalogStatusClass(status: IntelCatalogStatus): string {
   const classes: Record<IntelCatalogStatus, string> = {
-    catalogued: 'border-emerald-500/30 text-emerald-400 bg-emerald-500/5',
+    catalogued: 'border-phosphor-500/30 text-phosphor-400 bg-phosphor-500/5',
     orphan: 'border-amber-500/30 text-amber-400 bg-amber-500/5',
     local: 'border-industrial-silver/20 text-industrial-silver/50 bg-white/5',
   };

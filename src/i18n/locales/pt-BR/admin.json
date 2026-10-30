@@ -31,7 +31,8 @@
     "expandTitle": "Expandir Menu",
     "statusLabel": "Status do Sistema",
     "statusOnline": "Grid Online",
-    "statusOnlineTitle": "Grid Online"
+    "statusOnlineTitle": "Grid Online",
+    "navLabel": "Navegação do console"
   },
   "header": {
     "statusConnected": "Status: Conectado",
@@ -48,7 +49,10 @@
   },
   "footer": {
     "realtimeSync": "Sincronização de Dados em Tempo Real",
-    "systemId": "RM ADMIN SYSTEM V5.0 // ENCRYPTED NODE"
+    "systemId": "RM ADMIN SYSTEM V5.0 // ENCRYPTED NODE",
+    "shortcutSearch": "Busca",
+    "shortcutSections": "Seções",
+    "shortcutMenu": "Menu"
   },
   "context": {
     "live": "Ao Vivo — sessão e entrega",

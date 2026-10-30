@@ -22,7 +22,7 @@ export default function LanguageSelector({ variant = 'deck', className }: Langua
     variant === 'admin'
       ? 'font-display uppercase font-bold tracking-[0.15em] text-[9px] text-industrial-silver/40'
       : variant === 'nokia'
-        ? 'font-mono text-[8px] text-[#111e14]/70'
+        ? 'font-mono text-[8px] text-lcd-ink/70'
         : 'font-display uppercase tracking-[0.15em] text-[9px] text-industrial-silver/40';
 
   const btnBase =
@@ -34,12 +34,12 @@ export default function LanguageSelector({ variant = 'deck', className }: Langua
 
   const activeCls =
     variant === 'nokia'
-      ? 'border-[#111e14] bg-[#111e14] text-[#edfeed]'
+      ? 'border-lcd-ink bg-lcd-ink text-lcd-paper'
       : 'border-primary/50 bg-primary/15 text-primary';
 
   const idleCls =
     variant === 'nokia'
-      ? 'border-[#111e14]/40 text-[#111e14]/60 hover:bg-[#111e14]/10'
+      ? 'border-lcd-ink/40 text-lcd-ink/60 hover:bg-lcd-ink/10'
       : 'border-white/10 text-industrial-silver/40 hover:border-primary/30 hover:text-industrial-silver/70';
 
   return (

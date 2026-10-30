@@ -10,7 +10,7 @@ type TabId = 'contacts' | 'dialogues';
 
 const fieldClass =
   'w-full bg-black/50 border border-white/10 text-[11px] font-bold uppercase px-3 py-2.5 text-white outline-none focus:border-secondary rounded-sm';
-const labelClass = 'text-[9px] font-black uppercase tracking-widest text-zinc-500 mb-1.5 block';
+const labelClass = 'text-[9px] font-black uppercase tracking-widest text-ash-500 mb-1.5 block';
 
 function emptyContact(): NpcContact {
   return {
@@ -327,7 +327,7 @@ export default function NpcSmsPanel({ embedded = false }: { embedded?: boolean }
                   className={`text-[9px] font-black uppercase tracking-widest px-4 py-2 border rounded-sm ${
                     tab === id
                       ? 'border-secondary text-secondary bg-secondary/10'
-                      : 'border-white/10 text-zinc-500'
+                      : 'border-white/10 text-ash-500'
                   }`}
                 >
                   {id === 'contacts' ? t('npcSms.tabContacts') : t('npcSms.tabDialogues')}
@@ -335,7 +335,7 @@ export default function NpcSmsPanel({ embedded = false }: { embedded?: boolean }
               ))}
             </div>
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-[10px] font-black text-zinc-600 uppercase tracking-widest">
+              <span className="text-[10px] font-black text-ash-600 uppercase tracking-widest">
                 {tab === 'contacts' ? filteredContacts.length : filteredDialogues.length}{' '}
                 {tab === 'contacts' ? t('npcSms.countContacts') : t('npcSms.countDialogues')}
                 {!isRemote && (
@@ -362,7 +362,7 @@ export default function NpcSmsPanel({ embedded = false }: { embedded?: boolean }
 
           <div className="flex flex-wrap gap-3 items-center">
             <div className="relative flex-1 min-w-[200px] max-w-md">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-zinc-700 text-sm">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-ash-700 text-sm">
                 search
               </span>
               <input
@@ -396,34 +396,34 @@ export default function NpcSmsPanel({ embedded = false }: { embedded?: boolean }
               <div
                 key={c.id}
                 className={`bg-black border-2 p-4 rounded-xl flex items-center gap-4 ${
-                  c.enabled === false ? 'border-white/5 opacity-50' : 'border-[#1a1a1a]'
+                  c.enabled === false ? 'border-white/5 opacity-50' : 'border-seam'
                 }`}
               >
                 <div className="w-12 h-12 rounded-lg border border-secondary/20 overflow-hidden bg-black shrink-0 flex items-center justify-center">
                   {c.avatarUrl ? (
                     <img src={c.avatarUrl} alt="" className="w-full h-full object-cover" />
                   ) : (
-                    <span className="material-symbols-outlined text-zinc-600">person</span>
+                    <span className="material-symbols-outlined text-ash-600">person</span>
                   )}
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
                     <h4 className="text-sm font-black text-white uppercase tracking-wider">{c.name}</h4>
-                    <span className="text-[8px] font-mono text-zinc-600">{c.id}</span>
+                    <span className="text-[8px] font-mono text-ash-600">{c.id}</span>
                     {c.source === 'suggestion' && (
                       <span className="text-[8px] font-black uppercase tracking-widest px-2 py-0.5 border rounded-sm text-amber-400/80 border-amber-400/30">
                         {t('npcSms.badgeSuggestion')}
                       </span>
                     )}
                   </div>
-                  <p className="text-[10px] text-zinc-400 font-mono mt-1">{c.number}</p>
+                  <p className="text-[10px] text-ash-400 font-mono mt-1">{c.number}</p>
                 </div>
                 <div className="flex gap-2 shrink-0">
                   <button
                     type="button"
                     disabled={!hasRemoteContacts}
                     onClick={() => openEditContact(c)}
-                    className="text-[8px] font-black uppercase tracking-widest px-3 py-2 border border-white/10 text-zinc-400 hover:text-white rounded-sm disabled:opacity-30"
+                    className="text-[8px] font-black uppercase tracking-widest px-3 py-2 border border-white/10 text-ash-400 hover:text-white rounded-sm disabled:opacity-30"
                   >
                     {t('npcSms.edit')}
                   </button>
@@ -431,7 +431,7 @@ export default function NpcSmsPanel({ embedded = false }: { embedded?: boolean }
                     type="button"
                     disabled={!hasRemoteContacts}
                     onClick={() => toggleContact(c)}
-                    className="text-[8px] font-black uppercase tracking-widest px-3 py-2 border border-white/10 text-zinc-400 rounded-sm disabled:opacity-30"
+                    className="text-[8px] font-black uppercase tracking-widest px-3 py-2 border border-white/10 text-ash-400 rounded-sm disabled:opacity-30"
                   >
                     {c.enabled === false ? t('npcSms.enable') : t('npcSms.disable')}
                   </button>
@@ -454,7 +454,7 @@ export default function NpcSmsPanel({ embedded = false }: { embedded?: boolean }
                 <div
                   key={d.id}
                   className={`bg-black border-2 p-4 rounded-xl ${
-                    d.enabled === false ? 'border-white/5 opacity-50' : 'border-[#1a1a1a]'
+                    d.enabled === false ? 'border-white/5 opacity-50' : 'border-seam'
                   }`}
                 >
                   <div className="flex items-start justify-between gap-4">
@@ -466,19 +466,19 @@ export default function NpcSmsPanel({ embedded = false }: { embedded?: boolean }
                         <span className="text-[8px] font-black uppercase tracking-widest px-2 py-0.5 border rounded-sm text-primary border-primary/30">
                           {contact?.name || d.npcId}
                         </span>
-                        <span className="text-[8px] font-mono text-zinc-600">{d.messages.length} SMS</span>
+                        <span className="text-[8px] font-mono text-ash-600">{d.messages.length} SMS</span>
                       </div>
-                      <p className="text-[9px] text-zinc-500 line-clamp-2 italic">
+                      <p className="text-[9px] text-ash-500 line-clamp-2 italic">
                         &ldquo;{d.messages[0]?.text || ''}&rdquo;
                       </p>
-                      <p className="text-[8px] font-mono text-zinc-700 mt-1">{d.id}</p>
+                      <p className="text-[8px] font-mono text-ash-700 mt-1">{d.id}</p>
                     </div>
                     <div className="flex gap-2 shrink-0">
                       <button
                         type="button"
                         disabled={!hasRemoteDialogues}
                         onClick={() => openEditDialogue(d)}
-                        className="text-[8px] font-black uppercase tracking-widest px-3 py-2 border border-white/10 text-zinc-400 hover:text-white rounded-sm disabled:opacity-30"
+                        className="text-[8px] font-black uppercase tracking-widest px-3 py-2 border border-white/10 text-ash-400 hover:text-white rounded-sm disabled:opacity-30"
                       >
                         {t('npcSms.edit')}
                       </button>
@@ -486,7 +486,7 @@ export default function NpcSmsPanel({ embedded = false }: { embedded?: boolean }
                         type="button"
                         disabled={!hasRemoteDialogues}
                         onClick={() => toggleDialogue(d)}
-                        className="text-[8px] font-black uppercase tracking-widest px-3 py-2 border border-white/10 text-zinc-400 rounded-sm disabled:opacity-30"
+                        className="text-[8px] font-black uppercase tracking-widest px-3 py-2 border border-white/10 text-ash-400 rounded-sm disabled:opacity-30"
                       >
                         {d.enabled === false ? t('npcSms.enable') : t('npcSms.disable')}
                       </button>
@@ -522,12 +522,12 @@ export default function NpcSmsPanel({ embedded = false }: { embedded?: boolean }
             if (e.target === e.currentTarget && !saving) setContactEditor(null);
           }}
         >
-          <div className="bg-[#1a1a1a] border-2 border-white/10 w-full max-w-lg rounded-xl shadow-2xl overflow-hidden">
+          <div className="bg-seam border-2 border-white/10 w-full max-w-lg rounded-xl shadow-2xl overflow-hidden">
             <div className="px-6 py-4 border-b border-white/10 flex justify-between items-center bg-black/40">
               <h3 className="text-xs font-black uppercase tracking-[0.2em] text-white">
                 {isEdit ? t('npcSms.editContact') : t('npcSms.createContact')}
               </h3>
-              <button type="button" onClick={() => !saving && setContactEditor(null)} className="material-symbols-outlined text-zinc-500">
+              <button type="button" onClick={() => !saving && setContactEditor(null)} className="material-symbols-outlined text-ash-500">
                 close
               </button>
             </div>
@@ -542,7 +542,7 @@ export default function NpcSmsPanel({ embedded = false }: { embedded?: boolean }
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <span className="material-symbols-outlined text-zinc-600">person</span>
+                      <span className="material-symbols-outlined text-ash-600">person</span>
                     )}
                   </div>
                   <label className="block cursor-pointer text-[8px] font-black uppercase tracking-widest text-secondary border border-secondary/30 px-2 py-1.5 text-center rounded-sm">
@@ -555,7 +555,7 @@ export default function NpcSmsPanel({ embedded = false }: { embedded?: boolean }
                     />
                   </label>
                   {uploadProgress != null && (
-                    <p className="text-[8px] text-zinc-500 font-mono">{Math.round(uploadProgress)}%</p>
+                    <p className="text-[8px] text-ash-500 font-mono">{Math.round(uploadProgress)}%</p>
                   )}
                 </div>
                 <div className="flex-1 space-y-3">
@@ -586,7 +586,7 @@ export default function NpcSmsPanel({ embedded = false }: { embedded?: boolean }
                       onChange={(e) => setContactEditor({ ...contactEditor, number: e.target.value })}
                     />
                   </div>
-                  <label className="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-zinc-400">
+                  <label className="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-ash-400">
                     <input
                       type="checkbox"
                       checked={contactEditor.enabled}
@@ -604,7 +604,7 @@ export default function NpcSmsPanel({ embedded = false }: { embedded?: boolean }
                 type="button"
                 disabled={saving}
                 onClick={() => setContactEditor(null)}
-                className="flex-1 px-4 py-3 text-[10px] font-black uppercase tracking-widest text-zinc-500 bg-[#333] rounded-sm"
+                className="flex-1 px-4 py-3 text-[10px] font-black uppercase tracking-widest text-ash-500 bg-[#333] rounded-sm"
               >
                 {t('npcSms.cancel')}
               </button>
@@ -629,12 +629,12 @@ export default function NpcSmsPanel({ embedded = false }: { embedded?: boolean }
             if (e.target === e.currentTarget && !saving) setDialogueEditor(null);
           }}
         >
-          <div className="bg-[#1a1a1a] border-2 border-white/10 w-full max-w-2xl max-h-[90vh] flex flex-col rounded-xl shadow-2xl overflow-hidden">
+          <div className="bg-seam border-2 border-white/10 w-full max-w-2xl max-h-[90vh] flex flex-col rounded-xl shadow-2xl overflow-hidden">
             <div className="px-6 py-4 border-b border-white/10 flex justify-between items-center bg-black/40 shrink-0">
               <h3 className="text-xs font-black uppercase tracking-[0.2em] text-white">
                 {isEdit ? t('npcSms.editDialogue') : t('npcSms.createDialogue')}
               </h3>
-              <button type="button" onClick={() => !saving && setDialogueEditor(null)} className="material-symbols-outlined text-zinc-500">
+              <button type="button" onClick={() => !saving && setDialogueEditor(null)} className="material-symbols-outlined text-ash-500">
                 close
               </button>
             </div>
@@ -705,10 +705,10 @@ export default function NpcSmsPanel({ embedded = false }: { embedded?: boolean }
                         <option value="npc">NPC</option>
                         <option value="player">PLAYER</option>
                       </select>
-                      <button type="button" onClick={() => moveTurn(i, -1)} className="text-zinc-600 hover:text-white material-symbols-outlined text-sm">
+                      <button type="button" onClick={() => moveTurn(i, -1)} className="text-ash-600 hover:text-white material-symbols-outlined text-sm">
                         arrow_upward
                       </button>
-                      <button type="button" onClick={() => moveTurn(i, 1)} className="text-zinc-600 hover:text-white material-symbols-outlined text-sm">
+                      <button type="button" onClick={() => moveTurn(i, 1)} className="text-ash-600 hover:text-white material-symbols-outlined text-sm">
                         arrow_downward
                       </button>
                       <button type="button" onClick={() => removeTurn(i)} className="text-red-500/60 hover:text-red-400 material-symbols-outlined text-sm ml-auto">
@@ -724,7 +724,7 @@ export default function NpcSmsPanel({ embedded = false }: { embedded?: boolean }
                 ))}
               </div>
 
-              <label className="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-zinc-400">
+              <label className="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-ash-400">
                 <input
                   type="checkbox"
                   checked={dialogueEditor.enabled}
@@ -740,7 +740,7 @@ export default function NpcSmsPanel({ embedded = false }: { embedded?: boolean }
                 type="button"
                 disabled={saving}
                 onClick={() => setDialogueEditor(null)}
-                className="flex-1 px-4 py-3 text-[10px] font-black uppercase tracking-widest text-zinc-500 bg-[#333] rounded-sm"
+                className="flex-1 px-4 py-3 text-[10px] font-black uppercase tracking-widest text-ash-500 bg-[#333] rounded-sm"
               >
                 {t('npcSms.cancel')}
               </button>

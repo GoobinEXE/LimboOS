@@ -18,6 +18,8 @@ import { campaignLabel } from '../lib/entityLabels';
 import i18n from '../../i18n';
 import { motion } from 'motion/react';
 import { ADMIN_FADE } from '../lib/motion';
+import { modKeyLabel } from '../lib/platform';
+import RetroSpinner from '../../components/player/RetroSpinner';
 import {
   type OperationsSubId,
   type MesaSubId,
@@ -29,6 +31,8 @@ import {
   readMesaSubFromUrl,
   syncAdminTabsToUrl,
 } from '../lib/adminNavigation';
+
+const SIDEBAR_COLLAPSED_KEY = 'limbo.admin.sidebarCollapsed';
 
 const CampaignsPanel = React.lazy(() => import('./CampaignsPanel'));
 const MediaLibraryPanel = React.lazy(() => import('./MediaLibraryPanel'));
@@ -181,7 +185,13 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
     totalFidgets: 0,
     totalEjects: 0,
   });
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(() => {
+    try {
+      return window.localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === '1';
+    } catch {
+      return false;
+    }
+  });
   const [spotlightOpen, setSpotlightOpen] = useState(false);
   const [allAccounts, setAllAccounts] = useState<MasterAccount[]>([]);
   const [allCharacters, setAllCharacters] = useState<{ uid: string; char: CharacterData }[]>([]);
@@ -193,6 +203,14 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
   useEffect(() => {
     setMountedTabs((prev) => new Set(prev).add(activeTab));
   }, [activeTab]);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(SIDEBAR_COLLAPSED_KEY, sidebarCollapsed ? '1' : '0');
+    } catch {
+      /* storage indisponível (aba privada): preferência fica só na sessão */
+    }
+  }, [sidebarCollapsed]);
 
   useEffect(() => {
     syncAdminTabsToUrl(activeTab, opsTab, mesaTab);
@@ -367,6 +385,10 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
         const idx = parseInt(e.key) - 1;
         if (tabOrder[idx]) setActiveTab(tabOrder[idx]);
       }
+      if ((e.metaKey || e.ctrlKey) && e.key === '\\') {
+        e.preventDefault();
+        setSidebarCollapsed((prev) => !prev);
+      }
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
@@ -512,6 +534,8 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
     [navigateToMetric]
   );
 
+  const modKey = modKeyLabel();
+
   return (
     <div className="h-screen bg-surface flex relative overflow-hidden font-sans">
       <div className="noise-overlay" />
@@ -534,19 +558,20 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
           onOpenLive={() => setActiveTab('live')}
         />
 
-        <main className="flex-1 overflow-y-auto p-4 sm:p-8 custom-scrollbar bg-surface/50 backdrop-blur-sm">
-          <div className="max-w-6xl mx-auto space-y-8">
+        <main className="flex-1 overflow-y-auto px-4 py-5 sm:px-6 sm:py-6 2xl:px-10 custom-scrollbar">
+          <div className="max-w-7xl mx-auto space-y-8">
             <React.Suspense
               fallback={
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={ADMIN_FADE}
+                  transition={{ ...ADMIN_FADE, delay: 0.12 }}
                   className="flex items-center justify-center p-24"
+                  role="status"
                 >
                   <div className="flex flex-col items-center gap-4">
-                    <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
-                    <p className="text-[10px] font-display font-bold text-primary uppercase tracking-[0.4em] animate-pulse">
+                    <RetroSpinner size="md" />
+                    <p className="text-[10px] font-display font-bold text-primary uppercase tracking-[0.32em]">
                       {t('loading.data')}
                     </p>
                   </div>
@@ -633,14 +658,28 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
           </div>
         </main>
 
-        <footer className="h-8 border-t border-primary/10 bg-surface-container-low/50 flex items-center justify-between px-8 shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse glow-orange" />
-            <span className="text-[8px] font-display font-bold uppercase tracking-[0.3em] text-industrial-silver/40">
+        <footer className="h-8 border-t border-seam bg-surface-container-lowest flex items-center justify-between gap-6 px-4 sm:px-6 shrink-0">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <span className="lmb-led text-accent animate-led" aria-hidden />
+            <span className="text-[8px] font-display font-bold uppercase tracking-[0.3em] text-ash-500 truncate">
               {t('footer.realtimeSync')}
             </span>
           </div>
-          <span className="text-[8px] font-display font-bold uppercase tracking-[0.3em] text-industrial-silver/20">
+          <div className="hidden lg:flex items-center gap-4 text-[9px] text-ash-500" aria-hidden>
+            <span className="flex items-center gap-1.5">
+              <kbd className="lmb-kbd">{modKey}K</kbd>
+              {t('footer.shortcutSearch')}
+            </span>
+            <span className="flex items-center gap-1.5">
+              <kbd className="lmb-kbd">{modKey}1–5</kbd>
+              {t('footer.shortcutSections')}
+            </span>
+            <span className="flex items-center gap-1.5">
+              <kbd className="lmb-kbd">{modKey}\</kbd>
+              {t('footer.shortcutMenu')}
+            </span>
+          </div>
+          <span className="text-[8px] font-display font-bold uppercase tracking-[0.3em] text-ash-600 hidden md:inline truncate">
             {t('footer.systemId')}
           </span>
         </footer>

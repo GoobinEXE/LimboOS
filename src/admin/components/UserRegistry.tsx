@@ -32,7 +32,7 @@ function getAccountStatus(acc: MasterAccount): 'active' | 'inactive' | 'dormant'
 }
 
 const STATUS_STYLES = new Map<ReturnType<typeof getAccountStatus>, string>([
-  ['active', 'border-emerald-500/30 text-emerald-500 bg-emerald-500/5'],
+  ['active', 'border-phosphor-500/30 text-phosphor-500 bg-phosphor-500/5'],
   ['inactive', 'border-yellow-500/30 text-yellow-500 bg-yellow-500/5'],
   ['dormant', 'border-red-500/30 text-red-500 bg-red-500/5'],
   ['suspended', 'border-red-500/40 text-red-400 bg-red-500/10'],
@@ -579,7 +579,7 @@ export default function UserRegistry({
                                   className={`bg-surface-container-low border border-white/5 p-4 hover:border-primary/30 transition-all cursor-pointer flex justify-between items-center group shadow-md ${item.char.archived ? 'opacity-40 hover:opacity-80 grayscale' : ''}`}
                                 >
                                    <div className="flex items-center gap-4">
-                                      <div className={`w-10 h-10 rounded-sm bg-black/40 border border-white/5 flex items-center justify-center font-display font-bold text-lg ${item.char.agentStatus === 'vivo' ? 'text-emerald-500' : 'text-red-500'}`}>
+                                      <div className={`w-10 h-10 rounded-sm bg-black/40 border border-white/5 flex items-center justify-center font-display font-bold text-lg ${item.char.agentStatus === 'vivo' ? 'text-phosphor-500' : 'text-red-500'}`}>
                                         {(item.char.codinome || "?")[0].toUpperCase()}
                                       </div>
                                       <div>
@@ -698,21 +698,21 @@ export default function UserRegistry({
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={ADMIN_SPRING}
-            className="bg-[#222] border-l-8 border-[#1a1a1a] w-full max-w-2xl shadow-2xl flex flex-col h-full relative overflow-hidden font-chakra"
+            className="bg-[#222] border-l-8 border-seam w-full max-w-2xl shadow-2xl flex flex-col h-full relative overflow-hidden font-chakra"
           >
-            <div className="p-8 border-b-4 border-[#1a1a1a] flex justify-between items-start bg-black/40 relative z-20 shrink-0">
+            <div className="p-8 border-b-4 border-seam flex justify-between items-start bg-black/40 relative z-20 shrink-0">
                <div>
                  <div className="bg-primary px-2 py-0.5 text-[10px] font-black text-black tracking-widest uppercase inline-block mb-2">{t('accounts.edit.protocol')}</div>
                  <h3 className="font-black text-3xl text-white uppercase tracking-tighter">Diretrizes da <span className="text-primary">Conta</span></h3>
                </div>
-               <button onClick={() => { setEditingAccount(null); setResetPasswordValue(""); }} className="text-zinc-600 hover:text-white transition-all material-symbols-outlined -mt-2">close</button>
+               <button onClick={() => { setEditingAccount(null); setResetPasswordValue(""); }} className="text-ash-600 hover:text-white transition-all material-symbols-outlined -mt-2">close</button>
             </div>
             
             <div className="flex-1 overflow-y-auto custom-scrollbar p-8 bg-black/40 space-y-10">
-              <div className="bg-[#1a1a1a] p-5 border-l-4 border-primary rounded-r-sm shadow-inner group">
-                 <span className="text-[9px] font-black text-zinc-500 uppercase tracking-[0.3em] block mb-2 group-hover:text-primary transition-colors">{t('accounts.edit.channel')}</span>
+              <div className="bg-seam p-5 border-l-4 border-primary rounded-r-sm shadow-inner group">
+                 <span className="text-[9px] font-black text-ash-500 uppercase tracking-[0.3em] block mb-2 group-hover:text-primary transition-colors">{t('accounts.edit.channel')}</span>
                  <span className="text-sm font-mono font-bold text-primary tracking-widest">{editingAccount.email}</span>
-                 <p className="font-mono text-[9px] text-zinc-600 uppercase tracking-widest font-bold mt-2">
+                 <p className="font-mono text-[9px] text-ash-600 uppercase tracking-widest font-bold mt-2">
                    UID: {editingAccount.uid}
                  </p>
               </div>
@@ -720,16 +720,16 @@ export default function UserRegistry({
               {/* Nome Mestre + Notas */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="group">
-                  <label className="block text-[9px] font-black text-zinc-500 uppercase tracking-[0.3em] mb-2">{t('accounts.edit.masterName')}</label>
+                  <label className="block text-[9px] font-black text-ash-500 uppercase tracking-[0.3em] mb-2">{t('accounts.edit.masterName')}</label>
                   <div className="relative">
                     <input type="text" value={editMasterName} onChange={(e) => setEditMasterName(e.target.value)} placeholder={t('accounts.edit.masterPlaceholder')}
-                      className="w-full bg-black/60 border-2 border-[#1a1a1a] text-white px-4 py-4 text-[11px] font-black outline-none uppercase rounded-sm transition-all focus:border-primary placeholder:text-zinc-700" />
+                      className="w-full bg-black/60 border-2 border-seam text-white px-4 py-4 text-[11px] font-black outline-none uppercase rounded-sm transition-all focus:border-primary placeholder:text-ash-700" />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-[9px] font-black text-zinc-500 uppercase tracking-[0.3em] mb-2">{t('accounts.edit.notes')}</label>
+                  <label className="block text-[9px] font-black text-ash-500 uppercase tracking-[0.3em] mb-2">{t('accounts.edit.notes')}</label>
                   <textarea value={editNotes} onChange={(e) => setEditNotes(e.target.value)} placeholder="Notas sobre este jogador..." rows={3}
-                    className="w-full bg-black/60 border-2 border-[#1a1a1a] text-white px-4 py-3 text-[11px] font-sans outline-none rounded-sm transition-all focus:border-primary placeholder:text-zinc-700 resize-none custom-scrollbar" />
+                    className="w-full bg-black/60 border-2 border-seam text-white px-4 py-3 text-[11px] font-sans outline-none rounded-sm transition-all focus:border-primary placeholder:text-ash-700 resize-none custom-scrollbar" />
                 </div>
               </div>
               <div className="flex justify-end">
@@ -738,8 +738,8 @@ export default function UserRegistry({
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-10 pt-8 border-t border-white/5">
                  <div className="space-y-4">
-                    <label className="block text-[9px] font-black text-zinc-500 uppercase tracking-[0.3em] mb-4">{t('reports.hardware')}</label>
-                    <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest leading-relaxed">
+                    <label className="block text-[9px] font-black text-ash-500 uppercase tracking-[0.3em] mb-4">{t('reports.hardware')}</label>
+                    <p className="text-[10px] text-ash-500 font-bold uppercase tracking-widest leading-relaxed">
                       Autorização DOS/Mac fica em Sistema → Acesso (grants persistentes). Push durante a sessão fica no Ao Vivo.
                     </p>
                     <a
@@ -751,9 +751,9 @@ export default function UserRegistry({
                     </a>
                  </div>
                  <div className="space-y-4">
-                    <label className="block text-[9px] font-black text-zinc-500 uppercase tracking-[0.3em] mb-4">{t('accounts.edit.authorityLevel')}</label>
+                    <label className="block text-[9px] font-black text-ash-500 uppercase tracking-[0.3em] mb-4">{t('accounts.edit.authorityLevel')}</label>
                     <select value={editingAccount.role} onChange={(e) => handleUpdateAccountFlag(editingAccount.uid, 'role', e.target.value as any)}
-                      className="w-full bg-black/60 border-2 border-[#1a1a1a] text-primary text-[11px] font-black px-4 py-4 outline-none transition-all uppercase rounded-sm cursor-pointer shadow-inner focus:border-primary">
+                      className="w-full bg-black/60 border-2 border-seam text-primary text-[11px] font-black px-4 py-4 outline-none transition-all uppercase rounded-sm cursor-pointer shadow-inner focus:border-primary">
                       <option value="player">PLAYER (RECRUTA)</option>
                       <option value="admin">ADMIN (COMANDO)</option>
                     </select>
@@ -762,21 +762,21 @@ export default function UserRegistry({
 
               {/* Suspender Conta */}
               <div className="pt-8 border-t border-white/5">
-                <label className="block text-[9px] font-black text-zinc-500 uppercase tracking-[0.3em] mb-4">{t('accounts.edit.accessControl')}</label>
+                <label className="block text-[9px] font-black text-ash-500 uppercase tracking-[0.3em] mb-4">{t('accounts.edit.accessControl')}</label>
                 <button onClick={() => handleToggleSuspend(editingAccount.uid, !!editingAccount.suspended)}
-                  className={`w-full flex items-center justify-between px-6 py-5 border-2 transition-all rounded-sm shadow-inner ${editingAccount.suspended ? 'bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20' : 'bg-[#1a1a1a] border-transparent text-zinc-400 hover:text-white hover:border-white/10'}`}>
+                  className={`w-full flex items-center justify-between px-6 py-5 border-2 transition-all rounded-sm shadow-inner ${editingAccount.suspended ? 'bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20' : 'bg-seam border-transparent text-ash-400 hover:text-white hover:border-white/10'}`}>
                   <span className="text-[10px] font-black uppercase tracking-widest">{editingAccount.suspended ? '⛔ CONTA SUSPENSA — CLIQUE PARA REATIVAR' : 'SUSPENDER CONTA'}</span>
-                  <span className={`material-symbols-outlined text-2xl ${editingAccount.suspended ? 'text-red-400' : 'text-zinc-600'}`}>{editingAccount.suspended ? 'lock' : 'lock_open'}</span>
+                  <span className={`material-symbols-outlined text-2xl ${editingAccount.suspended ? 'text-red-400' : 'text-ash-600'}`}>{editingAccount.suspended ? 'lock' : 'lock_open'}</span>
                 </button>
               </div>
 
               <div className="pt-8 border-t border-white/5 pb-8">
-                <label className="block text-[9px] font-black text-zinc-500 uppercase tracking-[0.3em] mb-4">{t('accounts.edit.resetCreds')}</label>
+                <label className="block text-[9px] font-black text-ash-500 uppercase tracking-[0.3em] mb-4">{t('accounts.edit.resetCreds')}</label>
                 <div className="flex gap-4">
                   <input type="password" value={resetPasswordValue} onChange={(e) => setResetPasswordValue(e.target.value)} placeholder="NOVA SENHA SIGILOSA..."
-                    className="flex-1 bg-black/60 border-2 border-[#1a1a1a] text-white px-4 py-4 text-[11px] font-mono outline-none uppercase rounded-sm transition-all focus:border-primary placeholder:text-zinc-700" />
+                    className="flex-1 bg-black/60 border-2 border-seam text-white px-4 py-4 text-[11px] font-mono outline-none uppercase rounded-sm transition-all focus:border-primary placeholder:text-ash-700" />
                   <button onClick={() => handleResetPassword(editingAccount.uid)} disabled={resetPasswordLoading || !resetPasswordValue}
-                    className="bg-[#1a1a1a] text-primary hover:bg-primary hover:text-black disabled:opacity-20 disabled:hover:bg-[#1a1a1a] disabled:hover:text-primary px-8 py-4 text-[11px] font-black uppercase tracking-widest transition-all rounded-sm active:scale-95 shadow-lg border-2 border-primary/20 hover:border-primary">{t('accounts.edit.reset')}</button>
+                    className="bg-seam text-primary hover:bg-primary hover:text-black disabled:opacity-20 disabled:hover:bg-seam disabled:hover:text-primary px-8 py-4 text-[11px] font-black uppercase tracking-widest transition-all rounded-sm active:scale-95 shadow-lg border-2 border-primary/20 hover:border-primary">{t('accounts.edit.reset')}</button>
                 </div>
               </div>
             </div>
@@ -803,28 +803,28 @@ export default function UserRegistry({
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.95, opacity: 0 }}
             transition={{ duration: 0.18 }}
-            className="bg-surface-container-low border border-emerald-500/30 p-10 w-full max-w-md rounded-sm shadow-2xl relative overflow-hidden"
+            className="bg-surface-container-low border border-phosphor-500/30 p-10 w-full max-w-md rounded-sm shadow-2xl relative overflow-hidden"
           >
-            <div className="absolute -top-3 left-6 bg-emerald-500 px-2 py-0.5 text-[10px] font-display font-bold text-black tracking-widest uppercase">
+            <div className="absolute -top-3 left-6 bg-phosphor-500 px-2 py-0.5 text-[10px] font-display font-bold text-black tracking-widest uppercase">
               RECRUTAMENTO-SINTÉTICO
             </div>
             
-            <h3 className="font-display font-bold text-2xl text-white uppercase tracking-tighter mb-10 border-b border-white/5 pb-8 mt-2">Nova <span className="text-emerald-500">Conexão Mestra</span></h3>
+            <h3 className="font-display font-bold text-2xl text-white uppercase tracking-tighter mb-10 border-b border-white/5 pb-8 mt-2">Nova <span className="text-phosphor-500">Conexão Mestra</span></h3>
             <form onSubmit={handleCreateUser} className="space-y-8">
               <div className="group">
-                <label className="block text-[9px] font-display font-bold text-industrial-silver/40 uppercase tracking-widest mb-2 group-focus-within:text-emerald-500 transition-colors">Identificador Único (ID)</label>
+                <label className="block text-[9px] font-display font-bold text-industrial-silver/40 uppercase tracking-widest mb-2 group-focus-within:text-phosphor-500 transition-colors">Identificador Único (ID)</label>
                 <input type="text" value={newUserCodinome} onChange={(e) => setNewUserCodinome(e.target.value)} placeholder="ex: agt_silva" className="w-full bg-surface-container-lowest border-none text-white px-5 py-4 text-[11px] font-mono outline-none uppercase rounded-sm shadow-inner transition-all" required />
-                <div className="h-0.5 w-0 bg-emerald-500 transition-all duration-300 group-focus-within:w-full" />
+                <div className="h-0.5 w-0 bg-phosphor-500 transition-all duration-300 group-focus-within:w-full" />
               </div>
               <div className="group">
-                <label className="block text-[9px] font-display font-bold text-industrial-silver/40 uppercase tracking-widest mb-2 group-focus-within:text-emerald-500 transition-colors">{t('accounts.createPassword')}</label>
+                <label className="block text-[9px] font-display font-bold text-industrial-silver/40 uppercase tracking-widest mb-2 group-focus-within:text-phosphor-500 transition-colors">{t('accounts.createPassword')}</label>
                 <input type="password" value={newUserPassword} onChange={(e) => setNewUserPassword(e.target.value)} placeholder="••••••" className="w-full bg-surface-container-lowest border-none text-white px-5 py-4 text-[11px] font-mono outline-none uppercase rounded-sm shadow-inner transition-all" required minLength={6} />
-                <div className="h-0.5 w-0 bg-emerald-500 transition-all duration-300 group-focus-within:w-full" />
+                <div className="h-0.5 w-0 bg-phosphor-500 transition-all duration-300 group-focus-within:w-full" />
               </div>
 
               <div className="pt-10 flex justify-end gap-6 items-center">
                 <button type="button" onClick={() => setShowCreateUser(false)} className="text-[10px] font-display font-bold text-industrial-silver/30 hover:text-white uppercase tracking-widest transition-colors">{t('accounts.abort')}</button>
-                <button type="submit" disabled={createUserLoading} className="bg-emerald-600 text-black px-12 py-4 rounded-sm font-display font-bold text-[11px] tracking-widest uppercase hover:bg-emerald-500 transition-all active:scale-95 shadow-lg flex items-center gap-3">
+                <button type="submit" disabled={createUserLoading} className="bg-phosphor-600 text-black px-12 py-4 rounded-sm font-display font-bold text-[11px] tracking-widest uppercase hover:bg-phosphor-500 transition-all active:scale-95 shadow-lg flex items-center gap-3">
                   {createUserLoading ? <RetroSpinner /> : 'REGISTRAR'}
                 </button>
               </div>

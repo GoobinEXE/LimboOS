@@ -275,7 +275,7 @@ export default function CampaignsPanel({
                   <span
                     className={`px-3 py-1 rounded-sm border font-display font-bold ${
                       campaign.status === 'Ativa'
-                        ? 'border-emerald-500/20 text-emerald-500 bg-emerald-500/5'
+                        ? 'border-phosphor-500/20 text-phosphor-500 bg-phosphor-500/5'
                         : campaign.status === 'Bloqueada'
                           ? 'border-red-500/20 text-red-500 bg-red-500/5'
                           : 'border-white/5 text-industrial-silver/30'
@@ -292,7 +292,7 @@ export default function CampaignsPanel({
                     </span>
                   )}
                   {(operatingGroups > 0 || operatingAgents > 0) && (
-                    <span className="bg-emerald-500/10 text-emerald-500 border border-emerald-500/30 px-2 py-1 rounded-sm animate-pulse">
+                    <span className="bg-phosphor-500/10 text-phosphor-500 border border-phosphor-500/30 px-2 py-1 rounded-sm animate-pulse">
                       {t('missions.badge.inField', { n: operatingGroups + operatingAgents })}
                     </span>
                   )}
@@ -344,7 +344,7 @@ export default function CampaignsPanel({
                 animate={{ x: 0 }}
                 exit={{ x: '100%' }}
                 transition={ADMIN_SPRING}
-                className="bg-[#222] border-l-8 border-[#1a1a1a] w-full max-w-2xl shadow-2xl flex flex-col h-full relative overflow-hidden font-chakra"
+                className="bg-[#222] border-l-8 border-seam w-full max-w-2xl shadow-2xl flex flex-col h-full relative overflow-hidden font-chakra"
                 onClick={(e) => e.stopPropagation()}
               >
                 <Screw className="top-4 left-4" />
@@ -354,7 +354,7 @@ export default function CampaignsPanel({
                 <div className="noise-overlay" />
                 <div className="scanlines" />
 
-                <div className="p-8 border-b-4 border-[#1a1a1a] flex justify-between items-center bg-black/40 relative z-10">
+                <div className="p-8 border-b-4 border-seam flex justify-between items-center bg-black/40 relative z-10">
                   <div className="mt-2">
                     <h3 className="font-black text-xl text-white uppercase tracking-widest">
                       Retenção de <span className="text-primary">Recursos</span>
@@ -371,7 +371,7 @@ export default function CampaignsPanel({
                   </button>
                 </div>
 
-                <div className="p-6 bg-black/20 border-b-2 border-[#1a1a1a] relative z-10">
+                <div className="p-6 bg-black/20 border-b-2 border-seam relative z-10">
                   <div className="relative group">
                     <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-industrial-silver/20 text-base group-focus-within:text-primary transition-colors">
                       search
@@ -381,7 +381,7 @@ export default function CampaignsPanel({
                       placeholder={t('missions.persistent.search')}
                       value={itemSearch}
                       onChange={(e) => setItemSearch(e.target.value)}
-                      className="w-full bg-black/60 border-2 border-[#1a1a1a] text-[11px] font-bold px-12 py-4 text-white outline-none rounded-sm uppercase tracking-widest transition-all shadow-inner focus:ring-1 focus:ring-primary placeholder:text-zinc-700"
+                      className="w-full bg-black/60 border-2 border-seam text-[11px] font-bold px-12 py-4 text-white outline-none rounded-sm uppercase tracking-widest transition-all shadow-inner focus:ring-1 focus:ring-primary placeholder:text-ash-700"
                     />
                   </div>
                 </div>
@@ -401,7 +401,7 @@ export default function CampaignsPanel({
                           className={`flex items-center justify-between p-4 text-left transition-all border-2 rounded-sm group ${
                             persistentItems.includes(item.id)
                               ? 'bg-primary/10 border-primary/30 text-primary shadow-inner'
-                              : 'bg-[#1a1a1a] border-[#1a1a1a] text-zinc-500 hover:bg-white/5 hover:text-white hover:border-white/10'
+                              : 'bg-seam border-seam text-ash-500 hover:bg-white/5 hover:text-white hover:border-white/10'
                           }`}
                         >
                           <div className="flex items-center gap-4">
@@ -409,7 +409,7 @@ export default function CampaignsPanel({
                               className={`w-10 h-10 rounded-sm bg-black/40 border-2 flex items-center justify-center transition-all ${
                                 persistentItems.includes(item.id)
                                   ? 'border-primary/40 text-primary shadow-[0_0_10px_rgba(255,140,0,0.1)]'
-                                  : 'border-[#1a1a1a] text-zinc-600'
+                                  : 'border-seam text-ash-600'
                               }`}
                             >
                               <span className="material-symbols-outlined text-xl">
@@ -428,7 +428,7 @@ export default function CampaignsPanel({
                                 className={`text-[9px] font-bold uppercase tracking-widest mt-0.5 ${
                                   persistentItems.includes(item.id)
                                     ? 'text-primary/40'
-                                    : 'text-zinc-600'
+                                    : 'text-ash-600'
                                 }`}
                               >
                                 {item.metadata?.chapter || 'REGISTRO GERAL'}
@@ -443,7 +443,7 @@ export default function CampaignsPanel({
                   </div>
                 </div>
 
-                <div className="p-8 border-t-4 border-[#1a1a1a] flex justify-end bg-black/40 relative z-10 shrink-0">
+                <div className="p-8 border-t-4 border-seam flex justify-end bg-black/40 relative z-10 shrink-0">
                   <button
                     onClick={() => setShowItemsModal(false)}
                     className="bg-[#333] hover:bg-[#444] text-white px-12 py-4 text-[10px] font-black tracking-widest transition-all rounded-sm uppercase active:scale-95"

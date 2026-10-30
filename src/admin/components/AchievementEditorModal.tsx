@@ -182,7 +182,7 @@ type Props = {
 
 const fieldClass =
   'w-full bg-black/50 border border-white/10 text-[11px] font-bold uppercase px-3 py-2.5 text-white outline-none focus:border-secondary rounded-sm';
-const labelClass = 'text-[9px] font-black uppercase tracking-widest text-zinc-500 mb-1.5 block';
+const labelClass = 'text-[9px] font-black uppercase tracking-widest text-ash-500 mb-1.5 block';
 
 export default function AchievementEditorModal({
   open,
@@ -255,7 +255,7 @@ export default function AchievementEditorModal({
         if (e.target === e.currentTarget && !saving) onClose();
       }}
     >
-      <div className="bg-[#1a1a1a] border-2 border-white/10 w-full max-w-2xl max-h-[90vh] overflow-hidden rounded-xl shadow-2xl flex flex-col font-chakra">
+      <div className="bg-seam border-2 border-white/10 w-full max-w-2xl max-h-[90vh] overflow-hidden rounded-xl shadow-2xl flex flex-col font-chakra">
         <div className="px-6 py-4 border-b border-white/10 flex items-center justify-between bg-black/40">
           <h3 className="text-xs font-black uppercase tracking-[0.2em] text-white">
             {isEdit ? 'Editar conquista' : 'Nova conquista'}
@@ -264,7 +264,7 @@ export default function AchievementEditorModal({
             type="button"
             disabled={saving}
             onClick={onClose}
-            className="text-zinc-500 hover:text-white material-symbols-outlined text-xl"
+            className="text-ash-500 hover:text-white material-symbols-outlined text-xl"
           >
             close
           </button>
@@ -277,7 +277,7 @@ export default function AchievementEditorModal({
                 {iconSrc ? (
                   <img src={iconSrc} alt="" className="w-full h-full object-cover" />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-zinc-700">
+                  <div className="w-full h-full flex items-center justify-center text-ash-700">
                     <span className="material-symbols-outlined text-3xl">military_tech</span>
                   </div>
                 )}
@@ -292,7 +292,7 @@ export default function AchievementEditorModal({
                 />
               </label>
               {uploadProgress != null && (
-                <p className="text-[8px] text-zinc-500 font-mono">{Math.round(uploadProgress)}%</p>
+                <p className="text-[8px] text-ash-500 font-mono">{Math.round(uploadProgress)}%</p>
               )}
             </div>
 
@@ -383,7 +383,7 @@ export default function AchievementEditorModal({
               </select>
             </div>
             <div className="flex items-end gap-4 pb-1">
-              <label className="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-zinc-400 cursor-pointer">
+              <label className="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-ash-400 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={form.isSecret}
@@ -391,7 +391,7 @@ export default function AchievementEditorModal({
                 />
                 Secreta
               </label>
-              <label className="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-zinc-400 cursor-pointer">
+              <label className="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-ash-400 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={form.enabled}
@@ -413,7 +413,7 @@ export default function AchievementEditorModal({
                   className={`text-[9px] font-black uppercase tracking-widest px-3 py-1.5 border rounded-sm ${
                     form.platforms.includes(p)
                       ? 'border-secondary text-secondary bg-secondary/10'
-                      : 'border-white/10 text-zinc-500'
+                      : 'border-white/10 text-ash-500'
                   }`}
                 >
                   {PLATFORM_LABELS[p]}
@@ -431,7 +431,7 @@ export default function AchievementEditorModal({
                 className={`text-[9px] font-black uppercase tracking-widest px-3 py-1.5 border rounded-sm ${
                   form.campaignMode === 'global'
                     ? 'border-secondary text-secondary bg-secondary/10'
-                    : 'border-white/10 text-zinc-500'
+                    : 'border-white/10 text-ash-500'
                 }`}
               >
                 Global
@@ -442,7 +442,7 @@ export default function AchievementEditorModal({
                 className={`text-[9px] font-black uppercase tracking-widest px-3 py-1.5 border rounded-sm ${
                   form.campaignMode === 'list'
                     ? 'border-secondary text-secondary bg-secondary/10'
-                    : 'border-white/10 text-zinc-500'
+                    : 'border-white/10 text-ash-500'
                 }`}
               >
                 Específicas
@@ -458,7 +458,7 @@ export default function AchievementEditorModal({
                     className={`text-[8px] font-black uppercase tracking-widest px-2.5 py-1 border rounded-sm ${
                       form.campaignIds.includes(c.id)
                         ? 'border-primary text-primary bg-primary/10'
-                        : 'border-white/10 text-zinc-500'
+                        : 'border-white/10 text-ash-500'
                     }`}
                   >
                     {c.name || c.id}
@@ -574,7 +574,7 @@ export default function AchievementEditorModal({
                     className={`text-[8px] font-mono px-2 py-1 border rounded-sm ${
                       form.ruleFlagKeys.includes(k)
                         ? 'border-secondary text-secondary'
-                        : 'border-white/10 text-zinc-600'
+                        : 'border-white/10 text-ash-600'
                     }`}
                   >
                     {k}
@@ -590,7 +590,7 @@ export default function AchievementEditorModal({
             type="button"
             disabled={saving}
             onClick={onClose}
-            className="flex-1 px-4 py-3 text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-white bg-[#333] rounded-sm"
+            className="flex-1 px-4 py-3 text-[10px] font-black uppercase tracking-widest text-ash-500 hover:text-white bg-[#333] rounded-sm"
           >
             Cancelar
           </button>

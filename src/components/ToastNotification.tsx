@@ -106,7 +106,7 @@ function ToastItem({ toast, onDismiss }: ToastItemProps) {
           {toast.title}
         </p>
         {toast.subtitle && (
-          <p className="text-[10px] text-gray-400 truncate mt-0.5">{toast.subtitle}</p>
+          <p className="text-[10px] text-ash-400 truncate mt-0.5">{toast.subtitle}</p>
         )}
       </div>
       <motion.div
@@ -135,7 +135,7 @@ function AchievementToast({
   const platform = toast.platform || 'global';
   const tierBorder =
     platform === 'nokia'
-      ? 'border-emerald-400/60'
+      ? 'border-phosphor-400/60'
       : tier === 'legendary'
         ? 'border-amber-400/70'
         : tier === 'rare'
@@ -143,7 +143,7 @@ function AchievementToast({
           : 'border-orange-500/45';
   const tierGlow =
     platform === 'nokia'
-      ? 'shadow-[0_0_28px_rgba(52,211,153,0.35)]'
+      ? 'shadow-[0_0_28px_rgba(118,212,104,0.35)]'
       : tier === 'legendary'
         ? 'shadow-[0_0_32px_rgba(251,191,36,0.45)]'
         : 'shadow-[0_0_22px_rgba(255,140,0,0.3)]';
@@ -153,8 +153,8 @@ function AchievementToast({
       : tier === 'rare'
         ? t('achievement.tier.rareUpper')
         : t('achievement.tier.commonUpper');
-  const accentText = platform === 'nokia' ? 'text-emerald-300' : 'text-amber-300';
-  const accentMuted = platform === 'nokia' ? 'text-emerald-400/80' : 'text-amber-400/80';
+  const accentText = platform === 'nokia' ? 'text-phosphor-300' : 'text-amber-300';
+  const accentMuted = platform === 'nokia' ? 'text-phosphor-400/80' : 'text-amber-400/80';
 
   return (
     <motion.div
@@ -170,7 +170,7 @@ function AchievementToast({
         aria-hidden
         className={`pointer-events-none absolute inset-0 ${
           platform === 'nokia'
-            ? 'bg-[radial-gradient(ellipse_at_20%_0%,rgba(52,211,153,0.16),transparent_55%)]'
+            ? 'bg-[radial-gradient(ellipse_at_20%_0%,rgba(118,212,104,0.16),transparent_55%)]'
             : 'bg-[radial-gradient(ellipse_at_20%_0%,rgba(251,191,36,0.18),transparent_55%)]'
         }`}
       />
@@ -203,7 +203,7 @@ function AchievementToast({
         animate={{ scaleX: 0 }}
         transition={{ duration: duration / 1000, ease: 'linear' }}
         className={`absolute bottom-0 left-0 right-0 h-0.5 origin-left ${
-          platform === 'nokia' ? 'bg-emerald-400/70' : 'bg-amber-400/70'
+          platform === 'nokia' ? 'bg-phosphor-400/70' : 'bg-amber-400/70'
         }`}
       />
     </motion.div>

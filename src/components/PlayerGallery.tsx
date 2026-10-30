@@ -40,14 +40,14 @@ export default function PlayerGallery({ images, variant = 'default' }: PlayerGal
   if (variant === 'nokia') {
     if (images.length === 0) {
       return (
-        <div className="text-[8px] text-center border border-dashed border-[#111e14] py-3 opacity-70 font-bold">
+        <div className="text-[8px] text-center border border-dashed border-lcd-ink py-3 opacity-70 font-bold">
           {t('gallery.emptyNokia')}
         </div>
       );
     }
     return (
-      <div className="space-y-1 text-[#111e14] font-mono text-[9px] uppercase relative">
-        <div className="flex gap-1 mb-1 border-b border-[#111e14] pb-1">
+      <div className="space-y-1 text-lcd-ink font-mono text-[9px] uppercase relative">
+        <div className="flex gap-1 mb-1 border-b border-lcd-ink pb-1">
           {TABS.map(tab => {
             const count = getCounts(tab.id);
             const isActive = activeTab === tab.id;
@@ -55,8 +55,8 @@ export default function PlayerGallery({ images, variant = 'default' }: PlayerGal
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex-1 border border-[#111e14] py-0.5 text-center transition-all ${
-                  isActive ? 'bg-[#111e14] text-[#edfeed] font-bold' : 'hover:bg-[#111e14]/10'
+                className={`flex-1 border border-lcd-ink py-0.5 text-center transition-all ${
+                  isActive ? 'bg-lcd-ink text-lcd-paper font-bold' : 'hover:bg-lcd-ink/10'
                 }`}
               >
                 {tabLabel(tab.id).substring(0, 3)}{count > 0 && `:${count}`}
@@ -73,13 +73,13 @@ export default function PlayerGallery({ images, variant = 'default' }: PlayerGal
             className="grid grid-cols-2 gap-1"
           >
             {filtered.length === 0 ? (
-              <div className="col-span-2 text-center py-2 opacity-60 border border-dashed border-[#111e14]">{t('gallery.noRecordsNokia')}</div>
+              <div className="col-span-2 text-center py-2 opacity-60 border border-dashed border-lcd-ink">{t('gallery.noRecordsNokia')}</div>
             ) : (
               filtered.map((img, idx) => (
                 <div
                   key={img.id}
                   onClick={() => setSelectedImage(img)}
-                  className="border border-[#111e14] p-px cursor-pointer hover:bg-[#111e14] hover:text-[#edfeed] group transition-all relative"
+                  className="border border-lcd-ink p-px cursor-pointer hover:bg-lcd-ink hover:text-lcd-paper group transition-all relative"
                 >
                   <div className="aspect-square bg-black overflow-hidden relative grayscale contrast-150 brightness-75 group-hover:grayscale-0 group-hover:contrast-100 transition-all">
                     <img
@@ -88,9 +88,9 @@ export default function PlayerGallery({ images, variant = 'default' }: PlayerGal
                       className="w-full h-full object-cover"
                       onError={(e) => { e.currentTarget.src = FALLBACK_IMAGE; }}
                     />
-                    <span className="absolute top-0 left-0 bg-[#edfeed] text-[#111e14] text-[6px] font-bold px-0.5 leading-tight">{t('gallery.imgIndex', { n: pad(idx + 1) })}</span>
+                    <span className="absolute top-0 left-0 bg-lcd-paper text-lcd-ink text-[6px] font-bold px-0.5 leading-tight">{t('gallery.imgIndex', { n: pad(idx + 1) })}</span>
                   </div>
-                  <div className="text-[7px] font-bold truncate mt-0.5 px-0.5 text-center group-hover:text-[#edfeed]">{img.title}</div>
+                  <div className="text-[7px] font-bold truncate mt-0.5 px-0.5 text-center group-hover:text-lcd-paper">{img.title}</div>
                 </div>
               ))
             )}
@@ -102,15 +102,15 @@ export default function PlayerGallery({ images, variant = 'default' }: PlayerGal
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 z-100 bg-[#edfeed] flex flex-col p-1 border-2 border-[#111e14]"
+              className="absolute inset-0 z-100 bg-lcd-paper flex flex-col p-1 border-2 border-lcd-ink"
               onClick={() => setSelectedImage(null)}
             >
-              <div className="flex justify-between items-center border-b-2 border-[#111e14] pb-1 shrink-0 font-bold mb-1">
+              <div className="flex justify-between items-center border-b-2 border-lcd-ink pb-1 shrink-0 font-bold mb-1">
                 <span>{t('gallery.viewerTitle')}</span>
-                <button className="border border-[#111e14] px-1 hover:bg-[#111e14] hover:text-[#edfeed] active:scale-95 transition-all">{t('actions.x')}</button>
+                <button className="border border-lcd-ink px-1 hover:bg-lcd-ink hover:text-lcd-paper active:scale-95 transition-all">{t('actions.x')}</button>
               </div>
               <div className="flex-1 overflow-y-auto flex flex-col items-center" style={{ scrollbarWidth: 'none' }}>
-                <div className="border-4 border-[#111e14] p-1 bg-black mb-2 grayscale contrast-125 w-full">
+                <div className="border-4 border-lcd-ink p-1 bg-black mb-2 grayscale contrast-125 w-full">
                   <img
                     src={selectedImage.imageUrl}
                     alt={selectedImage.title}

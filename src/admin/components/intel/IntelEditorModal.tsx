@@ -237,7 +237,7 @@ export default function IntelEditorModal({
                           : 'Imagem'}
                     </p>
                     {formData.mediaUrl && (
-                      <span className="text-[8px] font-mono text-emerald-400/80 uppercase tracking-wider">
+                      <span className="text-[8px] font-mono text-phosphor-400/80 uppercase tracking-wider">
                         Arquivo vinculado
                       </span>
                     )}

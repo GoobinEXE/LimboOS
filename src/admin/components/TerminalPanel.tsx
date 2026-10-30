@@ -168,7 +168,7 @@ export default function TerminalPanel({ embedded = false }: TerminalPanelProps) 
                       toast.error(t('hardware.toast.revokeDosFail'));
                     }
                   }}
-                  className="px-3 py-1.5 text-[9px] font-black uppercase tracking-widest bg-[#333] border border-white/5 text-zinc-300 hover:bg-[#444] disabled:opacity-30"
+                  className="px-3 py-1.5 text-[9px] font-black uppercase tracking-widest bg-[#333] border border-white/5 text-ash-300 hover:bg-[#444] disabled:opacity-30"
                 >
                   {t('hardware.revokeDos')}
                 </button>
@@ -184,7 +184,7 @@ export default function TerminalPanel({ embedded = false }: TerminalPanelProps) 
                       toast.error(t('hardware.toast.revokeMacFail'));
                     }
                   }}
-                  className="px-3 py-1.5 text-[9px] font-black uppercase tracking-widest bg-[#333] border border-white/5 text-zinc-300 hover:bg-[#444] disabled:opacity-30"
+                  className="px-3 py-1.5 text-[9px] font-black uppercase tracking-widest bg-[#333] border border-white/5 text-ash-300 hover:bg-[#444] disabled:opacity-30"
                 >
                   {t('hardware.revokeMac')}
                 </button>
@@ -198,7 +198,7 @@ export default function TerminalPanel({ embedded = false }: TerminalPanelProps) 
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={t('hardware.search')}
-              className="flex-1 bg-black/50 border border-white/10 px-4 py-2.5 text-xs font-bold uppercase tracking-wide text-white placeholder:text-zinc-700 focus:outline-none focus:border-primary/40"
+              className="flex-1 bg-black/50 border border-white/10 px-4 py-2.5 text-xs font-bold uppercase tracking-wide text-white placeholder:text-ash-700 focus:outline-none focus:border-primary/40"
             />
             <div className="flex flex-wrap gap-1.5">
               {(
@@ -217,7 +217,7 @@ export default function TerminalPanel({ embedded = false }: TerminalPanelProps) 
                   className={`px-3 py-2 text-[9px] font-black uppercase tracking-widest border transition-colors ${
                     filter === id
                       ? 'border-primary bg-primary/15 text-primary'
-                      : 'border-white/5 text-zinc-600 hover:text-zinc-300'
+                      : 'border-white/5 text-ash-600 hover:text-ash-300'
                   }`}
                 >
                   {label}
@@ -231,18 +231,18 @@ export default function TerminalPanel({ embedded = false }: TerminalPanelProps) 
           <button
             type="button"
             onClick={selectFiltered}
-            className="text-[9px] font-black uppercase tracking-widest text-zinc-500 hover:text-primary"
+            className="text-[9px] font-black uppercase tracking-widest text-ash-500 hover:text-primary"
           >
             {selectedUids.size > 0 ? t('hardware.clearSelection', { n: selectedUids.size }) : t('hardware.selectFiltered', { n: filtered.length })}
           </button>
-          <span className="text-[9px] font-mono text-zinc-700 uppercase tracking-widest">
+          <span className="text-[9px] font-mono text-ash-700 uppercase tracking-widest">
             {t('hardware.count', { n: filtered.length })}
           </span>
         </div>
 
         <ul className="divide-y divide-white/5 max-h-[560px] overflow-y-auto">
           {filtered.length === 0 ? (
-            <li className="p-12 text-center text-zinc-600 text-[10px] font-black uppercase tracking-widest">
+            <li className="p-12 text-center text-ash-600 text-[10px] font-black uppercase tracking-widest">
               {t('hardware.empty')}
             </li>
           ) : (
@@ -269,7 +269,7 @@ export default function TerminalPanel({ embedded = false }: TerminalPanelProps) 
                       type="button"
                       onClick={() => toggleSelect(row.uid)}
                       className={`mt-0.5 w-5 h-5 border-2 rounded-sm shrink-0 flex items-center justify-center transition-all ${
-                        selected ? 'bg-primary border-primary' : 'border-zinc-800 hover:border-zinc-600'
+                        selected ? 'bg-primary border-primary' : 'border-ash-800 hover:border-ash-600'
                       }`}
                       aria-label="Selecionar conta"
                     >
@@ -280,9 +280,9 @@ export default function TerminalPanel({ embedded = false }: TerminalPanelProps) 
 
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-2">
-                        <p className="text-xs font-black uppercase text-zinc-100 tracking-wide">{row.label}</p>
+                        <p className="text-xs font-black uppercase text-ash-100 tracking-wide">{row.label}</p>
                         {row.isOnline && (
-                          <span className="text-[8px] font-black uppercase tracking-widest text-emerald-500 border border-emerald-500/30 px-1.5 py-0.5">
+                          <span className="text-[8px] font-black uppercase tracking-widest text-phosphor-500 border border-phosphor-500/30 px-1.5 py-0.5">
                             {t('hardware.filter.online')}
                           </span>
                         )}
@@ -292,15 +292,15 @@ export default function TerminalPanel({ embedded = false }: TerminalPanelProps) 
                           </span>
                         )}
                         {row.forceMacOpen && (
-                          <span className="text-[8px] font-black uppercase tracking-widest text-cyan-400 animate-pulse">
+                          <span className="text-[8px] font-black uppercase tracking-widest text-tube-400 animate-pulse">
                             Push Mac pendente
                           </span>
                         )}
                       </div>
                       {row.email && (
-                        <p className="text-[9px] font-mono text-zinc-600 mt-0.5 truncate">{row.email}</p>
+                        <p className="text-[9px] font-mono text-ash-600 mt-0.5 truncate">{row.email}</p>
                       )}
-                      <p className="text-[9px] font-bold uppercase tracking-wide text-zinc-500 mt-1">
+                      <p className="text-[9px] font-bold uppercase tracking-wide text-ash-500 mt-1">
                         {row.agents.length > 0 ? row.agents.join(' · ') : 'Sem personagem ativo'}
                       </p>
                     </div>
@@ -371,7 +371,7 @@ export default function TerminalPanel({ embedded = false }: TerminalPanelProps) 
                             toast.error(t('live.toast.macFail'));
                           }
                         }}
-                        className="px-3 py-1.5 text-[9px] font-black uppercase tracking-widest bg-zinc-200 text-black hover:bg-white disabled:opacity-30"
+                        className="px-3 py-1.5 text-[9px] font-black uppercase tracking-widest bg-ash-200 text-black hover:bg-white disabled:opacity-30"
                       >
                         Empurrar Mac
                       </button>
@@ -402,9 +402,9 @@ function GrantToggle({
 }) {
   const on =
     accent === 'cyan'
-      ? 'bg-cyan-500/20 border-cyan-500/40'
-      : 'bg-emerald-500/20 border-emerald-500/40';
-  const knob = accent === 'cyan' ? 'bg-cyan-400' : 'bg-emerald-400';
+      ? 'bg-tube-500/20 border-tube-500/40'
+      : 'bg-phosphor-500/20 border-phosphor-500/40';
+  const knob = accent === 'cyan' ? 'bg-tube-400' : 'bg-phosphor-400';
 
   return (
     <button
@@ -415,18 +415,18 @@ function GrantToggle({
     >
       <span
         className={`relative w-10 h-5 rounded-full border transition-all ${
-          active ? on : 'bg-zinc-900 border-zinc-800'
+          active ? on : 'bg-ash-900 border-ash-800'
         }`}
       >
         <span
           className={`absolute top-0.5 left-0.5 w-3.5 h-3.5 rounded-full transition-transform ${
-            active ? `translate-x-5 ${knob}` : 'translate-x-0 bg-zinc-700'
+            active ? `translate-x-5 ${knob}` : 'translate-x-0 bg-ash-700'
           }`}
         />
       </span>
       <span
         className={`text-[9px] font-black uppercase tracking-widest ${
-          active ? (accent === 'cyan' ? 'text-cyan-400' : 'text-emerald-400') : 'text-zinc-600'
+          active ? (accent === 'cyan' ? 'text-tube-400' : 'text-phosphor-400') : 'text-ash-600'
         }`}
       >
         {label}

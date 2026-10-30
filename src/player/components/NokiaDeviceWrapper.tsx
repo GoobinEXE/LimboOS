@@ -36,7 +36,7 @@ function NavButton({
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`border border-[#111e14] rounded hover:bg-[#111e14] hover:text-[#edfeed] transition-all duration-100 ease-limbo active:scale-95 active:translate-y-px cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed ${
+      className={`border border-lcd-ink rounded hover:bg-lcd-ink hover:text-lcd-paper transition-all duration-100 ease-limbo active:scale-95 active:translate-y-px cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed ${
         vertical
           ? 'w-full py-2 flex flex-col items-center justify-center gap-0.5 min-h-11'
           : 'px-3 py-1.5 flex items-center gap-1'
@@ -119,33 +119,33 @@ export default function NokiaDeviceWrapper({
   return (
     <div
       // Moldura respeita notch/home indicator (safe areas) sem alterar a cor do LCD
-      className="absolute inset-0 w-full h-full bg-[#edfeed] z-50 flex items-center justify-center overflow-hidden player-viewport pt-[max(0.5rem,env(safe-area-inset-top))] pr-[max(0.5rem,env(safe-area-inset-right))] pb-[max(0.5rem,env(safe-area-inset-bottom))] pl-[max(0.5rem,env(safe-area-inset-left))] sm:pt-[max(1rem,env(safe-area-inset-top))] sm:pr-[max(1rem,env(safe-area-inset-right))] sm:pb-[max(1rem,env(safe-area-inset-bottom))] sm:pl-[max(1rem,env(safe-area-inset-left))]"
+      className="absolute inset-0 w-full h-full bg-lcd-paper z-50 flex items-center justify-center overflow-hidden player-viewport pt-[max(0.5rem,env(safe-area-inset-top))] pr-[max(0.5rem,env(safe-area-inset-right))] pb-[max(0.5rem,env(safe-area-inset-bottom))] pl-[max(0.5rem,env(safe-area-inset-left))] sm:pt-[max(1rem,env(safe-area-inset-top))] sm:pr-[max(1rem,env(safe-area-inset-right))] sm:pb-[max(1rem,env(safe-area-inset-bottom))] sm:pl-[max(1rem,env(safe-area-inset-left))]"
     >
       {/* Sombreamento do plástico ao redor do LCD: escurece as bordas sem mudar o tom verde */}
       <div
         aria-hidden
-        className="absolute inset-0 pointer-events-none bg-radial-[at_50%_45%] from-transparent via-transparent to-[#111e14]/10"
+        className="absolute inset-0 pointer-events-none bg-radial-[at_50%_45%] from-transparent via-transparent to-lcd-ink/10"
       />
       <div
-        className={`w-full h-full bg-[#edfeed] rounded-xl border-4 border-[#111e14] relative shadow-[inset_0_4px_16px_rgba(0,0,0,0.45),inset_0_0_0_1px_rgba(255,255,255,0.35),0_0_0_1px_rgba(17,30,20,0.35),0_10px_30px_-12px_rgba(17,30,20,0.6)] overflow-hidden max-w-4xl mx-auto ${
+        className={`w-full h-full bg-lcd-paper rounded-xl border-4 border-lcd-ink relative shadow-[inset_0_4px_16px_rgba(0,0,0,0.45),inset_0_0_0_1px_rgba(255,255,255,0.35),0_0_0_1px_rgba(17,30,20,0.35),0_10px_30px_-12px_rgba(17,30,20,0.6)] overflow-hidden max-w-4xl mx-auto ${
           isLandscape && !isScanning ? 'flex flex-row' : 'flex flex-col'
         }`}
       >
         <div
           id="nokia-lcd-screen-inner"
           style={{ fontFamily: '"JetBrains Mono", monospace' }}
-          className={`w-full h-full bg-[#edfeed] text-[#111e14] overflow-hidden relative select-none nokia-theme-active ${
+          className={`w-full h-full bg-lcd-paper text-lcd-ink overflow-hidden relative select-none nokia-theme-active ${
             isLandscape && !isScanning ? 'flex flex-row min-h-0' : 'flex flex-col justify-between'
           }`}
         >
-          <div className="absolute inset-0 border border-[#111e14]/15 pointer-events-none z-20" />
+          <div className="absolute inset-0 border border-lcd-ink/15 pointer-events-none z-20" />
 
           {!isScanning && isLandscape && (
             <motion.div
               initial={{ opacity: 0, x: -8 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-              className="w-11 shrink-0 flex flex-col justify-around items-stretch bg-[#edfeed] border-r-2 border-[#111e14] py-1.5 px-0.5 gap-0.5 z-20 select-none text-[#111e14]"
+              className="w-11 shrink-0 flex flex-col justify-around items-stretch bg-lcd-paper border-r-2 border-lcd-ink py-1.5 px-0.5 gap-0.5 z-20 select-none text-lcd-ink"
             >
               {navButtons}
             </motion.div>
@@ -153,13 +153,13 @@ export default function NokiaDeviceWrapper({
 
           <div className={`flex flex-col min-h-0 min-w-0 ${isLandscape && !isScanning ? 'flex-1' : 'h-full'}`}>
             {!isScanning && (
-              <div className="flex justify-between items-center bg-[#edfeed] px-2 border-b border-[#111e14] py-1 text-[12px] font-bold h-6 select-none z-10 leading-none shrink-0">
+              <div className="flex justify-between items-center bg-lcd-paper px-2 border-b border-lcd-ink py-1 text-[12px] font-bold h-6 select-none z-10 leading-none shrink-0">
                 <div className="flex items-end gap-px h-2.5" title="Signal">
                   <span className="text-[10px] leading-none pr-0.5 font-black">HP</span>
                   {[1, 2, 3, 4, 5].map((level) => (
                     <div
                       key={level}
-                      className={`w-0.5 ${signalBarsCount >= level ? 'bg-[#111e14]' : 'bg-[#111e14]/10'}`}
+                      className={`w-0.5 ${signalBarsCount >= level ? 'bg-lcd-ink' : 'bg-lcd-ink/10'}`}
                       style={{ height: `${level * 2 + 2}px` }}
                     />
                   ))}
@@ -169,10 +169,10 @@ export default function NokiaDeviceWrapper({
 
                 <div className="flex items-center gap-0.5">
                   <span className="text-[10px] pr-0.5 font-black">MP</span>
-                  <div className="flex items-center border border-[#111e14] p-px rounded-[1px] w-4.5 h-2.5">
-                    <div className="bg-[#111e14] h-full w-[75%]" />
+                  <div className="flex items-center border border-lcd-ink p-px rounded-[1px] w-4.5 h-2.5">
+                    <div className="bg-lcd-ink h-full w-[75%]" />
                   </div>
-                  <div className="w-px h-1 bg-[#111e14] -ml-px" />
+                  <div className="w-px h-1 bg-lcd-ink -ml-px" />
                 </div>
               </div>
             )}
@@ -180,7 +180,7 @@ export default function NokiaDeviceWrapper({
             <div className="grow overflow-hidden relative p-2 flex flex-col min-h-0">{children}</div>
 
             {!isScanning && !isLandscape && (
-              <div className="flex justify-around items-center bg-[#edfeed] border-t-2 border-[#111e14] py-2 text-[12px] font-bold z-20 h-11 select-none text-[#111e14] shrink-0">
+              <div className="flex justify-around items-center bg-lcd-paper border-t-2 border-lcd-ink py-2 text-[12px] font-bold z-20 h-11 select-none text-lcd-ink shrink-0">
                 {navButtons}
               </div>
             )}

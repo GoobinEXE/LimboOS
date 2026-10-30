@@ -201,12 +201,12 @@ export default function MissionAccessTab({
       </div>
 
       <div className="space-y-4">
-        <p className="text-[8px] text-emerald-500/50 font-display font-bold uppercase tracking-widest border-b border-emerald-500/10 pb-2">
+        <p className="text-[8px] text-phosphor-500/50 font-display font-bold uppercase tracking-widest border-b border-phosphor-500/10 pb-2">
           Missão Ativa (Em Campo)
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <select
-            className="w-full bg-emerald-500/5 border border-emerald-500/20 text-[10px] font-display font-bold text-emerald-500 p-3 outline-none rounded-sm focus:border-emerald-500/40 transition-all appearance-none cursor-pointer"
+            className="w-full bg-phosphor-500/5 border border-phosphor-500/20 text-[10px] font-display font-bold text-phosphor-500 p-3 outline-none rounded-sm focus:border-phosphor-500/40 transition-all appearance-none cursor-pointer"
             onChange={(e) => e.target.value && handleAssignGroup(e.target.value)}
             value=""
           >
@@ -220,7 +220,7 @@ export default function MissionAccessTab({
               ))}
           </select>
           <select
-            className="w-full bg-emerald-500/5 border border-emerald-500/20 text-[10px] font-display font-bold text-emerald-500 p-3 outline-none rounded-sm focus:border-emerald-500/40 transition-all appearance-none cursor-pointer"
+            className="w-full bg-phosphor-500/5 border border-phosphor-500/20 text-[10px] font-display font-bold text-phosphor-500 p-3 outline-none rounded-sm focus:border-phosphor-500/40 transition-all appearance-none cursor-pointer"
             onChange={(e) => {
               if (!e.target.value) return;
               const [uid, charId] = e.target.value.split('|');
@@ -247,14 +247,14 @@ export default function MissionAccessTab({
             .map((g) => (
               <div
                 key={g.id}
-                className="flex items-center gap-1 bg-emerald-500/10 text-emerald-500 border border-emerald-500/30 rounded-sm pr-1 animate-pulse"
+                className="flex items-center gap-1 bg-phosphor-500/10 text-phosphor-500 border border-phosphor-500/30 rounded-sm pr-1 animate-pulse"
               >
                 <span className="text-[9px] font-display font-bold px-3 py-1 uppercase tracking-wider">
                   OPERANDO: {g.name}
                 </span>
                 <button
                   onClick={() => handleUnassignGroup(g.id)}
-                  className="p-1 text-emerald-500/40 hover:text-red-500 material-symbols-outlined text-xs"
+                  className="p-1 text-phosphor-500/40 hover:text-red-500 material-symbols-outlined text-xs"
                   title="Remover do campo"
                 >
                   close
@@ -266,14 +266,14 @@ export default function MissionAccessTab({
             .map((c) => (
               <div
                 key={c.character.id}
-                className="flex items-center gap-1 bg-emerald-500/10 text-emerald-500 border border-emerald-500/30 rounded-sm pr-1 animate-pulse"
+                className="flex items-center gap-1 bg-phosphor-500/10 text-phosphor-500 border border-phosphor-500/30 rounded-sm pr-1 animate-pulse"
               >
                 <span className="text-[9px] font-display font-bold px-3 py-1 uppercase tracking-wider">
                   OPERANDO: {c.character.codinome}
                 </span>
                 <button
                   onClick={() => handleUnassignCharacter(c.account.uid, c.character.id)}
-                  className="p-1 text-emerald-500/40 hover:text-red-500 material-symbols-outlined text-xs"
+                  className="p-1 text-phosphor-500/40 hover:text-red-500 material-symbols-outlined text-xs"
                   title="Remover do campo"
                 >
                   close

@@ -16,13 +16,22 @@ const AgentDossierOverlay = React.lazy(() =>
 const CampaignSelection = React.lazy(() => import('../../components/CampaignSelection'));
 
 const LIMBO_EASE = [0.22, 1, 0.36, 1] as const;
-const SCREEN_TRANSITION = { duration: 0.28, ease: LIMBO_EASE };
+const EXIT_EASE = [0.4, 0, 1, 1] as const;
 
+// mode="wait" soma saída + entrada: a saída precisa ser curta para a troca
+// de tela não parecer travada (≈140ms + 260ms em vez de 280ms + 280ms).
 const screenMotion = {
-  initial: { opacity: 0, y: 10 },
-  animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -8 },
-  transition: SCREEN_TRANSITION,
+  initial: { opacity: 0, transform: 'translateY(8px)' },
+  animate: {
+    opacity: 1,
+    transform: 'translateY(0px)',
+    transition: { duration: 0.26, ease: LIMBO_EASE },
+  },
+  exit: {
+    opacity: 0,
+    transform: 'translateY(-4px)',
+    transition: { duration: 0.14, ease: EXIT_EASE },
+  },
 };
 
 export default function PlayerScreenRouter() {

@@ -367,7 +367,7 @@ export default function MediaLibraryPanel({
         <div
           className={`p-3 border text-[10px] font-display font-bold uppercase tracking-[0.2em] rounded-sm ${
             intel.feedback.type === 'success'
-              ? 'border-emerald-500/30 text-emerald-400 bg-emerald-500/5'
+              ? 'border-phosphor-500/30 text-phosphor-400 bg-phosphor-500/5'
               : 'border-red-500/30 text-red-400 bg-red-500/5'
           }`}
         >

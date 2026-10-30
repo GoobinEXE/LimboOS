@@ -150,7 +150,7 @@ function AchievementDeliverPane({
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder={t('deliver.searchAchievement')}
-          className="w-full bg-black/50 border border-white/10 px-4 py-2.5 text-[10px] font-display font-bold uppercase tracking-widest text-white placeholder:text-zinc-700 outline-none focus:border-primary/40"
+          className="w-full bg-black/50 border border-white/10 px-4 py-2.5 text-[10px] font-display font-bold uppercase tracking-widest text-white placeholder:text-ash-700 outline-none focus:border-primary/40"
         />
       </div>
       <div className="flex-1 overflow-y-auto custom-scrollbar divide-y divide-white/5">
@@ -168,7 +168,7 @@ function AchievementDeliverPane({
               <p className="text-[11px] font-display font-bold uppercase tracking-widest text-white truncate">
                 {a.title}
               </p>
-              <p className="text-[9px] font-mono text-zinc-600 truncate mt-0.5">{a.id}</p>
+              <p className="text-[9px] font-mono text-ash-600 truncate mt-0.5">{a.id}</p>
             </div>
             {selectedId === a.id && (
               <span className="material-symbols-outlined text-primary text-lg">check_circle</span>
@@ -176,7 +176,7 @@ function AchievementDeliverPane({
           </button>
         ))}
         {filtered.length === 0 && (
-          <p className="p-12 text-center text-[10px] font-display font-bold uppercase tracking-widest text-zinc-600">
+          <p className="p-12 text-center text-[10px] font-display font-bold uppercase tracking-widest text-ash-600">
             Nenhuma conquista encontrada
           </p>
         )}
@@ -186,7 +186,7 @@ function AchievementDeliverPane({
           type="button"
           disabled={loading}
           onClick={onClose}
-          className="px-4 py-2 text-[10px] font-display font-bold uppercase tracking-widest text-zinc-500 hover:text-white"
+          className="px-4 py-2 text-[10px] font-display font-bold uppercase tracking-widest text-ash-500 hover:text-white"
         >
           {t('accounts.cancel')}
         </button>
@@ -293,7 +293,7 @@ function SmsDeliverPane({
     <DeliverShell title={t('deliver.kind.sms')} targets={targets} onClose={loading ? undefined : onClose}>
       <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
         <div>
-          <p className="text-[9px] font-display font-bold uppercase tracking-widest text-zinc-500 mb-2">
+          <p className="text-[9px] font-display font-bold uppercase tracking-widest text-ash-500 mb-2">
             NPC
           </p>
           <select
@@ -315,14 +315,14 @@ function SmsDeliverPane({
             <p className="text-[9px] font-display font-bold uppercase tracking-widest text-yellow-500/80">
               Sem esquadrão — SMS não será enviado
             </p>
-            <p className="text-[10px] text-zinc-500 mt-1">
+            <p className="text-[10px] text-ash-500 mt-1">
               {missingGroup.map((t) => t.label).join(', ')}
             </p>
           </div>
         )}
 
         <div className="space-y-2">
-          <p className="text-[9px] font-display font-bold uppercase tracking-widest text-zinc-500">
+          <p className="text-[9px] font-display font-bold uppercase tracking-widest text-ash-500">
             Destinatários prontos ({ready.length})
           </p>
           {ready.map((t) => (
@@ -335,7 +335,7 @@ function SmsDeliverPane({
             </div>
           ))}
           {ready.length === 0 && (
-            <p className="text-[10px] text-zinc-600 uppercase tracking-widest">
+            <p className="text-[10px] text-ash-600 uppercase tracking-widest">
               Nenhum alvo em esquadrão
             </p>
           )}
@@ -346,7 +346,7 @@ function SmsDeliverPane({
           type="button"
           disabled={loading}
           onClick={onClose}
-          className="px-4 py-2 text-[10px] font-display font-bold uppercase tracking-widest text-zinc-500 hover:text-white"
+          className="px-4 py-2 text-[10px] font-display font-bold uppercase tracking-widest text-ash-500 hover:text-white"
         >
           {t('accounts.cancel')}
         </button>
@@ -409,7 +409,7 @@ function DeliverShell({
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={ADMIN_SPRING}
-              className="bg-[#222] border-l-8 border-[#1a1a1a] w-full max-w-xl shadow-2xl flex flex-col h-full relative overflow-hidden font-display"
+              className="bg-[#222] border-l-8 border-seam w-full max-w-xl shadow-2xl flex flex-col h-full relative overflow-hidden font-display"
               onClick={(e) => e.stopPropagation()}
             >
               <Screw className="top-4 left-4" />
@@ -417,10 +417,10 @@ function DeliverShell({
               <div className="noise-overlay" />
               <div className="scanlines" />
 
-              <div className="p-6 border-b-4 border-[#1a1a1a] bg-black/40 relative z-10 flex justify-between items-start gap-4">
+              <div className="p-6 border-b-4 border-seam bg-black/40 relative z-10 flex justify-between items-start gap-4">
                 <div className="min-w-0">
                   <h3 className="font-black text-xl text-white uppercase tracking-widest truncate">{title}</h3>
-                  <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-1 truncate">
+                  <p className="text-[10px] text-ash-500 font-bold uppercase tracking-widest mt-1 truncate">
                     {targets.length} alvo(s): {targets.map((t) => t.label).join(', ')}
                   </p>
                 </div>
@@ -428,7 +428,7 @@ function DeliverShell({
                   <button
                     type="button"
                     onClick={requestClose}
-                    className="p-2 text-zinc-600 hover:text-white material-symbols-outlined shrink-0"
+                    className="p-2 text-ash-600 hover:text-white material-symbols-outlined shrink-0"
                   >
                     close
                   </button>

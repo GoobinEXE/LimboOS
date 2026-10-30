@@ -277,14 +277,14 @@ export default function JukeboxPanel({ embedded = false }: { embedded?: boolean 
         <div className="flex items-center gap-4">
           <div className="w-2 h-8 bg-primary rounded-full animate-pulse shadow-[0_0_10px_rgba(255,140,0,0.4)]" />
           <h2 className="font-black uppercase tracking-widest text-lg text-white">{t('jukebox.title')}</h2>
-          <span className="text-[10px] font-bold text-zinc-600 tracking-widest uppercase">{tracks.length} FAIXAS NO BUFFER</span>
+          <span className="text-[10px] font-bold text-ash-600 tracking-widest uppercase">{tracks.length} FAIXAS NO BUFFER</span>
         </div>
         <div className={`flex items-center gap-3 px-4 py-1.5 border-2 text-[10px] font-black uppercase tracking-widest rounded-sm ${
           isPlaying ? 'border-primary/40 text-primary bg-primary/5 shadow-[0_0_15px_rgba(255,140,0,0.1)]' :
           isLooping ? 'border-amber-500/40 text-amber-400 bg-amber-500/5' :
-          'border-[#1a1a1a] text-zinc-600'
+          'border-seam text-ash-600'
         }`}>
-          <div className={`w-1.5 h-1.5 rounded-full ${isPlaying ? 'bg-primary animate-pulse shadow-[0_0_5px_rgba(255,140,0,0.8)]' : 'bg-zinc-800'}`} />
+          <div className={`w-1.5 h-1.5 rounded-full ${isPlaying ? 'bg-primary animate-pulse shadow-[0_0_5px_rgba(255,140,0,0.8)]' : 'bg-ash-800'}`} />
           {statusLabel}
         </div>
       </div>
@@ -296,15 +296,15 @@ export default function JukeboxPanel({ embedded = false }: { embedded?: boolean 
           isLooping ? 'border-amber-500/40 text-amber-400 bg-amber-500/5' :
           'border-primary/10 text-industrial-silver/40'
         }`}>
-          <div className={`w-1.5 h-1.5 rounded-full ${isPlaying ? 'bg-primary animate-pulse' : 'bg-zinc-800'}`} />
+          <div className={`w-1.5 h-1.5 rounded-full ${isPlaying ? 'bg-primary animate-pulse' : 'bg-ash-800'}`} />
           {statusLabel}
         </div>
       </div>
       )}
 
       {/* Player Area */}
-      <div className="bg-[#1a1a1a] border-4 border-[#1a1a1a] rounded-xl overflow-hidden shadow-2xl relative">
-        <div className="p-6 border-b-4 border-[#1a1a1a] bg-black/40 flex items-center justify-between">
+      <div className="bg-seam border-4 border-seam rounded-xl overflow-hidden shadow-2xl relative">
+        <div className="p-6 border-b-4 border-seam bg-black/40 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="p-2 bg-primary/10 rounded-sm border border-primary/20">
                <span className="material-symbols-outlined text-primary text-xl">music_note</span>
@@ -313,7 +313,7 @@ export default function JukeboxPanel({ embedded = false }: { embedded?: boolean 
               <p className="font-black text-sm tracking-tight text-white uppercase group-hover:text-primary transition-colors">
                 {currentTrack ? currentTrack.title : t('jukebox.waiting')}
               </p>
-              <p className="text-[9px] font-black uppercase text-zinc-600 tracking-widest mt-1">
+              <p className="text-[9px] font-black uppercase text-ash-600 tracking-widest mt-1">
                 {currentTrack ? (currentTrack.type === 'youtube' ? 'TRANSMISSÃO YOUTUBE' : 'STREAM ÁUDIO LOCAL') : '---'}
               </p>
             </div>
@@ -332,7 +332,7 @@ export default function JukeboxPanel({ embedded = false }: { embedded?: boolean 
             </button>
             <button onClick={() => setIsLooping(!isLooping)}
               className={`w-12 h-12 rounded-sm border-2 flex items-center justify-center transition-all active:scale-90 ${
-                isLooping ? 'border-amber-500 text-amber-400 bg-amber-500/10 shadow-[0_0_10px_rgba(245,158,11,0.3)]' : 'border-[#1a1a1a] text-zinc-700 hover:text-amber-400 hover:border-amber-500/40'
+                isLooping ? 'border-amber-500 text-amber-400 bg-amber-500/10 shadow-[0_0_10px_rgba(245,158,11,0.3)]' : 'border-seam text-ash-700 hover:text-amber-400 hover:border-amber-500/40'
               }`} title={t('jukebox.loopTitle')}>
               <span className="material-symbols-outlined text-2xl">repeat_one</span>
             </button>
@@ -347,12 +347,12 @@ export default function JukeboxPanel({ embedded = false }: { embedded?: boolean 
           ) : currentTrack?.type === 'audio' ? (
             <div className="flex items-center justify-center h-32 gap-3 relative z-10">
               {Array.from({ length: 32 }).map((_, i) => (
-                <div key={i} className={`w-1.5 rounded-full transition-all duration-150 ${isPlaying ? 'bg-primary shadow-[0_0_8px_rgba(255,140,0,0.4)]' : 'bg-zinc-900'}`}
+                <div key={i} className={`w-1.5 rounded-full transition-all duration-150 ${isPlaying ? 'bg-primary shadow-[0_0_8px_rgba(255,140,0,0.4)]' : 'bg-ash-900'}`}
                   style={{ height: isPlaying ? `${15 + Math.random() * 60}px` : '10px', animationDelay: `${i * 40}ms` }} />
               ))}
             </div>
           ) : (
-            <div className="flex items-center justify-center h-32 text-zinc-800 text-[11px] font-black uppercase tracking-[0.4em] relative z-10">
+            <div className="flex items-center justify-center h-32 text-ash-800 text-[11px] font-black uppercase tracking-[0.4em] relative z-10">
               SELECIONE FAIXA PARA INICIAR TRANSMISSÃO
             </div>
           )}
@@ -360,21 +360,21 @@ export default function JukeboxPanel({ embedded = false }: { embedded?: boolean 
       </div>
 
       {/* Add Track Form */}
-      <div className="bg-[#1a1a1a] border-4 border-[#1a1a1a] p-6 rounded-xl shadow-xl space-y-4">
+      <div className="bg-seam border-4 border-seam p-6 rounded-xl shadow-xl space-y-4">
         <div className="flex items-center gap-3 mb-2">
-          <span className="material-symbols-outlined text-zinc-700 text-lg">add_circle</span>
-          <p className="font-black text-[10px] uppercase tracking-widest text-zinc-500">{t('jukebox.inject')}</p>
+          <span className="material-symbols-outlined text-ash-700 text-lg">add_circle</span>
+          <p className="font-black text-[10px] uppercase tracking-widest text-ash-500">{t('jukebox.inject')}</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
            <input type="text" placeholder={t('jukebox.titlePlaceholder')} value={titleInput}
              onChange={(e) => setTitleInput(e.target.value)}
-             className="w-full bg-black/60 border-2 border-[#1a1a1a] text-[10px] font-black uppercase tracking-widest text-white px-4 py-3 focus:border-primary outline-none rounded-sm placeholder:text-zinc-800 transition-all" />
+             className="w-full bg-black/60 border-2 border-seam text-[10px] font-black uppercase tracking-widest text-white px-4 py-3 focus:border-primary outline-none rounded-sm placeholder:text-ash-800 transition-all" />
            <div className="flex gap-2">
              <input type="text" placeholder={t('jukebox.urlPlaceholder')} value={linkInput}
                onChange={(e) => setLinkInput(e.target.value)}
                onKeyDown={(e) => e.key === 'Enter' && handleAddLink()}
-               className="flex-1 bg-black/60 border-2 border-[#1a1a1a] text-[10px] font-black uppercase tracking-widest text-white px-4 py-3 focus:border-red-500 outline-none rounded-sm placeholder:text-zinc-800 transition-all" />
+               className="flex-1 bg-black/60 border-2 border-seam text-[10px] font-black uppercase tracking-widest text-white px-4 py-3 focus:border-red-500 outline-none rounded-sm placeholder:text-ash-800 transition-all" />
              <button onClick={handleAddLink}
                className="px-6 py-3 bg-red-950/20 text-red-500 border-2 border-red-500/20 text-[10px] font-black tracking-widest hover:bg-red-500 hover:text-white transition-all rounded-sm active:scale-95">
                YOUTUBE
@@ -384,7 +384,7 @@ export default function JukeboxPanel({ embedded = false }: { embedded?: boolean 
 
         <div className="flex items-center gap-4 pt-2">
           <div className="h-px flex-1 bg-white/5" />
-          <span className="text-[8px] font-black text-zinc-700 uppercase tracking-widest">OU</span>
+          <span className="text-[8px] font-black text-ash-700 uppercase tracking-widest">OU</span>
           <div className="h-px flex-1 bg-white/5" />
         </div>
 
@@ -400,41 +400,41 @@ export default function JukeboxPanel({ embedded = false }: { embedded?: boolean 
       {/* Playlist */}
       <div className="space-y-4">
         <div className="flex items-center gap-3 mb-2 px-2">
-          <span className="material-symbols-outlined text-zinc-700 text-lg">playlist_play</span>
-          <p className="font-black text-[10px] uppercase tracking-widest text-zinc-500">{t('jukebox.playlist')}</p>
+          <span className="material-symbols-outlined text-ash-700 text-lg">playlist_play</span>
+          <p className="font-black text-[10px] uppercase tracking-widest text-ash-500">{t('jukebox.playlist')}</p>
         </div>
 
         {tracks.length === 0 ? (
-          <div className="bg-black/20 p-24 text-center border-4 border-dashed border-[#1a1a1a] rounded-2xl opacity-20">
-            <p className="text-zinc-700 font-black text-[12px] uppercase tracking-[0.4em]">{t('jukebox.empty')}</p>
+          <div className="bg-black/20 p-24 text-center border-4 border-dashed border-seam rounded-2xl opacity-20">
+            <p className="text-ash-700 font-black text-[12px] uppercase tracking-[0.4em]">{t('jukebox.empty')}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-3">
             {tracks.map((track, idx) => {
               const isActive = currentTrack?.id === track.id;
               return (
-                <div key={track.id} className={`bg-[#1a1a1a] border-4 p-4 flex items-center justify-between rounded-xl shadow-lg transition-all group ${
-                  isActive ? 'border-primary bg-primary/5 shadow-[0_0_20px_rgba(255,140,0,0.1)]' : 'border-[#1a1a1a] hover:border-white/5'
+                <div key={track.id} className={`bg-seam border-4 p-4 flex items-center justify-between rounded-xl shadow-lg transition-all group ${
+                  isActive ? 'border-primary bg-primary/5 shadow-[0_0_20px_rgba(255,140,0,0.1)]' : 'border-seam hover:border-white/5'
                 }`}>
                   <div className="flex items-center gap-5 min-w-0 flex-1">
-                    <span className={`font-black text-[11px] w-8 text-right font-mono ${isActive ? 'text-primary' : 'text-zinc-800'}`}>
+                    <span className={`font-black text-[11px] w-8 text-right font-mono ${isActive ? 'text-primary' : 'text-ash-800'}`}>
                       {String(idx + 1).padStart(2, '0')}
                     </span>
                     <button onClick={() => playTrackAtIndex(idx)}
                       className={`w-10 h-10 rounded-sm flex items-center justify-center border-2 transition-all active:scale-90 ${
-                        isActive ? 'bg-primary text-black border-primary' : 'bg-black text-zinc-600 border-[#1a1a1a] group-hover:border-zinc-700 hover:text-white'
+                        isActive ? 'bg-primary text-black border-primary' : 'bg-black text-ash-600 border-seam group-hover:border-ash-700 hover:text-white'
                       }`}>
                       <span className="material-symbols-outlined text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>
                         {isActive && isPlaying ? 'equalizer' : 'play_arrow'}
                       </span>
                     </button>
                     <div className="min-w-0 flex-1">
-                      <p className={`font-black text-sm tracking-tight truncate uppercase ${isActive ? 'text-white' : 'text-zinc-500 group-hover:text-zinc-300'}`}>
+                      <p className={`font-black text-sm tracking-tight truncate uppercase ${isActive ? 'text-white' : 'text-ash-500 group-hover:text-ash-300'}`}>
                         {track.title}
                       </p>
                       <div className="flex items-center gap-3 mt-1">
                          <span className={`text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-sm border ${
-                           track.type === 'youtube' ? 'border-red-500/20 text-red-500/60' : 'border-emerald-500/20 text-emerald-500/60'
+                           track.type === 'youtube' ? 'border-red-500/20 text-red-500/60' : 'border-phosphor-500/20 text-phosphor-500/60'
                          }`}>
                            {track.type === 'youtube' ? 'YOUTUBE' : 'ÁUDIO LOCAL'}
                          </span>
@@ -450,16 +450,16 @@ export default function JukeboxPanel({ embedded = false }: { embedded?: boolean 
                   <div className="flex items-center gap-3">
                     <div className="flex flex-col gap-1">
                        <button onClick={() => moveTrack(idx, -1)} disabled={idx === 0}
-                         className="material-symbols-outlined text-zinc-800 hover:text-primary text-lg disabled:opacity-5 transition-all">
+                         className="material-symbols-outlined text-ash-800 hover:text-primary text-lg disabled:opacity-5 transition-all">
                          keyboard_arrow_up
                        </button>
                        <button onClick={() => moveTrack(idx, 1)} disabled={idx === tracks.length - 1}
-                         className="material-symbols-outlined text-zinc-800 hover:text-primary text-lg disabled:opacity-5 transition-all">
+                         className="material-symbols-outlined text-ash-800 hover:text-primary text-lg disabled:opacity-5 transition-all">
                          keyboard_arrow_down
                        </button>
                     </div>
                     <button onClick={() => handleDelete(track)}
-                      className="w-10 h-10 bg-black/40 border border-white/5 flex items-center justify-center text-zinc-800 hover:text-red-500 hover:border-red-500/30 transition-all rounded-sm group/del ml-2">
+                      className="w-10 h-10 bg-black/40 border border-white/5 flex items-center justify-center text-ash-800 hover:text-red-500 hover:border-red-500/30 transition-all rounded-sm group/del ml-2">
                       <span className="material-symbols-outlined text-lg">delete</span>
                     </button>
                   </div>
@@ -471,10 +471,10 @@ export default function JukeboxPanel({ embedded = false }: { embedded?: boolean 
       </div>
 
       {/* Footer / Status Bar */}
-      <div className="flex items-center justify-between bg-black/40 border-4 border-[#1a1a1a] rounded-xl px-8 py-4 shadow-inner">
+      <div className="flex items-center justify-between bg-black/40 border-4 border-seam rounded-xl px-8 py-4 shadow-inner">
         <div className="flex items-center gap-4">
-           <div className="w-1.5 h-1.5 rounded-full bg-zinc-800" />
-           <span className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-700">
+           <div className="w-1.5 h-1.5 rounded-full bg-ash-800" />
+           <span className="text-[10px] font-black uppercase tracking-[0.2em] text-ash-700">
              FAIXA ATUAL: {currentIndex >= 0 ? `${currentIndex + 1} / ${tracks.length}` : 'TRANSMISSÃO INATIVA'}
            </span>
         </div>
@@ -485,7 +485,7 @@ export default function JukeboxPanel({ embedded = false }: { embedded?: boolean 
                <span className="text-[9px] font-black uppercase tracking-widest">{t('jukebox.redundancy')}</span>
             </div>
           )}
-          <span className={`text-[10px] font-black uppercase tracking-[0.2em] ${isPlaying ? 'text-primary' : 'text-zinc-800'}`}>
+          <span className={`text-[10px] font-black uppercase tracking-[0.2em] ${isPlaying ? 'text-primary' : 'text-ash-800'}`}>
             ESTADO: {statusLabel}
           </span>
         </div>

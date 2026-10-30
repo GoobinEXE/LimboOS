@@ -651,6 +651,16 @@
   outline-offset: 2px;
 }
 
+/* Foco de época dentro dos sistemas fictícios (aplicar junto com .focus-bare) */
+.focus-retro :focus-visible {
+  outline: 1px dotted currentColor;
+  outline-offset: -4px;
+}
+.focus-crt :focus-visible {
+  outline: 1px solid var(--color-crt);
+  outline-offset: 2px;
+}
+
 /* Barra de contagem dos toasts (animation-play-state pausa junto com o timer) */
 @keyframes toast-countdown {
   from { transform: scaleX(1); }

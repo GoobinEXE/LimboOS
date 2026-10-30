@@ -54,7 +54,7 @@ export default function App() {
                   <h1 className="font-display text-4xl font-bold text-white tracking-tight uppercase mb-2">
                     Acesso ao <span className="text-primary">Terminal</span>
                   </h1>
-                  <p className="text-xs font-display uppercase tracking-[0.2em] text-industrial-silver/60">
+                  <p className="text-xs font-display uppercase tracking-[0.2em] text-ash-400">
                     Protocolo de Segurança Nível 04
                   </p>
                 </div>
@@ -62,41 +62,45 @@ export default function App() {
             
                   <div className="space-y-6">
                     <div className="group">
-                      <label className="block text-[10px] font-display font-bold uppercase tracking-[0.2em] mb-2 transition-colors group-focus-within:text-primary">
+                      <label htmlFor="terminal-operator-id" className="block text-[10px] font-display font-bold uppercase tracking-[0.2em] mb-2 transition-colors group-focus-within:text-primary">
                         Identificação do Operador
                       </label>
                       <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-industrial-silver/40 group-focus-within:text-primary transition-colors">
+                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-ash-500 group-focus-within:text-primary transition-colors">
                           <User size={16} />
                         </div>
                         <input
+                          id="terminal-operator-id"
+                          autoComplete="email"
                           type="email"
                           required
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
                           placeholder="EX: ADMIN@INDUSTRIA.COM"
-                          className="w-full bg-surface-container-lowest border-none py-4 pl-12 pr-4 text-white font-sans text-sm tracking-wide focus:ring-0 placeholder:text-industrial-silver/20 transition-[width,color,background-color,border-color,opacity,transform,box-shadow] outline-none"
+                          className="w-full bg-surface-container-lowest border-none py-4 pl-12 pr-4 text-white font-sans text-sm tracking-wide focus:ring-0 placeholder:text-ash-600 transition-colors outline-none focus-bare"
                         />
-                        <div className="absolute bottom-0 left-0 h-0.5 w-0 bg-primary transition-[width,color,background-color,border-color,opacity,transform,box-shadow] duration-300 group-focus-within:w-full" />
+                        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary scale-x-0 origin-left transition-transform duration-(--duration-base) ease-limbo group-focus-within:scale-x-100" />
                       </div>
                     </div>
                     <div className="group">
-                      <label className="block text-[10px] font-display font-bold uppercase tracking-[0.2em] mb-2 transition-colors group-focus-within:text-primary">
+                      <label htmlFor="terminal-cipher" className="block text-[10px] font-display font-bold uppercase tracking-[0.2em] mb-2 transition-colors group-focus-within:text-primary">
                         Código de Encriptação
                       </label>
                       <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-industrial-silver/40 group-focus-within:text-primary transition-colors">
+                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-ash-500 group-focus-within:text-primary transition-colors">
                           <Lock size={16} />
                         </div>
                         <input
+                          id="terminal-cipher"
+                          autoComplete="current-password"
                           type="password"
                           required
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
                           placeholder="••••••••"
-                          className="w-full bg-surface-container-lowest border-none py-4 pl-12 pr-4 text-white font-sans text-sm tracking-wide focus:ring-0 placeholder:text-industrial-silver/20 transition-[width,color,background-color,border-color,opacity,transform,box-shadow] outline-none"
+                          className="w-full bg-surface-container-lowest border-none py-4 pl-12 pr-4 text-white font-sans text-sm tracking-wide focus:ring-0 placeholder:text-ash-600 transition-colors outline-none focus-bare"
                         />
-                        <div className="absolute bottom-0 left-0 h-0.5 w-0 bg-primary transition-[width,color,background-color,border-color,opacity,transform,box-shadow] duration-300 group-focus-within:w-full" />
+                        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary scale-x-0 origin-left transition-transform duration-(--duration-base) ease-limbo group-focus-within:scale-x-100" />
                       </div>
                     </div>
                   </div>
@@ -120,7 +124,7 @@ export default function App() {
                   <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pt-4">
                     <button
                       type="button"
-                      className="text-[10px] font-display font-bold uppercase tracking-widest text-industrial-silver/40 hover:text-primary transition-colors relative group"
+                      className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-500 hover:text-primary transition-colors relative group"
                     >
                       Recuperar Acesso
                       <span className="absolute -bottom-1 left-0 w-0 h-px bg-primary transition-[width,color,background-color,border-color,opacity,transform,box-shadow] group-hover:w-1/2" />
@@ -158,7 +162,7 @@ export default function App() {
                     />
                   ))}
                 </div>
-                <div className="text-[9px] font-display text-industrial-silver/30 uppercase tracking-widest">
+                <div className="text-[9px] font-display text-ash-600 uppercase tracking-widest">
                   Status do Hardware: Nominal
                 </div>
               </div>
@@ -190,7 +194,7 @@ export default function App() {
               <h2 className="font-display text-5xl font-bold text-white uppercase tracking-tighter">
                 Acesso <span className="text-primary">Concedido</span>
               </h2>
-              <p className="text-sm font-display uppercase tracking-[0.3em] text-industrial-silver/60">
+              <p className="text-sm font-display uppercase tracking-[0.3em] text-ash-400">
                 Bem-vindo de volta, Operador
               </p>
             </div>
@@ -222,11 +226,11 @@ export default function App() {
           </div>
         </div>
         <div className="space-y-2">
-          <div className="text-[9px] font-display text-industrial-silver/40 uppercase tracking-widest">Localização do Nó</div>
+          <div className="text-[9px] font-display text-ash-500 uppercase tracking-widest">Localização do Nó</div>
           <div className="text-xs font-display font-bold text-industrial-silver uppercase">Setor-7G</div>
         </div>
         <div className="space-y-2">
-          <div className="text-[9px] font-display text-industrial-silver/40 uppercase tracking-widest">Uptime do Sistema</div>
+          <div className="text-[9px] font-display text-ash-500 uppercase tracking-widest">Uptime do Sistema</div>
           <div className="text-xs font-display font-bold text-industrial-silver uppercase">1.429:12:04</div>
         </div>
       </div>

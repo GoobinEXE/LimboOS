@@ -228,7 +228,7 @@ export default function LimboBoard({ uid, characterId = '', onClose, globalSeize
   return (
     <motion.div
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 bg-[#050505] text-crt font-mono overflow-hidden touch-manipulation p-2 sm:p-4 wrap-break-word player-viewport safe-area-pad"
+      className="focus-bare focus-crt fixed inset-0 z-50 bg-[#050505] text-crt font-mono overflow-hidden touch-manipulation p-2 sm:p-4 wrap-break-word player-viewport safe-area-pad"
       style={{ fontFamily: '"Terminal", "Fixedsys", "Lucida Console", monospace', WebkitFontSmoothing: 'none' }}
     >
       <style>{`

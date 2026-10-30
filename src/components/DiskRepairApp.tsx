@@ -162,7 +162,7 @@ export default function DiskRepairApp({ uid, characterId = '', onClose, onBackTo
   if (isWindowed) return content;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#008080] font-sans selection:bg-[#000080] selection:text-white touch-none select-none player-viewport safe-area-pad">
+    <div className="focus-bare focus-retro fixed inset-0 z-50 flex items-center justify-center bg-[#008080] font-sans selection:bg-[#000080] selection:text-white touch-none select-none player-viewport safe-area-pad">
       <div className="fixed inset-0 pointer-events-none mix-blend-overlay opacity-30 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPjxyZWN0IHdpZHRoPSI0IiBoZWlnaHQ9IjQiIGZpbGw9IiMyMjIiPjwvcmVjdD48cGF0aCBkPSJNMCAwTDIgMk0yIDBMMCAyIiBzdHJva2U9IiMzMzMiIHN0cm9rZS13aWR0aD0iMSIvPjwvc3ZnPg==')]" />
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}

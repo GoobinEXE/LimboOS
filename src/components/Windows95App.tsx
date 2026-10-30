@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'motion/react';
+import { EASE_OUT } from '../lib/motion';
 import { checkMacClosed } from '../store/firestore';
 import { activityLogger } from '../services/ActivityLogger';
 import { useLandscapeLayout } from '../player/hooks/useLandscapeLayout';
@@ -61,7 +62,7 @@ export default function Windows95App({ uid, characterId, onClose }: Windows95App
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-[#008080] font-sans overflow-hidden select-none touch-none text-black player-viewport">
+    <div className="focus-bare focus-retro fixed inset-0 z-50 flex flex-col bg-[#008080] font-sans overflow-hidden select-none touch-none text-black player-viewport">
       <style>{`
         @font-face {
           font-family: 'Win95';
@@ -185,7 +186,7 @@ export default function Windows95App({ uid, characterId, onClose }: Windows95App
               initial={{ y: 10, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 10, opacity: 0 }}
-              transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.22, ease: EASE_OUT }}
               className={`absolute ${isLandscape ? 'bottom-8' : 'bottom-10'} left-0 w-60 max-h-[calc(100dvh-2.5rem)] bg-[#c0c0c0] win95-border-out z-50 p-0.5 flex overflow-hidden`}
             >
               <div className="start-menu-sidebar shrink-0">
@@ -263,7 +264,7 @@ const Window: React.FC<{
       initial={{ scale: 0.95, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       exit={{ scale: 0.95, opacity: 0 }}
-      transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.22, ease: EASE_OUT }}
       className={`absolute ${isLandscape ? 'w-[min(92%,420px)]' : 'w-[90%]'} max-w-lg bg-[#c0c0c0] win95-border-out pointer-events-auto flex flex-col min-h-0`}
       style={{
         zIndex: isFocused ? 45 : 35,

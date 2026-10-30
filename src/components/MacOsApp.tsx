@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'motion/react';
+import { EASE_OUT } from '../lib/motion';
 import AppleIcon from './icons/AppleIcon';
 import { checkMacClosed, firestoreUnlockIntel } from '../store/firestore';
 import { analyticsTracker } from '../services/AnalyticsTracker';
@@ -148,7 +149,7 @@ export default function MacOsApp({ uid, characterId, onClose }: MacOsAppProps) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex flex-col overflow-hidden select-none touch-none text-black player-viewport"
+      className="focus-bare focus-retro fixed inset-0 z-50 flex flex-col overflow-hidden select-none touch-none text-black player-viewport"
       style={{
         backgroundColor: phase === 'desktop' ? '#008080' : '#808080',
         fontFamily: '"Chicago", "Geneva", sans-serif',
@@ -298,7 +299,7 @@ export default function MacOsApp({ uid, characterId, onClose }: MacOsAppProps) {
                       initial={{ scale: 0.9, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
                       exit={{ scale: 0.9, opacity: 0 }}
-                      transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+                      transition={{ duration: 0.22, ease: EASE_OUT }}
                       className={`pointer-events-auto w-full ${isLandscape ? 'max-w-md' : 'max-w-sm'} bg-[#ddd] border border-black flex flex-col min-h-0 overflow-hidden`}
                       style={{ boxShadow: '2px 2px 0 rgba(0,0,0,0.5)', maxHeight: windowMaxHeight }}
                     >
@@ -319,7 +320,7 @@ export default function MacOsApp({ uid, characterId, onClose }: MacOsAppProps) {
                       initial={{ scale: 0.9, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
                       exit={{ scale: 0.9, opacity: 0 }}
-                      transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+                      transition={{ duration: 0.22, ease: EASE_OUT }}
                       className={`pointer-events-auto w-full ${isLandscape ? 'max-w-md' : 'max-w-lg'} bg-[#ddd] border border-black flex flex-col min-h-0 overflow-hidden`}
                       style={{ boxShadow: '2px 2px 0 rgba(0,0,0,0.5)', maxHeight: windowMaxHeight }}
                     >

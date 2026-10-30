@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'motion/react';
+import { EASE_OUT } from '../lib/motion';
 import { checkTerminalClosed } from '../store/firestore';
 import { activityLogger } from '../services/ActivityLogger';
 import { useLandscapeLayout } from '../player/hooks/useLandscapeLayout';
@@ -262,9 +263,9 @@ export default function BiosTerminal({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.28, ease: EASE_OUT }}
       layout
-      className="fixed inset-0 z-50 flex flex-col bg-[#050505] overflow-hidden text-crt font-mono select-none player-viewport"
+      className="focus-bare focus-crt fixed inset-0 z-50 flex flex-col bg-[#050505] overflow-hidden text-crt font-mono select-none player-viewport"
       style={{ fontFamily: '"Terminal", "Fixedsys", "Lucida Console", "Courier New", monospace' }}
     >
       <style>{`
@@ -394,8 +395,8 @@ export default function BiosTerminal({
             initial={isLandscape ? { opacity: 0, x: 16 } : { opacity: 0, y: 16 }}
             animate={{ opacity: 1, x: 0, y: 0 }}
             exit={isLandscape ? { opacity: 0, x: 12 } : { opacity: 0, y: 12 }}
-            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-            className={`border-crt/15 bg-surface-sunken/80 backdrop-blur-sm z-20 touch-none shrink-0 ${
+            transition={{ duration: 0.28, ease: EASE_OUT }}
+            className={`border-crt/15 bg-surface-sunken/95 z-20 touch-none shrink-0 ${
               isLandscape
                 ? 'border-l w-52 sm:w-56 overflow-y-auto py-2 pl-1 pr-[max(0.5rem,env(safe-area-inset-right))]'
                 : 'border-t p-2 pb-[max(1.5rem,env(safe-area-inset-bottom))]'

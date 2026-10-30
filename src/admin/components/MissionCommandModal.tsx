@@ -105,7 +105,7 @@ export default function MissionCommandModal({
             </div>
             <button
               onClick={onClose}
-              className="p-3 text-industrial-silver/20 hover:text-white transition-all material-symbols-outlined rounded-sm"
+              className="p-3 text-industrial-silver/20 hover:text-white transition material-symbols-outlined rounded-sm"
             >
               close
             </button>
@@ -120,7 +120,7 @@ export default function MissionCommandModal({
                   type="button"
                   disabled={locked}
                   onClick={() => !locked && setActiveTab(tab)}
-                  className={`flex-1 py-4 text-[10px] font-display font-bold uppercase tracking-[0.15em] transition-all ${
+                  className={`flex-1 py-4 text-[10px] font-display font-bold uppercase tracking-[0.15em] transition ${
                     activeTab === tab
                       ? 'text-primary bg-primary/10 border-b-2 border-primary'
                       : locked

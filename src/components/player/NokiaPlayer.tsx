@@ -632,7 +632,7 @@ export default function NokiaPlayer({
                 <div
                   key={i}
                   onClick={() => handleVolumeChange((i + 1) * 10)}
-                  className={`h-full flex-1 border border-lcd-ink cursor-pointer transition-all active:scale-90 ${
+                  className={`h-full flex-1 border border-lcd-ink cursor-pointer transition active:scale-90 ${
                     volume >= (i + 1) * 10 ? 'bg-lcd-ink' : 'bg-transparent'
                   }`}
                 />
@@ -970,7 +970,7 @@ export default function NokiaPlayer({
                 <button
                   key={tab.key}
                   onClick={() => handleTabChange(tab.key)}
-                  className={`flex-1 py-1.5 flex flex-col items-center justify-center gap-1 transition-all ${
+                  className={`flex-1 py-1.5 flex flex-col items-center justify-center gap-1 transition ${
                     activeTab === tab.key
                       ? 'bg-lcd-ink text-lcd-paper'
                       : 'bg-lcd-paper text-lcd-ink hover:bg-lcd-ink/5'
@@ -1050,7 +1050,7 @@ export default function NokiaPlayer({
                                   shouldStickToBottomRef.current = true;
                                   setActiveConversationId(conv.contactId);
                                 }}
-                                className="w-full text-left flex flex-col p-2 border-2 border-lcd-ink bg-lcd-paper hover:bg-lcd-ink/5 active:scale-[0.98] transition-all shadow-[1px_1px_0px_#111e14]"
+                                className="w-full text-left flex flex-col p-2 border-2 border-lcd-ink bg-lcd-paper hover:bg-lcd-ink/5 active:scale-[0.98] transition shadow-[1px_1px_0px_#111e14]"
                               >
                                 <div className="flex justify-between items-center text-[9px] font-black uppercase mb-1">
                                   <span className="flex items-center gap-1.5 min-w-0">
@@ -1083,7 +1083,7 @@ export default function NokiaPlayer({
                                 getSfx().playBack();
                                 setActiveConversationId(null);
                               }}
-                              className="border border-lcd-ink px-1.5 py-0.5 font-black text-[9px] hover:bg-lcd-ink hover:text-lcd-paper active:scale-95 uppercase transition-all"
+                              className="border border-lcd-ink px-1.5 py-0.5 font-black text-[9px] hover:bg-lcd-ink hover:text-lcd-paper active:scale-95 uppercase transition"
                             >
                               {tc('actions.backBracket')}
                             </button>
@@ -1154,7 +1154,7 @@ export default function NokiaPlayer({
                             <button
                               type="submit"
                               disabled={!newMessageText.trim()}
-                              className="border-2 border-lcd-ink bg-lcd-ink text-lcd-paper font-black px-2 py-1 text-[10px] active:scale-95 disabled:opacity-40 transition-all uppercase"
+                              className="border-2 border-lcd-ink bg-lcd-ink text-lcd-paper font-black px-2 py-1 text-[10px] active:scale-95 disabled:opacity-40 transition uppercase"
                             >
                               {t('nokia.sms.send')}
                             </button>
@@ -1193,7 +1193,7 @@ export default function NokiaPlayer({
                       <div
                         key={item.id}
                         onClick={() => handleItemTap(item)}
-                        className={`text-[12px] py-2 px-3 cursor-pointer flex items-center gap-3 font-bold transition-all border-2 shadow-[1px_1px_0px_#111e14] active:translate-y-[1px] active:shadow-none ${
+                        className={`text-[12px] py-2 px-3 cursor-pointer flex items-center gap-3 font-bold transition border-2 shadow-[1px_1px_0px_#111e14] active:translate-y-[1px] active:shadow-none ${
                           isCurrent
                             ? 'bg-lcd-ink text-lcd-paper border-lcd-ink'
                             : 'bg-lcd-paper text-lcd-ink border-lcd-ink hover:bg-lcd-ink/5'

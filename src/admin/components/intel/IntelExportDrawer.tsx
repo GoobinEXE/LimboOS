@@ -20,7 +20,7 @@ export default function IntelExportDrawer({
   onCopied,
 }: IntelExportDrawerProps) {
   return (
-    <OverlayPortal open={open} onClose={onClose}>
+    <OverlayPortal open={open} onClose={onClose} withExitAnimation>
       <AnimatePresence>
         {open && (
           <div
@@ -71,7 +71,7 @@ export default function IntelExportDrawer({
                     void navigator.clipboard.writeText(exportJSON);
                     onCopied();
                   }}
-                  className="w-full sm:w-auto bg-primary text-black px-12 py-4 text-[11px] font-display font-bold uppercase tracking-widest hover:bg-primary-container transition-all rounded-sm active:scale-95 glow-orange shadow-lg flex items-center justify-center gap-3"
+                  className="w-full sm:w-auto bg-primary text-black px-12 py-4 text-[11px] font-display font-bold uppercase tracking-widest hover:bg-primary-container transition rounded-sm active:scale-[0.97] glow-orange shadow-lg flex items-center justify-center gap-3"
                 >
                   <span className="material-symbols-outlined text-base">content_copy</span>
                   COPIAR PARA ÁREA DE TRANSFERÊNCIA

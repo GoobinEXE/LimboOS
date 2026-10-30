@@ -1,8 +1,10 @@
 import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { MotionConfig } from 'motion/react';
 import RetroLoading from './components/player/RetroLoading';
 import ErrorBoundary from './components/ErrorBoundary';
+import { DEFAULT_TRANSITION } from './lib/motion';
 
 const Player = lazy(() => import('./Player'));
 
@@ -34,9 +36,13 @@ function AppRoutes() {
 export default function App() {
   return (
     <BrowserRouter>
-      <ErrorBoundary>
-        <AppRoutes />
-      </ErrorBoundary>
+      {/* reducedMotion="user": respeita prefers-reduced-motion em todo o app
+          (desliga transform/layout, mantém opacidade). */}
+      <MotionConfig reducedMotion="user" transition={DEFAULT_TRANSITION}>
+        <ErrorBoundary>
+          <AppRoutes />
+        </ErrorBoundary>
+      </MotionConfig>
     </BrowserRouter>
   );
 }

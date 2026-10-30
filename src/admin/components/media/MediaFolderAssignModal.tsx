@@ -52,7 +52,7 @@ export default function MediaFolderAssignModal({
   };
 
   return (
-    <OverlayPortal open={open} onClose={onClose}>
+    <OverlayPortal open={open} onClose={onClose} withExitAnimation>
       <AnimatePresence>
         {open && (
           <div className="fixed inset-0 z-160 flex items-center justify-center p-4">

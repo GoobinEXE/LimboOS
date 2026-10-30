@@ -36,7 +36,7 @@ function NavButton({
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`border border-lcd-ink rounded hover:bg-lcd-ink hover:text-lcd-paper transition-all duration-100 ease-limbo active:scale-95 active:translate-y-px cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed ${
+      className={`border border-lcd-ink rounded hover:bg-lcd-ink hover:text-lcd-paper transition duration-100 ease-limbo active:scale-95 active:translate-y-px cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed ${
         vertical
           ? 'w-full py-2 flex flex-col items-center justify-center gap-0.5 min-h-11'
           : 'px-3 py-1.5 flex items-center gap-1'

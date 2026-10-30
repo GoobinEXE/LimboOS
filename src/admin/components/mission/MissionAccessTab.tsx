@@ -104,7 +104,7 @@ export default function MissionAccessTab({
             Autorizar Missão para Esquadrão
           </p>
           <select
-            className="w-full bg-surface-container-lowest border border-white/5 text-[10px] font-display font-bold text-primary p-3 outline-none rounded-sm focus:border-primary/40 transition-all appearance-none cursor-pointer shadow-inner"
+            className="w-full bg-surface-container-lowest border border-white/5 text-[10px] font-display font-bold text-primary p-3 outline-none rounded-sm focus:border-primary/40 transition appearance-none cursor-pointer shadow-inner"
             onChange={(e) => e.target.value && handleUnlockForGroup(e.target.value, true)}
             value=""
           >
@@ -123,7 +123,7 @@ export default function MissionAccessTab({
             Autorizar Missão para Agente
           </p>
           <select
-            className="w-full bg-surface-container-lowest border border-white/5 text-[10px] font-display font-bold text-primary p-3 outline-none rounded-sm focus:border-primary/40 transition-all appearance-none cursor-pointer shadow-inner"
+            className="w-full bg-surface-container-lowest border border-white/5 text-[10px] font-display font-bold text-primary p-3 outline-none rounded-sm focus:border-primary/40 transition appearance-none cursor-pointer shadow-inner"
             onChange={(e) => {
               if (!e.target.value) return;
               const [uid, charId] = e.target.value.split('|');
@@ -206,7 +206,7 @@ export default function MissionAccessTab({
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <select
-            className="w-full bg-phosphor-500/5 border border-phosphor-500/20 text-[10px] font-display font-bold text-phosphor-500 p-3 outline-none rounded-sm focus:border-phosphor-500/40 transition-all appearance-none cursor-pointer"
+            className="w-full bg-phosphor-500/5 border border-phosphor-500/20 text-[10px] font-display font-bold text-phosphor-500 p-3 outline-none rounded-sm focus:border-phosphor-500/40 transition appearance-none cursor-pointer"
             onChange={(e) => e.target.value && handleAssignGroup(e.target.value)}
             value=""
           >
@@ -220,7 +220,7 @@ export default function MissionAccessTab({
               ))}
           </select>
           <select
-            className="w-full bg-phosphor-500/5 border border-phosphor-500/20 text-[10px] font-display font-bold text-phosphor-500 p-3 outline-none rounded-sm focus:border-phosphor-500/40 transition-all appearance-none cursor-pointer"
+            className="w-full bg-phosphor-500/5 border border-phosphor-500/20 text-[10px] font-display font-bold text-phosphor-500 p-3 outline-none rounded-sm focus:border-phosphor-500/40 transition appearance-none cursor-pointer"
             onChange={(e) => {
               if (!e.target.value) return;
               const [uid, charId] = e.target.value.split('|');

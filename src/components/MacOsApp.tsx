@@ -366,7 +366,7 @@ export default function MacOsApp({ uid, characterId, onClose }: MacOsAppProps) {
                           <div className="flex-1 flex flex-col items-center justify-center gap-4">
                             <div className="text-sm font-bold text-center whitespace-pre-wrap">{t('macos.isolating')}</div>
                             <div className="w-4/5 h-5 border-2 border-black bg-white p-0.5">
-                              <div className="h-full bg-black transition-all duration-100" style={{ width: `${repairProgress}%` }} />
+                              <div className="h-full bg-black transition-[width,color,background-color,border-color,opacity,transform,box-shadow] duration-100" style={{ width: `${repairProgress}%` }} />
                             </div>
                           </div>
                         )}

@@ -109,10 +109,10 @@ export default function CharacterSelectionScreen({ account, onSelect, onLogout }
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <button onClick={onLogout} className="bg-error/10 hover:bg-error/20 text-error border border-error/30 w-10 h-10 rounded-control flex items-center justify-center transition-colors duration-(--duration-fast) active:scale-95" title={t('character.logoutTitle')}>
+            <button onClick={onLogout} className="bg-error/10 hover:bg-error/20 text-error border border-error/30 w-10 h-10 rounded-control flex items-center justify-center transition-colors duration-(--duration-fast) active:scale-[0.97]" title={t('character.logoutTitle')}>
               <LogOut size={16} />
             </button>
-            <button onClick={() => setIsCreating(true)} className="bg-accent/10 hover:bg-accent/20 text-accent border border-accent/30 px-4 py-2 rounded-control text-protocol transition-colors duration-(--duration-fast) flex items-center gap-2 group active:scale-95">
+            <button onClick={() => setIsCreating(true)} className="bg-accent/10 hover:bg-accent/20 text-accent border border-accent/30 px-4 py-2 rounded-control text-protocol transition-colors duration-(--duration-fast) flex items-center gap-2 group active:scale-[0.97]">
               <UserPlus size={14} className="group-hover:scale-110 transition-transform" /> {t('character.recruit')}
             </button>
           </div>
@@ -157,7 +157,7 @@ export default function CharacterSelectionScreen({ account, onSelect, onLogout }
                   {selectedCharId === char.id ? (
                     <RetroSpinner size="sm" className="text-accent" />
                   ) : (
-                    <ChevronRight size={20} className="text-industrial-silver/20 group-hover:text-accent transition-all duration-(--duration-fast) group-hover:translate-x-1" />
+                    <ChevronRight size={20} className="text-industrial-silver/20 group-hover:text-accent transition duration-(--duration-fast) group-hover:translate-x-1" />
                   )}
                 </div>
 
@@ -225,7 +225,7 @@ export default function CharacterSelectionScreen({ account, onSelect, onLogout }
                   <button type="button" onClick={() => setIsCreating(false)} className="flex-1 py-4 text-protocol text-industrial-silver/50 hover:text-white transition-colors duration-(--duration-fast)">
                     {tCommon('cancel')}
                   </button>
-                  <button type="submit" disabled={creating} className="flex-2 bg-accent hover:brightness-110 text-black font-display font-bold text-xs uppercase tracking-[0.2em] py-4 px-8 rounded-control transition-all duration-(--duration-fast) flex items-center justify-center gap-3 disabled:opacity-50 glow-orange">
+                  <button type="submit" disabled={creating} className="flex-2 bg-accent hover:brightness-110 text-black font-display font-bold text-xs uppercase tracking-[0.2em] py-4 px-8 rounded-control transition duration-(--duration-fast) flex items-center justify-center gap-3 disabled:opacity-50 glow-orange">
                     {creating ? <RetroSpinner size="sm" /> : t('character.create.submit')}
                   </button>
                 </div>
@@ -266,7 +266,7 @@ export default function CharacterSelectionScreen({ account, onSelect, onLogout }
                   </div>
                 </div>
 
-                <button type="submit" disabled={savingMasterName} className="w-full bg-accent hover:brightness-110 text-black font-display font-bold text-xs uppercase tracking-[0.2em] py-4 rounded-control transition-all duration-(--duration-fast) flex items-center justify-center gap-3 disabled:opacity-50 glow-orange">
+                <button type="submit" disabled={savingMasterName} className="w-full bg-accent hover:brightness-110 text-black font-display font-bold text-xs uppercase tracking-[0.2em] py-4 rounded-control transition duration-(--duration-fast) flex items-center justify-center gap-3 disabled:opacity-50 glow-orange">
                   {savingMasterName ? <RetroSpinner size="sm" /> : t('character.master.submit')}
                 </button>
               </form>

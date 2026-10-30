@@ -25,7 +25,7 @@ const ActionBtn = ({ onClick, icon: Icon, index, title, sub, tone = 'accent' }: 
     <button
       type="button"
       onClick={onClick}
-      className={`w-full flex items-center gap-5 p-5 rounded-card bg-surface-raised border transition-all duration-200 group text-left active:scale-[0.99] ${
+      className={`w-full flex items-center gap-5 p-5 rounded-card bg-surface-raised border transition duration-200 group text-left active:scale-[0.99] ${
         isDanger
           ? 'border-border hover:border-red-500/40 hover:bg-red-500/5'
           : 'border-border hover:border-border-accent hover:bg-accent-05'
@@ -49,7 +49,7 @@ const ActionBtn = ({ onClick, icon: Icon, index, title, sub, tone = 'accent' }: 
       </div>
       <ChevronRight
         size={20}
-        className={`shrink-0 opacity-30 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all ${isDanger ? 'text-red-400' : 'text-primary'}`}
+        className={`shrink-0 opacity-30 group-hover:opacity-100 group-hover:translate-x-0.5 transition ${isDanger ? 'text-red-400' : 'text-primary'}`}
       />
     </button>
   );
@@ -91,7 +91,7 @@ export const SecurityMenu = ({ onClose, onLogout, onShowProfile, onChangeCharact
           type="button"
           onClick={onClose}
           aria-label={t('security.closeAria')}
-          className="w-11 h-11 rounded-control border border-border bg-surface-panel text-primary flex items-center justify-center hover:border-border-accent hover:bg-accent-10 active:scale-95 transition-all duration-200 group shrink-0"
+          className="w-11 h-11 rounded-control border border-border bg-surface-panel text-primary flex items-center justify-center hover:border-border-accent hover:bg-accent-10 active:scale-[0.97] transition duration-200 group shrink-0"
         >
           <X size={22} className="group-hover:rotate-90 transition-transform duration-300" />
         </button>

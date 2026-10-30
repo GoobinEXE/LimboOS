@@ -89,7 +89,7 @@ export default function IntelCatalogPane({
               key={key}
               type="button"
               onClick={() => onStatusFilter(key)}
-              className={`px-2.5 py-1 text-[8px] font-display font-bold uppercase tracking-widest border transition-all rounded-sm ${
+              className={`px-2.5 py-1 text-[8px] font-display font-bold uppercase tracking-widest border transition rounded-sm ${
                 statusFilter === key
                   ? 'border-amber-500/50 text-amber-400 bg-amber-500/10'
                   : 'border-white/5 text-industrial-silver/30 hover:text-industrial-silver/60'
@@ -258,7 +258,7 @@ function IconBtn({
       type="button"
       title={title}
       onClick={onClick}
-      className={`p-1.5 text-industrial-silver/30 rounded-sm transition-all material-symbols-outlined text-base ${toneClass}`}
+      className={`p-1.5 text-industrial-silver/30 rounded-sm transition material-symbols-outlined text-base ${toneClass}`}
     >
       {icon}
     </button>

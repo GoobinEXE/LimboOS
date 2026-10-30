@@ -75,9 +75,9 @@ export default function App() {
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
                           placeholder="EX: ADMIN@INDUSTRIA.COM"
-                          className="w-full bg-surface-container-lowest border-none py-4 pl-12 pr-4 text-white font-sans text-sm tracking-wide focus:ring-0 placeholder:text-industrial-silver/20 transition-all outline-none"
+                          className="w-full bg-surface-container-lowest border-none py-4 pl-12 pr-4 text-white font-sans text-sm tracking-wide focus:ring-0 placeholder:text-industrial-silver/20 transition-[width,color,background-color,border-color,opacity,transform,box-shadow] outline-none"
                         />
-                        <div className="absolute bottom-0 left-0 h-0.5 w-0 bg-primary transition-all duration-300 group-focus-within:w-full" />
+                        <div className="absolute bottom-0 left-0 h-0.5 w-0 bg-primary transition-[width,color,background-color,border-color,opacity,transform,box-shadow] duration-300 group-focus-within:w-full" />
                       </div>
                     </div>
                     <div className="group">
@@ -94,9 +94,9 @@ export default function App() {
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
                           placeholder="••••••••"
-                          className="w-full bg-surface-container-lowest border-none py-4 pl-12 pr-4 text-white font-sans text-sm tracking-wide focus:ring-0 placeholder:text-industrial-silver/20 transition-all outline-none"
+                          className="w-full bg-surface-container-lowest border-none py-4 pl-12 pr-4 text-white font-sans text-sm tracking-wide focus:ring-0 placeholder:text-industrial-silver/20 transition-[width,color,background-color,border-color,opacity,transform,box-shadow] outline-none"
                         />
-                        <div className="absolute bottom-0 left-0 h-0.5 w-0 bg-primary transition-all duration-300 group-focus-within:w-full" />
+                        <div className="absolute bottom-0 left-0 h-0.5 w-0 bg-primary transition-[width,color,background-color,border-color,opacity,transform,box-shadow] duration-300 group-focus-within:w-full" />
                       </div>
                     </div>
                   </div>
@@ -123,12 +123,12 @@ export default function App() {
                       className="text-[10px] font-display font-bold uppercase tracking-widest text-industrial-silver/40 hover:text-primary transition-colors relative group"
                     >
                       Recuperar Acesso
-                      <span className="absolute -bottom-1 left-0 w-0 h-px bg-primary transition-all group-hover:w-1/2" />
+                      <span className="absolute -bottom-1 left-0 w-0 h-px bg-primary transition-[width,color,background-color,border-color,opacity,transform,box-shadow] group-hover:w-1/2" />
                     </button>
                     <button
                       type="submit"
                       disabled={isLoggingIn}
-                      className="w-full sm:w-auto bg-primary hover:bg-primary-container text-black font-display font-bold text-xs uppercase tracking-[0.2em] py-4 px-10 rounded-sm transition-all flex items-center justify-center gap-3 group disabled:opacity-50 disabled:cursor-not-allowed glow-orange hover:glow-orange-strong active:scale-95"
+                      className="w-full sm:w-auto bg-primary hover:bg-primary-container text-black font-display font-bold text-xs uppercase tracking-[0.2em] py-4 px-10 rounded-sm transition flex items-center justify-center gap-3 group disabled:opacity-50 disabled:cursor-not-allowed glow-orange hover:glow-orange-strong active:scale-[0.97]"
                     >
                       {isLoggingIn ? (
                         <>
@@ -197,7 +197,7 @@ export default function App() {
             <div className="pt-8">
               <button
                 onClick={() => window.location.reload()}
-                className="bg-surface-container-high hover:bg-surface-container-highest text-white font-display font-bold text-xs uppercase tracking-[0.2em] py-4 px-12 rounded-sm transition-all flex items-center gap-3 mx-auto"
+                className="bg-surface-container-high hover:bg-surface-container-highest text-white font-display font-bold text-xs uppercase tracking-[0.2em] py-4 px-12 rounded-sm transition flex items-center gap-3 mx-auto"
               >
                 <Power size={16} className="text-primary" />
                 Encerrar Terminal

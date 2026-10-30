@@ -81,7 +81,7 @@ export default function MediaUploadZone({
             type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={disabled || uploading}
-            className="flex items-center gap-2 bg-primary hover:bg-primary-container text-black px-5 py-2.5 rounded-sm font-display font-bold text-[10px] tracking-widest transition-all active:scale-95 glow-orange shadow-lg disabled:opacity-40"
+            className="flex items-center gap-2 bg-primary hover:bg-primary-container text-black px-5 py-2.5 rounded-sm font-display font-bold text-[10px] tracking-widest transition active:scale-[0.97] glow-orange shadow-lg disabled:opacity-40"
           >
             <span className="material-symbols-outlined text-base">
               {uploading ? 'sync' : 'add_circle'}
@@ -106,7 +106,7 @@ export default function MediaUploadZone({
           onClick={() => {
             if (!disabled && !uploading) fileInputRef.current?.click();
           }}
-          className={`relative border-2 border-dashed rounded-sm p-8 text-center transition-all group overflow-hidden cursor-pointer ${
+          className={`relative border-2 border-dashed rounded-sm p-8 text-center transition group overflow-hidden cursor-pointer ${
             isDragOver
               ? 'border-primary bg-primary/5'
               : 'border-primary/10 bg-black/20 hover:border-primary/20 hover:bg-black/40'
@@ -127,7 +127,7 @@ export default function MediaUploadZone({
 
           <div className="relative inline-block mb-3">
             <span
-              className={`material-symbols-outlined text-4xl transition-all duration-300 ${
+              className={`material-symbols-outlined text-4xl transition duration-300 ${
                 isDragOver ? 'text-primary scale-110' : 'text-industrial-silver/20 group-hover:text-primary/40'
               }`}
             >

@@ -212,7 +212,7 @@ export default function IntelDistributionDrawer({
             </div>
             <button
               onClick={requestClose}
-              className="p-2 text-ash-600 hover:text-white transition-all material-symbols-outlined rounded-sm"
+              className="p-2 text-ash-600 hover:text-white transition material-symbols-outlined rounded-sm"
             >
               close
             </button>
@@ -224,7 +224,7 @@ export default function IntelDistributionDrawer({
                 <button
                   key={tab}
                   onClick={() => setAddTab(tab)}
-                  className={`flex-1 min-w-[72px] py-4 text-[10px] font-black uppercase tracking-[0.15em] transition-all ${
+                  className={`flex-1 min-w-[72px] py-4 text-[10px] font-black uppercase tracking-[0.15em] transition ${
                     addTab === tab
                       ? 'text-primary bg-primary/10 border-b-2 border-primary'
                       : 'text-ash-600 hover:text-ash-400'
@@ -246,7 +246,7 @@ export default function IntelDistributionDrawer({
                 placeholder={t('intel.dist.search')}
                 value={addSearch}
                 onChange={(e) => setAddSearch(e.target.value)}
-                className="w-full bg-black/60 border-2 border-seam text-[11px] font-bold uppercase px-12 py-4 text-white outline-none focus:ring-1 focus:ring-primary transition-all rounded-sm placeholder:text-ash-800 tracking-widest"
+                className="w-full bg-black/60 border-2 border-seam text-[11px] font-bold uppercase px-12 py-4 text-white outline-none focus:ring-1 focus:ring-primary transition rounded-sm placeholder:text-ash-800 tracking-widest"
               />
             </div>
           </div>
@@ -276,7 +276,7 @@ export default function IntelDistributionDrawer({
                   <div
                     key={item.id}
                     onClick={() => toggleSelect(item.id, alreadyHas)}
-                    className={`flex items-center gap-4 px-5 py-4 border-2 transition-all rounded-sm ${
+                    className={`flex items-center gap-4 px-5 py-4 border-2 transition rounded-sm ${
                       alreadyHas
                         ? 'opacity-30 grayscale border-transparent cursor-not-allowed bg-[#111]'
                         : isSelected
@@ -292,7 +292,7 @@ export default function IntelDistributionDrawer({
                       {intelTypeIcon(item.type)}
                     </span>
                     <div
-                      className={`w-6 h-6 border-2 rounded-sm flex items-center justify-center transition-all shrink-0 ${
+                      className={`w-6 h-6 border-2 rounded-sm flex items-center justify-center transition shrink-0 ${
                         isSelected
                           ? 'bg-primary border-primary shadow-[0_0_8px_rgba(255,140,0,0.4)]'
                           : 'border-ash-800 group-hover:border-ash-600'
@@ -359,7 +359,7 @@ export default function IntelDistributionDrawer({
                 whileTap={{ scale: 0.97 }}
                 animate={loading ? { scale: [1, 0.98, 1] } : { scale: 1 }}
                 transition={loading ? { repeat: Infinity, duration: 0.8 } : ADMIN_SPRING}
-                className="flex-2 sm:flex-none bg-primary text-black px-10 py-4 rounded-sm font-black text-[11px] uppercase tracking-widest hover:bg-primary-container transition-all disabled:opacity-20 glow-orange shadow-lg"
+                className="flex-2 sm:flex-none bg-primary text-black px-10 py-4 rounded-sm font-black text-[11px] uppercase tracking-widest hover:bg-primary-container transition disabled:opacity-20 glow-orange shadow-lg"
               >
                 {actionLabel}
               </motion.button>

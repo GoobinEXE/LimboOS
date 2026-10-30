@@ -24,7 +24,7 @@ export default function MediaSelectorModal({
   const { t } = useTranslation('admin');
   const resolvedTitle = title ?? t('media.selectMedia');
   return (
-    <OverlayPortal open={isOpen} onClose={onClose}>
+    <OverlayPortal open={isOpen} onClose={onClose} withExitAnimation>
       <AnimatePresence>
         {isOpen && (
           <div className="fixed inset-0 z-[150] flex items-center justify-center p-4">

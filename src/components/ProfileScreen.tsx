@@ -102,7 +102,7 @@ const ActionRow = ({
   <button
     type="button"
     onClick={onClick}
-    className="w-full flex items-center gap-3 px-3.5 py-3 rounded-card border border-border bg-surface-raised hover:border-border-accent hover:bg-accent-05 active:scale-[0.99] transition-all duration-200 group text-left"
+    className="w-full flex items-center gap-3 px-3.5 py-3 rounded-card border border-border bg-surface-raised hover:border-border-accent hover:bg-accent-05 active:scale-[0.99] transition duration-200 group text-left"
   >
     <div className="w-9 h-9 rounded-control bg-surface-sunken border border-border text-primary flex items-center justify-center shrink-0 group-hover:bg-accent-10 group-hover:border-border-accent transition-colors">
       <Icon size={15} />
@@ -111,7 +111,7 @@ const ActionRow = ({
       <div className="text-protocol text-white text-[10px]">{title}</div>
       <div className="text-mono-ui text-[10px] text-industrial-silver/40 mt-0.5 truncate">{sub}</div>
     </div>
-    <ChevronRight size={16} className="text-primary/40 group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" />
+    <ChevronRight size={16} className="text-primary/40 group-hover:text-primary group-hover:translate-x-0.5 transition shrink-0" />
   </button>
 );
 
@@ -204,14 +204,14 @@ export default function ProfileScreen({
       <div className="w-full h-full bg-lcd-paper text-lcd-ink flex flex-col p-1 font-mono uppercase text-[10px] select-none tracking-widest relative">
         {/* Header */}
         <div className="flex justify-between items-center border-b-2 border-lcd-ink pb-1 shrink-0 font-bold mb-2">
-          <button onClick={onBack} className="hover:bg-lcd-ink hover:text-lcd-paper px-1 active:scale-95 transition-all">
+          <button onClick={onBack} className="hover:bg-lcd-ink hover:text-lcd-paper px-1 active:scale-[0.97] transition">
             {tCommon('actions.backBracket')}
           </button>
           <span className="text-[8px] flex items-center gap-1">
             <span className="w-1.5 h-1.5 bg-lcd-ink animate-pulse" />
             {t('profile.header.nokia')}
           </span>
-          <button onClick={onLogout} className="hover:bg-lcd-ink hover:text-lcd-paper px-1 active:scale-95 transition-all">
+          <button onClick={onLogout} className="hover:bg-lcd-ink hover:text-lcd-paper px-1 active:scale-[0.97] transition">
             {tCommon('actions.exitBracket')}
           </button>
         </div>
@@ -274,11 +274,11 @@ export default function ProfileScreen({
 
           {/* Ações */}
           <div className="space-y-1">
-            <button onClick={onChangeMission} className="w-full border-2 border-lcd-ink flex justify-between px-2 py-2 hover:bg-lcd-ink hover:text-lcd-paper font-black active:scale-95 transition-all shadow-[1px_1px_0px_#111e14]">
+            <button onClick={onChangeMission} className="w-full border-2 border-lcd-ink flex justify-between px-2 py-2 hover:bg-lcd-ink hover:text-lcd-paper font-black active:scale-[0.97] transition shadow-[1px_1px_0px_#111e14]">
               <span>{t('profile.action.missionNokia')}</span>
               <span>&raquo;</span>
             </button>
-            <button onClick={onChangeCharacter} className="w-full border-2 border-lcd-ink flex justify-between px-2 py-2 hover:bg-lcd-ink hover:text-lcd-paper font-black active:scale-95 transition-all shadow-[1px_1px_0px_#111e14]">
+            <button onClick={onChangeCharacter} className="w-full border-2 border-lcd-ink flex justify-between px-2 py-2 hover:bg-lcd-ink hover:text-lcd-paper font-black active:scale-[0.97] transition shadow-[1px_1px_0px_#111e14]">
               <span>{t('profile.action.agentNokia')}</span>
               <span>&raquo;</span>
             </button>
@@ -294,7 +294,7 @@ export default function ProfileScreen({
             title={t('profile.deck.nokia')}
             action={
               onUpdateSpotify && !isEditingSpotify ? (
-                <button onClick={startEditingSpotify} className="hover:bg-lcd-ink hover:text-lcd-paper px-1 active:scale-95 transition-all text-[8px] border border-lcd-ink">
+                <button onClick={startEditingSpotify} className="hover:bg-lcd-ink hover:text-lcd-paper px-1 active:scale-[0.97] transition text-[8px] border border-lcd-ink">
                   {embedUrl ? t('profile.deck.editShort') : t('profile.deck.linkShort')}
                 </button>
               ) : undefined
@@ -312,8 +312,8 @@ export default function ProfileScreen({
                 />
                 {spotifyError && <p className="text-[8px] animate-pulse">{tCommon('error')}: {spotifyError}</p>}
                 <div className="flex gap-1 justify-end">
-                  <button onClick={handleCancelEdit} className="border border-lcd-ink px-2 py-0.5 hover:bg-lcd-ink hover:text-lcd-paper active:scale-95 transition-all text-[8px]">{tCommon('actions.cancelShort')}</button>
-                  <button onClick={handleSaveSpotify} className="border border-lcd-ink px-2 py-0.5 hover:bg-lcd-ink hover:text-lcd-paper active:scale-95 transition-all font-black text-[8px]">{tCommon('actions.saveShort')}</button>
+                  <button onClick={handleCancelEdit} className="border border-lcd-ink px-2 py-0.5 hover:bg-lcd-ink hover:text-lcd-paper active:scale-[0.97] transition text-[8px]">{tCommon('actions.cancelShort')}</button>
+                  <button onClick={handleSaveSpotify} className="border border-lcd-ink px-2 py-0.5 hover:bg-lcd-ink hover:text-lcd-paper active:scale-[0.97] transition font-black text-[8px]">{tCommon('actions.saveShort')}</button>
                 </div>
               </div>
             ) : embedUrl ? (
@@ -337,7 +337,7 @@ export default function ProfileScreen({
             ) : (
               <button
                 onClick={handleGeneratePhone}
-                className="w-full border-2 border-lcd-ink py-1.5 text-center hover:bg-lcd-ink hover:text-lcd-paper active:scale-95 transition-all text-[9px] font-black"
+                className="w-full border-2 border-lcd-ink py-1.5 text-center hover:bg-lcd-ink hover:text-lcd-paper active:scale-[0.97] transition text-[9px] font-black"
               >
                 {t('profile.contact.generateNokia')}
               </button>
@@ -365,7 +365,7 @@ export default function ProfileScreen({
   }
 
   const iconButtonClass =
-    'w-10 h-10 rounded-control border border-border bg-surface-panel flex items-center justify-center active:scale-95 transition-all duration-200 shrink-0';
+    'w-10 h-10 rounded-control border border-border bg-surface-panel flex items-center justify-center active:scale-[0.97] transition duration-200 shrink-0';
 
   return (
     <motion.div
@@ -432,7 +432,7 @@ export default function ProfileScreen({
                 {Array.from({ length: 5 }, (_, i) => (
                   <span
                     key={i}
-                    className={`h-1.5 flex-1 rounded-inset transition-all duration-700 ${
+                    className={`h-1.5 flex-1 rounded-inset transition duration-700 ${
                       i < dangerLevel
                         ? dangerLevel >= 4 ? 'bg-red-500' : 'bg-primary'
                         : 'bg-surface-sunken border border-border-subtle'
@@ -594,7 +594,7 @@ export default function ProfileScreen({
                   <button
                     type="button"
                     onClick={handleGeneratePhone}
-                    className="w-full py-2.5 rounded-control bg-accent text-black text-protocol hover:bg-primary-container active:scale-[0.98] transition-all glow-orange-subtle"
+                    className="w-full py-2.5 rounded-control bg-accent text-black text-protocol hover:bg-primary-container active:scale-[0.98] transition glow-orange-subtle"
                   >
                     {t('profile.contact.generate')}
                   </button>

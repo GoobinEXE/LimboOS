@@ -9,7 +9,7 @@ import Dashboard from './components/Dashboard';
 import { ToastProvider } from './components/ToastProvider';
 import RetroLoading from '../components/player/RetroLoading';
 import { resolveAdminAccess } from '../lib/adminAccess';
-import { ADMIN_SPRING_SNAP } from './lib/motion';
+import { dialogPop } from './lib/motion';
 import { achievementCatalogService } from '../services/AchievementCatalogService';
 import { npcSmsCatalogService } from '../services/NpcSmsCatalogService';
 
@@ -78,41 +78,43 @@ export default function App() {
       <div className="w-full h-full min-h-screen flex items-center justify-center bg-surface relative overflow-hidden">
         <div className="noise-overlay" />
         <div className="scanlines" />
+        <div className="vignette" />
         <motion.div
-          initial={{ opacity: 0, y: 16, scale: 0.96 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={ADMIN_SPRING_SNAP}
-          className="relative z-10 max-w-md w-full mx-4 border border-primary/30 bg-surface-container-low/90 p-8 text-center space-y-6"
+          variants={dialogPop}
+          initial="hidden"
+          animate="visible"
+          className="relative z-10 max-w-md w-full mx-4 border border-seam bg-surface-container-low rounded-panel shadow-2xl machined-edge p-8 text-center space-y-5"
         >
-          <p className="text-[10px] font-display uppercase tracking-[0.35em] text-primary/70">
+          <p className="flex items-center justify-center gap-2 text-[10px] font-display font-bold uppercase tracking-[0.32em] text-primary">
+            <span className="lmb-led text-accent animate-led" aria-hidden />
             {t('accessDenied.eyebrow')}
           </p>
-          <h1 className="font-display text-2xl font-bold text-white uppercase tracking-tight">
+          <h1 className="font-display text-2xl font-bold text-bone uppercase tracking-tight text-balance">
             {t('accessDenied.title')}
           </h1>
-          <p className="text-sm text-industrial-silver/60 leading-relaxed">
+          <p className="text-sm text-ash-400 leading-relaxed text-pretty">
             {!user ? t('accessDenied.needAuth') : t('accessDenied.noPrivilege')}
           </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
+          <div className="flex flex-col sm:flex-row gap-2 justify-center pt-2">
             {user && (
               <button
                 type="button"
                 onClick={() => void logout()}
-                className="px-4 py-2 border border-white/10 text-[11px] font-display uppercase tracking-widest text-industrial-silver/70 hover:border-primary/40 hover:text-primary transition-colors"
+                className="lmb-btn"
               >
                 {t('accessDenied.endSession')}
               </button>
             )}
             <a
               href="/?mode=play"
-              className="px-4 py-2 border border-primary/40 bg-primary/10 text-[11px] font-display uppercase tracking-widest text-primary hover:bg-primary/20 transition-colors"
+              className="lmb-btn lmb-btn-primary"
             >
               {t('accessDenied.goPlayer')}
             </a>
             {!user && (
               <a
                 href="/"
-                className="px-4 py-2 border border-white/10 text-[11px] font-display uppercase tracking-widest text-industrial-silver/70 hover:border-primary/40 hover:text-primary transition-colors"
+                className="lmb-btn"
               >
                 {t('accessDenied.login')}
               </a>

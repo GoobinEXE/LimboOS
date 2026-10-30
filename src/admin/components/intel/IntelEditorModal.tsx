@@ -13,10 +13,10 @@ import {
 import type { IntelItem } from '../../../types/intel';
 
 const SELECT_CLASS =
-  'w-full bg-surface-container-lowest border border-white/5 py-4 px-4 text-white font-display font-bold text-sm tracking-widest outline-none uppercase cursor-pointer appearance-none focus:border-primary/40 transition-all rounded-sm';
+  'w-full bg-surface-container-lowest border border-white/5 py-4 px-4 text-white font-display font-bold text-sm tracking-widest outline-none uppercase cursor-pointer appearance-none focus:border-primary/40 transition rounded-sm';
 
 const INPUT_CLASS =
-  'w-full bg-surface-container-lowest border border-transparent focus:border-primary/30 py-4 px-4 text-white outline-none transition-all rounded-sm';
+  'w-full bg-surface-container-lowest border border-transparent focus:border-primary/30 py-4 px-4 text-white outline-none transition rounded-sm';
 
 interface IntelEditorModalProps {
   open: boolean;
@@ -84,7 +84,7 @@ export default function IntelEditorModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="p-3 text-industrial-silver/20 hover:text-white transition-all rounded-sm material-symbols-outlined"
+                className="p-3 text-industrial-silver/20 hover:text-white transition rounded-sm material-symbols-outlined"
               >
                 close
               </button>
@@ -146,7 +146,7 @@ export default function IntelEditorModal({
                         title={t('intel.editor.generateId')}
                         disabled={!formData.title.trim()}
                         onClick={() => onUpdateField('id', slugifyIntelId(formData.title))}
-                        className="shrink-0 px-3 border border-white/10 bg-black/30 text-industrial-silver/50 hover:text-primary hover:border-primary/30 transition-all rounded-sm disabled:opacity-30"
+                        className="shrink-0 px-3 border border-white/10 bg-black/30 text-industrial-silver/50 hover:text-primary hover:border-primary/30 transition rounded-sm disabled:opacity-30"
                       >
                         <span className="material-symbols-outlined text-base">auto_fix</span>
                       </button>
@@ -166,7 +166,7 @@ export default function IntelEditorModal({
                       key={t.value}
                       type="button"
                       onClick={() => onUpdateField('type', t.value)}
-                      className={`flex-1 min-w-[4.5rem] py-3.5 text-[10px] font-display font-bold uppercase tracking-widest border transition-all flex items-center justify-center gap-2 rounded-sm ${
+                      className={`flex-1 min-w-[4.5rem] py-3.5 text-[10px] font-display font-bold uppercase tracking-widest border transition flex items-center justify-center gap-2 rounded-sm ${
                         formData.type === t.value
                           ? 'border-primary bg-primary/10 text-primary'
                           : 'border-white/5 bg-black/20 text-industrial-silver/30 hover:border-white/10'
@@ -189,7 +189,7 @@ export default function IntelEditorModal({
                       key={l.value}
                       type="button"
                       onClick={() => onUpdateField('level', l.value)}
-                      className={`flex-1 py-3.5 text-[10px] font-display font-bold uppercase tracking-widest border transition-all rounded-sm ${
+                      className={`flex-1 py-3.5 text-[10px] font-display font-bold uppercase tracking-widest border transition rounded-sm ${
                         formData.level === l.value
                           ? 'border-primary bg-primary/10 text-primary'
                           : 'border-white/5 bg-black/20 text-industrial-silver/30 hover:border-white/10'
@@ -268,7 +268,7 @@ export default function IntelEditorModal({
                           : mediaFileInputRef
                         ).current?.click()
                       }
-                      className="py-4 border border-primary/30 bg-primary/10 text-primary hover:bg-primary hover:text-black transition-all rounded-sm flex items-center justify-center gap-2 font-display font-bold text-[9px] uppercase tracking-widest disabled:opacity-40"
+                      className="py-4 border border-primary/30 bg-primary/10 text-primary hover:bg-primary hover:text-black transition rounded-sm flex items-center justify-center gap-2 font-display font-bold text-[9px] uppercase tracking-widest disabled:opacity-40"
                     >
                       <span className="material-symbols-outlined text-base">upload_file</span>
                       {mediaUploading
@@ -280,7 +280,7 @@ export default function IntelEditorModal({
                     <button
                       type="button"
                       onClick={onOpenLibrary}
-                      className="py-4 border border-white/10 bg-black/30 text-industrial-silver/60 hover:text-white transition-all rounded-sm flex items-center justify-center gap-2 font-display font-bold text-[9px] uppercase tracking-widest"
+                      className="py-4 border border-white/10 bg-black/30 text-industrial-silver/60 hover:text-white transition rounded-sm flex items-center justify-center gap-2 font-display font-bold text-[9px] uppercase tracking-widest"
                     >
                       <span className="material-symbols-outlined text-base">perm_media</span>
                       {t('media.title')}
@@ -298,7 +298,7 @@ export default function IntelEditorModal({
                       <button
                         type="button"
                         onClick={onApplyYoutube}
-                        className="px-4 border border-red-500/30 bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition-all rounded-sm font-display font-bold text-[9px] uppercase tracking-widest shrink-0"
+                        className="px-4 border border-red-500/30 bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition rounded-sm font-display font-bold text-[9px] uppercase tracking-widest shrink-0"
                       >
                         YouTube
                       </button>
@@ -445,7 +445,7 @@ export default function IntelEditorModal({
                           onChange={(e) => onUpdateMeta('isSecret', e.target.checked)}
                           className="peer hidden"
                         />
-                        <div className="w-6 h-6 border border-white/10 bg-black/20 rounded-sm peer-checked:bg-primary peer-checked:border-primary transition-all flex items-center justify-center">
+                        <div className="w-6 h-6 border border-white/10 bg-black/20 rounded-sm peer-checked:bg-primary peer-checked:border-primary transition flex items-center justify-center">
                           <span className="material-symbols-outlined text-black text-sm font-black opacity-0 peer-checked:opacity-100">
                             check
                           </span>
@@ -471,7 +471,7 @@ export default function IntelEditorModal({
               <button
                 type="button"
                 onClick={onSave}
-                className="bg-primary hover:bg-primary-container text-black px-12 py-4 rounded-sm font-display font-bold text-[11px] tracking-widest uppercase transition-all active:scale-95 glow-orange shadow-lg flex items-center justify-center gap-2"
+                className="bg-primary hover:bg-primary-container text-black px-12 py-4 rounded-sm font-display font-bold text-[11px] tracking-widest uppercase transition active:scale-[0.97] glow-orange shadow-lg flex items-center justify-center gap-2"
               >
                 <span className="material-symbols-outlined text-base">
                   {editingItem ? 'sync' : 'save'}
@@ -493,7 +493,7 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
         {label}
       </label>
       {children}
-      <div className="h-0.5 w-0 bg-primary transition-all duration-300 group-focus-within:w-full" />
+      <div className="h-0.5 w-0 bg-primary transition-[width,color,background-color,border-color,opacity,transform,box-shadow] duration-300 group-focus-within:w-full" />
     </div>
   );
 }
@@ -505,7 +505,7 @@ function MetaField({ label, children }: { label: string; children: React.ReactNo
         {label}
       </label>
       {children}
-      <div className="h-0.5 w-0 bg-primary transition-all duration-300 group-focus-within:w-full" />
+      <div className="h-0.5 w-0 bg-primary transition-[width,color,background-color,border-color,opacity,transform,box-shadow] duration-300 group-focus-within:w-full" />
     </div>
   );
 }

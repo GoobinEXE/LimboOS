@@ -268,7 +268,7 @@ export default function TerminalPanel({ embedded = false }: TerminalPanelProps) 
                     <button
                       type="button"
                       onClick={() => toggleSelect(row.uid)}
-                      className={`mt-0.5 w-5 h-5 border-2 rounded-sm shrink-0 flex items-center justify-center transition-all ${
+                      className={`mt-0.5 w-5 h-5 border-2 rounded-sm shrink-0 flex items-center justify-center transition ${
                         selected ? 'bg-primary border-primary' : 'border-ash-800 hover:border-ash-600'
                       }`}
                       aria-label="Selecionar conta"
@@ -414,7 +414,7 @@ function GrantToggle({
       className="flex items-center gap-3 disabled:opacity-30"
     >
       <span
-        className={`relative w-10 h-5 rounded-full border transition-all ${
+        className={`relative w-10 h-5 rounded-full border transition ${
           active ? on : 'bg-ash-900 border-ash-800'
         }`}
       >

@@ -131,7 +131,7 @@ function OperationalPanorama({
         <button
           type="button"
           onClick={goAcesso}
-          className="bg-surface-container-low border border-primary/20 p-5 text-left hover:border-primary/40 transition-all"
+          className="bg-surface-container-low border border-primary/20 p-5 text-left hover:border-primary/40 transition"
         >
           <p className="font-display text-[10px] uppercase font-bold tracking-[0.2em] text-industrial-silver/50 mb-2">
             {t('reports.hardware')}
@@ -185,18 +185,18 @@ function StatCard({
     secondary: 'text-secondary/20',
     tertiary: 'text-tertiary/20',
   };
-  const className = `bg-surface-container-low border p-5 relative overflow-hidden group transition-all hover:bg-surface-container-high ${
+  const className = `bg-surface-container-low border p-5 relative overflow-hidden group transition hover:bg-surface-container-high ${
     onClick ? 'cursor-pointer hover:border-primary/40 active:scale-[0.98]' : ''
   } ${colorMap[color] ?? colorMap.primary}`;
 
   const content = (
     <>
       {onClick && (
-        <span className="absolute top-3 right-3 material-symbols-outlined text-sm text-primary/0 group-hover:text-primary/50 transition-all">
+        <span className="absolute top-3 right-3 material-symbols-outlined text-sm text-primary/0 group-hover:text-primary/50 transition">
           arrow_forward
         </span>
       )}
-      <div className="absolute -right-2 -bottom-2 opacity-10 group-hover:opacity-20 transition-all group-hover:scale-110">
+      <div className="absolute -right-2 -bottom-2 opacity-10 group-hover:opacity-20 transition group-hover:scale-110">
         <span className={`material-symbols-outlined text-6xl ${iconColorMap[color] ?? iconColorMap.primary}`}>{icon}</span>
       </div>
       <p className="font-display text-[10px] uppercase font-bold tracking-[0.2em] text-industrial-silver/50 mb-2">
@@ -229,18 +229,18 @@ function StatusCard({
   active: boolean;
   onClick?: () => void;
 }) {
-  const className = `bg-surface-container-low border p-5 relative overflow-hidden group transition-all hover:bg-surface-container-high ${
+  const className = `bg-surface-container-low border p-5 relative overflow-hidden group transition hover:bg-surface-container-high ${
     onClick ? 'cursor-pointer hover:border-primary/40 active:scale-[0.98]' : ''
   } ${active ? 'border-red-500/30 text-red-400' : 'border-phosphor-500/20 text-phosphor-400'}`;
 
   const content = (
     <>
       {onClick && (
-        <span className="absolute top-3 right-3 material-symbols-outlined text-sm text-primary/0 group-hover:text-primary/50 transition-all">
+        <span className="absolute top-3 right-3 material-symbols-outlined text-sm text-primary/0 group-hover:text-primary/50 transition">
           arrow_forward
         </span>
       )}
-      <div className="absolute -right-2 -bottom-2 opacity-10 group-hover:opacity-20 transition-all group-hover:scale-110">
+      <div className="absolute -right-2 -bottom-2 opacity-10 group-hover:opacity-20 transition group-hover:scale-110">
         <span className={`material-symbols-outlined text-6xl ${active ? 'text-red-500/20' : 'text-phosphor-500/20'}`}>
           {icon}
         </span>

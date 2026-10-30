@@ -112,7 +112,7 @@ export default function AnalyticsPanel({ onNavigate }: AnalyticsPanelProps = {})
         <button
           onClick={handleReset}
           disabled={isResetting}
-          className={`px-6 py-3 ${isResetting ? 'bg-surface-container-high text-industrial-silver/20' : 'bg-red-500/5 text-red-500/60 hover:bg-red-500/10 hover:text-red-500'} border border-red-500/10 text-[10px] font-display font-bold uppercase tracking-widest transition-all flex items-center gap-3 rounded-sm active:scale-95`}
+          className={`px-6 py-3 ${isResetting ? 'bg-surface-container-high text-industrial-silver/20' : 'bg-red-500/5 text-red-500/60 hover:bg-red-500/10 hover:text-red-500'} border border-red-500/10 text-[10px] font-display font-bold uppercase tracking-widest transition flex items-center gap-3 rounded-sm active:scale-[0.97]`}
         >
           <span className="material-symbols-outlined text-base">delete_forever</span>
           {isResetting ? 'Executando Reset...' : 'Zerar Banco de Dados BI'}
@@ -133,7 +133,7 @@ export default function AnalyticsPanel({ onNavigate }: AnalyticsPanelProps = {})
       </motion.div>
 
       <motion.div variants={staggerItem} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <ClickableSection onClick={() => onNavigate?.('media')} className="bg-surface-container-low border border-primary/10 p-6 shadow-xl group hover:border-primary/20 transition-all">
+        <ClickableSection onClick={() => onNavigate?.('media')} className="bg-surface-container-low border border-primary/10 p-6 shadow-xl group hover:border-primary/20 transition">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               <span className="material-symbols-outlined text-secondary text-base">cloud_done</span>
@@ -142,11 +142,11 @@ export default function AnalyticsPanel({ onNavigate }: AnalyticsPanelProps = {})
             <span className="text-[10px] font-display font-bold text-industrial-silver/60">{(analytics.totalStorageSize / (1024 * 1024)).toFixed(1)} MB / 5 GB</span>
           </div>
           <div className="h-2 w-full bg-black/40 rounded-full overflow-hidden border border-white/5">
-            <div className="h-full bg-secondary shadow-[0_0_10px_rgba(198,198,198,0.2)] transition-all duration-1000" style={{ width: `${Math.min(analytics.storagePercentage, 100)}%` }} />
+            <div className="h-full bg-secondary shadow-[0_0_10px_rgba(198,198,198,0.2)] transition-[width,color,background-color,border-color,opacity,transform,box-shadow] duration-1000" style={{ width: `${Math.min(analytics.storagePercentage, 100)}%` }} />
           </div>
         </ClickableSection>
 
-        <section className="bg-surface-container-low border border-primary/10 p-6 shadow-xl group hover:border-primary/20 transition-all">
+        <section className="bg-surface-container-low border border-primary/10 p-6 shadow-xl group hover:border-primary/20 transition">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               <span className="material-symbols-outlined text-primary text-base">check_circle</span>
@@ -155,7 +155,7 @@ export default function AnalyticsPanel({ onNavigate }: AnalyticsPanelProps = {})
             <span className="text-[10px] font-display font-bold text-industrial-silver/60">{displayAnalytics.completionRate.toFixed(1)}% Concluído</span>
           </div>
           <div className="h-2 w-full bg-black/40 rounded-full overflow-hidden border border-white/5">
-            <div className="h-full bg-primary shadow-[0_0_10px_rgba(255,140,0,0.2)] transition-all duration-1000" style={{ width: `${displayAnalytics.completionRate}%` }} />
+            <div className="h-full bg-primary shadow-[0_0_10px_rgba(255,140,0,0.2)] transition-[width,color,background-color,border-color,opacity,transform,box-shadow] duration-1000" style={{ width: `${displayAnalytics.completionRate}%` }} />
           </div>
         </section>
       </motion.div>
@@ -169,10 +169,10 @@ export default function AnalyticsPanel({ onNavigate }: AnalyticsPanelProps = {})
           <div className="flex items-end gap-1 h-40">
             {displayAnalytics.dailyPlaysSorted.map(([date, count]: [string, any]) => (
               <div key={date} className="flex-1 flex flex-col items-center group relative">
-                <div className="absolute -top-10 bg-surface-container-high border border-primary/20 text-primary text-[9px] font-display font-bold px-3 py-1.5 rounded-sm opacity-0 group-hover:opacity-100 transition-all whitespace-nowrap z-20 shadow-2xl scale-90 group-hover:scale-100 translate-y-2 group-hover:translate-y-0">
+                <div className="absolute -top-10 bg-surface-container-high border border-primary/20 text-primary text-[9px] font-display font-bold px-3 py-1.5 rounded-sm opacity-0 group-hover:opacity-100 transition-[height,color,background-color,border-color,opacity,transform,box-shadow] whitespace-nowrap z-20 shadow-2xl scale-90 group-hover:scale-100 translate-y-2 group-hover:translate-y-0">
                   {date.split('-').slice(1).reverse().join('/')} : {count} plays
                 </div>
-                <div className="w-full bg-primary/20 group-hover:bg-primary transition-all rounded-t-sm" style={{ height: `${(count / displayAnalytics.maxDailyPlays) * 100}%`, minHeight: count > 0 ? '4px' : '1px' }}></div>
+                <div className="w-full bg-primary/20 group-hover:bg-primary transition-[height,color,background-color,border-color,opacity,transform,box-shadow] rounded-t-sm" style={{ height: `${(count / displayAnalytics.maxDailyPlays) * 100}%`, minHeight: count > 0 ? '4px' : '1px' }}></div>
               </div>
             ))}
           </div>
@@ -190,10 +190,10 @@ export default function AnalyticsPanel({ onNavigate }: AnalyticsPanelProps = {})
           <div className="grid grid-cols-6 gap-3">
             {analytics.peakHours.map(({ hour, count }) => (
               <div key={hour} className="flex flex-col items-center group relative">
-                <div className="absolute -top-10 bg-surface-container-high border border-primary/20 text-primary text-[9px] font-display font-bold px-3 py-1.5 rounded-sm opacity-0 group-hover:opacity-100 transition-all whitespace-nowrap z-20 shadow-2xl scale-90 group-hover:scale-100">
+                <div className="absolute -top-10 bg-surface-container-high border border-primary/20 text-primary text-[9px] font-display font-bold px-3 py-1.5 rounded-sm opacity-0 group-hover:opacity-100 transition whitespace-nowrap z-20 shadow-2xl scale-90 group-hover:scale-100">
                   {hour}h: {count} eventos
                 </div>
-                <div className="w-full aspect-square rounded-sm border border-white/5 transition-all group-hover:scale-110 group-hover:border-primary/40 shadow-inner" style={{ backgroundColor: count === 0 ? 'rgba(255,255,255,0.02)' : `rgba(255, 183, 125, ${0.1 + (count / analytics.maxHourCount) * 0.9})`, boxShadow: count > 0 ? `0 0 15px rgba(255, 183, 125, ${(count / analytics.maxHourCount) * 0.3})` : 'none' }} />
+                <div className="w-full aspect-square rounded-sm border border-white/5 transition group-hover:scale-110 group-hover:border-primary/40 shadow-inner" style={{ backgroundColor: count === 0 ? 'rgba(255,255,255,0.02)' : `rgba(255, 183, 125, ${0.1 + (count / analytics.maxHourCount) * 0.9})`, boxShadow: count > 0 ? `0 0 15px rgba(255, 183, 125, ${(count / analytics.maxHourCount) * 0.3})` : 'none' }} />
                 <span className="text-[8px] text-industrial-silver/20 mt-2 font-display font-bold">{hour}h</span>
               </div>
             ))}
@@ -221,7 +221,7 @@ export default function AnalyticsPanel({ onNavigate }: AnalyticsPanelProps = {})
                         <span className="text-[10px] font-display font-bold text-primary ml-2">{count}×</span>
                       </div>
                       <div className="h-1.5 w-full bg-black/40 rounded-full border border-white/5 overflow-hidden">
-                        <div className="h-full bg-primary/40 group-hover:bg-primary transition-all" style={{ width: `${(count / maxCount) * 100}%` }}></div>
+                        <div className="h-full bg-primary/40 group-hover:bg-primary transition-[width,color,background-color,border-color,opacity,transform,box-shadow]" style={{ width: `${(count / maxCount) * 100}%` }}></div>
                       </div>
                     </div>
                   </div>
@@ -242,7 +242,7 @@ export default function AnalyticsPanel({ onNavigate }: AnalyticsPanelProps = {})
                 const maxCount = analytics.mostActiveUsers[0].count;
                 return (
                   <div key={user.uid} className="flex items-center gap-4 group">
-                    <div className={`w-10 h-10 border flex items-center justify-center text-[10px] font-display font-bold transition-all rounded-sm ${idx < 3 ? 'border-primary bg-primary/10 text-primary shadow-[0_0_10px_rgba(255,140,0,0.1)]' : 'border-white/5 bg-black/20 text-industrial-silver/20 group-hover:border-white/20'}`}>
+                    <div className={`w-10 h-10 border flex items-center justify-center text-[10px] font-display font-bold transition rounded-sm ${idx < 3 ? 'border-primary bg-primary/10 text-primary shadow-[0_0_10px_rgba(255,140,0,0.1)]' : 'border-white/5 bg-black/20 text-industrial-silver/20 group-hover:border-white/20'}`}>
                       {idx + 1}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -251,7 +251,7 @@ export default function AnalyticsPanel({ onNavigate }: AnalyticsPanelProps = {})
                         <span className="text-[10px] font-display font-bold text-tertiary ml-2">{user.count} plays</span>
                       </div>
                       <div className="h-1.5 w-full bg-black/40 rounded-full border border-white/5 overflow-hidden">
-                        <div className="h-full bg-tertiary/40 group-hover:bg-tertiary transition-all" style={{ width: `${(user.count / maxCount) * 100}%` }}></div>
+                        <div className="h-full bg-tertiary/40 group-hover:bg-tertiary transition-[width,color,background-color,border-color,opacity,transform,box-shadow]" style={{ width: `${(user.count / maxCount) * 100}%` }}></div>
                       </div>
                     </div>
                   </div>
@@ -271,7 +271,7 @@ export default function AnalyticsPanel({ onNavigate }: AnalyticsPanelProps = {})
           <div className="space-y-6">
             {analytics.rarityList.slice(0, 5).map((ach) => (
               <div key={ach.id} className="flex items-center gap-4 group">
-                <div className="w-12 h-12 bg-black/40 border border-white/5 flex items-center justify-center shrink-0 group-hover:border-primary/30 transition-all rounded-sm shadow-inner overflow-hidden group-hover:scale-110">
+                <div className="w-12 h-12 bg-black/40 border border-white/5 flex items-center justify-center shrink-0 group-hover:border-primary/30 transition rounded-sm shadow-inner overflow-hidden group-hover:scale-110">
                   {ach.icon?.startsWith('/') || ach.icon?.endsWith('.png') ? (
                     <img src={ach.icon} alt="" className="w-full h-full object-cover" />
                   ) : (
@@ -284,7 +284,7 @@ export default function AnalyticsPanel({ onNavigate }: AnalyticsPanelProps = {})
                     <span className="text-[9px] font-display font-bold px-2 py-0.5 bg-primary/5 text-primary/60 border border-primary/10 rounded-sm">{ach.percentage.toFixed(1)}%</span>
                   </div>
                   <div className="h-1 w-full bg-black/40 rounded-full overflow-hidden border border-white/5">
-                    <div className="h-full bg-primary/40 group-hover:bg-primary transition-all" style={{ width: `${ach.percentage}%` }} />
+                    <div className="h-full bg-primary/40 group-hover:bg-primary transition-[width,color,background-color,border-color,opacity,transform,box-shadow]" style={{ width: `${ach.percentage}%` }} />
                   </div>
                 </div>
               </div>
@@ -304,10 +304,10 @@ export default function AnalyticsPanel({ onNavigate }: AnalyticsPanelProps = {})
                   const maxWeekly = Math.max(...analytics.weeklyGrowth.values(), 1);
                   return (
                     <div key={week} className="flex-1 flex flex-col items-center group relative">
-                      <div className="absolute -top-10 bg-surface-container-high border border-primary/20 text-secondary text-[9px] font-display font-bold px-3 py-1.5 rounded-sm opacity-0 group-hover:opacity-100 transition-all whitespace-nowrap z-20 shadow-2xl">
+                      <div className="absolute -top-10 bg-surface-container-high border border-primary/20 text-secondary text-[9px] font-display font-bold px-3 py-1.5 rounded-sm opacity-0 group-hover:opacity-100 transition-[height,color,background-color,border-color,opacity,transform,box-shadow] whitespace-nowrap z-20 shadow-2xl">
                         Semana {week.slice(5)}: +{count} agentes
                       </div>
-                      <div className="w-full bg-secondary/20 group-hover:bg-secondary transition-all rounded-t-sm" style={{ height: `${((count as number) / maxWeekly) * 100}%`, minHeight: '4px' }}></div>
+                      <div className="w-full bg-secondary/20 group-hover:bg-secondary transition-[height,color,background-color,border-color,opacity,transform,box-shadow] rounded-t-sm" style={{ height: `${((count as number) / maxWeekly) * 100}%`, minHeight: '4px' }}></div>
                     </div>
                   );
                 })}
@@ -346,14 +346,14 @@ function KPICard({
   color: string;
   onClick?: () => void;
 }) {
-  const className = `bg-surface-container-low border border-primary/10 p-5 shadow-xl relative overflow-hidden group transition-all ${
+  const className = `bg-surface-container-low border border-primary/10 p-5 shadow-xl relative overflow-hidden group transition ${
     onClick ? 'cursor-pointer hover:border-primary/40 active:scale-[0.98]' : 'hover:border-primary/30'
   }`;
 
   const content = (
     <>
       {onClick && (
-        <span className="absolute top-3 right-3 material-symbols-outlined text-sm text-primary/0 group-hover:text-primary/50 transition-all z-20">
+        <span className="absolute top-3 right-3 material-symbols-outlined text-sm text-primary/0 group-hover:text-primary/50 transition z-20">
           arrow_forward
         </span>
       )}
@@ -362,11 +362,11 @@ function KPICard({
           <p className="text-[10px] font-display font-bold uppercase tracking-widest text-industrial-silver/40 mb-2">{label.replaceAll('_', ' ')}</p>
           <p className={`text-3xl font-display font-bold tracking-tighter ${color}`}>{value}</p>
         </div>
-        <div className="w-12 h-12 bg-black/20 rounded-sm flex items-center justify-center border border-white/5 group-hover:border-primary/20 transition-all">
-          <span className={`material-symbols-outlined text-2xl opacity-40 group-hover:opacity-100 transition-all ${color}`}>{icon}</span>
+        <div className="w-12 h-12 bg-black/20 rounded-sm flex items-center justify-center border border-white/5 group-hover:border-primary/20 transition">
+          <span className={`material-symbols-outlined text-2xl opacity-40 group-hover:opacity-100 transition ${color}`}>{icon}</span>
         </div>
       </div>
-      <div className="absolute -bottom-1 -right-1 w-16 h-16 bg-white/5 rounded-full blur-2xl group-hover:bg-primary/5 transition-all" />
+      <div className="absolute -bottom-1 -right-1 w-16 h-16 bg-white/5 rounded-full blur-2xl group-hover:bg-primary/5 transition" />
     </>
   );
 
@@ -395,7 +395,7 @@ function ClickableSection({
   }
 
   return (
-    <button type="button" onClick={onClick} className={`${className} text-left w-full cursor-pointer hover:border-primary/40 active:scale-[0.99] transition-all`}>
+    <button type="button" onClick={onClick} className={`${className} text-left w-full cursor-pointer hover:border-primary/40 active:scale-[0.99] transition`}>
       {children}
     </button>
   );

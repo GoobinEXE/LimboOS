@@ -193,14 +193,14 @@ export default function CampaignsPanel({
         <div className="flex gap-4">
           <button
             onClick={() => setShowItemsModal(true)}
-            className="flex items-center gap-3 bg-surface-container-high text-industrial-silver/60 px-6 py-3 rounded-sm font-display font-bold text-[11px] tracking-widest hover:bg-white/5 transition-all border border-white/5 active:scale-95 uppercase"
+            className="flex items-center gap-3 bg-surface-container-high text-industrial-silver/60 px-6 py-3 rounded-sm font-display font-bold text-[11px] tracking-widest hover:bg-white/5 transition border border-white/5 active:scale-[0.97] uppercase"
           >
             <span className="material-symbols-outlined text-base">inventory_2</span>
             {t('missions.persistentItems')}
           </button>
           <button
             onClick={openNewMission}
-            className="flex items-center gap-3 bg-primary text-black px-6 py-3 rounded-sm font-display font-bold text-[11px] tracking-widest hover:bg-primary-container transition-all active:scale-95 glow-orange shadow-lg uppercase"
+            className="flex items-center gap-3 bg-primary text-black px-6 py-3 rounded-sm font-display font-bold text-[11px] tracking-widest hover:bg-primary-container transition active:scale-[0.97] glow-orange shadow-lg uppercase"
           >
             <span className="material-symbols-outlined text-base">add_circle</span>
             {t('missions.modal.newTitle')}
@@ -221,14 +221,14 @@ export default function CampaignsPanel({
           return (
             <div
               key={campaign.id}
-              className="bg-surface-container-low border border-primary/10 overflow-hidden group hover:border-primary/30 transition-all shadow-2xl relative"
+              className="bg-surface-container-low border border-primary/10 overflow-hidden group hover:border-primary/30 transition shadow-2xl relative"
             >
               <div className="h-48 bg-black relative overflow-hidden">
                 {campaign.imageUrl ? (
                   <img
                     src={campaign.imageUrl}
                     alt={campaign.name}
-                    className="w-full h-full object-cover opacity-40 grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
+                    className="w-full h-full object-cover opacity-40 grayscale group-hover:grayscale-0 group-hover:scale-105 transition duration-700"
                     onError={(e) => {
                       e.currentTarget.src =
                         'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=800&auto=format&fit=crop';
@@ -301,14 +301,14 @@ export default function CampaignsPanel({
                 <div className="flex gap-3 pt-1">
                   <button
                     onClick={() => openManage(campaign)}
-                    className="flex-1 flex items-center justify-center gap-2 bg-primary text-black px-4 py-3 rounded-sm font-display font-bold text-[10px] uppercase tracking-widest hover:bg-primary-container transition-all active:scale-95 glow-orange"
+                    className="flex-1 flex items-center justify-center gap-2 bg-primary text-black px-4 py-3 rounded-sm font-display font-bold text-[10px] uppercase tracking-widest hover:bg-primary-container transition active:scale-[0.97] glow-orange"
                   >
                     <span className="material-symbols-outlined text-sm">tune</span>
                     {t('missions.manage')}
                   </button>
                   <button
                     onClick={() => handleDeleteCampaign(campaign.id, campaign.name)}
-                    className="w-12 flex items-center justify-center bg-black/40 border border-white/10 rounded-sm text-industrial-silver/40 hover:text-red-500 hover:border-red-500/30 transition-all active:scale-90"
+                    className="w-12 flex items-center justify-center bg-black/40 border border-white/10 rounded-sm text-industrial-silver/40 hover:text-red-500 hover:border-red-500/30 transition active:scale-95"
                     title={t('missions.deleteTitle')}
                   >
                     <span className="material-symbols-outlined text-xl">delete</span>
@@ -332,7 +332,7 @@ export default function CampaignsPanel({
         />
       )}
 
-      <OverlayPortal open={showItemsModal} onClose={() => setShowItemsModal(false)}>
+      <OverlayPortal open={showItemsModal} onClose={() => setShowItemsModal(false)} withExitAnimation>
         <AnimatePresence>
           {showItemsModal && (
             <div
@@ -365,7 +365,7 @@ export default function CampaignsPanel({
                   </div>
                   <button
                     onClick={() => setShowItemsModal(false)}
-                    className="p-3 text-industrial-silver/20 hover:text-white transition-all material-symbols-outlined rounded-sm"
+                    className="p-3 text-industrial-silver/20 hover:text-white transition material-symbols-outlined rounded-sm"
                   >
                     close
                   </button>
@@ -381,7 +381,7 @@ export default function CampaignsPanel({
                       placeholder={t('missions.persistent.search')}
                       value={itemSearch}
                       onChange={(e) => setItemSearch(e.target.value)}
-                      className="w-full bg-black/60 border-2 border-seam text-[11px] font-bold px-12 py-4 text-white outline-none rounded-sm uppercase tracking-widest transition-all shadow-inner focus:ring-1 focus:ring-primary placeholder:text-ash-700"
+                      className="w-full bg-black/60 border-2 border-seam text-[11px] font-bold px-12 py-4 text-white outline-none rounded-sm uppercase tracking-widest transition shadow-inner focus:ring-1 focus:ring-primary placeholder:text-ash-700"
                     />
                   </div>
                 </div>
@@ -398,7 +398,7 @@ export default function CampaignsPanel({
                         <button
                           key={item.id}
                           onClick={() => togglePersistentItem(item.id)}
-                          className={`flex items-center justify-between p-4 text-left transition-all border-2 rounded-sm group ${
+                          className={`flex items-center justify-between p-4 text-left transition border-2 rounded-sm group ${
                             persistentItems.includes(item.id)
                               ? 'bg-primary/10 border-primary/30 text-primary shadow-inner'
                               : 'bg-seam border-seam text-ash-500 hover:bg-white/5 hover:text-white hover:border-white/10'
@@ -406,7 +406,7 @@ export default function CampaignsPanel({
                         >
                           <div className="flex items-center gap-4">
                             <div
-                              className={`w-10 h-10 rounded-sm bg-black/40 border-2 flex items-center justify-center transition-all ${
+                              className={`w-10 h-10 rounded-sm bg-black/40 border-2 flex items-center justify-center transition ${
                                 persistentItems.includes(item.id)
                                   ? 'border-primary/40 text-primary shadow-[0_0_10px_rgba(255,140,0,0.1)]'
                                   : 'border-seam text-ash-600'
@@ -446,7 +446,7 @@ export default function CampaignsPanel({
                 <div className="p-8 border-t-4 border-seam flex justify-end bg-black/40 relative z-10 shrink-0">
                   <button
                     onClick={() => setShowItemsModal(false)}
-                    className="bg-[#333] hover:bg-[#444] text-white px-12 py-4 text-[10px] font-black tracking-widest transition-all rounded-sm uppercase active:scale-95"
+                    className="bg-[#333] hover:bg-[#444] text-white px-12 py-4 text-[10px] font-black tracking-widest transition rounded-sm uppercase active:scale-[0.97]"
                   >
                     Concluir Operação
                   </button>

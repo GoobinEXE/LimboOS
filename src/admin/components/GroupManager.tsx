@@ -286,7 +286,7 @@ export default function GroupManager({
         {!isCreating && (
           <button 
             onClick={() => setIsCreating(true)}
-            className="flex items-center gap-2 bg-primary/10 text-primary px-6 py-2 rounded-sm font-black text-[10px] tracking-widest border border-primary/20 hover:bg-primary/20 transition-all active:scale-95 glow-orange uppercase"
+            className="flex items-center gap-2 bg-primary/10 text-primary px-6 py-2 rounded-sm font-black text-[10px] tracking-widest border border-primary/20 hover:bg-primary/20 transition active:scale-[0.97] glow-orange uppercase"
           >
             <span className="material-symbols-outlined text-sm">group_add</span>
             NOVO ESQUADRÃO
@@ -298,7 +298,7 @@ export default function GroupManager({
         <div className="flex justify-end">
           <button 
             onClick={() => setIsCreating(true)}
-            className="flex items-center gap-2 bg-primary/10 text-primary px-6 py-2 rounded-sm font-black text-[10px] tracking-widest border border-primary/20 hover:bg-primary/20 transition-all active:scale-95 glow-orange uppercase"
+            className="flex items-center gap-2 bg-primary/10 text-primary px-6 py-2 rounded-sm font-black text-[10px] tracking-widest border border-primary/20 hover:bg-primary/20 transition active:scale-[0.97] glow-orange uppercase"
           >
             <span className="material-symbols-outlined text-sm">group_add</span>
             NOVO ESQUADRÃO
@@ -320,7 +320,7 @@ export default function GroupManager({
                     value={groupName}
                     onChange={(e) => setGroupName(e.target.value)}
                     placeholder={t('squads.idPlaceholder')}
-                    className="w-full bg-black/60 border-2 border-seam text-white px-4 py-3 text-[11px] font-bold focus:border-primary outline-none rounded-sm uppercase transition-all"
+                    className="w-full bg-black/60 border-2 border-seam text-white px-4 py-3 text-[11px] font-bold focus:border-primary outline-none rounded-sm uppercase transition"
                     required
                   />
                 </div>
@@ -343,7 +343,7 @@ export default function GroupManager({
                     <button 
                       type="button"
                       onClick={addSession}
-                      className="bg-[#333] hover:bg-[#444] text-white px-6 py-2 text-[10px] font-black uppercase tracking-widest transition-all rounded-sm"
+                      className="bg-[#333] hover:bg-[#444] text-white px-6 py-2 text-[10px] font-black uppercase tracking-widest transition rounded-sm"
                     >
                       ADD DATA
                     </button>
@@ -391,7 +391,7 @@ export default function GroupManager({
                           <button
                             type="button"
                             onClick={() => toggleCharacter(item.uid, item.char.id)}
-                            className="w-5 h-5 flex items-center justify-center text-ash-600 hover:text-red-500 transition-all rounded-xs hover:bg-red-500/10 cursor-pointer"
+                            className="w-5 h-5 flex items-center justify-center text-ash-600 hover:text-red-500 transition rounded-xs hover:bg-red-500/10 cursor-pointer"
                             title={t('squads.removeTitle')}
                           >
                             <span className="material-symbols-outlined text-sm font-black">close</span>
@@ -419,14 +419,14 @@ export default function GroupManager({
                   </div>
 
                   <div className="relative mb-3 group">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-industrial-silver/20 text-sm group-focus-within:text-primary transition-all">search</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-industrial-silver/20 text-sm group-focus-within:text-primary transition">search</span>
                     <input 
                       type="text" 
                       placeholder={t('squads.searchAgent')}
                       value={agentSearchQuery}
                       onChange={(e) => setAgentSearchQuery(e.target.value)}
                       onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAgentSearch())}
-                      className="w-full bg-black/40 border-2 border-seam text-white px-10 py-2.5 text-[9px] font-bold focus:border-primary/40 outline-none rounded-sm uppercase transition-all shadow-inner"
+                      className="w-full bg-black/40 border-2 border-seam text-white px-10 py-2.5 text-[9px] font-bold focus:border-primary/40 outline-none rounded-sm uppercase transition shadow-inner"
                     />
                   </div>
 
@@ -438,7 +438,7 @@ export default function GroupManager({
                           key={`avail_${item.uid}_${item.char.id}`}
                           type="button"
                           onClick={() => toggleCharacter(item.uid, item.char.id)}
-                          className="w-full flex items-center justify-between p-2 text-left transition-all border border-transparent hover:border-primary/20 hover:bg-primary/5 rounded-sm group cursor-pointer"
+                          className="w-full flex items-center justify-between p-2 text-left transition border border-transparent hover:border-primary/20 hover:bg-primary/5 rounded-sm group cursor-pointer"
                         >
                           <div className="flex items-center gap-3 min-w-0">
                             <div className={`w-8 h-8 rounded-sm bg-black border border-seam flex items-center justify-center font-black text-sm ${item.char.agentStatus === 'vivo' ? 'text-phosphor-500' : 'text-red-500'}`}>
@@ -469,7 +469,7 @@ export default function GroupManager({
               <button type="button" onClick={resetForm} className="px-8 py-3 text-[10px] font-black text-ash-600 hover:text-white uppercase tracking-widest transition-colors">{t('squads.abort')}</button>
               <button 
                 type="submit" 
-                className="bg-primary hover:bg-primary-container text-black px-12 py-3 rounded-sm font-black text-[10px] tracking-widest uppercase transition-all active:scale-95 glow-orange shadow-lg"
+                className="bg-primary hover:bg-primary-container text-black px-12 py-3 rounded-sm font-black text-[10px] tracking-widest uppercase transition active:scale-[0.97] glow-orange shadow-lg"
               >
                 {editingGroup ? t('squads.sync') : 'CONFIRMAR REGISTRO'}
               </button>
@@ -499,7 +499,7 @@ export default function GroupManager({
                 animate="visible"
                 exit="exit"
                 transition={{ ...ADMIN_FADE, delay: staggerDelay(index) }}
-                className="bg-seam border-4 border-seam p-6 group hover:border-primary/20 transition-all rounded-xl shadow-xl relative overflow-hidden active:scale-[0.99]"
+                className="bg-seam border-4 border-seam p-6 group hover:border-primary/20 transition rounded-xl shadow-xl relative overflow-hidden active:scale-[0.99]"
               >
                 <div className="absolute top-0 right-0 w-12 h-12 bg-primary/5 rotate-45 translate-x-6 -translate-y-6 border-b border-primary/10" />
                 <div className="flex justify-between items-start mb-6">
@@ -535,24 +535,24 @@ export default function GroupManager({
                       )}
                     </div>
                   </div>
-                  <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0">
+                  <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition translate-x-2 group-hover:translate-x-0">
                     <button
                       onClick={() => setShowMissionsModal(group.id)}
-                      className="w-8 h-8 flex items-center justify-center bg-black/60 border border-white/10 rounded-sm text-phosphor-500 hover:bg-phosphor-500 hover:text-black transition-all active:scale-90"
+                      className="w-8 h-8 flex items-center justify-center bg-black/60 border border-white/10 rounded-sm text-phosphor-500 hover:bg-phosphor-500 hover:text-black transition active:scale-95"
                       title={t('squads.manageMissions')}
                     >
                       <span className="material-symbols-outlined text-sm">rocket_launch</span>
                     </button>
-                    <button onClick={() => setShowSmsModal(group.id)} className="w-8 h-8 flex items-center justify-center bg-black/60 border border-white/10 rounded-sm text-primary hover:bg-primary hover:text-black transition-all active:scale-90" title={t('squads.smsTitle')}>
+                    <button onClick={() => setShowSmsModal(group.id)} className="w-8 h-8 flex items-center justify-center bg-black/60 border border-white/10 rounded-sm text-primary hover:bg-primary hover:text-black transition active:scale-95" title={t('squads.smsTitle')}>
                       <span className="material-symbols-outlined text-sm">sms</span>
                     </button>
-                    <button onClick={() => setShowGrantModal(group.id)} className="w-8 h-8 flex items-center justify-center bg-black/60 border border-white/10 rounded-sm text-primary hover:bg-primary hover:text-black transition-all active:scale-90" title={t('squads.bulkIntelTitle')}>
+                    <button onClick={() => setShowGrantModal(group.id)} className="w-8 h-8 flex items-center justify-center bg-black/60 border border-white/10 rounded-sm text-primary hover:bg-primary hover:text-black transition active:scale-95" title={t('squads.bulkIntelTitle')}>
                       <span className="material-symbols-outlined text-sm">wifi_tethering</span>
                     </button>
-                    <button onClick={() => startEdit(group)} className="w-8 h-8 flex items-center justify-center bg-black/60 border border-white/10 rounded-sm text-ash-600 hover:text-phosphor-400 transition-all active:scale-90">
+                    <button onClick={() => startEdit(group)} className="w-8 h-8 flex items-center justify-center bg-black/60 border border-white/10 rounded-sm text-ash-600 hover:text-phosphor-400 transition active:scale-95">
                       <span className="material-symbols-outlined text-sm">edit</span>
                     </button>
-                    <button onClick={() => handleDeleteGroup(group.id)} className="w-8 h-8 flex items-center justify-center bg-black/60 border border-white/10 rounded-sm text-ash-600 hover:text-red-500 transition-all active:scale-90">
+                    <button onClick={() => handleDeleteGroup(group.id)} className="w-8 h-8 flex items-center justify-center bg-black/60 border border-white/10 rounded-sm text-ash-600 hover:text-red-500 transition active:scale-95">
                       <span className="material-symbols-outlined text-sm">delete</span>
                     </button>
                   </div>
@@ -579,13 +579,13 @@ export default function GroupManager({
                              <p className="font-black text-[9px] text-ash-300 uppercase truncate pr-4">{item.char.codinome}</p>
                              <p className="font-mono text-[8px] text-ash-600 truncate">{masterAccountLabelByUid(slot.uid, users, '???')}</p>
                            </div>
-                           <button onClick={() => handleQuickRemoveMember(group.id, item.char.id, item.char.codinome)} className="absolute right-1 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center text-ash-500 hover:text-red-500 hover:bg-red-500/10 rounded-sm opacity-0 group-hover/member:opacity-100 transition-all bg-black/80 backdrop-blur-sm z-10">
+                           <button onClick={() => handleQuickRemoveMember(group.id, item.char.id, item.char.codinome)} className="absolute right-1 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center text-ash-500 hover:text-red-500 hover:bg-red-500/10 rounded-sm opacity-0 group-hover/member:opacity-100 transition bg-black/80 backdrop-blur-sm z-10">
                              <span className="material-symbols-outlined text-[14px]">close</span>
                            </button>
                         </div>
                       );
                     })}
-                    <button onClick={() => { setQuickAddGroup(quickAddGroup === group.id ? null : group.id); setQuickAddSearch(""); }} className={`flex items-center justify-center w-8 h-8 rounded-sm transition-all ${quickAddGroup === group.id ? 'bg-primary text-black border-primary' : 'bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20'}`}>
+                    <button onClick={() => { setQuickAddGroup(quickAddGroup === group.id ? null : group.id); setQuickAddSearch(""); }} className={`flex items-center justify-center w-8 h-8 rounded-sm transition ${quickAddGroup === group.id ? 'bg-primary text-black border-primary' : 'bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20'}`}>
                       <span className="material-symbols-outlined text-[16px]">{quickAddGroup === group.id ? 'close' : 'person_add'}</span>
                     </button>
                   </div>
@@ -597,7 +597,7 @@ export default function GroupManager({
                         placeholder={t('squads.searchAdd')}
                         value={quickAddSearch}
                         onChange={(e) => setQuickAddSearch(e.target.value)}
-                        className="w-full bg-black border-2 border-seam text-white px-3 py-2 text-[10px] font-bold focus:border-primary outline-none rounded-sm uppercase transition-all mb-2"
+                        className="w-full bg-black border-2 border-seam text-white px-3 py-2 text-[10px] font-bold focus:border-primary outline-none rounded-sm uppercase transition-[height,color,background-color,border-color,opacity,transform,box-shadow] mb-2"
                         autoFocus
                       />
                       <div className="max-h-32 overflow-y-auto space-y-1 custom-scrollbar">
@@ -611,7 +611,7 @@ export default function GroupManager({
                             (!quickAddSearch || c.char.codinome?.toLowerCase().includes(quickAddSearch.toLowerCase())) &&
                             !group.characterSlots?.some(s => s.characterId === c.char.id)
                           ).map(c => (
-                            <div key={c.char.id} className="flex items-center justify-between p-2 bg-black hover:bg-white/5 border border-white/5 rounded-sm transition-all group/add">
+                            <div key={c.char.id} className="flex items-center justify-between p-2 bg-black hover:bg-white/5 border border-white/5 rounded-sm transition group/add">
                                <div className="flex items-center gap-2">
                                  <div className={`w-2 h-2 rounded-full ${c.char.agentStatus === 'vivo' ? 'bg-phosphor-500' : c.char.agentStatus === 'morto' ? 'bg-red-500' : 'bg-yellow-500'}`} />
                                  <div className="flex flex-col">
@@ -619,7 +619,7 @@ export default function GroupManager({
                                    <span className="text-[8px] font-mono text-ash-600 uppercase">{masterAccountLabelByUid(c.uid, users, '???')}</span>
                                  </div>
                                </div>
-                               <button onClick={() => handleQuickAddMember(group.id, c.uid, c.char.id, c.char.codinome)} className="text-[9px] font-black bg-primary/10 text-primary px-3 py-1.5 rounded-sm uppercase hover:bg-primary hover:text-black transition-all opacity-0 group-hover/add:opacity-100">{t('squads.add')}</button>
+                               <button onClick={() => handleQuickAddMember(group.id, c.uid, c.char.id, c.char.codinome)} className="text-[9px] font-black bg-primary/10 text-primary px-3 py-1.5 rounded-sm uppercase hover:bg-primary hover:text-black transition opacity-0 group-hover/add:opacity-100">{t('squads.add')}</button>
                             </div>
                           ))
                         )}

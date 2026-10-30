@@ -158,7 +158,7 @@ export const CassetteCard = memo(({ campaign, onSelect, index, dragX, cardWidth,
                 setImageLoaded(true);
                 e.currentTarget.src = FALLBACK_IMAGE;
               }}
-              className={`w-full h-full object-cover transition-all duration-700 ease-limbo ${
+              className={`w-full h-full object-cover transition duration-700 ease-limbo ${
                 imageLoaded ? (isActive ? 'opacity-95 saturate-100' : 'opacity-70 saturate-[0.7]') : 'opacity-0'
               }`}
               draggable={false}
@@ -218,7 +218,7 @@ export const CassetteCard = memo(({ campaign, onSelect, index, dragX, cardWidth,
                 if (!isActive) onSnapToSelf();
                 else onSelect(campaign);
               }}
-              className={`w-full text-protocol py-3.5 rounded-control transition-all duration-200 flex items-center justify-center gap-2 group/btn active:scale-[0.98] ${
+              className={`w-full text-protocol py-3.5 rounded-control transition duration-200 flex items-center justify-center gap-2 group/btn active:scale-[0.98] ${
                 isActive
                   ? 'bg-accent text-black glow-orange hover:bg-primary-container'
                   : 'bg-surface-raised text-industrial-silver/50 border border-border hover:border-border-accent hover:text-primary'

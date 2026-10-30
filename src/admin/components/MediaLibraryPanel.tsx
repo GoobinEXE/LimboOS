@@ -339,7 +339,7 @@ export default function MediaLibraryPanel({
                 placeholder={t('media.search')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="bg-surface-container-lowest border border-primary/10 text-[10px] font-display font-bold uppercase tracking-[0.2em] focus:border-primary/50 w-full placeholder:text-industrial-silver/20 text-white pl-10 pr-4 py-2.5 outline-none rounded-sm transition-all"
+                className="bg-surface-container-lowest border border-primary/10 text-[10px] font-display font-bold uppercase tracking-[0.2em] focus:border-primary/50 w-full placeholder:text-industrial-silver/20 text-white pl-10 pr-4 py-2.5 outline-none rounded-sm transition"
               />
             </div>
             {showCatalog && (
@@ -347,7 +347,7 @@ export default function MediaLibraryPanel({
                 <button
                   type="button"
                   onClick={() => intel.setShowExport(true)}
-                  className="bg-surface-container-high text-industrial-silver/60 px-4 py-2.5 text-[10px] font-display font-bold border border-white/5 uppercase hover:bg-white/5 transition-all rounded-sm active:scale-95 flex items-center gap-2"
+                  className="bg-surface-container-high text-industrial-silver/60 px-4 py-2.5 text-[10px] font-display font-bold border border-white/5 uppercase hover:bg-white/5 transition rounded-sm active:scale-[0.97] flex items-center gap-2"
                 >
                   <span className="material-symbols-outlined text-base">download</span>
                   {t('accounts.export')}
@@ -484,7 +484,7 @@ export default function MediaLibraryPanel({
                           exit={{ opacity: 0, scale: 0.92 }}
                           transition={{ delay: Math.min(index * 0.025, 0.25) }}
                           key={asset.id}
-                          className={`group relative aspect-square bg-surface-container-low border overflow-hidden transition-all cursor-pointer ${
+                          className={`group relative aspect-square bg-surface-container-low border overflow-hidden transition cursor-pointer ${
                             selected
                               ? 'border-primary ring-2 ring-primary/40 shadow-[0_0_20px_rgba(255,140,0,0.15)]'
                               : 'border-primary/10 hover:border-primary/50'
@@ -560,7 +560,7 @@ export default function MediaLibraryPanel({
                                   setAssignFolderIds([...(asset.metadata?.tags || [])]);
                                   setAssignAsset(asset);
                                 }}
-                                className="p-1 bg-primary/20 hover:bg-primary text-primary hover:text-black rounded-sm transition-all"
+                                className="p-1 bg-primary/20 hover:bg-primary text-primary hover:text-black rounded-sm transition"
                               >
                                 <span className="material-symbols-outlined text-sm">folder</span>
                               </button>
@@ -570,7 +570,7 @@ export default function MediaLibraryPanel({
                                   e.stopPropagation();
                                   void handleDelete(asset);
                                 }}
-                                className="p-1 bg-red-500/20 hover:bg-red-500 text-red-500 hover:text-white rounded-sm transition-all"
+                                className="p-1 bg-red-500/20 hover:bg-red-500 text-red-500 hover:text-white rounded-sm transition"
                               >
                                 <span className="material-symbols-outlined text-sm">delete</span>
                               </button>
@@ -733,7 +733,7 @@ function UnifiedIntelCreateButton({
         type="button"
         disabled={uploading}
         onClick={() => setMenuOpen((v) => !v)}
-        className="bg-primary text-black pl-4 pr-3 py-2.5 text-[10px] font-display font-bold border border-primary/20 uppercase hover:bg-primary-container transition-all rounded-sm active:scale-95 glow-orange shadow-lg flex items-center gap-2 disabled:opacity-40"
+        className="bg-primary text-black pl-4 pr-3 py-2.5 text-[10px] font-display font-bold border border-primary/20 uppercase hover:bg-primary-container transition rounded-sm active:scale-[0.97] glow-orange shadow-lg flex items-center gap-2 disabled:opacity-40"
       >
         <span className="material-symbols-outlined text-base">
           {uploading ? 'sync' : 'add_circle'}
@@ -808,7 +808,7 @@ function FilterTab({
     <button
       type="button"
       onClick={onClick}
-      className={`flex items-center gap-2 px-6 py-3 text-[10px] font-display font-bold tracking-[0.2em] transition-all border-r border-primary/10 uppercase shrink-0 ${
+      className={`flex items-center gap-2 px-6 py-3 text-[10px] font-display font-bold tracking-[0.2em] transition border-r border-primary/10 uppercase shrink-0 ${
         active
           ? 'bg-primary/10 text-primary border-b-2 border-b-primary'
           : 'text-industrial-silver/50 hover:bg-primary/5 hover:text-primary'

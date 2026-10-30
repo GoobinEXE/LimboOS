@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import type { AchievementTier, PlayerPlatform } from '../services/AchievementManager';
+import { EXIT_FAST, SPRING_TOAST } from '../lib/motion';
 
 export interface Toast {
   id: string;
@@ -32,7 +33,7 @@ function ToastIcon({ icon, className }: { icon?: string; className?: string }) {
       <img
         src={icon}
         alt=""
-        className={`object-cover rounded-md shrink-0 ${className || 'w-8 h-8'}`}
+        className={`object-cover rounded-inset shrink-0 ${className || 'w-8 h-8'}`}
       />
     );
   }
@@ -41,7 +42,11 @@ function ToastIcon({ icon, className }: { icon?: string; className?: string }) {
 
 export default function ToastNotification({ toasts, onDismiss }: ToastNotificationProps) {
   return (
-    <div className="fixed top-4 right-4 z-9999 flex flex-col gap-2 pointer-events-none items-end">
+    <div
+      className="fixed top-4 right-4 z-9999 flex flex-col gap-2 pointer-events-none items-end"
+      aria-live="polite"
+      aria-relevant="additions"
+    >
       <AnimatePresence>
         {toasts.map((toast) => (
           <ToastItem key={toast.id} toast={toast} onDismiss={onDismiss} />
@@ -75,8 +80,8 @@ function ToastItem({ toast, onDismiss }: ToastItemProps) {
     error: 'border-red-500/60',
   };
   const glows = {
-    tape: 'shadow-[0_0_20px_rgba(255,140,0,0.3)]',
-    error: 'shadow-[0_0_20px_rgba(239,68,68,0.3)]',
+    tape: 'shadow-[0_0_0_1px_rgba(255,140,0,0.12),0_10px_24px_-10px_rgba(0,0,0,0.9),0_0_14px_-6px_rgba(255,140,0,0.5)]',
+    error: 'shadow-[0_0_0_1px_rgba(239,68,68,0.12),0_10px_24px_-10px_rgba(0,0,0,0.9),0_0_14px_-6px_rgba(239,68,68,0.5)]',
   };
   const textColors = {
     tape: 'text-accent',
@@ -89,12 +94,13 @@ function ToastItem({ toast, onDismiss }: ToastItemProps) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: 60, scale: 0.9 }}
-      animate={{ opacity: 1, x: 0, scale: 1 }}
-      exit={{ opacity: 0, x: 60, scale: 0.9 }}
-      transition={{ type: 'spring', damping: 20, stiffness: 300 }}
+      layout
+      initial={{ opacity: 0, x: 40 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 40, transition: EXIT_FAST }}
+      transition={SPRING_TOAST}
       role="status"
-      className={`pointer-events-auto relative overflow-hidden flex items-center gap-3 px-4 py-3 border rounded-lg bg-surface-raised/95 backdrop-blur-md min-w-[200px] max-w-[260px] cursor-pointer ${colors[toast.type]} ${glows[toast.type]}`}
+      className={`pointer-events-auto relative overflow-hidden flex items-center gap-3 px-4 py-3 border rounded-card bg-surface-container-low machined-edge min-w-[200px] max-w-[260px] cursor-pointer ${colors[toast.type]} ${glows[toast.type]}`}
       onClick={() => onDismiss(toast.id)}
     >
       <ToastIcon icon={toast.icon} />
@@ -146,7 +152,7 @@ function AchievementToast({
       ? 'shadow-[0_0_28px_rgba(118,212,104,0.35)]'
       : tier === 'legendary'
         ? 'shadow-[0_0_32px_rgba(251,191,36,0.45)]'
-        : 'shadow-[0_0_22px_rgba(255,140,0,0.3)]';
+        : 'shadow-[0_0_18px_-4px_rgba(255,140,0,0.4)]';
   const tierLabel =
     tier === 'legendary'
       ? t('achievement.tier.legendaryUpper')
@@ -158,12 +164,13 @@ function AchievementToast({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: -16, scale: 0.86, rotate: -1.5 }}
+      layout
+      initial={{ opacity: 0, y: -14, scale: 0.94, rotate: -1.2 }}
       animate={{ opacity: 1, y: 0, scale: 1, rotate: 0 }}
-      exit={{ opacity: 0, x: 40, scale: 0.92 }}
-      transition={{ type: 'spring', damping: 16, stiffness: 260 }}
+      exit={{ opacity: 0, x: 40, transition: EXIT_FAST }}
+      transition={{ type: 'spring', visualDuration: 0.42, bounce: 0.28 }}
       role="status"
-      className={`pointer-events-auto relative overflow-hidden flex gap-3.5 px-4 py-3.5 border-2 rounded-xl bg-surface-raised/97 backdrop-blur-md min-w-[260px] max-w-[300px] cursor-pointer ${tierBorder} ${tierGlow}`}
+      className={`pointer-events-auto relative overflow-hidden flex gap-3.5 px-4 py-3.5 border-2 rounded-card bg-surface-container-low machined-edge min-w-[260px] max-w-[300px] cursor-pointer ${tierBorder} ${tierGlow}`}
       onClick={() => onDismiss(toast.id)}
     >
       <div
@@ -175,12 +182,12 @@ function AchievementToast({
         }`}
       />
       <motion.div
-        initial={{ scale: 0.5, opacity: 0 }}
+        initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        transition={{ type: 'spring', damping: 12, stiffness: 280, delay: 0.05 }}
+        transition={{ type: 'spring', visualDuration: 0.36, bounce: 0.35, delay: 0.08 }}
         className="relative shrink-0"
       >
-        <ToastIcon icon={toast.icon || '/achievements/ACH-VETERAN.png'} className="w-12 h-12 rounded-lg shadow-[0_0_12px_rgba(251,191,36,0.35)]" />
+        <ToastIcon icon={toast.icon || '/achievements/ACH-VETERAN.png'} className="w-12 h-12 rounded-inset shadow-[0_0_0_1px_rgba(0,0,0,0.6),0_0_10px_-2px_rgba(251,191,36,0.4)]" />
       </motion.div>
       <div className="relative min-w-0 flex-1">
         <p className={`text-[8px] uppercase tracking-[0.28em] font-bold ${accentMuted}`}>

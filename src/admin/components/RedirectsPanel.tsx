@@ -107,7 +107,7 @@ export default function RedirectsPanel({ embedded = false }: { embedded?: boolea
                   value={newSourceId}
                   onChange={(e) => setNewSourceId(e.target.value)}
                   placeholder="EX: IJZ0IE..."
-                  className="w-full bg-black/40 border-2 border-seam text-[11px] font-mono font-bold uppercase tracking-widest focus:border-phosphor-500 outline-none text-phosphor-400 px-4 py-3 rounded-sm transition-all"
+                  className="w-full bg-black/40 border-2 border-seam text-[11px] font-mono font-bold uppercase tracking-widest focus:border-phosphor-500 outline-none text-phosphor-400 px-4 py-3 rounded-sm transition"
                 />
               </div>
               <div className="space-y-2">
@@ -118,7 +118,7 @@ export default function RedirectsPanel({ embedded = false }: { embedded?: boolea
                   value={newTargetId}
                   onChange={(e) => setNewTargetId(e.target.value)}
                   placeholder="EX: TAPE-ID-123..."
-                  className="w-full bg-black/40 border-2 border-seam text-[11px] font-mono font-bold uppercase tracking-widest focus:border-primary outline-none text-primary px-4 py-3 rounded-sm transition-all"
+                  className="w-full bg-black/40 border-2 border-seam text-[11px] font-mono font-bold uppercase tracking-widest focus:border-primary outline-none text-primary px-4 py-3 rounded-sm transition"
                 />
               </div>
               <div className="space-y-2">
@@ -128,13 +128,13 @@ export default function RedirectsPanel({ embedded = false }: { embedded?: boolea
                   onChange={(e) => setNewReason(e.target.value)}
                   placeholder="MOTIVO DO REDIRECIONAMENTO..."
                   rows={2}
-                  className="w-full bg-black/40 border-2 border-seam text-[10px] font-bold text-white px-4 py-3 focus:border-white/20 outline-none rounded-sm resize-none transition-all"
+                  className="w-full bg-black/40 border-2 border-seam text-[10px] font-bold text-white px-4 py-3 focus:border-white/20 outline-none rounded-sm resize-none transition"
                 />
               </div>
               <button
                 type="submit"
                 disabled={isSaving}
-                className="w-full bg-phosphor-600 hover:bg-phosphor-500 text-white py-4 font-black text-[10px] uppercase tracking-[0.3em] transition-all rounded-sm active:scale-95 shadow-[0_0_15px_rgba(86,185,75,0.2)] disabled:opacity-20"
+                className="w-full bg-phosphor-600 hover:bg-phosphor-500 text-white py-4 font-black text-[10px] uppercase tracking-[0.3em] transition rounded-sm active:scale-[0.97] shadow-[0_0_15px_rgba(86,185,75,0.2)] disabled:opacity-20"
               >
                 {isSaving ? 'SINC DADOS...' : t('redirects.linkAction')}
               </button>
@@ -160,7 +160,7 @@ export default function RedirectsPanel({ embedded = false }: { embedded?: boolea
                    placeholder="LOCALIZAR VETOR..."
                    value={search}
                    onChange={(e) => setSearch(e.target.value)}
-                   className="bg-black/60 border-2 border-seam text-[9px] font-black uppercase tracking-widest focus:ring-1 focus:ring-phosphor-500 placeholder:text-ash-900 text-white px-10 py-2 w-56 rounded-sm transition-all"
+                   className="bg-black/60 border-2 border-seam text-[9px] font-black uppercase tracking-widest focus:ring-1 focus:ring-phosphor-500 placeholder:text-ash-900 text-white px-10 py-2 w-56 rounded-sm transition"
                  />
               </div>
             </div>
@@ -179,12 +179,12 @@ export default function RedirectsPanel({ embedded = false }: { embedded?: boolea
               ) : (
                 <div className="divide-y divide-white/5">
                   {filteredRedirects.map((r) => (
-                    <div key={r.sourceId} className="p-6 hover:bg-primary/5 transition-all group">
+                    <div key={r.sourceId} className="p-6 hover:bg-primary/5 transition group">
                       <div className="flex items-center justify-between gap-6">
                         <div className="flex items-center gap-8 flex-1">
                           <div className="flex flex-col gap-2">
                             <p className="text-[8px] font-black text-ash-700 uppercase tracking-widest">{t('redirects.origin')}</p>
-                            <code className="text-[11px] font-mono bg-black px-4 py-2 border-2 border-seam text-phosphor-400 group-hover:border-phosphor-500/30 transition-all rounded-sm font-black">
+                            <code className="text-[11px] font-mono bg-black px-4 py-2 border-2 border-seam text-phosphor-400 group-hover:border-phosphor-500/30 transition rounded-sm font-black">
                               {r.sourceId}
                             </code>
                           </div>
@@ -193,7 +193,7 @@ export default function RedirectsPanel({ embedded = false }: { embedded?: boolea
                           </div>
                           <div className="flex flex-col gap-2">
                             <p className="text-[8px] font-black text-ash-700 uppercase tracking-widest">{t('redirects.destination')}</p>
-                            <code className="text-[11px] font-mono bg-black px-4 py-2 border-2 border-seam text-primary group-hover:border-primary/30 transition-all rounded-sm font-black">
+                            <code className="text-[11px] font-mono bg-black px-4 py-2 border-2 border-seam text-primary group-hover:border-primary/30 transition rounded-sm font-black">
                               {r.targetId}
                             </code>
                           </div>
@@ -208,7 +208,7 @@ export default function RedirectsPanel({ embedded = false }: { embedded?: boolea
                         </div>
                         <button
                           onClick={() => handleDelete(r.sourceId)}
-                          className="w-10 h-10 flex items-center justify-center text-ash-800 hover:text-red-500 hover:bg-red-500/10 transition-all opacity-0 group-hover:opacity-100 material-symbols-outlined rounded-sm border border-transparent hover:border-red-500/20"
+                          className="w-10 h-10 flex items-center justify-center text-ash-800 hover:text-red-500 hover:bg-red-500/10 transition opacity-0 group-hover:opacity-100 material-symbols-outlined rounded-sm border border-transparent hover:border-red-500/20"
                           title="ELIMINAR MAPEAMENTO"
                         >
                           delete

@@ -147,7 +147,7 @@ export const MetadataOverlay = ({ onClose, agent }: MetadataOverlayProps) => {
               {Array.from({ length: 5 }, (_, i) => (
                 <div
                   key={i}
-                  className={`h-2 flex-1 rounded-inset transition-all duration-700 ${
+                  className={`h-2 flex-1 rounded-inset transition duration-700 ${
                     i < dangerLevel
                       ? dangerLevel >= 4 ? 'bg-red-500 shadow-[0_0_8px_#ef444466]' : 'bg-primary glow-orange-subtle'
                       : 'bg-surface-sunken border border-border-subtle'
@@ -166,7 +166,7 @@ export const MetadataOverlay = ({ onClose, agent }: MetadataOverlayProps) => {
           <button
             type="button"
             onClick={onClose}
-            className="w-full bg-accent-10 hover:bg-accent-20 text-primary border border-border-accent rounded-control py-3.5 text-protocol transition-all duration-200 active:scale-[0.98] glow-orange-subtle"
+            className="w-full bg-accent-10 hover:bg-accent-20 text-primary border border-border-accent rounded-control py-3.5 text-protocol transition duration-200 active:scale-[0.98] glow-orange-subtle"
           >
             {t('metadata.syncExit')}
           </button>

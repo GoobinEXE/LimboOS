@@ -25,11 +25,12 @@ export default function RetroSpinner({ size = 'md', className = '' }: RetroSpinn
   }[size];
 
   return (
-    <div className={`relative flex items-center justify-center ${className}`}>
+    <div className={`relative flex items-center justify-center ${className}`} aria-hidden>
       <div className={`${dimensions} relative flex items-center justify-center`}>
         <div className={`absolute inset-0 rounded-full ${borderSize} border-border`} />
-        <div className={`absolute inset-0 rounded-full ${borderSize} border-transparent border-t-accent glow-orange-subtle animate-spin`} />
-        <div className={`${dotSize} bg-accent rounded-full animate-pulse`} />
+        {/* Carretel: giro um pouco mais rápido que 1s faz a espera parecer menor */}
+        <div className={`absolute inset-0 rounded-full ${borderSize} border-transparent border-t-accent animate-[spin_0.8s_linear_infinite]`} />
+        <div className={`${dotSize} bg-accent rounded-full animate-led`} />
       </div>
     </div>
   );

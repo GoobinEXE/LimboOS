@@ -228,7 +228,7 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager, onUpdat
           type="button"
           onClick={onClose}
           aria-label={t('dossier.closeAria')}
-          className="w-11 h-11 rounded-control border border-border bg-surface-panel text-primary flex items-center justify-center hover:border-border-accent hover:bg-accent-10 active:scale-95 transition-all duration-200 group shrink-0"
+          className="w-11 h-11 rounded-control border border-border bg-surface-panel text-primary flex items-center justify-center hover:border-border-accent hover:bg-accent-10 active:scale-[0.97] transition duration-200 group shrink-0"
         >
           <X size={20} className="group-hover:rotate-90 transition-transform duration-300" />
         </button>
@@ -301,7 +301,7 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager, onUpdat
                     {Array.from({ length: 5 }, (_, i) => (
                       <div
                         key={i}
-                        className={`h-2 flex-1 rounded-inset transition-all duration-700 ${
+                        className={`h-2 flex-1 rounded-inset transition duration-700 ${
                           i < stats.dangerLevel
                             ? stats.dangerLevel >= 4 ? 'bg-red-500 shadow-[0_0_8px_#ef444466]' : 'bg-primary glow-orange-subtle'
                             : 'bg-surface-sunken border border-border-subtle'
@@ -441,7 +441,7 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager, onUpdat
                         transition={{ delay: i * 0.03 }}
                         onClick={() => openable && setSelectedIntel(item)}
                         disabled={!openable}
-                        className={`w-full text-left rounded-card bg-surface-raised border border-border p-3.5 flex items-center gap-3.5 transition-all duration-200 group ${
+                        className={`w-full text-left rounded-card bg-surface-raised border border-border p-3.5 flex items-center gap-3.5 transition duration-200 group ${
                           openable ? 'cursor-pointer hover:border-border-accent hover:bg-accent-05 active:scale-[0.99]' : 'cursor-default'
                         }`}
                       >

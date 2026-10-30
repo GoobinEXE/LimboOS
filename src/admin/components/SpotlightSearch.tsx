@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AnimatePresence, motion } from 'motion/react';
 import { masterAccountLabel } from '../lib/entityLabels';
 import i18n from '../../i18n';
-import { ADMIN_SPRING_INDICATOR } from '../lib/motion';
 
 interface SearchableItem {
   id: string;
@@ -30,7 +28,7 @@ export default function SpotlightSearch({ open, onClose, items }: SpotlightSearc
     if (open) {
       setQuery('');
       setSelectedIdx(0);
-      setTimeout(() => inputRef.current?.focus(), 50);
+      requestAnimationFrame(() => inputRef.current?.focus());
     }
   }, [open]);
 
@@ -69,13 +67,20 @@ export default function SpotlightSearch({ open, onClose, items }: SpotlightSearc
     onClose();
   }, [onClose]);
 
+  // Mantém o item ativo visível ao navegar pelo teclado
+  useEffect(() => {
+    if (!open) return;
+    document.getElementById(`spotlight-opt-${selectedIdx}`)?.scrollIntoView({ block: 'nearest' });
+  }, [selectedIdx, open]);
+
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    const count = filtered.length;
     if (e.key === 'ArrowDown') {
       e.preventDefault();
-      setSelectedIdx((prev) => Math.min(prev + 1, filtered.length - 1));
+      if (count) setSelectedIdx((prev) => (prev + 1) % count);
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
-      setSelectedIdx((prev) => Math.max(prev - 1, 0));
+      if (count) setSelectedIdx((prev) => (prev - 1 + count) % count);
     } else if (e.key === 'Enter') {
       e.preventDefault();
       if (filtered[selectedIdx]) handleSelect(filtered[selectedIdx]);
@@ -84,96 +89,103 @@ export default function SpotlightSearch({ open, onClose, items }: SpotlightSearc
     }
   }, [filtered, selectedIdx, handleSelect, onClose]);
 
+  // Paleta de comando abre dezenas de vezes por sessão: sem animação de entrada/saída
+  if (!open) return null;
+
+  const activeId = filtered[selectedIdx] ? `spotlight-opt-${selectedIdx}` : undefined;
+
   return (
-    <AnimatePresence>
-      {open && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.15 }}
-          className="fixed inset-0 z-9999 flex items-start justify-center pt-[15vh] bg-black/85 backdrop-blur-lg p-4"
-          onMouseDown={(e) => { if (e.target === e.currentTarget) onClose(); }}
-        >
-          <motion.div
-            initial={{ scale: 0.96, opacity: 0, y: -10 }}
-            animate={{ scale: 1, opacity: 1, y: 0 }}
-            exit={{ scale: 0.96, opacity: 0, y: -10 }}
-            transition={ADMIN_SPRING_INDICATOR}
-            className="w-full max-w-lg bg-surface-container-low border border-primary/30 shadow-2xl overflow-hidden"
-            onKeyDown={handleKeyDown}
-          >
-            {/* Search Input */}
-            <div className="flex items-center gap-4 px-6 py-5 border-b border-white/5 bg-black/30">
-              <span className="material-symbols-outlined text-primary text-xl">search</span>
-              <input
-                ref={inputRef}
-                type="text"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder={t('spotlight.placeholder')}
-                className="flex-1 bg-transparent text-white text-sm font-display font-bold outline-none placeholder:text-industrial-silver/20 uppercase tracking-wider"
-              />
-              <kbd className="text-[9px] font-display font-bold text-industrial-silver/20 bg-black/30 border border-white/5 px-2 py-1 rounded-sm tracking-wider">ESC</kbd>
-            </div>
+    <div
+      className="fixed inset-0 z-9999 flex items-start justify-center pt-[12vh] bg-surface-scrim p-4"
+      onMouseDown={(e) => { if (e.target === e.currentTarget) onClose(); }}
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={t('spotlight.placeholder')}
+        className="w-full max-w-xl bg-surface-container-low border border-border-strong rounded-card shadow-2xl machined-edge overflow-hidden"
+        onKeyDown={handleKeyDown}
+      >
+        {/* Campo de busca */}
+        <div className="flex items-center gap-3 px-5 h-14 border-b border-seam">
+          <span className="material-symbols-outlined text-accent text-xl" aria-hidden>search</span>
+          <input
+            ref={inputRef}
+            type="text"
+            role="combobox"
+            aria-expanded={filtered.length > 0}
+            aria-controls="spotlight-listbox"
+            aria-activedescendant={activeId}
+            aria-autocomplete="list"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={t('spotlight.placeholder')}
+            className="focus-bare flex-1 bg-transparent text-bone text-[15px] outline-none placeholder:text-ash-600"
+          />
+          <kbd className="lmb-kbd">ESC</kbd>
+        </div>
 
-            {/* Results */}
-            <div className="max-h-[50vh] overflow-y-auto custom-scrollbar">
-              {filtered.length === 0 ? (
-                <div className="py-16 text-center">
-                  <span className="material-symbols-outlined text-4xl text-industrial-silver/10 block mb-3">search_off</span>
-                  <p className="text-[10px] font-display font-bold text-industrial-silver/20 uppercase tracking-[0.3em]">{t('spotlight.empty')}</p>
+        {/* Resultados */}
+        <div id="spotlight-listbox" role="listbox" className="max-h-[52vh] overflow-y-auto custom-scrollbar py-1">
+          {filtered.length === 0 ? (
+            <div className="py-14 text-center">
+              <span className="material-symbols-outlined text-3xl text-ash-700 block mb-3" aria-hidden>search_off</span>
+              <p className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.3em]">{t('spotlight.empty')}</p>
+            </div>
+          ) : (
+            Object.entries(grouped).map(([cat, catItems]: [string, SearchableItem[]]) => (
+              <div key={cat} role="group" aria-label={categoryLabel[cat] || cat}>
+                <div className="px-5 pt-3 pb-1.5">
+                  <span className="text-[9px] font-display font-bold text-ash-500 uppercase tracking-[0.3em]">{categoryLabel[cat] || cat}</span>
                 </div>
-              ) : (
-                Object.entries(grouped).map(([cat, catItems]: [string, SearchableItem[]]) => (
-                  <div key={cat}>
-                    <div className="px-6 py-2 bg-black/20">
-                      <span className="text-[9px] font-display font-bold text-primary/40 uppercase tracking-[0.3em]">{categoryLabel[cat] || cat}</span>
-                    </div>
-                    {catItems.map((item) => {
-                      const globalIdx = filtered.indexOf(item);
-                      const isSelected = globalIdx === selectedIdx;
-                      return (
-                        <button
-                          key={item.id}
-                          onClick={() => handleSelect(item)}
-                          onMouseEnter={() => setSelectedIdx(globalIdx)}
-                          className={`w-full flex items-center gap-4 px-6 py-3.5 transition-all text-left ${
-                            isSelected ? 'bg-primary/10 text-primary' : 'text-industrial-silver/50 hover:bg-white/5'
-                          }`}
-                        >
-                          <span className={`material-symbols-outlined text-lg ${isSelected ? 'text-primary' : 'text-industrial-silver/15'}`}>{item.icon}</span>
-                          <div className="flex-1 min-w-0">
-                            <p className={`text-[11px] font-display font-bold uppercase tracking-widest truncate ${isSelected ? 'text-white' : ''}`}>{item.label}</p>
-                            {item.sublabel && <p className="text-[9px] font-mono text-industrial-silver/25 truncate mt-0.5">{item.sublabel}</p>}
-                          </div>
-                          {isSelected && (
-                            <span className="text-[9px] font-display font-bold text-primary/40 tracking-wider">{t('spotlight.enter')}</span>
-                          )}
-                        </button>
-                      );
-                    })}
-                  </div>
-                ))
-              )}
-            </div>
-
-            {/* Footer */}
-            <div className="px-6 py-3 border-t border-white/5 bg-black/20 flex items-center justify-between gap-3 flex-wrap">
-              <div className="flex gap-3 flex-wrap">
-                <span className="text-[8px] font-display font-bold text-industrial-silver/15 uppercase tracking-widest">{t('spotlight.hint.navigate')}</span>
-                <span className="text-[8px] font-display font-bold text-industrial-silver/15 uppercase tracking-widest">{t('spotlight.hint.select')}</span>
-                <span className="text-[8px] font-display font-bold text-industrial-silver/15 uppercase tracking-widest">{t('spotlight.hint.shortcut')}</span>
-                <span className="text-[8px] font-display font-bold text-industrial-silver/15 uppercase tracking-widest">{t('spotlight.hint.tabs')}</span>
+                {catItems.map((item) => {
+                  const globalIdx = filtered.indexOf(item);
+                  const isSelected = globalIdx === selectedIdx;
+                  return (
+                    <button
+                      key={item.id}
+                      id={`spotlight-opt-${globalIdx}`}
+                      type="button"
+                      role="option"
+                      aria-selected={isSelected}
+                      tabIndex={-1}
+                      onClick={() => handleSelect(item)}
+                      onMouseMove={() => { if (!isSelected) setSelectedIdx(globalIdx); }}
+                      className={`relative w-full flex items-center gap-3.5 px-5 h-12 text-left ${
+                        isSelected ? 'bg-accent-10 text-bone' : 'text-ash-300'
+                      }`}
+                    >
+                      {isSelected && <span className="absolute left-0 top-2 bottom-2 w-0.5 bg-accent" aria-hidden />}
+                      <span className={`material-symbols-outlined text-[18px] ${isSelected ? 'text-accent' : 'text-ash-600'}`} aria-hidden>{item.icon}</span>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[11px] font-display font-bold uppercase tracking-[0.14em] truncate">{item.label}</p>
+                        {item.sublabel && <p className="text-[10px] font-mono text-ash-500 truncate mt-0.5">{item.sublabel}</p>}
+                      </div>
+                      {isSelected && (
+                        <kbd className="lmb-kbd" aria-hidden>↵</kbd>
+                      )}
+                    </button>
+                  );
+                })}
               </div>
-              <span className="text-[8px] font-display font-bold text-industrial-silver/15 uppercase tracking-widest">
-                {t('spotlight.resultsCount', { n: filtered.length })}
-              </span>
-            </div>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+            ))
+          )}
+        </div>
+
+        {/* Rodapé de dicas */}
+        <div className="px-5 py-2.5 border-t border-seam bg-surface-container-lowest flex items-center justify-between gap-3 flex-wrap">
+          <div className="flex gap-4 flex-wrap">
+            <span className="text-[9px] font-display font-bold text-ash-500 uppercase tracking-widest">{t('spotlight.hint.navigate')}</span>
+            <span className="text-[9px] font-display font-bold text-ash-500 uppercase tracking-widest">{t('spotlight.hint.select')}</span>
+            <span className="text-[9px] font-display font-bold text-ash-500 uppercase tracking-widest">{t('spotlight.hint.shortcut')}</span>
+            <span className="text-[9px] font-display font-bold text-ash-500 uppercase tracking-widest">{t('spotlight.hint.tabs')}</span>
+          </div>
+          <span className="text-[9px] font-mono text-ash-600 tabular-nums">
+            {t('spotlight.resultsCount', { n: filtered.length })}
+          </span>
+        </div>
+      </div>
+    </div>
   );
 }
 

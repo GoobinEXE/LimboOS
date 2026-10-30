@@ -1,75 +1,39 @@
-import type { Transition, Variants } from 'motion/react';
+import type { Transition } from 'motion/react';
+import {
+  FADE,
+  SPRING_DRAWER,
+  SPRING_INDICATOR,
+  SPRING_SNAP,
+  SPRING_TOAST,
+} from '../../lib/motion';
+
+/**
+ * Aliases do painel admin sobre o vocabulário compartilhado (src/lib/motion.ts).
+ * Mantidos para não espalhar renomeações pelos painéis.
+ */
 
 /** Drawers / slide panels */
-export const ADMIN_SPRING: Transition = {
-  type: 'spring',
-  stiffness: 300,
-  damping: 30,
-};
+export const ADMIN_SPRING: Transition = SPRING_DRAWER;
 
 /** Modals / confirm dialogs */
-export const ADMIN_SPRING_SNAP: Transition = {
-  type: 'spring',
-  stiffness: 360,
-  damping: 30,
-};
+export const ADMIN_SPRING_SNAP: Transition = SPRING_SNAP;
 
 /** layoutId indicators (sidebar, sub-tabs) */
-export const ADMIN_SPRING_INDICATOR: Transition = {
-  type: 'spring',
-  stiffness: 400,
-  damping: 32,
-};
+export const ADMIN_SPRING_INDICATOR: Transition = SPRING_INDICATOR;
 
 /** Toasts */
-export const ADMIN_SPRING_TOAST: Transition = {
-  type: 'spring',
-  stiffness: 400,
-  damping: 30,
-};
+export const ADMIN_SPRING_TOAST: Transition = SPRING_TOAST;
 
 /** Panel / sub-tab content crossfade */
-export const ADMIN_FADE: Transition = {
-  duration: 0.22,
-};
+export const ADMIN_FADE: Transition = FADE;
 
-/** Cap stagger delays for list mounts */
-export function staggerDelay(index: number, step = 0.03, cap = 0.2): number {
-  return Math.min(index * step, cap);
-}
-
-export const panelEnter: Variants = {
-  hidden: { opacity: 0, y: 8 },
-  visible: { opacity: 1, y: 0 },
-};
-
-export const listItem: Variants = {
-  hidden: { opacity: 0, x: -8 },
-  visible: { opacity: 1, x: 0 },
-  exit: { opacity: 0, x: 8, transition: { duration: 0.15 } },
-};
-
-export const overlayFade: Variants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1 },
-  exit: { opacity: 0 },
-};
-
-export const staggerContainer: Variants = {
-  hidden: {},
-  visible: {
-    transition: {
-      staggerChildren: 0.03,
-      delayChildren: 0.02,
-    },
-  },
-};
-
-export const staggerItem: Variants = {
-  hidden: { opacity: 0, y: 10 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: ADMIN_FADE,
-  },
-};
+export {
+  staggerDelay,
+  panelEnter,
+  listItem,
+  overlayFade,
+  staggerContainer,
+  staggerItem,
+  dialogPop,
+  drawerRight,
+} from '../../lib/motion';

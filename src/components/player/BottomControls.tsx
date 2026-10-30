@@ -11,7 +11,7 @@ import type { WalkmanStatus } from '../../types/player';
 const KEYCAP =
   'bg-radial-[at_50%_15%] from-surface-bright to-surface-container-highest border-2 border-surface-sunken ' +
   'shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_6px_14px_-5px_rgba(0,0,0,0.95)] ' +
-  'flex items-center justify-center transition-all duration-150 ease-limbo';
+  'flex items-center justify-center transition duration-150 ease-limbo';
 const KEYCAP_ACTIVE =
   'active:translate-y-px active:scale-[0.97] active:from-surface-container-highest active:to-surface-container-high active:shadow-[inset_0_2px_6px_rgba(0,0,0,0.75)]';
 const KEYCAP_DISABLED = 'opacity-40 cursor-not-allowed';

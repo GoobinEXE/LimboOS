@@ -54,7 +54,7 @@ export default function MissionDataTab({
                 required
                 disabled={!isNew}
               />
-              <div className="h-0.5 w-0 bg-primary transition-all duration-300 group-focus-within:w-full" />
+              <div className="h-0.5 w-0 bg-primary transition-[width,color,background-color,border-color,opacity,transform,box-shadow] duration-300 group-focus-within:w-full" />
             </div>
             <div className="group">
               <label className="block text-[9px] font-display font-bold text-industrial-silver/40 uppercase tracking-[0.2em] mb-2 group-focus-within:text-primary transition-colors">
@@ -67,7 +67,7 @@ export default function MissionDataTab({
                 className="w-full bg-surface-container-lowest border-none text-white px-4 py-4 text-[11px] font-display font-bold outline-none rounded-sm uppercase shadow-inner"
                 required
               />
-              <div className="h-0.5 w-0 bg-primary transition-all duration-300 group-focus-within:w-full" />
+              <div className="h-0.5 w-0 bg-primary transition-[width,color,background-color,border-color,opacity,transform,box-shadow] duration-300 group-focus-within:w-full" />
             </div>
             <div className="group">
               <label className="block text-[9px] font-display font-bold text-industrial-silver/40 uppercase tracking-[0.2em] mb-2 group-focus-within:text-primary transition-colors">
@@ -79,7 +79,7 @@ export default function MissionDataTab({
                 onChange={(e) => onChange({ ...campaign, rpgSystem: e.target.value })}
                 className="w-full bg-surface-container-lowest border-none text-white px-4 py-4 text-[11px] font-display font-bold outline-none rounded-sm uppercase shadow-inner"
               />
-              <div className="h-0.5 w-0 bg-primary transition-all duration-300 group-focus-within:w-full" />
+              <div className="h-0.5 w-0 bg-primary transition-[width,color,background-color,border-color,opacity,transform,box-shadow] duration-300 group-focus-within:w-full" />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="group">
@@ -92,7 +92,7 @@ export default function MissionDataTab({
                   onChange={(e) => onChange({ ...campaign, year: e.target.value })}
                   className="w-full bg-surface-container-lowest border-none text-white px-4 py-4 text-[11px] font-display font-bold outline-none rounded-sm uppercase shadow-inner"
                 />
-                <div className="h-0.5 w-0 bg-primary transition-all duration-300 group-focus-within:w-full" />
+                <div className="h-0.5 w-0 bg-primary transition-[width,color,background-color,border-color,opacity,transform,box-shadow] duration-300 group-focus-within:w-full" />
               </div>
               <div className="group">
                 <label className="block text-[9px] font-display font-bold text-industrial-silver/40 uppercase tracking-[0.2em] mb-2 group-focus-within:text-primary transition-colors">
@@ -109,7 +109,7 @@ export default function MissionDataTab({
                   <option value="Arquivada">{t('missions.status.archived')}</option>
                   <option value="Bloqueada">{t('missions.status.blocked')}</option>
                 </select>
-                <div className="h-0.5 w-0 bg-primary transition-all duration-300 group-focus-within:w-full" />
+                <div className="h-0.5 w-0 bg-primary transition-[width,color,background-color,border-color,opacity,transform,box-shadow] duration-300 group-focus-within:w-full" />
               </div>
             </div>
             <div className="group">
@@ -126,7 +126,7 @@ export default function MissionDataTab({
                 <option value="walkman">DECK RETRO</option>
                 <option value="nokia">HANDSET AZUL</option>
               </select>
-              <div className="h-0.5 w-0 bg-primary transition-all duration-300 group-focus-within:w-full" />
+              <div className="h-0.5 w-0 bg-primary transition-[width,color,background-color,border-color,opacity,transform,box-shadow] duration-300 group-focus-within:w-full" />
             </div>
           </div>
 
@@ -140,7 +140,7 @@ export default function MissionDataTab({
                 onChange={(e) => onChange({ ...campaign, description: e.target.value })}
                 className="w-full h-28 bg-surface-container-lowest border-none text-white px-4 py-4 text-[11px] font-sans outline-none resize-none rounded-sm shadow-inner leading-relaxed"
               />
-              <div className="h-0.5 w-0 bg-primary transition-all duration-300 group-focus-within:w-full" />
+              <div className="h-0.5 w-0 bg-primary transition-[width,color,background-color,border-color,opacity,transform,box-shadow] duration-300 group-focus-within:w-full" />
             </div>
             <div className="group">
               <label className="block text-[9px] font-display font-bold text-industrial-silver/40 uppercase tracking-[0.2em] mb-2 group-focus-within:text-primary transition-colors">
@@ -152,7 +152,7 @@ export default function MissionDataTab({
                 onChange={(e) => onChange({ ...campaign, location: e.target.value })}
                 className="w-full bg-surface-container-lowest border-none text-white px-4 py-4 text-[11px] font-display font-bold outline-none rounded-sm uppercase shadow-inner"
               />
-              <div className="h-0.5 w-0 bg-primary transition-all duration-300 group-focus-within:w-full" />
+              <div className="h-0.5 w-0 bg-primary transition-[width,color,background-color,border-color,opacity,transform,box-shadow] duration-300 group-focus-within:w-full" />
             </div>
             <div className="group">
               <label className="block text-[9px] font-display font-bold text-industrial-silver/40 uppercase tracking-[0.2em] mb-2 group-focus-within:text-primary transition-colors">
@@ -174,7 +174,7 @@ export default function MissionDataTab({
                   <button
                     type="button"
                     onClick={() => onChange({ ...campaign, imageUrl: '' })}
-                    className="absolute top-2 right-2 w-7 h-7 bg-black/70 border border-white/10 rounded-sm flex items-center justify-center text-red-500/70 hover:text-red-500 transition-all hover:border-red-500/30"
+                    className="absolute top-2 right-2 w-7 h-7 bg-black/70 border border-white/10 rounded-sm flex items-center justify-center text-red-500/70 hover:text-red-500 transition hover:border-red-500/30"
                   >
                     <span className="material-symbols-outlined text-sm">close</span>
                   </button>
@@ -187,7 +187,7 @@ export default function MissionDataTab({
               <button
                 type="button"
                 onClick={() => setIsMediaSelectorOpen(true)}
-                className="w-full border-2 border-dashed border-primary/15 hover:border-primary/40 bg-surface-container-lowest/50 hover:bg-primary/5 rounded-sm py-8 flex flex-col items-center gap-2 transition-all group/upload cursor-pointer"
+                className="w-full border-2 border-dashed border-primary/15 hover:border-primary/40 bg-surface-container-lowest/50 hover:bg-primary/5 rounded-sm py-8 flex flex-col items-center gap-2 transition group/upload cursor-pointer"
               >
                 <span className="material-symbols-outlined text-3xl text-industrial-silver/20 group-hover/upload:text-primary/60 transition-colors">
                   perm_media
@@ -211,7 +211,7 @@ export default function MissionDataTab({
                 className="w-full bg-surface-container-lowest border-none text-white px-4 py-3 text-[11px] font-mono outline-none rounded-sm shadow-inner mt-2"
                 placeholder="https://..."
               />
-              <div className="h-0.5 w-0 bg-primary transition-all duration-300 group-focus-within:w-full" />
+              <div className="h-0.5 w-0 bg-primary transition-[width,color,background-color,border-color,opacity,transform,box-shadow] duration-300 group-focus-within:w-full" />
             </div>
           </div>
         </div>
@@ -220,14 +220,14 @@ export default function MissionDataTab({
           <button
             type="button"
             onClick={onCancel}
-            className="px-8 py-4 text-[10px] font-display font-bold text-industrial-silver/30 hover:text-white uppercase tracking-[0.3em] transition-all"
+            className="px-8 py-4 text-[10px] font-display font-bold text-industrial-silver/30 hover:text-white uppercase tracking-[0.3em] transition"
           >
             Abortar Missão
           </button>
           <button
             type="submit"
             disabled={saving}
-            className="bg-primary hover:bg-primary-container text-black px-12 py-4 rounded-sm font-display font-bold text-[11px] tracking-widest uppercase transition-all active:scale-95 glow-orange shadow-lg flex items-center justify-center gap-3 disabled:opacity-50"
+            className="bg-primary hover:bg-primary-container text-black px-12 py-4 rounded-sm font-display font-bold text-[11px] tracking-widest uppercase transition active:scale-[0.97] glow-orange shadow-lg flex items-center justify-center gap-3 disabled:opacity-50"
           >
             <span className="material-symbols-outlined text-base">save</span>
             {saving ? 'Salvando...' : t('missions.data.save')}

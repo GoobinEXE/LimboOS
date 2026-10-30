@@ -110,7 +110,7 @@ export default React.memo(function CassetteVisor({
               </React.Suspense>
             ) : (
               <div onClick={!isLoading ? onScanClick : undefined}
-                className={`w-full max-w-70 h-32.5 border-2 border-dashed rounded-lg flex flex-col items-center justify-center gap-3 transition-all duration-200 ease-limbo ${isLoading ? 'border-border-accent cursor-default' : 'border-border-strong hover:bg-accent-05 hover:border-border-accent cursor-pointer group'}`}>
+                className={`w-full max-w-70 h-32.5 border-2 border-dashed rounded-lg flex flex-col items-center justify-center gap-3 transition duration-200 ease-limbo ${isLoading ? 'border-border-accent cursor-default' : 'border-border-strong hover:bg-accent-05 hover:border-border-accent cursor-pointer group'}`}>
                 {isLoading ? (
                   <div className="flex flex-col items-center gap-2">
                     <RetroSpinner size="sm" />

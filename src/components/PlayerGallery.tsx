@@ -55,7 +55,7 @@ export default function PlayerGallery({ images, variant = 'default' }: PlayerGal
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex-1 border border-lcd-ink py-0.5 text-center transition-all ${
+                className={`flex-1 border border-lcd-ink py-0.5 text-center transition ${
                   isActive ? 'bg-lcd-ink text-lcd-paper font-bold' : 'hover:bg-lcd-ink/10'
                 }`}
               >
@@ -79,9 +79,9 @@ export default function PlayerGallery({ images, variant = 'default' }: PlayerGal
                 <div
                   key={img.id}
                   onClick={() => setSelectedImage(img)}
-                  className="border border-lcd-ink p-px cursor-pointer hover:bg-lcd-ink hover:text-lcd-paper group transition-all relative"
+                  className="border border-lcd-ink p-px cursor-pointer hover:bg-lcd-ink hover:text-lcd-paper group transition relative"
                 >
-                  <div className="aspect-square bg-black overflow-hidden relative grayscale contrast-150 brightness-75 group-hover:grayscale-0 group-hover:contrast-100 transition-all">
+                  <div className="aspect-square bg-black overflow-hidden relative grayscale contrast-150 brightness-75 group-hover:grayscale-0 group-hover:contrast-100 transition">
                     <img
                       src={img.imageUrl}
                       alt={img.title}
@@ -107,7 +107,7 @@ export default function PlayerGallery({ images, variant = 'default' }: PlayerGal
             >
               <div className="flex justify-between items-center border-b-2 border-lcd-ink pb-1 shrink-0 font-bold mb-1">
                 <span>{t('gallery.viewerTitle')}</span>
-                <button className="border border-lcd-ink px-1 hover:bg-lcd-ink hover:text-lcd-paper active:scale-95 transition-all">{t('actions.x')}</button>
+                <button className="border border-lcd-ink px-1 hover:bg-lcd-ink hover:text-lcd-paper active:scale-[0.97] transition">{t('actions.x')}</button>
               </div>
               <div className="flex-1 overflow-y-auto flex flex-col items-center" style={{ scrollbarWidth: 'none' }}>
                 <div className="border-4 border-lcd-ink p-1 bg-black mb-2 grayscale contrast-125 w-full">
@@ -196,13 +196,13 @@ export default function PlayerGallery({ images, variant = 'default' }: PlayerGal
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.3, delay: idx * 0.04 }}
                   onClick={() => setSelectedImage(img)}
-                  className="relative rounded-card overflow-hidden border border-border bg-surface-raised text-left cursor-pointer group hover:border-border-accent active:scale-[0.98] transition-all duration-200"
+                  className="relative rounded-card overflow-hidden border border-border bg-surface-raised text-left cursor-pointer group hover:border-border-accent active:scale-[0.98] transition duration-200"
                 >
                   <div className="aspect-square overflow-hidden relative bg-surface-sunken">
                     <img
                       src={img.imageUrl}
                       alt={img.title}
-                      className="w-full h-full object-cover saturate-[0.8] group-hover:saturate-100 group-hover:scale-105 transition-all duration-500 ease-limbo"
+                      className="w-full h-full object-cover saturate-[0.8] group-hover:saturate-100 group-hover:scale-105 transition duration-500 ease-limbo"
                       loading="lazy"
                       onError={(e) => { e.currentTarget.src = FALLBACK_IMAGE; }}
                     />

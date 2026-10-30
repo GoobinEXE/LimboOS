@@ -59,7 +59,7 @@ export default function MissionVideoTab({
             type="button"
             disabled={campaignCharacters.length === 0}
             onClick={() => setShowBroadcastDrawer(true)}
-            className="inline-flex items-center justify-center gap-2 py-4 px-8 bg-primary text-black font-display font-black uppercase tracking-[0.2em] text-[11px] hover:bg-primary/90 transition-all disabled:opacity-40"
+            className="inline-flex items-center justify-center gap-2 py-4 px-8 bg-primary text-black font-display font-black uppercase tracking-[0.2em] text-[11px] hover:bg-primary/90 transition disabled:opacity-40"
           >
             <span className="material-symbols-outlined text-base">cast</span>
             Abrir Transmissão

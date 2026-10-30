@@ -651,6 +651,12 @@
   outline-offset: 2px;
 }
 
+/* Barra de contagem dos toasts (animation-play-state pausa junto com o timer) */
+@keyframes toast-countdown {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0); }
+}
+
 .indented-box {
   background: var(--color-surface-container-lowest);
   box-shadow:

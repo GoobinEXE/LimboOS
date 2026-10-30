@@ -47,7 +47,7 @@ export default function Screw({ className = '', innerClassName = '', onClick, si
   return (
     <div
       onClick={handleClick}
-      className={`absolute flex items-center justify-center cursor-pointer hover:brightness-125 active:scale-90 transition-all duration-(--duration-fast) ease-limbo z-20 ${outer}`}
+      className={`absolute flex items-center justify-center cursor-pointer hover:brightness-125 active:scale-90 transition duration-(--duration-fast) ease-limbo z-20 ${outer}`}
     >
       <div className={`pointer-events-none ${inner}`} />
     </div>

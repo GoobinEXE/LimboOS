@@ -209,7 +209,7 @@ export default function AchievementsPanel({ embedded = false }: { embedded?: boo
                 placeholder={t('achievements.filter')}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full bg-black/40 border-2 border-white/5 text-[11px] font-black uppercase px-12 py-3 text-white outline-none focus:border-secondary transition-all rounded-sm"
+                className="w-full bg-black/40 border-2 border-white/5 text-[11px] font-black uppercase px-12 py-3 text-white outline-none focus:border-secondary transition rounded-sm"
               />
             </div>
             <div className="flex items-center gap-2 flex-wrap">
@@ -281,7 +281,7 @@ export default function AchievementsPanel({ embedded = false }: { embedded?: boo
                 {group.defs.map((ach) => (
                   <div
                     key={ach.id}
-                    className={`bg-black border-2 p-6 rounded-xl flex flex-col gap-4 group transition-all shadow-lg ${
+                    className={`bg-black border-2 p-6 rounded-xl flex flex-col gap-4 group transition shadow-lg ${
                       ach.enabled === false
                         ? 'border-white/5 opacity-50'
                         : 'border-seam hover:border-secondary/20'

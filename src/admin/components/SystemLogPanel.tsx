@@ -361,7 +361,7 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
             <>
               <button
                 onClick={handleExportJSON}
-                className="px-6 py-2 text-[10px] font-display font-bold uppercase tracking-widest bg-white/5 border border-white/5 text-industrial-silver/40 hover:bg-white/10 hover:text-white transition-all flex items-center gap-2 rounded-sm shadow-lg"
+                className="px-6 py-2 text-[10px] font-display font-bold uppercase tracking-widest bg-white/5 border border-white/5 text-industrial-silver/40 hover:bg-white/10 hover:text-white transition flex items-center gap-2 rounded-sm shadow-lg"
               >
                 <span className="material-symbols-outlined text-base">download</span>
                 Exportar JSON
@@ -370,7 +370,7 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
               <button
                 onClick={handleWipeUsers}
                 disabled={isWiping}
-                className={`px-6 py-2 text-[10px] font-display font-bold uppercase tracking-widest border transition-all flex items-center gap-2 rounded-sm shadow-lg ${
+                className={`px-6 py-2 text-[10px] font-display font-bold uppercase tracking-widest border transition flex items-center gap-2 rounded-sm shadow-lg ${
                   isWiping
                     ? 'bg-red-500/20 text-red-400 border-red-500/20 animate-pulse'
                     : 'bg-red-500/5 text-red-500/60 border-red-500/10 hover:bg-red-500/10 hover:text-red-500'
@@ -383,7 +383,7 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
               <button
                 onClick={handleClearLogs}
                 disabled={isClearing}
-                className={`px-6 py-2 text-[10px] font-display font-bold uppercase tracking-widest border transition-all flex items-center gap-2 rounded-sm shadow-lg ${
+                className={`px-6 py-2 text-[10px] font-display font-bold uppercase tracking-widest border transition flex items-center gap-2 rounded-sm shadow-lg ${
                   isClearing
                     ? 'bg-white/5 text-industrial-silver/10 border-white/5'
                     : 'bg-red-500/5 text-red-500/60 border-red-500/10 hover:bg-red-500/10 hover:text-red-500'
@@ -406,7 +406,7 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
         <select
           value={filterSource}
           onChange={(e) => setFilterSource(e.target.value)}
-          className="bg-surface-container-lowest border border-white/5 text-[10px] font-display font-bold uppercase tracking-widest text-primary px-4 py-2 outline-none rounded-sm transition-all cursor-pointer shadow-inner"
+          className="bg-surface-container-lowest border border-white/5 text-[10px] font-display font-bold uppercase tracking-widest text-primary px-4 py-2 outline-none rounded-sm transition cursor-pointer shadow-inner"
         >
           <option value="all">{t('logs.origin.all')}</option>
           <option value="player">{t('logs.origin.player')}</option>
@@ -416,7 +416,7 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
         <select
           value={filterType}
           onChange={(e) => setFilterType(e.target.value)}
-          className="bg-surface-container-lowest border border-white/5 text-[10px] font-display font-bold uppercase tracking-widest text-primary px-4 py-2 outline-none rounded-sm transition-all cursor-pointer shadow-inner"
+          className="bg-surface-container-lowest border border-white/5 text-[10px] font-display font-bold uppercase tracking-widest text-primary px-4 py-2 outline-none rounded-sm transition cursor-pointer shadow-inner"
         >
           <option value="all">{t('logs.type.all')}</option>
           <option value="navigation">{t('logs.type.navigation')}</option>
@@ -437,7 +437,7 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
             placeholder={t('logs.search')}
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
-            className="bg-surface-container-lowest border border-white/5 text-[10px] font-display font-bold uppercase tracking-widest text-white placeholder:text-industrial-silver/10 pl-10 pr-4 py-2.5 w-full focus:border-primary/40 outline-none rounded-sm transition-all shadow-inner"
+            className="bg-surface-container-lowest border border-white/5 text-[10px] font-display font-bold uppercase tracking-widest text-white placeholder:text-industrial-silver/10 pl-10 pr-4 py-2.5 w-full focus:border-primary/40 outline-none rounded-sm transition shadow-inner"
           />
         </div>
       </div>
@@ -482,7 +482,7 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
               <button
                 key={n}
                 onClick={() => setMaxEntries(n)}
-                className={`px-4 py-1 text-[10px] font-display font-bold tracking-tighter transition-all rounded-sm ${
+                className={`px-4 py-1 text-[10px] font-display font-bold tracking-tighter transition rounded-sm ${
                   maxEntries === n
                     ? 'text-primary bg-primary/10 shadow-lg'
                     : 'text-industrial-silver/20 hover:text-white hover:bg-white/5'

@@ -115,7 +115,7 @@ export default function GroupMissionsModal({
             <button
               onClick={onClose}
               disabled={busy}
-              className="p-2 text-ash-600 hover:text-white transition-all material-symbols-outlined rounded-sm disabled:opacity-40"
+              className="p-2 text-ash-600 hover:text-white transition material-symbols-outlined rounded-sm disabled:opacity-40"
             >
               close
             </button>
@@ -132,7 +132,7 @@ export default function GroupMissionsModal({
                 Autorizar Missão
               </p>
               <select
-                className="w-full bg-surface-container-lowest border border-white/5 text-[10px] font-display font-bold text-primary p-3 outline-none rounded-sm focus:border-primary/40 transition-all appearance-none cursor-pointer shadow-inner disabled:opacity-40"
+                className="w-full bg-surface-container-lowest border border-white/5 text-[10px] font-display font-bold text-primary p-3 outline-none rounded-sm focus:border-primary/40 transition appearance-none cursor-pointer shadow-inner disabled:opacity-40"
                 disabled={busy || availableToUnlock.length === 0}
                 onChange={(e) => {
                   if (!e.target.value) return;
@@ -190,7 +190,7 @@ export default function GroupMissionsModal({
                 Missão Ativa (Em Campo)
               </p>
               <select
-                className="w-full bg-phosphor-500/5 border border-phosphor-500/20 text-[10px] font-display font-bold text-phosphor-500 p-3 outline-none rounded-sm focus:border-phosphor-500/40 transition-all appearance-none cursor-pointer disabled:opacity-40"
+                className="w-full bg-phosphor-500/5 border border-phosphor-500/20 text-[10px] font-display font-bold text-phosphor-500 p-3 outline-none rounded-sm focus:border-phosphor-500/40 transition appearance-none cursor-pointer disabled:opacity-40"
                 disabled={busy || availableToAssign.length === 0}
                 onChange={(e) => {
                   if (!e.target.value) return;

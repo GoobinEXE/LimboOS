@@ -49,7 +49,7 @@ export default function SessionGlobalsPanel() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div
-        className={`bg-surface-container-low border p-5 rounded-sm flex flex-col gap-4 transition-all ${
+        className={`bg-surface-container-low border p-5 rounded-sm flex flex-col gap-4 transition ${
           limboState.seized
             ? 'border-red-500/60 shadow-[0_0_24px_rgba(239,68,68,0.15)]'
             : 'border-primary/10'
@@ -91,11 +91,11 @@ export default function SessionGlobalsPanel() {
         <button
           type="button"
           onClick={toggleLimboMilitary}
-          className={`px-5 py-2 border-2 font-display font-black uppercase text-[10px] tracking-widest transition-all rounded-sm self-start ${
+          className={`px-5 py-2 border-2 font-display font-black uppercase text-[10px] tracking-widest transition rounded-sm self-start ${
             limboState.seized
               ? 'bg-red-600 border-red-400 text-white'
               : 'bg-[#333] border-white/5 text-ash-400 hover:bg-[#444]'
-          } active:scale-95`}
+          } active:scale-[0.97]`}
         >
           {limboState.seized ? t('sessionGlobals.normalize') : t('sessionGlobals.forceUsarmy')}
         </button>
@@ -113,7 +113,7 @@ export default function SessionGlobalsPanel() {
           <button
             type="button"
             onClick={toggleDiskRepair}
-            className={`relative w-14 h-7 rounded-full transition-all border-2 ${
+            className={`relative w-14 h-7 rounded-full transition border-2 ${
               diskRepairAllowed
                 ? 'bg-primary/20 border-primary shadow-[0_0_10px_rgba(255,140,0,0.2)]'
                 : 'bg-ash-900 border-ash-800'

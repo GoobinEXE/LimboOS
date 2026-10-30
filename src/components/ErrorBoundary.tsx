@@ -30,23 +30,29 @@ class ErrorBoundary extends React.Component<Props, State> {
   public render() {
     if (this.state.hasError) {
       return this.props.fallback || (
-        <div className="min-h-screen bg-black flex items-center justify-center p-8">
-          <div className="max-w-md w-full border border-red-900/50 bg-red-950/10 p-6 rounded-lg text-red-500 font-mono">
-            <h2 className="text-xl mb-4 flex items-center gap-2">
-              <span className="animate-pulse">⚠️</span> {i18n.t('errorBoundary.title', { ns: 'common' })}
-            </h2>
-            <p className="text-sm opacity-80 mb-6">
-              {i18n.t('errorBoundary.body', { ns: 'common' })}
-            </p>
-            <div className="bg-black/50 p-3 rounded border border-red-900/30 text-xs overflow-auto max-h-32 mb-6">
-              {this.state.error?.message}
+        <div className="min-h-screen bg-surface-sunken flex items-center justify-center p-6" role="alert">
+          <div className="max-w-md w-full">
+            {/* Placa de advertência da bancada (hero: WARNING / SYSTEM INSTABILITY) */}
+            <div className="border-2 border-[#d9ad3c] bg-[#d9ad3c] text-[#14110a] px-5 py-3 rounded-inset shadow-xl">
+              <p className="font-display font-bold text-2xl tracking-[0.08em] uppercase leading-none">
+                {i18n.t('errorBoundary.title', { ns: 'common' })}
+              </p>
             </div>
-            <button
-              onClick={() => window.location.reload()}
-              className="w-full py-2 bg-red-900/20 hover:bg-red-900/40 border border-red-500/50 rounded transition-colors text-sm uppercase tracking-wider"
-            >
-              {i18n.t('errorBoundary.reload', { ns: 'common' })}
-            </button>
+            <div className="mt-3 border border-border bg-surface-container-lowest rounded-inset p-5 font-mono shadow-panel">
+              <p className="text-sm text-ash-300 leading-relaxed mb-4">
+                {i18n.t('errorBoundary.body', { ns: 'common' })}
+              </p>
+              <pre className="bg-surface-sunken p-3 rounded-inset border border-red-500/20 text-[11px] text-red-300/90 whitespace-pre-wrap break-words overflow-auto max-h-32 mb-5">
+                {this.state.error?.message}
+              </pre>
+              <button
+                type="button"
+                onClick={() => window.location.reload()}
+                className="lmb-btn lmb-btn-primary w-full"
+              >
+                {i18n.t('errorBoundary.reload', { ns: 'common' })}
+              </button>
+            </div>
           </div>
         </div>
       );

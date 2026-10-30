@@ -181,7 +181,7 @@ export default function MissionInventoryTab({
           return (
             <div
               key={compositeKey}
-              className="bg-black/40 border border-white/5 rounded-sm p-6 group hover:border-primary/20 transition-all shadow-inner"
+              className="bg-black/40 border border-white/5 rounded-sm p-6 group hover:border-primary/20 transition shadow-inner"
             >
               <div className="flex justify-between items-center mb-6 border-b border-white/5 pb-4">
                 <div className="flex items-center gap-4">
@@ -207,7 +207,7 @@ export default function MissionInventoryTab({
                   </span>
                   <button
                     onClick={() => setShowGrantModal({ charId: character.id, uid: account.uid })}
-                    className="bg-primary/10 text-primary border border-primary/20 px-4 py-2 rounded-sm font-display font-bold text-[9px] tracking-widest uppercase hover:bg-primary hover:text-black transition-all active:scale-95 glow-orange flex items-center gap-2"
+                    className="bg-primary/10 text-primary border border-primary/20 px-4 py-2 rounded-sm font-display font-bold text-[9px] tracking-widest uppercase hover:bg-primary hover:text-black transition active:scale-[0.97] glow-orange flex items-center gap-2"
                   >
                     <span className="material-symbols-outlined text-sm">add</span> Conceder
                   </button>
@@ -220,11 +220,11 @@ export default function MissionInventoryTab({
                   return (
                     <div
                       key={t.id}
-                      className="bg-surface-container-lowest border border-white/5 p-4 rounded-sm relative group/item hover:border-primary/30 transition-all shadow-md"
+                      className="bg-surface-container-lowest border border-white/5 p-4 rounded-sm relative group/item hover:border-primary/30 transition shadow-md"
                     >
                       <div className="flex items-start justify-between mb-2">
                         <div
-                          className={`p-1.5 rounded-sm bg-black/40 border border-white/5 text-[10px] transition-all group-hover/item:border-primary/20 ${
+                          className={`p-1.5 rounded-sm bg-black/40 border border-white/5 text-[10px] transition group-hover/item:border-primary/20 ${
                             intel?.type === 'AUDIO'
                               ? 'text-amber-500'
                               : intel?.type === 'VISUAL'

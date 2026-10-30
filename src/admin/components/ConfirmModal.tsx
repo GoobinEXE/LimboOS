@@ -1,8 +1,8 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react';
+import React, { useState, useCallback, useRef, useEffect, useId } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AnimatePresence, motion } from 'motion/react';
 import Screw from '../../components/player/Screw';
-import { ADMIN_SPRING_SNAP, overlayFade } from '../lib/motion';
+import { dialogPop, overlayFade } from '../lib/motion';
 import OverlayPortal from './OverlayPortal';
 
 type ModalVariant = 'confirm' | 'alert';
@@ -20,17 +20,29 @@ interface ConfirmModalProps {
   onCancel: () => void;
 }
 
+const DANGER_TERMS = ['atenção', 'attention', 'delete', 'apagar', 'zerar', 'reset', 'excluir', 'remover'];
+
 export function ConfirmModal({ state, onConfirm, onCancel }: ConfirmModalProps) {
   const { t } = useTranslation('admin');
-  const isDanger = state.title.toLowerCase().includes('atenção') || state.title.toLowerCase().includes('attention') || state.title.toLowerCase().includes('delete') || state.title.toLowerCase().includes('apagar') || state.title.toLowerCase().includes('zerar') || state.title.toLowerCase().includes('reset') || state.title.toLowerCase().includes('excluir') || state.title.toLowerCase().includes('remover');
+  const titleLower = state.title.toLowerCase();
+  const isDanger = DANGER_TERMS.some((term) => titleLower.includes(term));
   const confirmRef = useRef<HTMLButtonElement>(null);
-  
+  const cancelRef = useRef<HTMLButtonElement>(null);
+  const titleId = useId();
+  const messageId = useId();
+
+  // Ação destrutiva nunca recebe o foco inicial: Enter acidental cancela em vez de apagar
   useEffect(() => {
-    if (state.open) setTimeout(() => confirmRef.current?.focus(), 50);
-  }, [state.open]);
+    if (!state.open) return;
+    const id = window.setTimeout(() => {
+      const target = isDanger && state.variant === 'confirm' ? cancelRef.current : confirmRef.current;
+      target?.focus();
+    }, 30);
+    return () => window.clearTimeout(id);
+  }, [state.open, isDanger, state.variant]);
 
   return (
-    <OverlayPortal open={state.open} onClose={onCancel}>
+    <OverlayPortal open={state.open} onClose={onCancel} withExitAnimation>
     <AnimatePresence>
       {state.open && (
         <motion.div
@@ -38,52 +50,62 @@ export function ConfirmModal({ state, onConfirm, onCancel }: ConfirmModalProps) 
           initial="hidden"
           animate="visible"
           exit="exit"
-          className="fixed inset-0 z-9999 flex items-center justify-center bg-black/90 backdrop-blur-xl p-4"
+          className="fixed inset-0 z-9999 flex items-center justify-center bg-surface-scrim p-4"
           onMouseDown={(e) => { if (e.target === e.currentTarget) onCancel(); }}
         >
           <motion.div
-            initial={{ scale: 0.94, opacity: 0, y: 20 }}
-            animate={{ scale: 1, opacity: 1, y: 0 }}
-            exit={{ scale: 0.94, opacity: 0, y: 20 }}
-            transition={ADMIN_SPRING_SNAP}
-            className="bg-[#222] border-8 border-seam w-full max-w-md rounded-[32px] shadow-2xl flex flex-col relative overflow-hidden font-chakra"
+            variants={dialogPop}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            role={state.variant === 'confirm' ? 'alertdialog' : 'dialog'}
+            aria-modal="true"
+            aria-labelledby={titleId}
+            aria-describedby={messageId}
+            className="relative w-full max-w-md bg-surface-container-low border border-seam rounded-panel shadow-2xl machined-edge overflow-hidden"
           >
-            <Screw className="top-4 left-4" /><Screw className="top-4 right-4 -rotate-90" /><Screw className="bottom-4 left-4 -rotate-90" /><Screw className="bottom-4 right-4" />
-            <div className="noise-overlay" /><div className="scanlines" />
+            <Screw size="xs" className="top-2.5 left-2.5" />
+            <Screw size="xs" className="top-2.5 right-2.5 -rotate-90" />
+            <Screw size="xs" className="bottom-2.5 left-2.5 -rotate-90" />
+            <Screw size="xs" className="bottom-2.5 right-2.5" />
 
-            {/* Header */}
-            <div className={`px-10 py-6 border-b-4 relative z-10 flex items-center gap-4 bg-black/40 ${isDanger ? 'border-red-800/30' : 'border-seam'}`}>
-              <div className={`p-2 rounded-sm border-2 ${isDanger ? 'bg-red-500/10 border-red-500/20 text-red-500' : 'bg-primary/10 border-primary/20 text-primary'}`}>
-                <span className="material-symbols-outlined text-lg">
-                  {isDanger ? 'report' : 'info'}
-                </span>
-              </div>
-              <h2 className={`font-black text-xs uppercase tracking-[0.2em] ${isDanger ? 'text-red-400' : 'text-white'}`}>{state.title}</h2>
+            {/* Placa de identificação */}
+            <div
+              className={`relative flex items-center gap-3 px-7 h-14 border-b ${
+                isDanger ? 'border-red-500/20 bg-red-500/[0.04]' : 'border-seam bg-surface-container-lowest'
+              }`}
+            >
+              <span
+                className={`material-symbols-outlined text-[18px] ${isDanger ? 'text-red-400' : 'text-accent'}`}
+                aria-hidden
+              >
+                {isDanger ? 'report' : 'info'}
+              </span>
+              <h2
+                id={titleId}
+                className={`font-display font-bold text-[11px] uppercase tracking-[0.22em] ${isDanger ? 'text-red-300' : 'text-bone'}`}
+              >
+                {state.title}
+              </h2>
             </div>
 
-            {/* Content */}
-            <div className="px-10 py-8 relative z-10">
-              <p className="text-ash-400 text-sm font-bold uppercase leading-relaxed tracking-wide">{state.message}</p>
+            <div className="px-7 py-6">
+              <p id={messageId} className="text-ash-300 text-sm leading-relaxed text-pretty">
+                {state.message}
+              </p>
             </div>
 
-            {/* Actions */}
-            <div className="px-10 pb-10 flex gap-6 relative z-10">
+            <div className="flex justify-end gap-2 px-7 pb-6">
               {state.variant === 'confirm' && (
-                <button
-                  onClick={onCancel}
-                  className="flex-1 px-6 py-4 text-[10px] font-black uppercase tracking-widest text-ash-600 hover:text-white transition-all bg-[#333] hover:bg-[#444] rounded-sm active:scale-95"
-                >
+                <button ref={cancelRef} type="button" onClick={onCancel} className="lmb-btn lmb-btn-ghost">
                   {t('confirm.abort')}
                 </button>
               )}
               <button
                 ref={confirmRef}
+                type="button"
                 onClick={onConfirm}
-                className={`flex-1 px-6 py-4 text-[10px] font-black uppercase tracking-widest transition-all rounded-sm active:scale-95 shadow-lg ${
-                  isDanger
-                    ? 'bg-red-700 hover:bg-red-600 text-white shadow-[0_0_15px_rgba(239,68,68,0.2)]'
-                    : 'bg-primary hover:bg-primary-container text-black glow-orange'
-                }`}
+                className={`lmb-btn min-w-28 ${isDanger ? 'lmb-btn-danger' : 'lmb-btn-solid'}`}
               >
                 {state.confirmLabel ?? (state.variant === 'confirm' ? t('confirm.confirm') : t('confirm.understood'))}
               </button>

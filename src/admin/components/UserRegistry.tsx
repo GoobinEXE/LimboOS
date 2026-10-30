@@ -412,8 +412,8 @@ export default function UserRegistry({
                 onChange={(e) => setShowArchived(e.target.checked)}
                 className="hidden"
               />
-              <div className={`w-8 h-4 rounded-full transition-all relative ${showArchived ? 'bg-primary/30 border border-primary' : 'bg-surface-container-lowest border border-white/10'}`}>
-                <div className={`absolute top-0.5 w-2.5 h-2.5 rounded-full bg-white transition-all ${showArchived ? 'left-4.5 bg-primary' : 'left-1 bg-industrial-silver/40'}`} />
+              <div className={`w-8 h-4 rounded-full transition relative ${showArchived ? 'bg-primary/30 border border-primary' : 'bg-surface-container-lowest border border-white/10'}`}>
+                <div className={`absolute top-0.5 w-2.5 h-2.5 rounded-full bg-white transition ${showArchived ? 'left-4.5 bg-primary' : 'left-1 bg-industrial-silver/40'}`} />
               </div>
               <span className="text-[9px] font-display font-bold text-industrial-silver/30 group-hover:text-primary transition-colors uppercase tracking-widest">{t('accounts.includeArchived')}</span>
             </label>
@@ -426,27 +426,27 @@ export default function UserRegistry({
                 placeholder={t('accounts.search')} 
                 value={searchQuery} 
                 onChange={(e) => setSearchQuery(e.target.value)} 
-                className="w-full bg-surface-container-lowest border border-white/5 text-[11px] font-display font-bold uppercase tracking-[0.2em] text-white pl-10 pr-3 py-3 focus:border-primary/40 outline-none rounded-sm transition-all" 
+                className="w-full bg-surface-container-lowest border border-white/5 text-[11px] font-display font-bold uppercase tracking-[0.2em] text-white pl-10 pr-3 py-3 focus:border-primary/40 outline-none rounded-sm transition" 
               />
             </div>
             {isAdmin && (
               <div className="flex gap-3">
                 <div className="relative">
-                  <button onClick={() => setShowExportMenu(prev => !prev)} className="flex items-center gap-2 bg-surface-container-lowest border border-white/5 text-industrial-silver/40 hover:text-primary hover:border-primary/20 px-4 py-3 rounded-sm font-display font-bold text-[10px] tracking-widest transition-all active:scale-95">
+                  <button onClick={() => setShowExportMenu(prev => !prev)} className="flex items-center gap-2 bg-surface-container-lowest border border-white/5 text-industrial-silver/40 hover:text-primary hover:border-primary/20 px-4 py-3 rounded-sm font-display font-bold text-[10px] tracking-widest transition active:scale-[0.97]">
                     <span className="material-symbols-outlined text-base">download</span> {t('accounts.export')}
                   </button>
                   {showExportMenu && (
                     <div className="absolute top-full right-0 mt-1 bg-surface-container-low border border-primary/20 shadow-2xl z-50 min-w-35">
-                      <button onClick={() => handleExport('csv')} className="w-full flex items-center gap-3 px-4 py-3 text-[10px] font-display font-bold text-industrial-silver/50 hover:text-primary hover:bg-primary/5 transition-all uppercase tracking-widest">
+                      <button onClick={() => handleExport('csv')} className="w-full flex items-center gap-3 px-4 py-3 text-[10px] font-display font-bold text-industrial-silver/50 hover:text-primary hover:bg-primary/5 transition uppercase tracking-widest">
                         <span className="material-symbols-outlined text-sm">table_chart</span> CSV
                       </button>
-                      <button onClick={() => handleExport('json')} className="w-full flex items-center gap-3 px-4 py-3 text-[10px] font-display font-bold text-industrial-silver/50 hover:text-primary hover:bg-primary/5 transition-all uppercase tracking-widest border-t border-white/5">
+                      <button onClick={() => handleExport('json')} className="w-full flex items-center gap-3 px-4 py-3 text-[10px] font-display font-bold text-industrial-silver/50 hover:text-primary hover:bg-primary/5 transition uppercase tracking-widest border-t border-white/5">
                         <span className="material-symbols-outlined text-sm">data_object</span> JSON
                       </button>
                     </div>
                   )}
                 </div>
-                <button onClick={() => setShowCreateUser(true)} className="flex items-center gap-3 bg-primary hover:bg-primary-container text-black px-6 py-3 rounded-sm font-display font-bold text-[11px] tracking-widest transition-all active:scale-95 glow-orange shadow-lg">
+                <button onClick={() => setShowCreateUser(true)} className="flex items-center gap-3 bg-primary hover:bg-primary-container text-black px-6 py-3 rounded-sm font-display font-bold text-[11px] tracking-widest transition active:scale-[0.97] glow-orange shadow-lg">
                   <span className="material-symbols-outlined text-base">person_add</span> {t('accounts.create')}
                 </button>
               </div>
@@ -513,7 +513,7 @@ export default function UserRegistry({
                   >
                     <tr 
                       onClick={() => toggleExpand(acc.uid)}
-                      className={`hover:bg-primary/5 transition-all group cursor-pointer ${acc.suspended ? 'opacity-40' : ''} ${isExpanded ? 'bg-white/5' : ''}`}
+                      className={`hover:bg-primary/5 transition group cursor-pointer ${acc.suspended ? 'opacity-40' : ''} ${isExpanded ? 'bg-white/5' : ''}`}
                     >
                       <td className="p-6">
                         <div className="flex items-center gap-2">
@@ -550,7 +550,7 @@ export default function UserRegistry({
                         {acc.lastLogin ? formatDistanceToNow(acc.lastLogin.toDate(), { addSuffix: true, locale: dateLocale }) : "---"}
                       </td>
                       <td className="p-6 text-right">
-                         <button onClick={(e) => handleOpenEdit(e, acc)} className="p-2.5 text-industrial-silver/20 hover:text-primary hover:bg-primary/10 rounded-sm material-symbols-outlined text-xl transition-all active:scale-90" title={t('accounts.settingsTitle')}>settings</button>
+                         <button onClick={(e) => handleOpenEdit(e, acc)} className="p-2.5 text-industrial-silver/20 hover:text-primary hover:bg-primary/10 rounded-sm material-symbols-outlined text-xl transition active:scale-95" title={t('accounts.settingsTitle')}>settings</button>
                       </td>
                     </tr>
                     
@@ -565,7 +565,7 @@ export default function UserRegistry({
                               </h4>
                               <button 
                                 onClick={(e) => { e.stopPropagation(); setShowCreateCharacter(acc.uid); }} 
-                                className="flex items-center gap-2 text-[9px] font-display font-bold uppercase tracking-widest text-primary hover:text-black hover:bg-primary transition-all border border-primary/20 px-4 py-2 rounded-sm active:scale-95"
+                                className="flex items-center gap-2 text-[9px] font-display font-bold uppercase tracking-widest text-primary hover:text-black hover:bg-primary transition border border-primary/20 px-4 py-2 rounded-sm active:scale-[0.97]"
                               >
                                 <span className="material-symbols-outlined text-sm">person_add</span> {t('accounts.createChar')}
                               </button>
@@ -576,7 +576,7 @@ export default function UserRegistry({
                                 <div 
                                   key={item.char.id} 
                                   onClick={(e) => { e.stopPropagation(); setSelectedAgent(item); }} 
-                                  className={`bg-surface-container-low border border-white/5 p-4 hover:border-primary/30 transition-all cursor-pointer flex justify-between items-center group shadow-md ${item.char.archived ? 'opacity-40 hover:opacity-80 grayscale' : ''}`}
+                                  className={`bg-surface-container-low border border-white/5 p-4 hover:border-primary/30 transition cursor-pointer flex justify-between items-center group shadow-md ${item.char.archived ? 'opacity-40 hover:opacity-80 grayscale' : ''}`}
                                 >
                                    <div className="flex items-center gap-4">
                                       <div className={`w-10 h-10 rounded-sm bg-black/40 border border-white/5 flex items-center justify-center font-display font-bold text-lg ${item.char.agentStatus === 'vivo' ? 'text-phosphor-500' : 'text-red-500'}`}>
@@ -627,7 +627,7 @@ export default function UserRegistry({
       )}
 
       {/* Quick Create Character Modal */}
-      <OverlayPortal open={!!showCreateCharacter} onClose={() => setShowCreateCharacter(null)}>
+      <OverlayPortal open={!!showCreateCharacter} onClose={() => setShowCreateCharacter(null)} withExitAnimation>
         <AnimatePresence>
           {showCreateCharacter && (
         <motion.div
@@ -661,16 +661,16 @@ export default function UserRegistry({
                   value={newCharCodinome} 
                   onChange={(e) => setNewCharCodinome(e.target.value)} 
                   placeholder={t('accounts.codenamePlaceholder')} 
-                  className="w-full bg-surface-container-lowest border-none text-white px-5 py-4 text-[11px] font-display font-bold outline-none uppercase rounded-sm shadow-inner transition-all" 
+                  className="w-full bg-surface-container-lowest border-none text-white px-5 py-4 text-[11px] font-display font-bold outline-none uppercase rounded-sm shadow-inner transition" 
                   required 
                   autoFocus
                 />
-                <div className="h-0.5 w-0 bg-primary transition-all duration-300 group-focus-within:w-full" />
+                <div className="h-0.5 w-0 bg-primary transition-[width,color,background-color,border-color,opacity,transform,box-shadow] duration-300 group-focus-within:w-full" />
               </div>
 
               <div className="flex justify-end gap-4">
                 <button type="button" onClick={() => setShowCreateCharacter(null)} className="px-6 py-3 text-[10px] font-display font-bold text-industrial-silver/30 hover:text-white uppercase tracking-widest transition-colors">{t('accounts.cancel')}</button>
-                <button type="submit" disabled={createCharLoading} className="bg-primary text-black px-8 py-3 rounded-sm font-display font-bold text-[10px] tracking-widest uppercase hover:bg-primary-container transition-all active:scale-95 shadow-lg flex items-center gap-2">
+                <button type="submit" disabled={createCharLoading} className="bg-primary text-black px-8 py-3 rounded-sm font-display font-bold text-[10px] tracking-widest uppercase hover:bg-primary-container transition active:scale-[0.97] shadow-lg flex items-center gap-2">
                   {createCharLoading ? <RetroSpinner /> : 'CRIAR'}
                 </button>
               </div>
@@ -682,7 +682,7 @@ export default function UserRegistry({
       </OverlayPortal>
 
       {/* Edit Account Drawer */}
-      <OverlayPortal open={!!editingAccount} onClose={() => { setEditingAccount(null); setResetPasswordValue(""); }}>
+      <OverlayPortal open={!!editingAccount} onClose={() => { setEditingAccount(null); setResetPasswordValue(""); }} withExitAnimation>
         <AnimatePresence>
           {editingAccount && (
         <motion.div
@@ -705,7 +705,7 @@ export default function UserRegistry({
                  <div className="bg-primary px-2 py-0.5 text-[10px] font-black text-black tracking-widest uppercase inline-block mb-2">{t('accounts.edit.protocol')}</div>
                  <h3 className="font-black text-3xl text-white uppercase tracking-tighter">Diretrizes da <span className="text-primary">Conta</span></h3>
                </div>
-               <button onClick={() => { setEditingAccount(null); setResetPasswordValue(""); }} className="text-ash-600 hover:text-white transition-all material-symbols-outlined -mt-2">close</button>
+               <button onClick={() => { setEditingAccount(null); setResetPasswordValue(""); }} className="text-ash-600 hover:text-white transition material-symbols-outlined -mt-2">close</button>
             </div>
             
             <div className="flex-1 overflow-y-auto custom-scrollbar p-8 bg-black/40 space-y-10">
@@ -723,17 +723,17 @@ export default function UserRegistry({
                   <label className="block text-[9px] font-black text-ash-500 uppercase tracking-[0.3em] mb-2">{t('accounts.edit.masterName')}</label>
                   <div className="relative">
                     <input type="text" value={editMasterName} onChange={(e) => setEditMasterName(e.target.value)} placeholder={t('accounts.edit.masterPlaceholder')}
-                      className="w-full bg-black/60 border-2 border-seam text-white px-4 py-4 text-[11px] font-black outline-none uppercase rounded-sm transition-all focus:border-primary placeholder:text-ash-700" />
+                      className="w-full bg-black/60 border-2 border-seam text-white px-4 py-4 text-[11px] font-black outline-none uppercase rounded-sm transition focus:border-primary placeholder:text-ash-700" />
                   </div>
                 </div>
                 <div>
                   <label className="block text-[9px] font-black text-ash-500 uppercase tracking-[0.3em] mb-2">{t('accounts.edit.notes')}</label>
                   <textarea value={editNotes} onChange={(e) => setEditNotes(e.target.value)} placeholder="Notas sobre este jogador..." rows={3}
-                    className="w-full bg-black/60 border-2 border-seam text-white px-4 py-3 text-[11px] font-sans outline-none rounded-sm transition-all focus:border-primary placeholder:text-ash-700 resize-none custom-scrollbar" />
+                    className="w-full bg-black/60 border-2 border-seam text-white px-4 py-3 text-[11px] font-sans outline-none rounded-sm transition focus:border-primary placeholder:text-ash-700 resize-none custom-scrollbar" />
                 </div>
               </div>
               <div className="flex justify-end">
-                <button onClick={() => handleSaveAccountDetails(editingAccount.uid)} className="bg-primary hover:bg-primary-container text-black px-8 py-3 rounded-sm font-black text-[10px] tracking-widest uppercase transition-all active:scale-95 glow-orange shadow-lg">{t('accounts.edit.save')}</button>
+                <button onClick={() => handleSaveAccountDetails(editingAccount.uid)} className="bg-primary hover:bg-primary-container text-black px-8 py-3 rounded-sm font-black text-[10px] tracking-widest uppercase transition active:scale-[0.97] glow-orange shadow-lg">{t('accounts.edit.save')}</button>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-10 pt-8 border-t border-white/5">
@@ -753,7 +753,7 @@ export default function UserRegistry({
                  <div className="space-y-4">
                     <label className="block text-[9px] font-black text-ash-500 uppercase tracking-[0.3em] mb-4">{t('accounts.edit.authorityLevel')}</label>
                     <select value={editingAccount.role} onChange={(e) => handleUpdateAccountFlag(editingAccount.uid, 'role', e.target.value as any)}
-                      className="w-full bg-black/60 border-2 border-seam text-primary text-[11px] font-black px-4 py-4 outline-none transition-all uppercase rounded-sm cursor-pointer shadow-inner focus:border-primary">
+                      className="w-full bg-black/60 border-2 border-seam text-primary text-[11px] font-black px-4 py-4 outline-none transition uppercase rounded-sm cursor-pointer shadow-inner focus:border-primary">
                       <option value="player">PLAYER (RECRUTA)</option>
                       <option value="admin">ADMIN (COMANDO)</option>
                     </select>
@@ -764,7 +764,7 @@ export default function UserRegistry({
               <div className="pt-8 border-t border-white/5">
                 <label className="block text-[9px] font-black text-ash-500 uppercase tracking-[0.3em] mb-4">{t('accounts.edit.accessControl')}</label>
                 <button onClick={() => handleToggleSuspend(editingAccount.uid, !!editingAccount.suspended)}
-                  className={`w-full flex items-center justify-between px-6 py-5 border-2 transition-all rounded-sm shadow-inner ${editingAccount.suspended ? 'bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20' : 'bg-seam border-transparent text-ash-400 hover:text-white hover:border-white/10'}`}>
+                  className={`w-full flex items-center justify-between px-6 py-5 border-2 transition rounded-sm shadow-inner ${editingAccount.suspended ? 'bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20' : 'bg-seam border-transparent text-ash-400 hover:text-white hover:border-white/10'}`}>
                   <span className="text-[10px] font-black uppercase tracking-widest">{editingAccount.suspended ? '⛔ CONTA SUSPENSA — CLIQUE PARA REATIVAR' : 'SUSPENDER CONTA'}</span>
                   <span className={`material-symbols-outlined text-2xl ${editingAccount.suspended ? 'text-red-400' : 'text-ash-600'}`}>{editingAccount.suspended ? 'lock' : 'lock_open'}</span>
                 </button>
@@ -774,9 +774,9 @@ export default function UserRegistry({
                 <label className="block text-[9px] font-black text-ash-500 uppercase tracking-[0.3em] mb-4">{t('accounts.edit.resetCreds')}</label>
                 <div className="flex gap-4">
                   <input type="password" value={resetPasswordValue} onChange={(e) => setResetPasswordValue(e.target.value)} placeholder="NOVA SENHA SIGILOSA..."
-                    className="flex-1 bg-black/60 border-2 border-seam text-white px-4 py-4 text-[11px] font-mono outline-none uppercase rounded-sm transition-all focus:border-primary placeholder:text-ash-700" />
+                    className="flex-1 bg-black/60 border-2 border-seam text-white px-4 py-4 text-[11px] font-mono outline-none uppercase rounded-sm transition focus:border-primary placeholder:text-ash-700" />
                   <button onClick={() => handleResetPassword(editingAccount.uid)} disabled={resetPasswordLoading || !resetPasswordValue}
-                    className="bg-seam text-primary hover:bg-primary hover:text-black disabled:opacity-20 disabled:hover:bg-seam disabled:hover:text-primary px-8 py-4 text-[11px] font-black uppercase tracking-widest transition-all rounded-sm active:scale-95 shadow-lg border-2 border-primary/20 hover:border-primary">{t('accounts.edit.reset')}</button>
+                    className="bg-seam text-primary hover:bg-primary hover:text-black disabled:opacity-20 disabled:hover:bg-seam disabled:hover:text-primary px-8 py-4 text-[11px] font-black uppercase tracking-widest transition rounded-sm active:scale-[0.97] shadow-lg border-2 border-primary/20 hover:border-primary">{t('accounts.edit.reset')}</button>
                 </div>
               </div>
             </div>
@@ -787,7 +787,7 @@ export default function UserRegistry({
       </OverlayPortal>
 
       {/* Create User Modal */}
-      <OverlayPortal open={showCreateUser} onClose={() => setShowCreateUser(false)}>
+      <OverlayPortal open={showCreateUser} onClose={() => setShowCreateUser(false)} withExitAnimation>
         <AnimatePresence>
           {showCreateUser && (
         <motion.div
@@ -813,18 +813,18 @@ export default function UserRegistry({
             <form onSubmit={handleCreateUser} className="space-y-8">
               <div className="group">
                 <label className="block text-[9px] font-display font-bold text-industrial-silver/40 uppercase tracking-widest mb-2 group-focus-within:text-phosphor-500 transition-colors">Identificador Único (ID)</label>
-                <input type="text" value={newUserCodinome} onChange={(e) => setNewUserCodinome(e.target.value)} placeholder="ex: agt_silva" className="w-full bg-surface-container-lowest border-none text-white px-5 py-4 text-[11px] font-mono outline-none uppercase rounded-sm shadow-inner transition-all" required />
-                <div className="h-0.5 w-0 bg-phosphor-500 transition-all duration-300 group-focus-within:w-full" />
+                <input type="text" value={newUserCodinome} onChange={(e) => setNewUserCodinome(e.target.value)} placeholder="ex: agt_silva" className="w-full bg-surface-container-lowest border-none text-white px-5 py-4 text-[11px] font-mono outline-none uppercase rounded-sm shadow-inner transition-[width,color,background-color,border-color,opacity,transform,box-shadow]" required />
+                <div className="h-0.5 w-0 bg-phosphor-500 transition-[width,color,background-color,border-color,opacity,transform,box-shadow] duration-300 group-focus-within:w-full" />
               </div>
               <div className="group">
                 <label className="block text-[9px] font-display font-bold text-industrial-silver/40 uppercase tracking-widest mb-2 group-focus-within:text-phosphor-500 transition-colors">{t('accounts.createPassword')}</label>
-                <input type="password" value={newUserPassword} onChange={(e) => setNewUserPassword(e.target.value)} placeholder="••••••" className="w-full bg-surface-container-lowest border-none text-white px-5 py-4 text-[11px] font-mono outline-none uppercase rounded-sm shadow-inner transition-all" required minLength={6} />
-                <div className="h-0.5 w-0 bg-phosphor-500 transition-all duration-300 group-focus-within:w-full" />
+                <input type="password" value={newUserPassword} onChange={(e) => setNewUserPassword(e.target.value)} placeholder="••••••" className="w-full bg-surface-container-lowest border-none text-white px-5 py-4 text-[11px] font-mono outline-none uppercase rounded-sm shadow-inner transition-[width,color,background-color,border-color,opacity,transform,box-shadow]" required minLength={6} />
+                <div className="h-0.5 w-0 bg-phosphor-500 transition-[width,color,background-color,border-color,opacity,transform,box-shadow] duration-300 group-focus-within:w-full" />
               </div>
 
               <div className="pt-10 flex justify-end gap-6 items-center">
                 <button type="button" onClick={() => setShowCreateUser(false)} className="text-[10px] font-display font-bold text-industrial-silver/30 hover:text-white uppercase tracking-widest transition-colors">{t('accounts.abort')}</button>
-                <button type="submit" disabled={createUserLoading} className="bg-phosphor-600 text-black px-12 py-4 rounded-sm font-display font-bold text-[11px] tracking-widest uppercase hover:bg-phosphor-500 transition-all active:scale-95 shadow-lg flex items-center gap-3">
+                <button type="submit" disabled={createUserLoading} className="bg-phosphor-600 text-black px-12 py-4 rounded-sm font-display font-bold text-[11px] tracking-widest uppercase hover:bg-phosphor-500 transition active:scale-[0.97] shadow-lg flex items-center gap-3">
                   {createUserLoading ? <RetroSpinner /> : 'REGISTRAR'}
                 </button>
               </div>
@@ -842,7 +842,7 @@ function ToggleButton({ label, active, onClick }: { label: string; active: boole
   return (
     <button 
       onClick={onClick}
-      className={`w-full flex items-center justify-between px-4 py-4 border transition-all rounded-sm shadow-inner ${
+      className={`w-full flex items-center justify-between px-4 py-4 border transition rounded-sm shadow-inner ${
         active ? 'bg-primary/5 border-primary/40 text-primary shadow-[0_0_15px_rgba(255,140,0,0.05)]' : 'bg-surface-container-lowest border-white/5 text-industrial-silver/20 hover:border-white/10'
       }`}
     >
@@ -858,7 +858,7 @@ function SortHeader({ label, field, current, dir, onSort }: { label: string; fie
     <th className="p-6 cursor-pointer select-none group" onClick={() => onSort(field)}>
       <div className="flex items-center gap-2">
         <span className={isActive ? 'text-primary' : ''}>{label}</span>
-        <span className={`material-symbols-outlined text-xs transition-all ${isActive ? 'text-primary opacity-100' : 'opacity-0 group-hover:opacity-30'}`}>
+        <span className={`material-symbols-outlined text-xs transition ${isActive ? 'text-primary opacity-100' : 'opacity-0 group-hover:opacity-30'}`}>
           {isActive && dir === 'desc' ? 'arrow_downward' : 'arrow_upward'}
         </span>
       </div>

@@ -112,7 +112,7 @@ export default function IntelQrModal({ item, onClose, onFeedback }: IntelQrModal
               <button
                 type="button"
                 onClick={handleCopyQrCode}
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-3 text-[10px] font-display font-bold border border-primary/20 text-industrial-silver/60 hover:text-primary hover:bg-primary/5 transition-all rounded-sm uppercase tracking-widest"
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-3 text-[10px] font-display font-bold border border-primary/20 text-industrial-silver/60 hover:text-primary hover:bg-primary/5 transition rounded-sm uppercase tracking-widest"
               >
                 <span className="material-symbols-outlined text-base">content_copy</span>
                 Copiar
@@ -120,7 +120,7 @@ export default function IntelQrModal({ item, onClose, onFeedback }: IntelQrModal
               <button
                 type="button"
                 onClick={handleDownloadQrCode}
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-3 text-[10px] font-display font-bold border border-primary/20 text-industrial-silver/60 hover:text-primary hover:bg-primary/5 transition-all rounded-sm uppercase tracking-widest"
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-3 text-[10px] font-display font-bold border border-primary/20 text-industrial-silver/60 hover:text-primary hover:bg-primary/5 transition rounded-sm uppercase tracking-widest"
               >
                 <span className="material-symbols-outlined text-base">download</span>
                 Salvar
@@ -129,7 +129,7 @@ export default function IntelQrModal({ item, onClose, onFeedback }: IntelQrModal
             <button
               type="button"
               onClick={onClose}
-              className="px-10 py-4 text-[11px] font-display font-bold text-industrial-silver/40 hover:text-white transition-all w-full border-t border-primary/5 uppercase tracking-[0.3em]"
+              className="px-10 py-4 text-[11px] font-display font-bold text-industrial-silver/40 hover:text-white transition w-full border-t border-primary/5 uppercase tracking-[0.3em]"
             >
               Fechar Terminal
             </button>

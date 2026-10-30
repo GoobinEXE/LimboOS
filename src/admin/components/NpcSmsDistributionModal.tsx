@@ -223,7 +223,7 @@ export default function NpcSmsDistributionModal({
             <button
               onClick={onClose}
               disabled={loading}
-              className="p-2 text-ash-600 hover:text-white transition-all material-symbols-outlined rounded-sm"
+              className="p-2 text-ash-600 hover:text-white transition material-symbols-outlined rounded-sm"
             >
               close
             </button>
@@ -232,7 +232,7 @@ export default function NpcSmsDistributionModal({
           <div className="flex flex-wrap border-b-2 border-seam bg-black/20 relative z-10 shrink-0">
             <button
               onClick={() => setSelectedNpc('all')}
-              className={`flex-1 min-w-[80px] py-4 text-[9px] font-black uppercase tracking-widest transition-all ${
+              className={`flex-1 min-w-[80px] py-4 text-[9px] font-black uppercase tracking-widest transition ${
                 selectedNpc === 'all'
                   ? 'text-primary bg-primary/10 border-b-2 border-primary'
                   : 'text-ash-600 hover:text-ash-400'
@@ -244,7 +244,7 @@ export default function NpcSmsDistributionModal({
               <button
                 key={npc.id}
                 onClick={() => setSelectedNpc(npc.id)}
-                className={`flex-1 min-w-[80px] py-4 text-[9px] font-black uppercase tracking-widest transition-all ${
+                className={`flex-1 min-w-[80px] py-4 text-[9px] font-black uppercase tracking-widest transition ${
                   selectedNpc === npc.id
                     ? 'text-primary bg-primary/10 border-b-2 border-primary'
                     : 'text-ash-600 hover:text-ash-400'
@@ -332,7 +332,7 @@ export default function NpcSmsDistributionModal({
                     <button
                       onClick={generateShuffleAssignments}
                       disabled={loading}
-                      className="flex items-center gap-1.5 text-primary text-[9px] font-black uppercase tracking-widest border border-primary/20 bg-primary/5 hover:bg-primary/15 px-3 py-1.5 rounded-sm active:scale-95 transition-all"
+                      className="flex items-center gap-1.5 text-primary text-[9px] font-black uppercase tracking-widest border border-primary/20 bg-primary/5 hover:bg-primary/15 px-3 py-1.5 rounded-sm active:scale-[0.97] transition"
                     >
                       <span className="material-symbols-outlined text-[12px]">shuffle</span>
                       {t('npcSms.reshuffle')}
@@ -344,7 +344,7 @@ export default function NpcSmsDistributionModal({
                   {assignments.map((asg, idx) => (
                     <div
                       key={`${asg.npcId}_${asg.characterId}_${idx}`}
-                      className="bg-[#181818] border border-[#2d2d2d] p-4 rounded-sm flex items-center justify-between group hover:border-[#444] transition-all"
+                      className="bg-[#181818] border border-[#2d2d2d] p-4 rounded-sm flex items-center justify-between group hover:border-[#444] transition"
                     >
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
@@ -392,7 +392,7 @@ export default function NpcSmsDistributionModal({
               <button
                 onClick={handleDistribute}
                 disabled={assignments.length === 0 || loading}
-                className="flex-2 sm:flex-none bg-primary text-black px-10 py-4 rounded-sm font-black text-[11px] uppercase tracking-widest hover:bg-primary-container transition-all active:scale-95 disabled:opacity-20 glow-orange shadow-lg"
+                className="flex-2 sm:flex-none bg-primary text-black px-10 py-4 rounded-sm font-black text-[11px] uppercase tracking-widest hover:bg-primary-container transition active:scale-[0.97] disabled:opacity-20 glow-orange shadow-lg"
               >
                 {loading ? 'ENVIANDO...' : 'DISTRIBUIR SMS'}
               </button>

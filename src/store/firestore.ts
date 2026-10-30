@@ -17,6 +17,7 @@ import {
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { storage, db } from '../lib/firebase';
 import { callFunction } from '../lib/functions';
+import { isValidSpotifyPlaylistInput } from '../lib/spotify';
 import { 
   PlayerData, 
   PlayerStats, 
@@ -219,21 +220,8 @@ export async function firestoreUpdateStats(uid: string, characterId: string, sta
 
 export async function firestoreUpdateSpotifyPlaylist(uid: string, characterId: string, url: string): Promise<void> {
   const trimmed = url.trim();
-  if (trimmed) {
-    try {
-      if (trimmed.startsWith('spotify:')) {
-        if (!/^spotify:(playlist|album|track|episode|show):[a-zA-Z0-9]+$/.test(trimmed)) {
-          throw new Error('URL Spotify inválida');
-        }
-      } else {
-        const parsed = new URL(trimmed);
-        if (parsed.protocol !== 'https:' || parsed.hostname !== 'open.spotify.com') {
-          throw new Error('URL Spotify inválida');
-        }
-      }
-    } catch {
-      throw new Error('URL Spotify inválida');
-    }
+  if (!isValidSpotifyPlaylistInput(trimmed)) {
+    throw new Error('URL Spotify inválida');
   }
   await setDoc(doc(db, 'users', uid, 'characters', characterId), { spotifyPlaylistUrl: trimmed }, { merge: true });
 }

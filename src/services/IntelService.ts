@@ -15,6 +15,7 @@ import {
 import { db } from '../lib/firebase';
 import { callFunction } from '../lib/functions';
 import { mediaService } from './MediaService';
+import { normalizeQrPayload } from '../lib/qrCode';
 import {
   fetchAudioTapeById,
   fetchAudioTapesByIds,
@@ -302,10 +303,12 @@ class IntelService {
    * 2. Busca no registro local
    */
   public async resolve(code: string): Promise<IntelItem | null> {
+    const normalized = normalizeQrPayload(code);
+
     // Registry local primeiro (funciona offline / sem Functions deployadas)
-    const localDirect = intelRegistry.getByCode(code);
+    const localDirect = intelRegistry.getByCode(normalized);
     if (localDirect) {
-      this.lastResolvedSourceCode = code;
+      this.lastResolvedSourceCode = normalized;
       this.lastResolvedIntelId = localDirect.id;
       return localDirect;
     }
@@ -319,29 +322,29 @@ class IntelService {
       result = await callFunction<{ code: string }, {
         redirectedId: string | null;
         asset: Record<string, unknown> | null;
-      }>('resolveIntelCode', { code });
+      }>('resolveIntelCode', { code: normalized });
     } catch (err) {
       console.warn('[IntelService] resolveIntelCode falhou, tentando registry local:', err);
-      const localFallback = intelRegistry.getByCode(code);
+      const localFallback = intelRegistry.getByCode(normalized);
       if (localFallback) {
-        this.lastResolvedSourceCode = code;
+        this.lastResolvedSourceCode = normalized;
         this.lastResolvedIntelId = localFallback.id;
         return localFallback;
       }
       throw err;
     }
 
-    const finalCode = result.redirectedId || code;
+    const finalCode = result.redirectedId || normalized;
 
-    const local = intelRegistry.getByCode(finalCode) || intelRegistry.getByCode(code);
+    const local = intelRegistry.getByCode(finalCode) || intelRegistry.getByCode(normalized);
     if (local) {
-      this.lastResolvedSourceCode = code;
+      this.lastResolvedSourceCode = normalized;
       this.lastResolvedIntelId = local.id;
       return local;
     }
 
     if (result.asset) {
-      this.lastResolvedSourceCode = code;
+      this.lastResolvedSourceCode = normalized;
       const item = this.registerMediaAssetAsIntel({
         id: String(result.asset.id || finalCode),
         ...result.asset,

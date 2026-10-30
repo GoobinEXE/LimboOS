@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { MediaFolder } from '../../../types/media';
 
 export type FolderFilter = 'all' | 'unfiled' | string;
@@ -30,6 +31,7 @@ export default function MediaFolderSidebar({
   onRename,
   onDelete,
 }: MediaFolderSidebarProps) {
+  const { t } = useTranslation('admin');
   const [creating, setCreating] = useState(false);
   const [newName, setNewName] = useState('');
   const [renamingId, setRenamingId] = useState<string | null>(null);
@@ -70,7 +72,7 @@ export default function MediaFolderSidebar({
     <aside className="w-full md:w-56 shrink-0 border border-primary/10 bg-black/20 flex flex-col max-h-[70vh] md:max-h-none">
       <div className="px-3 py-2.5 border-b border-primary/10 flex items-center justify-between gap-2">
         <p className="text-[9px] font-display font-bold text-industrial-silver/40 uppercase tracking-[0.25em]">
-          Pastas
+          {t('media.foldersTitle')}
         </p>
         {!selectionMode && (
           <button
@@ -87,7 +89,7 @@ export default function MediaFolderSidebar({
       <div className="flex-1 overflow-y-auto custom-scrollbar py-1">
         <FolderRow
           icon="grid_view"
-          label="Todos"
+          label={t('hardware.filter.all')}
           count={totalCount}
           active={selected === 'all'}
           onClick={() => onSelect('all')}
@@ -102,7 +104,7 @@ export default function MediaFolderSidebar({
 
         {campaignFolders.length > 0 && (
           <p className="px-3 pt-3 pb-1 text-[8px] font-display font-bold text-industrial-silver/25 uppercase tracking-[0.3em]">
-            Campanhas
+            {t('reports.group.campaigns')}
           </p>
         )}
         {campaignFolders.map((folder) => (
@@ -132,7 +134,7 @@ export default function MediaFolderSidebar({
                 if (e.key === 'Enter') void submitCreate();
                 if (e.key === 'Escape') setCreating(false);
               }}
-              placeholder="NOME_PASTA"
+              placeholder="NOME PASTA"
               className="flex-1 min-w-0 bg-surface-container-lowest border border-primary/20 text-[9px] font-display font-bold uppercase tracking-widest text-white px-2 py-1.5 outline-none focus:border-primary/50"
             />
             <button
@@ -193,7 +195,7 @@ export default function MediaFolderSidebar({
                       </button>
                       <button
                         type="button"
-                        title="Apagar"
+                        title={t('missions.deleteAction')}
                         onClick={(e) => {
                           e.stopPropagation();
                           void onDelete(folder);

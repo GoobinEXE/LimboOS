@@ -1,0 +1,755 @@
+{
+  "loading": {
+    "protocols": "Inicializando Protocolos...",
+    "terminal": "Acessando Terminal Administrativo RM-84",
+    "data": "Acessando Dados..."
+  },
+  "accessDenied": {
+    "eyebrow": "Terminal RM-84 // Admin",
+    "title": "Acesso Negado",
+    "needAuth": "É necessário autenticar com uma conta autorizada para acessar o painel administrativo.",
+    "noPrivilege": "Esta conta não possui privilégios de administrador. Contate o operador do sistema se isso for um erro.",
+    "endSession": "Encerrar Sessão",
+    "goPlayer": "Ir para o Player",
+    "login": "Fazer Login"
+  },
+  "sidebar": {
+    "brand": "SYS ADMIN",
+    "brandCollapsed": "ADM",
+    "group": {
+      "session": "Sessão",
+      "arsenal": "Arsenal",
+      "core": "Núcleo"
+    },
+    "live": "Ao Vivo",
+    "mesa": "Mesa",
+    "missions": "Missões",
+    "media": "Conteúdo",
+    "systems": "Sistema",
+    "collapse": "Compactar",
+    "collapseTitle": "Compactar Menu",
+    "expandTitle": "Expandir Menu",
+    "statusLabel": "Status do Sistema",
+    "statusOnline": "Grid Online",
+    "statusOnlineTitle": "Grid Online"
+  },
+  "header": {
+    "statusConnected": "Status: Conectado",
+    "search": "Buscar...",
+    "searchTitle": "Busca Global (Cmd+K)",
+    "sessionPrefix": "Sessão:",
+    "sessionGoLive": "Ir para Ao Vivo — sessão ativa",
+    "noSession": "Nenhuma sessão",
+    "defaultContext": "Terminal de Comando",
+    "operator": "Operador Autenticado",
+    "logout": "Logout",
+    "logoutTitle": "Encerrar Sessão",
+    "squadFallback": "Esquadrão"
+  },
+  "footer": {
+    "realtimeSync": "Sincronização de Dados em Tempo Real",
+    "systemId": "RM ADMIN SYSTEM V5.0 // ENCRYPTED NODE"
+  },
+  "context": {
+    "live": "Ao Vivo — sessão e entrega",
+    "mesa": "Mesa — esquadrões e contas",
+    "missions": "Missões — comando de campanha",
+    "media": "Conteúdo — biblioteca e intel",
+    "systems": "Sistema — relatórios e acesso"
+  },
+  "entity": {
+    "unknown": "Desconhecido",
+    "missionUnknown": "Missão desconhecida",
+    "intelUnknown": "Intel desconhecido",
+    "achievementUnknown": "Conquista desconhecida",
+    "agentUnknown": "Agente desconhecido",
+    "masterUnknown": "Mestre desconhecido",
+    "accountNoName": "Conta sem nome",
+    "agentNoCodename": "Agente sem codinome",
+    "noCodename": "Sem codinome"
+  },
+  "confirm": {
+    "abort": "ABORTAR",
+    "confirm": "CONFIRMAR",
+    "understood": "ENTENDIDO"
+  },
+  "spotlight": {
+    "placeholder": "Buscar agentes, contas, seções...",
+    "empty": "Nenhum resultado encontrado",
+    "category": {
+      "nav": "NAVEGAÇÃO",
+      "accounts": "CONTAS",
+      "agents": "AGENTES",
+      "squads": "ESQUADRÕES",
+      "missions": "MISSÕES"
+    },
+    "hint": {
+      "navigate": "↑↓ Navegar",
+      "select": "↵ Selecionar",
+      "shortcut": "⌘/Ctrl+K Spotlight",
+      "tabs": "⌘/Ctrl+1–6 Abas"
+    },
+    "resultsCount": "{{n}} resultados",
+    "enter": "ENTER ↵",
+    "item": {
+      "missionInventory": "Inventário de Missão",
+      "missionInventorySub": "Abrir missões → inventário",
+      "jukebox": "Jukebox"
+    },
+    "ops": {
+      "accessHardware": "Acesso Hardware"
+    },
+    "sub": {
+      "mesa": "Mesa",
+      "systems": "Sistema",
+      "live": "Ao Vivo",
+      "squad": "Esquadrão",
+      "mission": "Missão"
+    }
+  },
+  "mesa": {
+    "title": "Mesa",
+    "sub": {
+      "squads": "Esquadrões",
+      "squadsBlurb": "Mesas de jogo, membros e ações em lote",
+      "accounts": "Contas",
+      "accountsBlurb": "Contas mestras, personagens e dossiês"
+    }
+  },
+  "systems": {
+    "title": "Sistema",
+    "sub": {
+      "reports": "Relatórios",
+      "reportsBlurb": "Panorama, BI e telemetria completa",
+      "access": "Acesso",
+      "accessBlurb": "Autorização persistente de hardware DOS/Mac",
+      "qr": "QR & Links",
+      "qrBlurb": "Mapear QR físico → intel de destino",
+      "achievements": "Conquistas",
+      "achievementsBlurb": "Catálogo global de achievements",
+      "sms": "SMS / NPCs",
+      "smsBlurb": "Contatos e diálogos de torpedos"
+    }
+  },
+  "live": {
+    "session": {
+      "title": "Sessão Ativa",
+      "subtitle": "Esquadrão + missão da noite (só neste browser)",
+      "openMission": "Abrir missão",
+      "openSquad": "Abrir esquadrão",
+      "clear": "Limpar",
+      "squad": "Esquadrão",
+      "mission": "Missão",
+      "noneSquad": "Nenhum",
+      "noneMission": "Nenhuma",
+      "onlySession": "Só sessão na presença / entrega"
+    },
+    "stat": {
+      "online": "Online",
+      "errors24h": "Erros 24h",
+      "limbo": "Limbo",
+      "limboTaken": "TOMADO",
+      "limboFree": "LIVRE",
+      "selected": "Selecionados"
+    },
+    "presence": {
+      "title": "Mesa ao Vivo",
+      "subtitleOnline": "{{n}} online // selecione e entregue",
+      "subtitleSession": "{{n}} da sessão online // {{group}}",
+      "empty": "Nenhum agente com login recente",
+      "emptySession": "Nenhum membro da sessão online",
+      "seeAllOnline": "Ver todos online",
+      "openAccess": "Abrir Sistema → Acesso (grants offline)",
+      "selectAll": "Selecionar todos ({{n}})",
+      "clearSelection": "Limpar seleção ({{n}})",
+      "marked": "{{n}} marcados",
+      "noMark": "sem marca = todos*"
+    },
+    "deliver": {
+      "label": "Entregar",
+      "intel": "Intel",
+      "achievement": "Conquista",
+      "sms": "SMS",
+      "video": "Vídeo",
+      "dosAll": "DOS → todos",
+      "macAll": "Mac → todos"
+    },
+    "confirm": {
+      "deliverSession": "Entregar à sessão online",
+      "deliverAll": "Entregar a todos online",
+      "deliverBody": "Nenhum agente marcado. Entregar para {{scope}}?",
+      "deliverAction": "Entregar",
+      "scopeSession": "todos os {{n}} da sessão online",
+      "scopeAll": "todos os {{n}} online"
+    },
+    "toast": {
+      "noOnline": "Nenhum agente online para entregar",
+      "noCharacter": "Alvos sem personagem ativo",
+      "dosOk": "DOS empurrado para {{target}}",
+      "macOk": "Mac empurrado para {{target}}",
+      "dosFail": "Falha ao empurrar DOS",
+      "macFail": "Falha ao empurrar Mac"
+    },
+    "quick": {
+      "systems": "Sistema",
+      "mesa": "Mesa",
+      "media": "Conteúdo"
+    },
+    "controls": "Controles de Sessão"
+  },
+  "deliver": {
+    "kind": {
+      "intel": "Entregar Intel",
+      "achievements": "Outorgar Conquista",
+      "sms": "Distribuir SMS NPC",
+      "video": "Transmitir Vídeo"
+    },
+    "searchAchievement": "BUSCAR CONQUISTA...",
+    "npcAll": "Todos os NPCs",
+    "toast": {
+      "achievementOk": "Conquista outorgada a {{n}} agente(s)",
+      "achievementFail": "Falha ao outorgar conquista",
+      "smsOk": "{{n}} torpedo(s) enviados",
+      "smsFail": "Falha ao distribuir SMS"
+    }
+  },
+  "sessionGlobals": {
+    "limboTitle": "LIMBO_01 global",
+    "militaryLock": "MILITAR LOCK",
+    "gridOpen": "GRID OPEN",
+    "readGlobal": "Leitura global [{{read}}/{{total}}]",
+    "ipHint": "IP DOS → Limbo",
+    "forceUsarmy": "FORÇAR USArmy",
+    "normalize": "NORMALIZAR",
+    "protocols": "Protocolos RPG",
+    "diskRepair": "DiskRepair.exe",
+    "diskRepairDesc": "Desmagnetização remota",
+    "hint": "Controles de sessão. Autorização persistente de hardware fica em Sistema → Acesso."
+  },
+  "missions": {
+    "title": "Centro de Comando",
+    "subtitle": "Gestão de Instâncias e Missões Ativas",
+    "loading": "Sincronizando Missões...",
+    "persistentItems": "Itens Persistentes",
+    "new": "Nova Missão",
+    "manage": "Gerenciar",
+    "deleteTitle": "Apagar missão",
+    "deleteConfirmTitle": "Apagar Missão",
+    "deleteConfirmBody": "Tem certeza que deseja apagar \"{{name}}\"? Referências em agentes e esquadrões (campaignId / unlockedCampaigns) não serão limpas automaticamente.",
+    "deleteAction": "Apagar",
+    "deleteFail": "Falha ao remover campanha.",
+    "badge": {
+      "authorized": "{{n}} esq. autorizados",
+      "inField": "{{n}} em campo"
+    },
+    "playerType": {
+      "deck": "DECK",
+      "handset": "HANDSET LCD"
+    },
+    "status": {
+      "active": "Ativa",
+      "blocked": "Bloqueada",
+      "archived": "Arquivada"
+    },
+    "persistent": {
+      "title": "Retenção de Recursos",
+      "subtitle": "Itens disponíveis em todas as missões",
+      "search": "LOCALIZAR ITEM NO ACERVO..."
+    },
+    "tab": {
+      "dados": "Dados",
+      "vinculos": "Vínculos",
+      "inventario": "Inventário",
+      "transmissao": "Transmissão"
+    },
+    "modal": {
+      "install": "INSTALAÇÃO-DE-MISSÃO",
+      "newTitle": "Nova Missão",
+      "saveFirst": "Salve a missão na aba Dados primeiro"
+    },
+    "toast": {
+      "saved": "Missão salva com sucesso.",
+      "saveFail": "Não foi possível salvar a campanha."
+    },
+    "data": {
+      "save": "Salvar Configurações",
+      "selectCover": "Selecionar Capa da Missão"
+    },
+    "inventory": {
+      "revokeTitle": "Revogar Evidência",
+      "revokeBody": "Remover este item do inventário do personagem para esta campanha?"
+    },
+    "video": {
+      "title": "Transmissão de Vídeo — Missão"
+    }
+  },
+  "media": {
+    "title": "Biblioteca",
+    "subtitle": "{{files}} arquivos // {{folders}} pastas // {{intel}} intel",
+    "search": "BUSCAR ARQUIVO...",
+    "export": "EXPORTAR",
+    "indexing": "Indexando Biblioteca...",
+    "empty": "Nenhum arquivo encontrado",
+    "foldersTitle": "Pastas",
+    "filter": {
+      "all": "Todos",
+      "audio": "Áudio",
+      "images": "Imagens",
+      "videos": "Vídeos"
+    },
+    "uploadFile": "Upload de arquivo",
+    "selectMedia": "Selecionar Mídia",
+    "selectVideo": "Selecionar Vídeo",
+    "alert": {
+      "upload": "Upload",
+      "noValidFiles": "Nenhum arquivo válido para envio.",
+      "uploadError": "Erro de Upload",
+      "uploadFail": "Falha ao enviar um ou mais arquivos.",
+      "deleteFail": "Falha ao deletar arquivo.",
+      "createFolderFail": "Não foi possível criar a pasta.",
+      "renameFolderFail": "Não foi possível renomear a pasta.",
+      "deleteFolderFail": "Falha ao apagar pasta.",
+      "updateFoldersFail": "Falha ao atualizar pastas do arquivo."
+    },
+    "confirm": {
+      "deleteFolder": "Remover a pasta \"{{name}}\"? Os arquivos não serão apagados — só saem desta pasta."
+    },
+    "toast": {
+      "uploadOk": "✓ {{n}} arquivos enviados. Editando o primeiro — os demais estão no catálogo."
+    }
+  },
+  "intel": {
+    "type": {
+      "audio": "Áudio",
+      "video": "Vídeo",
+      "text": "Texto",
+      "visual": "Visual",
+      "meta": "Meta"
+    },
+    "status": {
+      "all": "Todos",
+      "catalogued": "Catalogados",
+      "orphans": "Órfãos",
+      "textMeta": "Texto/Meta"
+    },
+    "badge": {
+      "catalogued": "Catalogado",
+      "orphan": "Órfão",
+      "local": "Local"
+    },
+    "levelFallback": "NÍVEL {{level}}",
+    "editor": {
+      "properties": "Propriedades Intel",
+      "title": "Título Operacional",
+      "campaign": "Vínculo com Campanha",
+      "generateId": "Gerar ID a partir do título",
+      "summary": "Resumo Executivo (Descrição)",
+      "summaryPlaceholder": "Descrição breve para fins de identificação...",
+      "textPlaceholder": "Insira o conteúdo textual sigiloso...",
+      "npc": "NPC RESPONSÁVEL",
+      "chapter": "CAPÍTULO / SETOR",
+      "duration": "DURAÇÃO (SEG)",
+      "format": "FORMATO FÍSICO"
+    },
+    "qr": {
+      "title": "Gerar QR desta Intel",
+      "copied": "✓ QR Code copiado para a área de transferência!",
+      "copyFail": "Falha ao copiar QR Code. Verifique as permissões."
+    },
+    "export": {
+      "title": "Exportar Registro Mestre"
+    },
+    "catalog": {
+      "preview": "Prévia"
+    },
+    "dist": {
+      "search": "LOCALIZAR NA BIBLIOTECA...",
+      "transmitVideo": "TRANSMITIR VÍDEO",
+      "videoTitle": "Transmissão de Vídeo",
+      "videoSelected": "1 VÍDEO SELECIONADO",
+      "selectVideo": "SELECIONE UM VÍDEO",
+      "error": "ERRO: Falha na operação."
+    }
+  },
+  "accounts": {
+    "title": "Gestão de Identidades",
+    "subtitle": "Contas Mestras e Personagens Vinculados",
+    "includeArchived": "Incluir Arquivados",
+    "search": "BUSCAR CONTA OU PERSONAGEM...",
+    "export": "EXPORTAR",
+    "create": "CRIAR CONTA",
+    "col": {
+      "name": "Nome Mestre",
+      "networkId": "Identificação de Rede",
+      "authority": "Autoridade",
+      "status": "Status",
+      "agents": "Agentes",
+      "created": "Registro",
+      "lastAccess": "Último Acesso",
+      "actions": "Ações da Conta"
+    },
+    "empty": {
+      "search": "Nenhuma conta encontrada para esta busca",
+      "none": "Nenhuma conta registrada"
+    },
+    "pending": "PENDENTE...",
+    "noEmail": "SEM EMAIL VINCULADO",
+    "settingsTitle": "Configurações de Protocolo",
+    "linkedChars": "Personagens Vinculados",
+    "createChar": "CRIAR PERSONAGEM",
+    "noChars": "Nenhum personagem registrado",
+    "dossier": "DOSSIÊ",
+    "newCharTitle": "Novo Personagem",
+    "codename": "Codinome do Agente",
+    "codenamePlaceholder": "EX: FALCÃO",
+    "cancel": "Cancelar",
+    "edit": {
+      "protocol": "MODIFICAÇÃO-DE-PROTOCOLO",
+      "title": "Diretrizes da Conta",
+      "channel": "Canal de Comunicação Autenticado",
+      "masterName": "Nome Mestre",
+      "masterPlaceholder": "EX: JOÃO SILVA",
+      "notes": "Observações do GM",
+      "save": "Salvar Dados",
+      "hardware": "Hardware",
+      "authorityLevel": "Nível de Autoridade",
+      "accessControl": "Controle de Acesso",
+      "resetCreds": "Redefinição de Credenciais de Campo",
+      "reset": "Resetar"
+    },
+    "createMasterTitle": "Nova Conexão Mestra",
+    "createPassword": "Senha Provisória",
+    "abort": "Abortar",
+    "status": {
+      "active": "ATIVO",
+      "inactive": "INATIVO",
+      "dormant": "DORMENTE",
+      "suspended": "SUSPENSA",
+      "unknown": "SEM DADOS"
+    },
+    "toast": {
+      "exportOk": "Exportação {{format}} concluída.",
+      "createOk": "Conta \"{{name}}\" registrada com sucesso.",
+      "passwordOk": "Senha alterada com sucesso.",
+      "suspended": "Conta suspensa.",
+      "reactivated": "Conta reativada.",
+      "statusFail": "Falha ao alterar status da conta.",
+      "updated": "Dados da conta atualizados.",
+      "saveFail": "Falha ao salvar dados.",
+      "charCreated": "Personagem \"{{name}}\" criado com sucesso.",
+      "charCreateFail": "Erro ao criar personagem.",
+      "charsLoadFail": "Falha ao carregar personagens."
+    }
+  },
+  "squads": {
+    "title": "Gerenciamento de Esquadrões RPG",
+    "idLabel": "Identificador do Esquadrão (Mesa)",
+    "idPlaceholder": "EX: NÉVOA DE RAVENLOFT",
+    "sessions": "Registros de Sessão",
+    "noSessions": "Nenhum Registro Temporal",
+    "noSelected": "Nenhum Agente Selecionado",
+    "available": "Agentes Disponíveis",
+    "includeArchived": "Incluir Arquivados",
+    "searchAgent": "BUSCAR AGENTE POR CODINOME...",
+    "searchAdd": "BUSCAR AGENTE PARA ADICIONAR...",
+    "noneAvailable": "Nenhum Agente Disponível",
+    "noneFound": "NENHUM AGENTE ENCONTRADO",
+    "empty": "Nenhum Esquadrão Sincronizado",
+    "add": "Adicionar",
+    "abort": "ABORTAR",
+    "sync": "SINCRONIZAR ALTERAÇÕES",
+    "removeTitle": "Remover do Esquadrão",
+    "manageMissions": "Gerenciar Missões",
+    "smsTitle": "Distribuir Torpedos SMS de NPCs",
+    "bulkIntelTitle": "Transferência de Evidências em Lote",
+    "distTitle": "Distribuir Intel — Esquadrão",
+    "confirm": {
+      "deleteTitle": "Excluir Grupo",
+      "deleteBody": "Tem certeza que deseja excluir este esquadrão PERMANENTEMENTE?",
+      "deleteAction": "Excluir",
+      "removeTitle": "Remover Agente",
+      "removeBody": "Deseja remover {{name}} do esquadrão?",
+      "removeAction": "Remover",
+      "aliveOnlyTitle": "Condição de Distribuição",
+      "aliveOnlyBody": "Distribuir apenas para agentes VIVOS no esquadrão? (Clique em confirmar para Apenas Vivos)",
+      "aliveOnlyAction": "Apenas Vivos"
+    }
+  },
+  "groupMissions": {
+    "authorizedHint": "Autorizado libera a missão na seleção do jogador.",
+    "inFieldHint": "Em campo define a missão ativa do esquadrão.",
+    "allAuthorized": "Todas as missões já autorizadas",
+    "authorizePlaceholder": "Autorizar missão...",
+    "noneAvailable": "Nenhuma missão disponível",
+    "assignPlaceholder": "Designar missão para campo...",
+    "willAuthorize": " (autorizará)",
+    "removeAuth": "Remover autorização",
+    "toast": {
+      "authorized": "Missão autorizada para o esquadrão.",
+      "authRemoved": "Autorização removida.",
+      "authFail": "Falha ao gerenciar autorização.",
+      "assigned": "Esquadrão enviado para a missão (Ativa).",
+      "assignFail": "Falha na atribuição.",
+      "removedField": "Esquadrão removido do campo.",
+      "removeFail": "Falha ao remover designação."
+    }
+  },
+  "dossier": {
+    "archiveTitle": "Arquivar Agente",
+    "unarchiveTitle": "Desarquivar Agente",
+    "archiveBody": "Arquivar removerá o agente da lista principal, mas preservará todo o histórico. Continuar?",
+    "unarchiveBody": "O agente voltará à ativa. Continuar?",
+    "deleteTitle": "Excluir Definitivamente",
+    "deleteBody": "AVISO CRÍTICO: Exclusão permanente destruirá todos os dados do agente \"{{name}}\". Esta ação não pode ser desfeita. Confirmar?",
+    "deleteAction": "Excluir Permanentemente",
+    "transferTitle": "Transferir Agente",
+    "transferBody": "Esta operação moverá todos os dados do personagem para a conta selecionada. Confirmar?",
+    "transferAction": "Transferir",
+    "removeItemTitle": "Remover Item",
+    "removeItemBody": "Remover este item do inventário do agente?",
+    "removeItemAction": "Remover",
+    "revokeMedalTitle": "Revogar Medalha",
+    "revokeMedalBody": "Deseja revogar a medalha {{id}}?",
+    "revokeMedalAction": "Revogar",
+    "spotifyTitle": "Deck Spotify",
+    "spotifyPlaceholder": "https://open.spotify.com/playlist/...",
+    "spotifyHint": "Cole o link da playlist do agente. Aceita links intl-pt e URI spotify:.",
+    "spotifyClear": "Limpar",
+    "spotifyInvalid": "Link Spotify inválido"
+  },
+  "hardware": {
+    "title": "Acesso & Hardware",
+    "subtitle": "Autorização persistente por conta. Push one-shot e Limbo/DiskRepair ficam no Ao Vivo.",
+    "embeddedHint": "Por conta (UID) · Acesso = reabrir sozinho · Empurrar = 1ª abertura · Push durante sessão → Ao Vivo",
+    "authTitle": "Autorização de hardware",
+    "authSubtitle": "Grant / revoke em massa, inclusive offline",
+    "search": "Buscar codinome, nome ou email...",
+    "filter": {
+      "all": "Todos",
+      "online": "Online",
+      "dos": "Acesso DOS",
+      "mac": "Acesso Mac",
+      "none": "Sem acesso"
+    },
+    "revokeDos": "Revogar DOS filtrados",
+    "revokeMac": "Revogar Mac filtrados",
+    "selectFiltered": "Selecionar filtrados ({{n}})",
+    "clearSelection": "Limpar seleção ({{n}})",
+    "count": "{{n}} conta(s)",
+    "empty": "Nenhuma conta neste filtro",
+    "toast": {
+      "revokeDosFail": "Falha ao revogar DOS",
+      "revokeMacFail": "Falha ao revogar Mac"
+    }
+  },
+  "reports": {
+    "panorama": "Panorama Operacional",
+    "logDivider": "Log Central do Nucleo",
+    "group": {
+      "agents": "Agentes",
+      "campaigns": "Campanhas",
+      "health": "Saúde do Sistema",
+      "engagement": "Engajamento"
+    },
+    "metric": {
+      "activeAgents": "Agentes Ativos",
+      "alive": "Vivos",
+      "dead": "Mortos",
+      "missing": "Desaparecidos",
+      "highDanger": "Alto Perigo",
+      "archived": "Arquivados",
+      "activeCampaigns": "Ativas",
+      "blocked": "Bloqueadas",
+      "archivedCampaigns": "Arquivadas",
+      "deck": "Deck",
+      "handset": "Handset",
+      "suspended": "Suspensos",
+      "dormant": "Dormentes",
+      "errors24h": "Erros 24h",
+      "limbo": "Limbo",
+      "achievements": "Conquistas",
+      "screw": "Parafuso",
+      "fidget": "Fidget",
+      "eject": "Eject sem Play"
+    },
+    "hardware": "Hardware",
+    "openAccess": "Abrir Acesso →"
+  },
+  "analytics": {
+    "title": "Análise de Dados e BI",
+    "subtitle": "Monitoramento de Performance da Rede",
+    "storage": "Armazenamento Firebase",
+    "completionRate": "Taxa de Conclusão",
+    "peakHours": "Horários de Pico",
+    "activeUsers": "Usuários Ativos",
+    "audioFiles": "Arquivos Áudio",
+    "mostActive": "Agentes Mais Ativos",
+    "rareAchievements": "Conquistas de Alta Raridade",
+    "engagement": "Métricas de Engajamento",
+    "avgPlays": "Média de Plays",
+    "uniqueContent": "Conteúdos Únicos",
+    "empty": "Sem dados registrados",
+    "noRecords": "Sem registros",
+    "resetDone": "Reset Concluído"
+  },
+  "logs": {
+    "sessionId": "Identificador de Sessão",
+    "agentVector": "Vetor do Agente",
+    "source": "Procedência / Fonte",
+    "telemetry": "Dados Adicionais de Telemetria:",
+    "unidentified": "NÃO IDENTIFICADO",
+    "filters": "Filtros de Rede:",
+    "origin": {
+      "all": "ORIGEM: TUDO",
+      "player": "SINAL: JOGADOR",
+      "admin": "SINAL: OPERADOR"
+    },
+    "type": {
+      "all": "TIPO: TUDO",
+      "navigation": "Navegação",
+      "action": "Evento",
+      "system": "Sistema",
+      "auth": "Acesso",
+      "error": "Anomalia",
+      "admin": "Comando",
+      "trace": "Rastro"
+    },
+    "search": "LOCALIZAR MENSAGEM...",
+    "waiting": "Aguardando Sincronização de Sinal",
+    "density": "Densidade:",
+    "clearTitle": "Limpar Logs",
+    "clearBody": "Isso removerá PERMANENTEMENTE todos os registros do banco de dados. Confirmar?",
+    "clearAction": "Limpar Tudo",
+    "wipeUsers": "Wipe de Usuários",
+    "wipeTitle": "⚠️ WIPE COMPLETO DE USUÁRIOS",
+    "wipeBody": "ATENÇÃO: Esta operação é IRREVERSÍVEL. Todos os dados de jogadores, personagens, intel, achievements, playEvents, logs e grupos serão PERMANENTEMENTE DESTRUÍDOS. Confirmar?",
+    "wipeFinalTitle": "CONFIRMAÇÃO FINAL",
+    "wipeFinalBody": "Tem CERTEZA ABSOLUTA? Não há como reverter esta operação. Todos os dados de todos os jogadores serão perdidos.",
+    "wipeDone": "Wipe Concluído",
+    "syncOk": "Sincronização",
+    "connectionError": "Erro de Conexão",
+    "criticalError": "Erro Crítico",
+    "serverFail": "Falha na comunicação com o servidor."
+  },
+  "redirects": {
+    "inject": "Injetar Novo Mapeamento",
+    "notes": "NOTAS DO OPERADOR",
+    "linkAction": "VINCULAR FREQUÊNCIAS",
+    "help": "Mapear QR físico → intel de destino. O código impresso permanece; o núcleo resolve para o alvo. Para gerar o QR de uma intel, use o catálogo em Conteúdo.",
+    "activeGrid": "Sequência de Mapeamento Ativa",
+    "loading": "CARREGANDO GRID...",
+    "empty": "Grid de Mapeamento Inativo",
+    "origin": "Origem",
+    "destination": "Destino",
+    "integrity": "Integridade de Mapeamento: Ótima"
+  },
+  "achievements": {
+    "title": "Catálogo Global de Conquistas",
+    "filter": "FILTRAR CATÁLOGO...",
+    "empty": "Nenhum Registro Encontrado",
+    "countLabel": "MEDALHAS",
+    "localHint": "sugestões locais — importe para editar",
+    "allCategories": "Todas",
+    "create": "Nova",
+    "edit": "Editar",
+    "delete": "Apagar",
+    "enable": "Ativar",
+    "disable": "Desativar",
+    "import": "Importar sugestões",
+    "importTitle": "Importar sugestões",
+    "importBody": "Cria no Firestore as medalhas padrão que ainda não existem. As já importadas são ignoradas.",
+    "importAction": "Importar",
+    "importOk": "{{imported}} importada(s), {{skipped}} já existiam",
+    "importFail": "Falha ao importar sugestões",
+    "badgeSuggestion": "Sugestão",
+    "badgeDisabled": "Off",
+    "needImportTitle": "Catálogo local",
+    "needImportBody": "Importe as sugestões para o Firestore antes de editar, desativar ou apagar.",
+    "deleteTitle": "Apagar conquista",
+    "deleteBody": "Remover \"{{title}}\" do catálogo? Grants já outorgados nos agentes permanecem.",
+    "deleteAction": "Apagar",
+    "deleteOk": "Conquista removida",
+    "deleteFail": "Falha ao apagar",
+    "saveOk": "Conquista salva",
+    "saveFail": "Falha ao salvar conquista",
+    "validation": "ID e título são obrigatórios",
+    "enabledOk": "Conquista ativada",
+    "disabledOk": "Conquista desativada"
+  },
+  "npcSms": {
+    "title": "Catálogo SMS / NPCs",
+    "filter": "FILTRAR...",
+    "empty": "Nenhum registro",
+    "localHint": "sugestões locais — importe para editar",
+    "tabContacts": "Contatos",
+    "tabDialogues": "Diálogos",
+    "countContacts": "NPCs",
+    "countDialogues": "DIÁLOGOS",
+    "allNpcs": "Todos os NPCs",
+    "import": "Importar sugestões",
+    "importTitle": "Importar sugestões",
+    "importBody": "Cria no Firestore os NPCs e diálogos padrão que ainda não existem.",
+    "importAction": "Importar",
+    "importOk": "{{contacts}} NPC(s) + {{dialogues}} diálogo(s); {{skipped}} já existiam",
+    "importFail": "Falha ao importar",
+    "createContact": "Novo NPC",
+    "createDialogue": "Novo diálogo",
+    "editContact": "Editar NPC",
+    "editDialogue": "Editar diálogo",
+    "edit": "Editar",
+    "delete": "Apagar",
+    "enable": "Ativar",
+    "disable": "Desativar",
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "name": "Nome",
+    "number": "Número",
+    "avatar": "Foto",
+    "active": "Ativo",
+    "dialogueTitle": "Título",
+    "turns": "Turnos",
+    "addTurn": "Turno",
+    "selectNpc": "Selecionar NPC",
+    "badgeSuggestion": "Sugestão",
+    "needImportTitle": "Catálogo local",
+    "needImportBody": "Importe as sugestões para o Firestore antes de editar, desativar ou apagar.",
+    "deleteContactTitle": "Apagar NPC",
+    "deleteContactBody": "Remover \"{{name}}\"? Diálogos vinculados não são apagados automaticamente.",
+    "deleteDialogueTitle": "Apagar diálogo",
+    "deleteDialogueBody": "Remover \"{{title}}\" do catálogo?",
+    "deleteAction": "Apagar",
+    "deleteOk": "Removido",
+    "deleteFail": "Falha ao apagar",
+    "saveOk": "Salvo",
+    "saveFail": "Falha ao salvar",
+    "validationContact": "ID e nome são obrigatórios",
+    "validationDialogue": "ID, NPC e título são obrigatórios",
+    "validationTurns": "Adicione ao menos um turno com texto",
+    "enabledOk": "Ativado",
+    "disabledOk": "Desativado",
+    "selectDialogues": "Selecionar diálogos",
+    "shuffleMode": "Embaralhar 1 por agente",
+    "pickMode": "Seleção manual",
+    "reshuffle": "Embaralhar novamente",
+    "preview": "Preview de distribuição",
+    "noDialogues": "Nenhum diálogo disponível para este NPC"
+  },
+  "jukebox": {
+    "title": "Interface de Broadcast Jukebox",
+    "selectAudio": "Selecionar Áudio para Jukebox",
+    "waiting": "BUFFER AGUARDANDO SINAL",
+    "loopTitle": "Loop de Frequência",
+    "inject": "Injetar Novo Sinal na Playlist",
+    "titlePlaceholder": "IDENTIFICADOR DA FAIXA (OPCIONAL)",
+    "urlPlaceholder": "URL DO YOUTUBE...",
+    "playlist": "Sequência de Frequências Ativas",
+    "empty": "LISTA DE REPRODUÇÃO VAZIA",
+    "redundancy": "REDUNDÂNCIA ATIVA",
+    "invalidUrl": "URL Inválida",
+    "invalidUrlBody": "Insira uma URL válida do YouTube.",
+    "addFail": "Falha ao adicionar áudio à jukebox.",
+    "removeTitle": "Atenção",
+    "removeBody": "Remover \"{{title}}\" da jukebox?",
+    "removeAction": "Remover"
+  }
+}

@@ -1,0 +1,163 @@
+{
+  "language": {
+    "label": "Language"
+  },
+  "loading": "TUNING...",
+  "loadingSub": "Searching for signal on 87.5 MHz",
+  "loadingSystem": "SYSTEM LOADING...",
+  "loadingSystemSub": "Initializing access protocols",
+  "cancel": "Cancel",
+  "close": "Close",
+  "save": "Save",
+  "edit": "Edit",
+  "back": "Back",
+  "confirm": "Confirm",
+  "retry": "Try Again",
+  "error": "Error",
+  "unknown": "Unknown",
+  "none": "—",
+  "you": "YOU",
+  "now": "Now",
+  "active": "Active",
+  "classified": "CLASSIFIED",
+  "classifiedAlt": "Classified",
+  "nivel": "Level",
+  "statusLabel": "Status",
+  "id": "ID",
+  "profileAlt": "Profile",
+  "closeAria": "Close",
+  "brand": {
+    "limbo": "Limbo",
+    "os": "OS",
+    "rmLink": "RM-LINK",
+    "smileIndustries": "Smile Industries // Security Division",
+    "smileCopyright": "Smile Industries © 2026"
+  },
+  "actions": {
+    "cancelShort": "[CANC]",
+    "saveShort": "[SAVE]",
+    "backBracket": "[BACK]",
+    "exitBracket": "[EXIT]",
+    "closeBracket": "[ CLOSE ]",
+    "disconnectBracket": "[ DISCONNECT  ]",
+    "x": "[X]",
+    "env": "[SEND]"
+  },
+  "status": {
+    "ativo": "ACTIVE",
+    "eliminado": "ELIMINATED",
+    "desaparecido": "MISSING"
+  },
+  "danger": {
+    "none": "—",
+    "baixo": "LOW",
+    "moderado": "MODERATE",
+    "elevado": "ELEVATED",
+    "alto": "HIGH",
+    "critico": "CRITICAL",
+    "label": "Threat Level",
+    "labelUpper": "THREAT LEVEL"
+  },
+  "access": {
+    "restrito": "RESTRICTED",
+    "confidencial": "CONFIDENTIAL",
+    "sigiloso": "SECRET",
+    "topSecret": "TOP SECRET",
+    "desconhecido": "UNKNOWN"
+  },
+  "intelType": {
+    "audio": "📼 Audio",
+    "text": "💾 Texts",
+    "visual": "📷 Images",
+    "meta": "🏆 Achievements",
+    "video": "📺 Video",
+    "unknown": "❓ Unknown"
+  },
+  "achievement": {
+    "tier": {
+      "common": "Common",
+      "rare": "Rare",
+      "legendary": "Legendary",
+      "commonUpper": "COMMON",
+      "rareUpper": "RARE",
+      "legendaryUpper": "LEGENDARY"
+    },
+    "platform": {
+      "walkman": "Walkman",
+      "nokia": "Nokia",
+      "global": "Agency"
+    },
+    "category": {
+      "progression": "Progression",
+      "exploration": "Exploration",
+      "lore": "Lore",
+      "mechanics": "Mechanics",
+      "honor": "Honor"
+    },
+    "locked": "Achievement Locked",
+    "lockedNokia": "LOCKED",
+    "unlockHow": "How to unlock: {{condition}}",
+    "exploreMore": "Stay alert and explore further.",
+    "raresCount": "{{count}} rare"
+  },
+  "gallery": {
+    "tab": {
+      "locais": "Places",
+      "pistas": "Clues",
+      "pessoas": "People",
+      "itens": "Items"
+    },
+    "emptyTitle": "Visual archive empty",
+    "emptyHint": "New evidence will appear here when unlocked.",
+    "emptyCategory": "No records in this category",
+    "emptyNokia": "ARCHIVE EMPTY.",
+    "noRecordsNokia": "NO RECORDS",
+    "viewerTitle": "IMG_VIEWER.EXE",
+    "evidenceVisual": "Visual evidence",
+    "imgIndex": "IMG_{{n}}"
+  },
+  "toast": {
+    "protocol": {
+      "intel": "SIGNAL // INTEL",
+      "error": "FAILURE // SYSTEM"
+    },
+    "achievement": {
+      "header": "LOG // MEDAL UNLOCKED",
+      "class": "CLASS // {{tier}}"
+    }
+  },
+  "errorBoundary": {
+    "title": "CRITICAL SYSTEM FAILURE",
+    "body": "The module hit an unrecoverable instability in the interface protocols. The log was sent to command center.",
+    "reload": "Restart Protocols"
+  },
+  "auth": {
+    "error": {
+      "forbiddenChars": "FORBIDDEN CHARACTERS DETECTED BY SECURITY",
+      "suspended": "ACCOUNT SUSPENDED: Contact the administrator.",
+      "weakPassword": "Password too weak (minimum 6 characters).",
+      "wrongPassword": "AUTH FAILURE: INCORRECT PASSWORD",
+      "invalidCredentials": "AUTH FAILURE: INVALID CREDENTIALS",
+      "noConnection": "NO CONNECTION: check your network.",
+      "createProfile": "Error creating profile.",
+      "profileNotFound": "Profile not found. Contact the administrator.",
+      "profileTimeout": "Profile not provisioned in time. Try again shortly.",
+      "cancelled": "OPERATION CANCELLED BY USER",
+      "emailInUse": "Email already registered via another login method.",
+      "unexpected": "Unexpected error ({{code}})",
+      "provider": "Provider login error ({{code}})"
+    }
+  },
+  "os": {
+    "file": "File",
+    "edit": "Edit",
+    "view": "View",
+    "help": "Help",
+    "special": "Special",
+    "close": "Close",
+    "closeWindowAria": "Close window",
+    "start": "Start",
+    "shutdown": "Shut Down...",
+    "window": "Window"
+  }
+}

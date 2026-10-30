@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'motion/react';
 import { generateAgentId } from '../../store/firestore';
 
@@ -17,13 +18,13 @@ interface MetadataOverlayProps {
   agent?: AgentDossier | null;
 }
 
-const STATUS_CONFIG = {
-  vivo: { label: 'ATIVO', color: 'text-green-400', dot: 'bg-green-400' },
-  morto: { label: 'ELIMINADO', color: 'text-red-400', dot: 'bg-red-400' },
-  desaparecido: { label: 'DESAPARECIDO', color: 'text-yellow-400', dot: 'bg-yellow-400' },
+const STATUS_STYLE = {
+  vivo: { color: 'text-green-400', dot: 'bg-green-400', labelKey: 'status.ativo' },
+  morto: { color: 'text-red-400', dot: 'bg-red-400', labelKey: 'status.eliminado' },
+  desaparecido: { color: 'text-yellow-400', dot: 'bg-yellow-400', labelKey: 'status.desaparecido' },
 } as const;
 
-const DANGER_LABELS = ['—', 'BAIXO', 'MODERADO', 'ELEVADO', 'ALTO', 'CRÍTICO'] as const;
+const DANGER_KEYS = ['none', 'baixo', 'moderado', 'elevado', 'alto', 'critico'] as const;
 
 const CornerMarks = () => (
   <>
@@ -44,6 +45,7 @@ const Row = ({ label, children }: { label: string; children: React.ReactNode }) 
 );
 
 export const MetadataOverlay = ({ onClose, agent }: MetadataOverlayProps) => {
+  const { t } = useTranslation(['player', 'common']);
   const [agentCode, setAgentCode] = useState<string | null>(agent?.agentId || null);
   const [loading, setLoading] = useState(!agent?.agentId);
   const [revealed, setRevealed] = useState(false);
@@ -68,9 +70,13 @@ export const MetadataOverlay = ({ onClose, agent }: MetadataOverlayProps) => {
   }, [loading, agentCode]);
 
   const status = agent?.agentStatus || 'vivo';
-  const statusCfg = STATUS_CONFIG[status] || STATUS_CONFIG.vivo;
+  const statusCfg = useMemo(() => {
+    const cfg = STATUS_STYLE[status] || STATUS_STYLE.vivo;
+    return { ...cfg, label: t(cfg.labelKey, { ns: 'common' }) };
+  }, [status, t]);
+
   const dangerLevel = agent?.dangerLevel || 0;
-  const dangerLabel = DANGER_LABELS[dangerLevel] || '—';
+  const dangerLabel = t(`danger.${DANGER_KEYS[dangerLevel] || 'none'}`, { ns: 'common' });
   const maskedCode = (agentCode || '0000').replace(/./g, '•');
 
   return (
@@ -94,19 +100,19 @@ export const MetadataOverlay = ({ onClose, agent }: MetadataOverlayProps) => {
 
         <header className="px-7 pt-7 pb-4 border-b border-border-subtle relative z-10">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-protocol text-[8px] text-primary/60">Metadados do Agente</span>
+            <span className="text-protocol text-[8px] text-primary/60">{t('metadata.title')}</span>
             <span className="inline-flex items-center gap-1.5 text-protocol text-[8px]">
               <span className={`w-1.5 h-1.5 rounded-full ${statusCfg.dot} animate-pulse`} />
               <span className={statusCfg.color}>{statusCfg.label}</span>
             </span>
           </div>
-          <h2 className="text-display text-2xl text-white uppercase truncate">{agent?.username || 'CARREGANDO...'}</h2>
+          <h2 className="text-display text-2xl text-white uppercase truncate">{agent?.username || t('metadata.loadingName')}</h2>
         </header>
 
         <div className="px-7 py-6 space-y-5 relative z-10">
-          <Row label="ID Registro">
+          <Row label={t('metadata.idLabel')}>
             {loading ? (
-              <span className="text-primary/40 animate-pulse">SINC...</span>
+              <span className="text-primary/40 animate-pulse">{t('metadata.syncing')}</span>
             ) : (
               <span className="text-primary font-semibold relative inline-block">
                 <AnimatePresence mode="wait" initial={false}>
@@ -123,16 +129,16 @@ export const MetadataOverlay = ({ onClose, agent }: MetadataOverlayProps) => {
               </span>
             )}
           </Row>
-          <Row label="Status">
+          <Row label={t('metadata.statusLabel')}>
             <span className={statusCfg.color}>{statusCfg.label}</span>
           </Row>
-          <Row label="Última Operação">
-            <span className="text-white/80">{agent?.lastCampaignName || 'NENHUM REGISTRO'}</span>
+          <Row label={t('metadata.lastOp')}>
+            <span className="text-white/80">{agent?.lastCampaignName || t('metadata.noRecord')}</span>
           </Row>
 
           <div className="space-y-2 pt-1">
             <div className="flex items-center justify-between">
-              <span className="text-protocol text-[9px] text-industrial-silver/40">Periculosidade</span>
+              <span className="text-protocol text-[9px] text-industrial-silver/40">{t('danger.label', { ns: 'common' })}</span>
               <span className={`text-protocol text-[9px] ${dangerLevel >= 4 ? 'text-red-400' : dangerLevel >= 2 ? 'text-primary' : 'text-industrial-silver/40'}`}>
                 {dangerLabel}
               </span>
@@ -162,7 +168,7 @@ export const MetadataOverlay = ({ onClose, agent }: MetadataOverlayProps) => {
             onClick={onClose}
             className="w-full bg-accent-10 hover:bg-accent-20 text-primary border border-border-accent rounded-control py-3.5 text-protocol transition-all duration-200 active:scale-[0.98] glow-orange-subtle"
           >
-            Sincronizar e Sair
+            {t('metadata.syncExit')}
           </button>
         </div>
       </motion.div>

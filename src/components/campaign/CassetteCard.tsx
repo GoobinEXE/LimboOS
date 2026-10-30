@@ -1,4 +1,5 @@
 import React, { memo, useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, useTransform, MotionValue } from 'motion/react';
 import { Zap, ChevronRight, Lock } from 'lucide-react';
 import { Campaign } from '../../data/campaigns';
@@ -54,6 +55,7 @@ const Spec = ({ label, value }: { label: string; value: string }) => (
 );
 
 export const CassetteCard = memo(({ campaign, onSelect, index, dragX, cardWidth, cardHeight, step, isActive, onSnapToSelf }: CassetteCardProps) => {
+  const { t } = useTranslation('player');
   const isLocked = campaign.status === 'Bloqueada';
   const [imageLoaded, setImageLoaded] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -77,7 +79,7 @@ export const CassetteCard = memo(({ campaign, onSelect, index, dragX, cardWidth,
     { clamp: true }
   );
 
-  const tapeSideLabel = campaign.playerType === 'nokia' ? 'HANDSET' : 'DECK';
+  const tapeSideLabel = campaign.playerType === 'nokia' ? t('cassette.side.handset') : t('cassette.side.deck');
 
   const cardStyle = webkitLite
     ? { scale, opacity, zIndex, y, width: cardWidth, height: cardHeight }
@@ -123,7 +125,7 @@ export const CassetteCard = memo(({ campaign, onSelect, index, dragX, cardWidth,
         <div className="flex items-start justify-between gap-3 px-5 pt-5 pb-3 shrink-0">
           <div className="min-w-0">
             <span className="text-protocol text-[8px] text-primary/60">
-              Missão // {pad(index + 1)} · {tapeSideLabel}
+              {t('cassette.mission', { n: pad(index + 1), side: tapeSideLabel })}
             </span>
             <h3 className="text-display text-[21px] text-white uppercase mt-1 truncate group-hover:text-primary transition-colors duration-300">
               {campaign.name}
@@ -182,9 +184,9 @@ export const CassetteCard = memo(({ campaign, onSelect, index, dragX, cardWidth,
           {isLocked && (
             <div className="absolute inset-0 bg-surface-overlay backdrop-blur-sm flex flex-col items-center justify-center gap-2 z-20">
               <div className="-rotate-6 border-2 border-red-500/60 text-red-400 text-protocol px-3 py-1.5 rounded-inset bg-red-950/40">
-                Acesso Negado
+                {t('cassette.denied')}
               </div>
-              <span className="text-mono-ui text-[9px] text-red-400/60 uppercase">Autorização insuficiente</span>
+              <span className="text-mono-ui text-[9px] text-red-400/60 uppercase">{t('cassette.deniedSub')}</span>
             </div>
           )}
         </div>
@@ -202,9 +204,9 @@ export const CassetteCard = memo(({ campaign, onSelect, index, dragX, cardWidth,
 
         {/* Especificações */}
         <div className="mx-5 mt-3 grid grid-cols-3 gap-3 border-t border-border-subtle pt-3 shrink-0">
-          <Spec label="Sistema" value={campaign.rpgSystem} />
-          <Spec label="Setor" value={campaign.location} />
-          <Spec label="Ano" value={campaign.year} />
+          <Spec label={t('cassette.spec.system')} value={campaign.rpgSystem} />
+          <Spec label={t('cassette.spec.sector')} value={campaign.location} />
+          <Spec label={t('cassette.spec.year')} value={campaign.year} />
         </div>
 
         {/* Ação */}
@@ -222,7 +224,7 @@ export const CassetteCard = memo(({ campaign, onSelect, index, dragX, cardWidth,
                   : 'bg-surface-raised text-industrial-silver/50 border border-border hover:border-border-accent hover:text-primary'
               }`}
             >
-              {isActive ? 'Iniciar Missão' : 'Selecionar'}
+              {isActive ? t('cassette.start') : t('cassette.select')}
               {isActive && <ChevronRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />}
             </button>
           ) : (
@@ -230,7 +232,7 @@ export const CassetteCard = memo(({ campaign, onSelect, index, dragX, cardWidth,
               disabled
               className="w-full text-protocol py-3.5 rounded-control bg-surface-sunken text-industrial-silver/25 border border-border-subtle cursor-not-allowed flex items-center justify-center gap-2"
             >
-              <Lock size={12} /> Protocolo Bloqueado
+              <Lock size={12} /> {t('cassette.blocked')}
             </button>
           )}
         </div>

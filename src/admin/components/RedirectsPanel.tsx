@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { subscribeToQrRedirects, saveQrRedirect, deleteQrRedirect } from '../../store/firestore';
 import { activityLogger } from '../../services/ActivityLogger';
 import { useModal } from './ConfirmModal';
@@ -13,6 +14,7 @@ interface QrRedirect {
 }
 
 export default function RedirectsPanel({ embedded = false }: { embedded?: boolean }) {
+  const { t } = useTranslation('admin');
   const [redirects, setRedirects] = useState<QrRedirect[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -74,10 +76,10 @@ export default function RedirectsPanel({ embedded = false }: { embedded?: boolea
       <div className="flex items-center gap-4">
         <div className="w-2 h-8 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.4)]" />
         <h2 className="font-black uppercase tracking-widest text-lg text-white">
-          Interface_de_Redirecionamento_de_Sinal_QR
+          Interface de Redirecionamento de Sinal QR
         </h2>
         <span className="text-[10px] font-bold text-zinc-600 tracking-widest uppercase">
-          {redirects.length} MAPEAMENTOS_ATIVOS_NO_GRID
+          {redirects.length} MAPEAMENTOS ATIVOS NO GRID
         </span>
       </div>
       )}
@@ -93,12 +95,12 @@ export default function RedirectsPanel({ embedded = false }: { embedded?: boolea
           <div className="bg-[#1a1a1a] border-4 border-[#1a1a1a] p-8 rounded-xl shadow-xl space-y-8 relative overflow-hidden">
             <div className="flex items-center gap-3 border-b border-white/5 pb-6">
               <span className="material-symbols-outlined text-emerald-500 text-2xl">add_link</span>
-              <h3 className="font-black text-xs uppercase tracking-widest text-white">Injetar_Novo_Mapeamento</h3>
+              <h3 className="font-black text-xs uppercase tracking-widest text-white">{t('redirects.inject')}</h3>
             </div>
             
             <form onSubmit={handleAddRedirect} className="space-y-6 relative z-10">
               <div className="space-y-2">
-                <label className="block text-[9px] font-black uppercase tracking-[0.2em] text-zinc-600">ID_ORIGEM (QR_FÍSICO)</label>
+                <label className="block text-[9px] font-black uppercase tracking-[0.2em] text-zinc-600">ID ORIGEM (QR FÍSICO)</label>
                 <input
                   type="text"
                   required
@@ -109,7 +111,7 @@ export default function RedirectsPanel({ embedded = false }: { embedded?: boolea
                 />
               </div>
               <div className="space-y-2">
-                <label className="block text-[9px] font-black uppercase tracking-[0.2em] text-zinc-600">ID_DESTINO (DADO_CORRETO)</label>
+                <label className="block text-[9px] font-black uppercase tracking-[0.2em] text-zinc-600">ID DESTINO (DADO CORRETO)</label>
                 <input
                   type="text"
                   required
@@ -120,7 +122,7 @@ export default function RedirectsPanel({ embedded = false }: { embedded?: boolea
                 />
               </div>
               <div className="space-y-2">
-                <label className="block text-[9px] font-black uppercase tracking-[0.2em] text-zinc-600">NOTAS_DO_OPERADOR</label>
+                <label className="block text-[9px] font-black uppercase tracking-[0.2em] text-zinc-600">{t('redirects.notes')}</label>
                 <textarea
                   value={newReason}
                   onChange={(e) => setNewReason(e.target.value)}
@@ -134,13 +136,13 @@ export default function RedirectsPanel({ embedded = false }: { embedded?: boolea
                 disabled={isSaving}
                 className="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-4 font-black text-[10px] uppercase tracking-[0.3em] transition-all rounded-sm active:scale-95 shadow-[0_0_15px_rgba(16,185,129,0.2)] disabled:opacity-20"
               >
-                {isSaving ? 'SINC_DADOS...' : 'VINCULAR_FREQUÊNCIAS'}
+                {isSaving ? 'SINC DADOS...' : t('redirects.linkAction')}
               </button>
             </form>
 
             <div className="bg-black/60 border-2 border-[#1a1a1a] p-5 rounded-xl">
               <p className="text-[10px] text-zinc-600 leading-relaxed font-bold uppercase tracking-wide">
-                <span className="text-emerald-500 font-black">LOG:</span> Mapear QR físico → intel de destino. O código impresso permanece; o núcleo resolve para o alvo. Para gerar o QR de uma intel, use o catálogo em Conteúdo.
+                <span className="text-emerald-500 font-black">LOG:</span> {t('redirects.help')}
               </p>
             </div>
           </div>
@@ -150,12 +152,12 @@ export default function RedirectsPanel({ embedded = false }: { embedded?: boolea
         <div className="lg:col-span-2">
           <div className="bg-[#1a1a1a] border-4 border-[#1a1a1a] rounded-xl shadow-2xl flex flex-col min-h-[500px] overflow-hidden">
             <div className="p-6 border-b-4 border-[#1a1a1a] bg-black/40 flex items-center justify-between">
-              <h3 className="font-black text-[10px] uppercase tracking-[0.3em] text-zinc-600">Sequência_de_Mapeamento_Ativa</h3>
+              <h3 className="font-black text-[10px] uppercase tracking-[0.3em] text-zinc-600">{t('redirects.activeGrid')}</h3>
               <div className="relative">
                  <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-zinc-700 text-xs">search</span>
                  <input
                    type="text"
-                   placeholder="LOCALIZAR_VETOR..."
+                   placeholder="LOCALIZAR VETOR..."
                    value={search}
                    onChange={(e) => setSearch(e.target.value)}
                    className="bg-black/60 border-2 border-[#1a1a1a] text-[9px] font-black uppercase tracking-widest focus:ring-1 focus:ring-emerald-500 placeholder:text-zinc-900 text-white px-10 py-2 w-56 rounded-sm transition-all"
@@ -167,12 +169,12 @@ export default function RedirectsPanel({ embedded = false }: { embedded?: boolea
               {loading ? (
                 <div className="p-24 text-center">
                   <span className="material-symbols-outlined text-3xl text-emerald-900 animate-spin block mb-4">sync</span>
-                  <p className="font-black text-xs text-zinc-700 tracking-[0.4em]">CARREGANDO_GRID...</p>
+                  <p className="font-black text-xs text-zinc-700 tracking-[0.4em]">{t('redirects.loading')}</p>
                 </div>
               ) : filteredRedirects.length === 0 ? (
                 <div className="p-24 text-center opacity-10">
                   <span className="material-symbols-outlined text-6xl block mb-4">link_off</span>
-                  <p className="font-black text-sm uppercase tracking-[0.4em]">Grid_de_Mapeamento_Inativo</p>
+                  <p className="font-black text-sm uppercase tracking-[0.4em]">{t('redirects.empty')}</p>
                 </div>
               ) : (
                 <div className="divide-y divide-white/5">
@@ -181,7 +183,7 @@ export default function RedirectsPanel({ embedded = false }: { embedded?: boolea
                       <div className="flex items-center justify-between gap-6">
                         <div className="flex items-center gap-8 flex-1">
                           <div className="flex flex-col gap-2">
-                            <p className="text-[8px] font-black text-zinc-700 uppercase tracking-widest">Origem</p>
+                            <p className="text-[8px] font-black text-zinc-700 uppercase tracking-widest">{t('redirects.origin')}</p>
                             <code className="text-[11px] font-mono bg-black px-4 py-2 border-2 border-[#1a1a1a] text-emerald-400 group-hover:border-emerald-500/30 transition-all rounded-sm font-black">
                               {r.sourceId}
                             </code>
@@ -190,7 +192,7 @@ export default function RedirectsPanel({ embedded = false }: { embedded?: boolea
                              <span className="material-symbols-outlined text-zinc-800 text-2xl group-hover:text-primary transition-colors">double_arrow</span>
                           </div>
                           <div className="flex flex-col gap-2">
-                            <p className="text-[8px] font-black text-zinc-700 uppercase tracking-widest">Destino</p>
+                            <p className="text-[8px] font-black text-zinc-700 uppercase tracking-widest">{t('redirects.destination')}</p>
                             <code className="text-[11px] font-mono bg-black px-4 py-2 border-2 border-[#1a1a1a] text-primary group-hover:border-primary/30 transition-all rounded-sm font-black">
                               {r.targetId}
                             </code>
@@ -221,7 +223,7 @@ export default function RedirectsPanel({ embedded = false }: { embedded?: boolea
             <div className="bg-black/40 border-t-4 border-[#1a1a1a] p-6 px-10 flex justify-between items-center shrink-0">
                <div className="flex items-center gap-3">
                   <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_5px_rgba(16,185,129,0.6)]" />
-                  <span className="text-[9px] font-black uppercase tracking-[0.2em] text-zinc-600">Integridade_de_Mapeamento: Ótima</span>
+                  <span className="text-[9px] font-black uppercase tracking-[0.2em] text-zinc-600">{t('redirects.integrity')}</span>
                </div>
                <span className="text-[9px] font-black text-zinc-800 uppercase tracking-widest">RM-REDIRECT-SYS-v4</span>
             </div>

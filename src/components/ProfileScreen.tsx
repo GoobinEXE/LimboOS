@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useTranslation } from 'react-i18next';
 import { ArrowLeft, LogOut, Trophy, Music, Pencil, Check, X, ExternalLink, Image, Map as MapIcon, User, Phone, ChevronRight } from 'lucide-react';
-import { ALL_ACHIEVEMENTS } from '../data/achievements';
 import PlayerGallery from './PlayerGallery';
 import { AchievementCatalog } from './achievements/AchievementCatalog';
+import LanguageSelector from './LanguageSelector';
 import { useLandscapeLayout } from '../player/hooks/useLandscapeLayout';
+import { useAchievementCatalog } from '../hooks/useAchievementCatalog';
 import type { GalleryImage, PlayerData } from '../types/player';
+import { extractSpotifyEmbedUrl } from '../lib/spotify';
 
 interface ProfileScreenProps {
   profile: PlayerData;
@@ -19,40 +22,22 @@ interface ProfileScreenProps {
   variant?: 'default' | 'nokia';
 }
 
-function extractSpotifyEmbedUrl(url: string): string | null {
-  if (!url) return null;
-  try {
-    if (url.startsWith('spotify:')) {
-      const uriMatch = url.match(/^spotify:(playlist|album|track|episode|show):([a-zA-Z0-9]+)$/);
-      if (!uriMatch) return null;
-      return `https://open.spotify.com/embed/${uriMatch[1]}/${uriMatch[2]}?utm_source=generator&theme=0`;
-    }
-    const parsed = new URL(url);
-    if (parsed.protocol !== 'https:' || parsed.hostname !== 'open.spotify.com') return null;
-    const embedMatch = parsed.pathname.match(/^\/embed\/(playlist|album|track|episode|show)\/([a-zA-Z0-9]+)\/?$/);
-    if (embedMatch) {
-      return `https://open.spotify.com/embed/${embedMatch[1]}/${embedMatch[2]}?utm_source=generator&theme=0`;
-    }
-    const match = parsed.pathname.match(/^\/(playlist|album|track|episode|show)\/([a-zA-Z0-9]+)\/?$/);
-    if (match) {
-      return `https://open.spotify.com/embed/${match[1]}/${match[2]}?utm_source=generator&theme=0`;
-    }
-    return null;
-  } catch {
-    return null;
-  }
-}
-
 type AgentStatusKey = 'vivo' | 'morto' | 'desaparecido';
 
-const STATUS_CONFIG: Map<AgentStatusKey, { label: string; color: string; dot: string; border: string }> = new Map([
-  ['vivo', { label: 'ATIVO', color: 'text-green-400', dot: 'bg-green-400', border: 'border-green-500/30' }],
-  ['morto', { label: 'ELIMINADO', color: 'text-red-400', dot: 'bg-red-400', border: 'border-red-500/30' }],
-  ['desaparecido', { label: 'DESAPARECIDO', color: 'text-yellow-400', dot: 'bg-yellow-400', border: 'border-yellow-500/30' }],
+const STATUS_STYLE: Map<AgentStatusKey, { color: string; dot: string; border: string }> = new Map([
+  ['vivo', { color: 'text-green-400', dot: 'bg-green-400', border: 'border-green-500/30' }],
+  ['morto', { color: 'text-red-400', dot: 'bg-red-400', border: 'border-red-500/30' }],
+  ['desaparecido', { color: 'text-yellow-400', dot: 'bg-yellow-400', border: 'border-yellow-500/30' }],
 ]);
-const DEFAULT_STATUS = { label: 'ATIVO', color: 'text-green-400', dot: 'bg-green-400', border: 'border-green-500/30' };
+const DEFAULT_STATUS_STYLE = { color: 'text-green-400', dot: 'bg-green-400', border: 'border-green-500/30' };
 
-const DANGER_LABELS = ['—', 'BAIXO', 'MODERADO', 'ELEVADO', 'ALTO', 'CRÍTICO'] as const;
+const STATUS_LABEL_KEY: Record<AgentStatusKey, 'ativo' | 'eliminado' | 'desaparecido'> = {
+  vivo: 'ativo',
+  morto: 'eliminado',
+  desaparecido: 'desaparecido',
+};
+
+const DANGER_KEYS = ['none', 'baixo', 'moderado', 'elevado', 'alto', 'critico'] as const;
 
 export function generateRandomUSPhoneNumber(): string {
   const areaCode = Math.floor(100 + Math.random() * 900); // 100-999
@@ -166,6 +151,9 @@ export default function ProfileScreen({
   onChangeCharacter,
   variant = 'default'
 }: ProfileScreenProps) {
+  const { t } = useTranslation('player');
+  const { achievements } = useAchievementCatalog();
+  const { t: tCommon } = useTranslation('common');
   const { isLandscape } = useLandscapeLayout();
 
   const [isEditingSpotify, setIsEditingSpotify] = useState(false);
@@ -179,15 +167,18 @@ export default function ProfileScreen({
     .join('');
 
   const embedUrl = extractSpotifyEmbedUrl(profile.character.spotifyPlaylistUrl || '');
-  const statusCfg = STATUS_CONFIG.get((profile.character.agentStatus || 'vivo') as AgentStatusKey) ?? DEFAULT_STATUS;
+  const agentStatus = (profile.character.agentStatus || 'vivo') as AgentStatusKey;
+  const statusStyle = STATUS_STYLE.get(agentStatus) ?? DEFAULT_STATUS_STYLE;
+  const statusLabel = tCommon(`status.${STATUS_LABEL_KEY[agentStatus] ?? 'ativo'}`);
+  const statusCfg = { ...statusStyle, label: statusLabel };
   const dangerLevel = profile.character.dangerLevel || 0;
-  const dangerLabel = DANGER_LABELS[dangerLevel] ?? '—';
+  const dangerLabel = tCommon(`danger.${DANGER_KEYS[dangerLevel] ?? 'none'}`);
   const agentCode = `RM-${profile.character.agentId || 'XXXX'}`;
 
   const handleSaveSpotify = () => {
     const trimmed = spotifyInput.trim();
     if (trimmed && !extractSpotifyEmbedUrl(trimmed)) {
-      setSpotifyError('Link inválido. Use o link de uma playlist do Spotify.');
+      setSpotifyError(t('profile.deck.error'));
       return;
     }
     setSpotifyError('');
@@ -214,14 +205,14 @@ export default function ProfileScreen({
         {/* Header */}
         <div className="flex justify-between items-center border-b-2 border-[#111e14] pb-1 shrink-0 font-bold mb-2">
           <button onClick={onBack} className="hover:bg-[#111e14] hover:text-[#edfeed] px-1 active:scale-95 transition-all">
-            [VOLTAR]
+            {tCommon('actions.backBracket')}
           </button>
           <span className="text-[8px] flex items-center gap-1">
             <span className="w-1.5 h-1.5 bg-[#111e14] animate-pulse" />
-            FICHA_AGENTE
+            {t('profile.header.nokia')}
           </span>
           <button onClick={onLogout} className="hover:bg-[#111e14] hover:text-[#edfeed] px-1 active:scale-95 transition-all">
-            [SAIR]
+            {tCommon('actions.exitBracket')}
           </button>
         </div>
 
@@ -229,13 +220,13 @@ export default function ProfileScreen({
 
           {/* Identidade */}
           <div className="border-2 border-[#111e14] p-2 relative overflow-hidden shadow-[2px_2px_0px_#111e14]">
-            <span className="absolute top-1 right-1 text-[6px] font-black border border-[#111e14] px-1 -rotate-3 opacity-70">CLASSIFICADO</span>
+            <span className="absolute top-1 right-1 text-[6px] font-black border border-[#111e14] px-1 -rotate-3 opacity-70">{tCommon('classified')}</span>
             <div className="flex gap-3 mb-2">
               <div className="w-12 h-12 border-2 border-[#111e14] bg-[#edfeed] shrink-0 flex items-center justify-center font-black text-[16px] relative overflow-hidden shadow-[1px_1px_0px_#111e14]">
                 {profile.character.profilePhotoUrl ? (
                   <img
                     src={profile.character.profilePhotoUrl}
-                    alt="Perfil"
+                    alt={tCommon('profileAlt')}
                     className="w-full h-full object-cover grayscale contrast-150 brightness-75 mix-blend-multiply"
                   />
                 ) : (
@@ -247,19 +238,19 @@ export default function ProfileScreen({
               <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
                 <div className="flex flex-col gap-0.5 min-w-0">
                   <div className="text-[12px] font-black leading-none truncate pr-14">{profile.character.codinome}</div>
-                  <div className="text-[8px] opacity-60 font-bold tracking-tighter">ID: {agentCode}</div>
+                  <div className="text-[8px] opacity-60 font-bold tracking-tighter">{tCommon('id')}: {agentCode}</div>
                 </div>
                 <div className={`self-start px-1.5 py-0.5 border border-[#111e14] text-[7px] font-black ${profile.character.agentStatus === 'vivo' || !profile.character.agentStatus ? 'bg-[#111e14] text-[#edfeed]' : ''}`}>
-                  STATUS: {statusCfg.label}
+                  {t('profile.statusPrefix', { status: statusCfg.label })}
                 </div>
               </div>
             </div>
 
             <div className="grid grid-cols-3 gap-2 border-y border-dotted border-[#111e14]/60 py-2 my-2">
               {[
-                { label: 'PROVAS', value: profile.unlockedIntelIds.length },
-                { label: 'MEDALHAS', value: profile.achievementIds.length },
-                { label: 'IMAGENS', value: galleryImages.length },
+                { label: t('profile.stat.proofsUpper'), value: profile.unlockedIntelIds.length },
+                { label: t('profile.stat.medalsUpper'), value: profile.achievementIds.length },
+                { label: t('profile.stat.imagesUpper'), value: galleryImages.length },
               ].map((s) => (
                 <div key={s.label} className="flex flex-col">
                   <span className="text-[7px] opacity-60 font-bold tracking-tighter">{s.label}</span>
@@ -270,7 +261,7 @@ export default function ProfileScreen({
 
             <div>
               <div className="flex justify-between items-center mb-1">
-                <span className="text-[7px] opacity-60 font-bold">PERICULOSIDADE</span>
+                <span className="text-[7px] opacity-60 font-bold">{tCommon('danger.labelUpper')}</span>
                 <span className="text-[7px] font-black">{dangerLabel}</span>
               </div>
               <div className="flex gap-0.5 h-1.5">
@@ -284,23 +275,27 @@ export default function ProfileScreen({
           {/* Ações */}
           <div className="space-y-1">
             <button onClick={onChangeMission} className="w-full border-2 border-[#111e14] flex justify-between px-2 py-2 hover:bg-[#111e14] hover:text-[#edfeed] font-black active:scale-95 transition-all shadow-[1px_1px_0px_#111e14]">
-              <span>&gt; ALVO / MISSÃO</span>
+              <span>{t('profile.action.missionNokia')}</span>
               <span>&raquo;</span>
             </button>
             <button onClick={onChangeCharacter} className="w-full border-2 border-[#111e14] flex justify-between px-2 py-2 hover:bg-[#111e14] hover:text-[#edfeed] font-black active:scale-95 transition-all shadow-[1px_1px_0px_#111e14]">
-              <span>&gt; TROCAR AGENTE</span>
+              <span>{t('profile.action.agentNokia')}</span>
               <span>&raquo;</span>
             </button>
           </div>
 
+          <NokiaSection index="00" title={t('profile.languageSection')}>
+            <LanguageSelector variant="nokia" />
+          </NokiaSection>
+
           {/* Deck */}
           <NokiaSection
             index="01"
-            title="DECK / REDE_SCN"
+            title={t('profile.deck.nokia')}
             action={
               onUpdateSpotify && !isEditingSpotify ? (
                 <button onClick={startEditingSpotify} className="hover:bg-[#111e14] hover:text-[#edfeed] px-1 active:scale-95 transition-all text-[8px] border border-[#111e14]">
-                  [{embedUrl ? 'EDIT' : 'LINK'}]
+                  {embedUrl ? t('profile.deck.editShort') : t('profile.deck.linkShort')}
                 </button>
               ) : undefined
             }
@@ -311,32 +306,32 @@ export default function ProfileScreen({
                   type="url"
                   value={spotifyInput}
                   onChange={(e) => { setSpotifyInput(e.target.value); setSpotifyError(''); }}
-                  placeholder="URL SPOTIFY..."
+                  placeholder={t('profile.deck.placeholderNokia')}
                   className="w-full bg-[#edfeed] border border-[#111e14] px-1 py-1 text-[9px] text-[#111e14] focus:outline-none placeholder:text-[#111e14]/50"
                   autoFocus
                 />
-                {spotifyError && <p className="text-[8px] animate-pulse">ERRO: {spotifyError}</p>}
+                {spotifyError && <p className="text-[8px] animate-pulse">{tCommon('error')}: {spotifyError}</p>}
                 <div className="flex gap-1 justify-end">
-                  <button onClick={handleCancelEdit} className="border border-[#111e14] px-2 py-0.5 hover:bg-[#111e14] hover:text-[#edfeed] active:scale-95 transition-all text-[8px]">[CANC]</button>
-                  <button onClick={handleSaveSpotify} className="border border-[#111e14] px-2 py-0.5 hover:bg-[#111e14] hover:text-[#edfeed] active:scale-95 transition-all font-black text-[8px]">[SALV]</button>
+                  <button onClick={handleCancelEdit} className="border border-[#111e14] px-2 py-0.5 hover:bg-[#111e14] hover:text-[#edfeed] active:scale-95 transition-all text-[8px]">{tCommon('actions.cancelShort')}</button>
+                  <button onClick={handleSaveSpotify} className="border border-[#111e14] px-2 py-0.5 hover:bg-[#111e14] hover:text-[#edfeed] active:scale-95 transition-all font-black text-[8px]">{tCommon('actions.saveShort')}</button>
                 </div>
               </div>
             ) : embedUrl ? (
               <div className="border border-dashed border-[#111e14] p-0.5 opacity-90">
-                <iframe src={embedUrl} width="100%" height="80" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" title="Spotify Deck" />
+                <iframe src={embedUrl} width="100%" height="80" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" title={t('profile.deck.iframeTitle')} />
               </div>
             ) : (
               <div className="text-[8px] text-center border border-dashed border-[#111e14] py-3 opacity-60 font-bold italic">
-                SEM CONEXÃO DE ÁUDIO.
+                {t('profile.deck.noAudioNokia')}
               </div>
             )}
           </NokiaSection>
 
           {/* Handset */}
-          <NokiaSection index="02" title="CONTATO / SMS_LINK">
+          <NokiaSection index="02" title={t('profile.contact.nokia')}>
             {profile.character.phoneNumber ? (
               <div className="flex justify-between items-center bg-[#111e14] text-[#edfeed] p-1.5">
-                <span className="text-[8px] font-black">LINHA:</span>
+                <span className="text-[8px] font-black">{t('profile.contact.line')}</span>
                 <span className="text-[10px] font-mono tracking-tighter">{profile.character.phoneNumber}</span>
               </div>
             ) : (
@@ -344,18 +339,18 @@ export default function ProfileScreen({
                 onClick={handleGeneratePhone}
                 className="w-full border-2 border-[#111e14] py-1.5 text-center hover:bg-[#111e14] hover:text-[#edfeed] active:scale-95 transition-all text-[9px] font-black"
               >
-                [GERAR NÚMERO US]
+                {t('profile.contact.generateNokia')}
               </button>
             )}
           </NokiaSection>
 
           {/* Galeria */}
-          <NokiaSection index="03" title="ARQUIVOS_VISUAIS">
+          <NokiaSection index="03" title={t('profile.gallery.nokia')}>
             <PlayerGallery images={galleryImages} variant="nokia" />
           </NokiaSection>
 
           {/* Conquistas */}
-          <NokiaSection index="04" title="REGISTROS_OPERACIONAIS" action={<span className="text-[7px] opacity-60">{profile.achievementIds.length}/{ALL_ACHIEVEMENTS.length}</span>}>
+          <NokiaSection index="04" title={t('profile.achievements.nokia')} action={<span className="text-[7px] opacity-60">{profile.achievementIds.length}/{achievements.length}</span>}>
             <AchievementCatalog
               grantDocIds={profile.achievementIds}
               campaignId={profile.character.campaignId}
@@ -391,19 +386,19 @@ export default function ProfileScreen({
           <button
             type="button"
             onClick={onBack}
-            aria-label="Voltar ao deck"
+            aria-label={t('profile.backAria')}
             className={`${iconButtonClass} text-primary hover:border-border-accent hover:bg-accent-10`}
           >
             <ArrowLeft size={16} />
           </button>
           <div className="flex flex-col items-center gap-0.5 min-w-0">
-            <span className="text-protocol text-[8px] text-industrial-silver/40">Ficha do Agente</span>
+            <span className="text-protocol text-[8px] text-industrial-silver/40">{t('profile.header.agentFile')}</span>
             <span className="text-mono-ui text-[10px] text-primary/70">{agentCode}</span>
           </div>
           <button
             type="button"
             onClick={onLogout}
-            aria-label="Desconectar"
+            aria-label={t('profile.logoutAria')}
             className={`${iconButtonClass} text-red-400 hover:border-red-500/40 hover:bg-red-500/10`}
           >
             <LogOut size={15} />
@@ -415,7 +410,7 @@ export default function ProfileScreen({
           <div className="flex items-center gap-4">
             <div className="relative w-20 h-20 rounded-card overflow-hidden border border-border-strong bg-surface-sunken shrink-0 flex items-center justify-center glow-orange-subtle">
               {profile.character.profilePhotoUrl ? (
-                <img src={profile.character.profilePhotoUrl} alt="Perfil" className="w-full h-full object-cover" />
+                <img src={profile.character.profilePhotoUrl} alt={tCommon('profileAlt')} className="w-full h-full object-cover" />
               ) : (
                 <span className="text-display text-2xl text-primary">{initials || '?'}</span>
               )}
@@ -430,7 +425,7 @@ export default function ProfileScreen({
                   {statusCfg.label}
                 </span>
                 <span className="text-mono-ui text-[10px] text-industrial-silver/40">
-                  Nível <span className={dangerLevel >= 4 ? 'text-red-400' : dangerLevel >= 2 ? 'text-primary' : ''}>{dangerLabel}</span>
+                  {tCommon('nivel')} <span className={dangerLevel >= 4 ? 'text-red-400' : dangerLevel >= 2 ? 'text-primary' : ''}>{dangerLabel}</span>
                 </span>
               </div>
               <div className="mt-3 flex gap-1">
@@ -451,23 +446,30 @@ export default function ProfileScreen({
 
         {/* Leituras */}
         <div className="relative z-10 mx-4 flex rounded-card border border-border bg-surface-raised shadow-hairline overflow-hidden shrink-0">
-          <Stat value={profile.unlockedIntelIds.length} label="Provas" />
-          <Stat value={profile.achievementIds.length} label="Conquistas" />
-          <Stat value={galleryImages.length} label="Imagens" />
+          <Stat value={profile.unlockedIntelIds.length} label={t('profile.stat.proofs')} />
+          <Stat value={profile.achievementIds.length} label={t('profile.stat.achievements')} />
+          <Stat value={galleryImages.length} label={t('profile.stat.images')} />
         </div>
 
         <div className="relative z-10 flex-1 overflow-y-auto min-h-0 custom-scrollbar">
           {/* Ações */}
           <div className="px-4 pt-4 pb-2 space-y-2">
-            <ActionRow onClick={onChangeMission} Icon={MapIcon} title="Alternar Missão" sub="Trocar a realidade ativa" />
-            <ActionRow onClick={onChangeCharacter} Icon={User} title="Trocar Agente" sub="Assumir nova identidade" />
+            <ActionRow onClick={onChangeMission} Icon={MapIcon} title={t('profile.action.mission')} sub={t('profile.action.missionSub')} />
+            <ActionRow onClick={onChangeCharacter} Icon={User} title={t('profile.action.agent')} sub={t('profile.action.agentSub')} />
           </div>
+
+          <section className="px-4 pt-4 pb-2">
+            <div className="rounded-card border border-border bg-surface-raised/60 p-3">
+              <div className="text-protocol text-[8px] text-industrial-silver/40 mb-2">{t('profile.languageSection')}</div>
+              <LanguageSelector variant="deck" />
+            </div>
+          </section>
 
           {/* Deck */}
           <section className="px-4 pt-5 pb-2">
             <SectionHeader
               index="01"
-              title="Meu Deck"
+              title={t('profile.deck.title')}
               Icon={Music}
               tone="text-[#1DB954]"
               action={
@@ -478,7 +480,7 @@ export default function ProfileScreen({
                     className="flex items-center gap-1 text-protocol text-[8px] text-industrial-silver/40 hover:text-[#1DB954] transition-colors"
                   >
                     <Pencil size={9} />
-                    {embedUrl ? 'Editar' : 'Conectar'}
+                    {embedUrl ? t('profile.deck.edit') : t('profile.deck.connect')}
                   </button>
                 ) : undefined
               }
@@ -494,19 +496,19 @@ export default function ProfileScreen({
                 >
                   <div className="rounded-card border border-border bg-surface-raised p-3">
                     <label className="text-protocol text-[8px] text-industrial-silver/40 block mb-2">
-                      Cole o link da sua playlist do Spotify
+                      {t('profile.deck.label')}
                     </label>
                     <input
                       type="url"
                       value={spotifyInput}
                       onChange={(e) => { setSpotifyInput(e.target.value); setSpotifyError(''); }}
-                      placeholder="https://open.spotify.com/playlist/..."
+                      placeholder={t('profile.deck.placeholder')}
                       className="w-full bg-surface-sunken border border-border rounded-control px-3 py-2 text-base text-white placeholder:text-industrial-silver/20 focus:border-[#1DB954]/60 focus:outline-none transition-colors font-mono"
                       autoFocus
                     />
                     {spotifyError && <p className="text-red-400 text-[10px] mt-1.5 font-sans">{spotifyError}</p>}
                     <p className="text-[9px] text-industrial-silver/30 mt-2 leading-relaxed font-sans">
-                      Abra o Spotify → Playlist → Compartilhar → Copiar link
+                      {t('profile.deck.hint')}
                     </p>
                   </div>
                   <div className="flex gap-2 justify-end">
@@ -515,14 +517,14 @@ export default function ProfileScreen({
                       onClick={handleCancelEdit}
                       className="flex items-center gap-1 px-3 py-1.5 rounded-control border border-border bg-surface-raised text-industrial-silver/60 text-protocol text-[8px] hover:text-white transition-colors"
                     >
-                      <X size={10} /> Cancelar
+                      <X size={10} /> {tCommon('cancel')}
                     </button>
                     <button
                       type="button"
                       onClick={handleSaveSpotify}
                       className="flex items-center gap-1 px-3 py-1.5 rounded-control bg-[#1DB954]/15 text-[#1DB954] text-protocol text-[8px] border border-[#1DB954]/30 hover:bg-[#1DB954]/25 transition-colors"
                     >
-                      <Check size={10} /> Salvar
+                      <Check size={10} /> {tCommon('save')}
                     </button>
                   </div>
                 </motion.div>
@@ -542,7 +544,7 @@ export default function ProfileScreen({
                     allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
                     loading="lazy"
                     className="block"
-                    title="Spotify Deck"
+                    title={t('profile.deck.iframeTitle')}
                   />
                 </motion.div>
               ) : (
@@ -556,8 +558,8 @@ export default function ProfileScreen({
                   <div className="w-12 h-12 rounded-control bg-surface-sunken border border-border flex items-center justify-center mx-auto mb-3 text-[#1DB954]/60">
                     <Music size={20} />
                   </div>
-                  <p className="text-protocol text-industrial-silver/50 mb-1">Nenhuma playlist conectada</p>
-                  <p className="text-[10px] text-industrial-silver/30 font-sans">Conecte sua playlist do Spotify para personalizar seu Deck.</p>
+                  <p className="text-protocol text-industrial-silver/50 mb-1">{t('profile.deck.emptyTitle')}</p>
+                  <p className="text-[10px] text-industrial-silver/30 font-sans">{t('profile.deck.emptyHint')}</p>
                   {onUpdateSpotify && (
                     <button
                       type="button"
@@ -565,7 +567,7 @@ export default function ProfileScreen({
                       className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 rounded-control bg-[#1DB954]/15 text-[#1DB954] text-protocol text-[8px] border border-[#1DB954]/25 hover:bg-[#1DB954]/25 transition-colors"
                     >
                       <ExternalLink size={10} />
-                      Conectar Spotify
+                      {t('profile.deck.connectCta')}
                     </button>
                   )}
                 </motion.div>
@@ -575,26 +577,26 @@ export default function ProfileScreen({
 
           {/* Linha de contato */}
           <section className="px-4 pt-5 pb-2">
-            <SectionHeader index="02" title="Linha de Contato" Icon={Phone} />
+            <SectionHeader index="02" title={t('profile.contact.title')} Icon={Phone} />
             <div className="rounded-card border border-border bg-surface-raised p-3">
               {profile.character.phoneNumber ? (
                 <div className="flex items-center justify-between gap-3">
                   <span className="text-mono-ui text-sm text-white">{profile.character.phoneNumber}</span>
                   <span className="inline-flex items-center gap-1.5 text-protocol text-[8px] text-primary">
-                    <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" /> Ativa
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" /> {tCommon('active')}
                   </span>
                 </div>
               ) : (
                 <div className="flex flex-col gap-3">
                   <p className="text-[10px] text-industrial-silver/50 leading-relaxed font-sans">
-                    Você precisa de um número americano para enviar mensagens no grupo.
+                    {t('profile.contact.needUs')}
                   </p>
                   <button
                     type="button"
                     onClick={handleGeneratePhone}
                     className="w-full py-2.5 rounded-control bg-accent text-black text-protocol hover:bg-primary-container active:scale-[0.98] transition-all glow-orange-subtle"
                   >
-                    Gerar Número Aleatório
+                    {t('profile.contact.generate')}
                   </button>
                 </div>
               )}
@@ -603,7 +605,7 @@ export default function ProfileScreen({
 
           {/* Galeria */}
           <section className="px-4 pt-5 pb-2">
-            <SectionHeader index="03" title="Arquivo Visual" Icon={Image} />
+            <SectionHeader index="03" title={t('profile.gallery.title')} Icon={Image} />
             <PlayerGallery images={galleryImages} />
           </section>
 
@@ -611,9 +613,9 @@ export default function ProfileScreen({
           <section className="px-4 pt-5 pb-6">
             <SectionHeader
               index="04"
-              title="Conquistas"
+              title={t('profile.achievements.title')}
               Icon={Trophy}
-              action={<span className="text-mono-ui text-[10px] text-industrial-silver/40">{profile.achievementIds.length}/{ALL_ACHIEVEMENTS.length}</span>}
+              action={<span className="text-mono-ui text-[10px] text-industrial-silver/40">{profile.achievementIds.length}/{achievements.length}</span>}
             />
             <AchievementCatalog
               grantDocIds={profile.achievementIds}

@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import QRCode from 'react-qr-code';
 import type { IntelItem } from '../../../types/intel';
 import OverlayPortal from '../OverlayPortal';
+import { saveQrRedirect } from '../../../store/firestore';
 
 interface IntelQrModalProps {
   item: IntelItem | null;
@@ -10,6 +12,16 @@ interface IntelQrModalProps {
 }
 
 export default function IntelQrModal({ item, onClose, onFeedback }: IntelQrModalProps) {
+  const { t } = useTranslation('admin');
+
+  // Garante qrRedirects/{id} → id para QRs do catálogo (resolve + unlock no player)
+  useEffect(() => {
+    if (!item?.id) return;
+    void saveQrRedirect(item.id, item.id, 'QR gerado no catálogo').catch((err) => {
+      console.warn('[IntelQrModal] falha ao registrar redirect de identidade:', err);
+    });
+  }, [item?.id]);
+
   const getQrCodeSvgDataUri = () => {
     const container = document.getElementById('qr-code-container-intel');
     if (!container) return null;
@@ -61,10 +73,10 @@ export default function IntelQrModal({ item, onClose, onFeedback }: IntelQrModal
           if (blob) {
             try {
               await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
-              onFeedback({ type: 'success', text: '✓ QR Code copiado para a área de transferência!' });
+              onFeedback({ type: 'success', text: t('intel.qr.copied') });
             } catch (err) {
               console.error('Failed to copy', err);
-              onFeedback({ type: 'error', text: 'Falha ao copiar QR Code. Verifique as permissões.' });
+              onFeedback({ type: 'error', text: t('intel.qr.copyFail') });
             }
           }
         }, 'image/png');
@@ -82,7 +94,7 @@ export default function IntelQrModal({ item, onClose, onFeedback }: IntelQrModal
               ASSINATURA-DIGITAL-INTEL
             </div>
             <h3 className="font-display font-bold text-xl mb-2 text-white uppercase tracking-widest text-center mt-2">
-              Gerar QR desta <span className="text-primary">Intel</span>
+              Gerar QR desta <span className="text-primary">{t('live.deliver.intel')}</span>
             </h3>
             <p className="text-[9px] font-display font-bold text-industrial-silver/40 uppercase tracking-widest text-center mb-6">
               Valor = ID da intel · Para mapear QR físico errado → Sistema → QR & Links

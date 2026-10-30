@@ -2,6 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import Screw from '../../../components/player/Screw';
 import OverlayPortal from '../OverlayPortal';
+import { ADMIN_SPRING } from '../../lib/motion';
 
 interface IntelExportDrawerProps {
   open: boolean;
@@ -30,7 +31,7 @@ export default function IntelExportDrawer({
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
-              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+              transition={ADMIN_SPRING}
               className="bg-surface-container-low border-l border-primary/20 w-full max-w-4xl shadow-2xl flex flex-col h-full relative overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import AnalyticsPanel from './AnalyticsPanel';
 import SystemLogPanel from './SystemLogPanel';
 
@@ -51,6 +52,8 @@ export default function ReportsPanel({
   engagement,
   onNavigate,
 }: ReportsPanelProps) {
+  const { t } = useTranslation('admin');
+
   return (
     <div className="space-y-8">
       <OperationalPanorama
@@ -64,7 +67,7 @@ export default function ReportsPanel({
         <AnalyticsPanel onNavigate={onNavigate as never} />
       </div>
       <div id="admin-system-log" className="border-t border-primary/10 pt-8">
-        <SectionDivider title="Log_Central_do_Nucleo" />
+        <SectionDivider title={t('reports.logDivider')} />
         <SystemLogPanel />
       </div>
     </div>
@@ -78,6 +81,7 @@ function OperationalPanorama({
   engagement,
   onNavigate,
 }: ReportsPanelProps) {
+  const { t } = useTranslation('admin');
   const goPlayers = () => onNavigate('mesa', { mesaSubTab: 'contas' });
   const goMissions = () => onNavigate('missions');
   const goAcesso = () => onNavigate('systems', { opsSubTab: 'acesso' });
@@ -87,52 +91,52 @@ function OperationalPanorama({
 
   return (
     <div className="space-y-6">
-      <SectionDivider title="Panorama_Operacional" />
+      <SectionDivider title={t('reports.panorama')} />
 
-      <MetricGroup title="Agentes">
-        <StatCard label="Agentes Ativos" value={agents.active} icon="badge" color="primary" onClick={goPlayers} />
-        <StatCard label="Vivos" value={agents.vivo} icon="favorite" color="tertiary" onClick={goPlayers} />
-        <StatCard label="Mortos" value={agents.morto} icon="skull" color="secondary" onClick={goPlayers} />
-        <StatCard label="Desaparecidos" value={agents.desaparecido} icon="help" color="secondary" onClick={goPlayers} />
-        <StatCard label="Alto Perigo" value={agents.highDanger} icon="warning" color="primary" onClick={goPlayers} />
-        <StatCard label="Arquivados" value={agents.archived} icon="inventory_2" color="secondary" onClick={goPlayers} />
+      <MetricGroup title={t('reports.group.agents')}>
+        <StatCard label={t('reports.metric.activeAgents')} value={agents.active} icon="badge" color="primary" onClick={goPlayers} />
+        <StatCard label={t('reports.metric.alive')} value={agents.vivo} icon="favorite" color="tertiary" onClick={goPlayers} />
+        <StatCard label={t('reports.metric.dead')} value={agents.morto} icon="skull" color="secondary" onClick={goPlayers} />
+        <StatCard label={t('reports.metric.missing')} value={agents.desaparecido} icon="help" color="secondary" onClick={goPlayers} />
+        <StatCard label={t('reports.metric.highDanger')} value={agents.highDanger} icon="warning" color="primary" onClick={goPlayers} />
+        <StatCard label={t('reports.metric.archived')} value={agents.archived} icon="inventory_2" color="secondary" onClick={goPlayers} />
       </MetricGroup>
 
-      <MetricGroup title="Campanhas">
-        <StatCard label="Ativas" value={campaigns.ativa} icon="flag" color="primary" onClick={goMissions} />
-        <StatCard label="Bloqueadas" value={campaigns.bloqueada} icon="lock" color="secondary" onClick={goMissions} />
-        <StatCard label="Arquivadas" value={campaigns.arquivada} icon="archive" color="secondary" onClick={goMissions} />
-        <StatCard label="Deck" value={campaigns.walkman} icon="headphones" color="tertiary" onClick={goMissions} />
-        <StatCard label="Handset" value={campaigns.nokia} icon="smartphone" color="tertiary" onClick={goMissions} />
+      <MetricGroup title={t('reports.group.campaigns')}>
+        <StatCard label={t('reports.metric.activeCampaigns')} value={campaigns.ativa} icon="flag" color="primary" onClick={goMissions} />
+        <StatCard label={t('reports.metric.blocked')} value={campaigns.bloqueada} icon="lock" color="secondary" onClick={goMissions} />
+        <StatCard label={t('reports.metric.archivedCampaigns')} value={campaigns.arquivada} icon="archive" color="secondary" onClick={goMissions} />
+        <StatCard label={t('reports.metric.deck')} value={campaigns.walkman} icon="headphones" color="tertiary" onClick={goMissions} />
+        <StatCard label={t('reports.metric.handset')} value={campaigns.nokia} icon="smartphone" color="tertiary" onClick={goMissions} />
       </MetricGroup>
 
-      <MetricGroup title="Saúde do Sistema">
-        <StatCard label="Suspensos" value={health.suspended} icon="block" color="secondary" onClick={goPlayers} />
-        <StatCard label="Dormentes" value={health.dormant} icon="bedtime" color="secondary" onClick={goPlayers} />
-        <StatCard label="Erros 24h" value={health.errors24h} icon="error" color="primary" onClick={goLog} />
+      <MetricGroup title={t('reports.group.health')}>
+        <StatCard label={t('reports.metric.suspended')} value={health.suspended} icon="block" color="secondary" onClick={goPlayers} />
+        <StatCard label={t('reports.metric.dormant')} value={health.dormant} icon="bedtime" color="secondary" onClick={goPlayers} />
+        <StatCard label={t('reports.metric.errors24h')} value={health.errors24h} icon="error" color="primary" onClick={goLog} />
         <StatusCard
-          label="Limbo"
-          value={health.limboSeized ? 'TOMADO' : 'LIVRE'}
+          label={t('reports.metric.limbo')}
+          value={health.limboSeized ? t('live.stat.limboTaken') : t('live.stat.limboFree')}
           icon="security"
           active={health.limboSeized}
           onClick={() => onNavigate('live')}
         />
       </MetricGroup>
 
-      <MetricGroup title="Engajamento">
-        <StatCard label="Conquistas" value={engagement.totalAchievements} icon="emoji_events" color="primary" onClick={goAchievements} />
-        <StatCard label="Parafuso" value={engagement.totalScrews} icon="build" color="tertiary" onClick={goAnalytics} />
-        <StatCard label="Fidget" value={engagement.totalFidgets} icon="touch_app" color="tertiary" onClick={goAnalytics} />
-        <StatCard label="Eject sem Play" value={engagement.totalEjects} icon="eject" color="secondary" onClick={goAnalytics} />
+      <MetricGroup title={t('reports.group.engagement')}>
+        <StatCard label={t('reports.metric.achievements')} value={engagement.totalAchievements} icon="emoji_events" color="primary" onClick={goAchievements} />
+        <StatCard label={t('reports.metric.screw')} value={engagement.totalScrews} icon="build" color="tertiary" onClick={goAnalytics} />
+        <StatCard label={t('reports.metric.fidget')} value={engagement.totalFidgets} icon="touch_app" color="tertiary" onClick={goAnalytics} />
+        <StatCard label={t('reports.metric.eject')} value={engagement.totalEjects} icon="eject" color="secondary" onClick={goAnalytics} />
         <button
           type="button"
           onClick={goAcesso}
           className="bg-surface-container-low border border-primary/20 p-5 text-left hover:border-primary/40 transition-all"
         >
           <p className="font-display text-[10px] uppercase font-bold tracking-[0.2em] text-industrial-silver/50 mb-2">
-            Hardware
+            {t('reports.hardware')}
           </p>
-          <p className="text-sm font-display font-bold text-primary uppercase tracking-widest">Abrir Acesso →</p>
+          <p className="text-sm font-display font-bold text-primary uppercase tracking-widest">{t('reports.openAccess')}</p>
         </button>
       </MetricGroup>
     </div>
@@ -196,7 +200,7 @@ function StatCard({
         <span className={`material-symbols-outlined text-6xl ${iconColorMap[color] ?? iconColorMap.primary}`}>{icon}</span>
       </div>
       <p className="font-display text-[10px] uppercase font-bold tracking-[0.2em] text-industrial-silver/50 mb-2">
-        {label.replace(/ /g, '_')}
+        {label}
       </p>
       <p className="text-4xl font-display font-bold text-white tracking-tighter">{value}</p>
     </>
@@ -242,7 +246,7 @@ function StatusCard({
         </span>
       </div>
       <p className="font-display text-[10px] uppercase font-bold tracking-[0.2em] text-industrial-silver/50 mb-2">
-        {label.replace(/ /g, '_')}
+        {label}
       </p>
       <p className="text-2xl font-display font-bold tracking-tight">{value}</p>
     </>

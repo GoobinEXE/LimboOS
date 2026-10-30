@@ -1,0 +1,755 @@
+{
+  "loading": {
+    "protocols": "Initializing Protocols...",
+    "terminal": "Accessing Admin Terminal RM-84",
+    "data": "Accessing Data..."
+  },
+  "accessDenied": {
+    "eyebrow": "Terminal RM-84 // Admin",
+    "title": "Access Denied",
+    "needAuth": "You must sign in with an authorized account to access the admin panel.",
+    "noPrivilege": "This account does not have admin privileges. Contact the system operator if this is an error.",
+    "endSession": "End Session",
+    "goPlayer": "Go to Player",
+    "login": "Sign In"
+  },
+  "sidebar": {
+    "brand": "SYS ADMIN",
+    "brandCollapsed": "ADM",
+    "group": {
+      "session": "Session",
+      "arsenal": "Arsenal",
+      "core": "Core"
+    },
+    "live": "Live",
+    "mesa": "Table",
+    "missions": "Missions",
+    "media": "Content",
+    "systems": "System",
+    "collapse": "Collapse",
+    "collapseTitle": "Collapse Menu",
+    "expandTitle": "Expand Menu",
+    "statusLabel": "System Status",
+    "statusOnline": "Grid Online",
+    "statusOnlineTitle": "Grid Online"
+  },
+  "header": {
+    "statusConnected": "Status: Connected",
+    "search": "Search...",
+    "searchTitle": "Global Search (Cmd+K)",
+    "sessionPrefix": "Session:",
+    "sessionGoLive": "Go to Live — active session",
+    "noSession": "No session",
+    "defaultContext": "Terminal de Comando",
+    "operator": "Authenticated Operator",
+    "logout": "Logout",
+    "logoutTitle": "End Session",
+    "squadFallback": "Squad"
+  },
+  "footer": {
+    "realtimeSync": "Realtime Data Sync",
+    "systemId": "RM ADMIN SYSTEM V5.0 // ENCRYPTED NODE"
+  },
+  "context": {
+    "live": "Live — session and delivery",
+    "mesa": "Table — squads and accounts",
+    "missions": "Missions — campaign command",
+    "media": "Content — library and intel",
+    "systems": "System — reports and access"
+  },
+  "entity": {
+    "unknown": "Unknown",
+    "missionUnknown": "Unknown mission",
+    "intelUnknown": "Unknown intel",
+    "achievementUnknown": "Unknown achievement",
+    "agentUnknown": "Unknown agent",
+    "masterUnknown": "Unknown master",
+    "accountNoName": "Unnamed account",
+    "agentNoCodename": "Agent without codename",
+    "noCodename": "No codename"
+  },
+  "confirm": {
+    "abort": "ABORT",
+    "confirm": "CONFIRM",
+    "understood": "GOT IT"
+  },
+  "spotlight": {
+    "placeholder": "Search agents, accounts, sections...",
+    "empty": "No results found",
+    "category": {
+      "nav": "NAVIGATION",
+      "accounts": "ACCOUNTS",
+      "agents": "AGENTS",
+      "squads": "SQUADS",
+      "missions": "MISSIONS"
+    },
+    "hint": {
+      "navigate": "↑↓ Navigate",
+      "select": "↵ Select",
+      "shortcut": "⌘/Ctrl+K Spotlight",
+      "tabs": "⌘/Ctrl+1–6 Abas"
+    },
+    "resultsCount": "{{n}} results",
+    "enter": "ENTER ↵",
+    "item": {
+      "missionInventory": "Mission Inventory",
+      "missionInventorySub": "Open missions → inventory",
+      "jukebox": "Jukebox"
+    },
+    "ops": {
+      "accessHardware": "Hardware Access"
+    },
+    "sub": {
+      "mesa": "Table",
+      "systems": "System",
+      "live": "Live",
+      "squad": "Squad",
+      "mission": "Mission"
+    }
+  },
+  "mesa": {
+    "title": "Table",
+    "sub": {
+      "squads": "Squads",
+      "squadsBlurb": "Game tables, members and bulk actions",
+      "accounts": "Accounts",
+      "accountsBlurb": "Master accounts, characters and dossiers"
+    }
+  },
+  "systems": {
+    "title": "System",
+    "sub": {
+      "reports": "Reports",
+      "reportsBlurb": "Overview, BI and full telemetry",
+      "access": "Access",
+      "accessBlurb": "Persistent DOS/Mac hardware authorization",
+      "qr": "QR & Links",
+      "qrBlurb": "Map physical QR → target intel",
+      "achievements": "Achievements",
+      "achievementsBlurb": "Global achievements catalog",
+      "sms": "SMS / NPCs",
+      "smsBlurb": "Contacts and SMS dialogue scripts"
+    }
+  },
+  "live": {
+    "session": {
+      "title": "Active Session",
+      "subtitle": "Squad + tonight's mission (this browser only)",
+      "openMission": "Open mission",
+      "openSquad": "Open squad",
+      "clear": "Clear",
+      "squad": "Squad",
+      "mission": "Mission",
+      "noneSquad": "None",
+      "noneMission": "None",
+      "onlySession": "Session-only for presence / delivery"
+    },
+    "stat": {
+      "online": "Online",
+      "errors24h": "Errors 24h",
+      "limbo": "Limbo",
+      "limboTaken": "TAKEN",
+      "limboFree": "FREE",
+      "selected": "Selected"
+    },
+    "presence": {
+      "title": "Live Table",
+      "subtitleOnline": "{{n}} online // select and deliver",
+      "subtitleSession": "{{n}} from session online // {{group}}",
+      "empty": "No agents with recent login",
+      "emptySession": "No session members online",
+      "seeAllOnline": "See all online",
+      "openAccess": "Open System → Access (offline grants)",
+      "selectAll": "Select all ({{n}})",
+      "clearSelection": "Clear selection ({{n}})",
+      "marked": "{{n}} marked",
+      "noMark": "no mark = all*"
+    },
+    "deliver": {
+      "label": "Deliver",
+      "intel": "Intel",
+      "achievement": "Achievement",
+      "sms": "SMS",
+      "video": "Video",
+      "dosAll": "DOS → all",
+      "macAll": "Mac → all"
+    },
+    "confirm": {
+      "deliverSession": "Deliver to online session",
+      "deliverAll": "Deliver to all online",
+      "deliverBody": "No agents marked. Deliver to {{scope}}?",
+      "deliverAction": "Deliver",
+      "scopeSession": "all {{n}} from the online session",
+      "scopeAll": "all {{n}} online"
+    },
+    "toast": {
+      "noOnline": "No online agents to deliver to",
+      "noCharacter": "Targets without active character",
+      "dosOk": "DOS pushed to {{target}}",
+      "macOk": "Mac pushed to {{target}}",
+      "dosFail": "Failed to push DOS",
+      "macFail": "Failed to push Mac"
+    },
+    "quick": {
+      "systems": "System",
+      "mesa": "Table",
+      "media": "Content"
+    },
+    "controls": "Session Controls"
+  },
+  "deliver": {
+    "kind": {
+      "intel": "Deliver Intel",
+      "achievements": "Grant Achievement",
+      "sms": "Distribute NPC SMS",
+      "video": "Broadcast Video"
+    },
+    "searchAchievement": "SEARCH ACHIEVEMENT...",
+    "npcAll": "All NPCs",
+    "toast": {
+      "achievementOk": "Achievement granted to {{n}} agent(s)",
+      "achievementFail": "Failed to grant achievement",
+      "smsOk": "{{n}} message(s) sent",
+      "smsFail": "Failed to distribute SMS"
+    }
+  },
+  "sessionGlobals": {
+    "limboTitle": "LIMBO_01 global",
+    "militaryLock": "MILITAR LOCK",
+    "gridOpen": "GRID OPEN",
+    "readGlobal": "Global read [{{read}}/{{total}}]",
+    "ipHint": "IP DOS → Limbo",
+    "forceUsarmy": "FORCE USArmy",
+    "normalize": "NORMALIZE",
+    "protocols": "RPG Protocols",
+    "diskRepair": "DiskRepair.exe",
+    "diskRepairDesc": "Remote demagnetization",
+    "hint": "Session controls. Persistent hardware auth is under System → Access."
+  },
+  "missions": {
+    "title": "Command Center",
+    "subtitle": "Instance and Active Mission Management",
+    "loading": "Syncing Missions...",
+    "persistentItems": "Persistent Items",
+    "new": "New Mission",
+    "manage": "Manage",
+    "deleteTitle": "Delete mission",
+    "deleteConfirmTitle": "Delete Mission",
+    "deleteConfirmBody": "Are you sure you want to delete \"{{name}}\"? References on agents and squads (campaignId / unlockedCampaigns) will not be cleared automatically.",
+    "deleteAction": "Delete",
+    "deleteFail": "Failed to remove campaign.",
+    "badge": {
+      "authorized": "{{n}} squads authorized",
+      "inField": "{{n}} in field"
+    },
+    "playerType": {
+      "deck": "DECK",
+      "handset": "HANDSET LCD"
+    },
+    "status": {
+      "active": "Active",
+      "blocked": "Blocked",
+      "archived": "Archived"
+    },
+    "persistent": {
+      "title": "Resource Retention",
+      "subtitle": "Items available across all missions",
+      "search": "LOCATE ITEM IN ARCHIVE..."
+    },
+    "tab": {
+      "dados": "Data",
+      "vinculos": "Links",
+      "inventario": "Inventory",
+      "transmissao": "Broadcast"
+    },
+    "modal": {
+      "install": "MISSION-INSTALL",
+      "newTitle": "New Mission",
+      "saveFirst": "Save the mission in the Data tab first"
+    },
+    "toast": {
+      "saved": "Mission saved successfully.",
+      "saveFail": "Could not save the campaign."
+    },
+    "data": {
+      "save": "Save Settings",
+      "selectCover": "Select Mission Cover"
+    },
+    "inventory": {
+      "revokeTitle": "Revoke Evidence",
+      "revokeBody": "Remove this item from the character inventory for this campaign?"
+    },
+    "video": {
+      "title": "Video Broadcast — Mission"
+    }
+  },
+  "media": {
+    "title": "Library",
+    "subtitle": "{{files}} files // {{folders}} folders // {{intel}} intel",
+    "search": "SEARCH FILE...",
+    "export": "EXPORT",
+    "indexing": "Indexing Library...",
+    "empty": "No files found",
+    "foldersTitle": "Folders",
+    "filter": {
+      "all": "All",
+      "audio": "Audio",
+      "images": "Images",
+      "videos": "Videos"
+    },
+    "uploadFile": "File upload",
+    "selectMedia": "Select Media",
+    "selectVideo": "Select Video",
+    "alert": {
+      "upload": "Upload",
+      "noValidFiles": "No valid files to upload.",
+      "uploadError": "Upload Error",
+      "uploadFail": "Failed to upload one or more files.",
+      "deleteFail": "Failed to delete file.",
+      "createFolderFail": "Could not create folder.",
+      "renameFolderFail": "Could not rename folder.",
+      "deleteFolderFail": "Failed to delete folder.",
+      "updateFoldersFail": "Failed to update file folders."
+    },
+    "confirm": {
+      "deleteFolder": "Remove folder \"{{name}}\"? Files will not be deleted — only removed from this folder."
+    },
+    "toast": {
+      "uploadOk": "✓ {{n}} files uploaded. Editing the first — others are in the catalog."
+    }
+  },
+  "intel": {
+    "type": {
+      "audio": "Audio",
+      "video": "Video",
+      "text": "Text",
+      "visual": "Visual",
+      "meta": "Meta"
+    },
+    "status": {
+      "all": "All",
+      "catalogued": "Catalogued",
+      "orphans": "Orphans",
+      "textMeta": "Text/Meta"
+    },
+    "badge": {
+      "catalogued": "Catalogued",
+      "orphan": "Orphan",
+      "local": "Local"
+    },
+    "levelFallback": "LEVEL {{level}}",
+    "editor": {
+      "properties": "Intel Properties",
+      "title": "Operational Title",
+      "campaign": "Campaign Link",
+      "generateId": "Generate ID from title",
+      "summary": "Executive Summary (Description)",
+      "summaryPlaceholder": "Brief description for identification...",
+      "textPlaceholder": "Enter classified text content...",
+      "npc": "RESPONSIBLE NPC",
+      "chapter": "CHAPTER / SECTOR",
+      "duration": "DURATION (SEC)",
+      "format": "PHYSICAL FORMAT"
+    },
+    "qr": {
+      "title": "Generate QR for this Intel",
+      "copied": "✓ QR Code copied to clipboard!",
+      "copyFail": "Failed to copy QR Code. Check permissions."
+    },
+    "export": {
+      "title": "Export Master Record"
+    },
+    "catalog": {
+      "preview": "Preview"
+    },
+    "dist": {
+      "search": "LOCATE IN LIBRARY...",
+      "transmitVideo": "TRANSMIT VIDEO",
+      "videoTitle": "Video Broadcast",
+      "videoSelected": "1 VIDEO SELECTED",
+      "selectVideo": "SELECT A VIDEO",
+      "error": "ERROR: Operation failed."
+    }
+  },
+  "accounts": {
+    "title": "Identity Management",
+    "subtitle": "Master Accounts and Linked Characters",
+    "includeArchived": "Include Archived",
+    "search": "SEARCH ACCOUNT OR CHARACTER...",
+    "export": "EXPORT",
+    "create": "CREATE ACCOUNT",
+    "col": {
+      "name": "Master Name",
+      "networkId": "Network ID",
+      "authority": "Authority",
+      "status": "Status",
+      "agents": "Agents",
+      "created": "Registered",
+      "lastAccess": "Last Access",
+      "actions": "Account Actions"
+    },
+    "empty": {
+      "search": "No accounts found for this search",
+      "none": "No accounts registered"
+    },
+    "pending": "PENDING...",
+    "noEmail": "SEM EMAIL VINCULADO",
+    "settingsTitle": "Protocol Settings",
+    "linkedChars": "Linked Characters",
+    "createChar": "CREATE CHARACTER",
+    "noChars": "No characters registered",
+    "dossier": "DOSSIER",
+    "newCharTitle": "New Character",
+    "codename": "Agent Codename",
+    "codenamePlaceholder": "EX: FALCON",
+    "cancel": "Cancel",
+    "edit": {
+      "protocol": "PROTOCOL-MODIFICATION",
+      "title": "Account Guidelines",
+      "channel": "Authenticated Communication Channel",
+      "masterName": "Master Name",
+      "masterPlaceholder": "EX: JOHN SMITH",
+      "notes": "GM Notes",
+      "save": "Save Data",
+      "hardware": "Hardware",
+      "authorityLevel": "Authority Level",
+      "accessControl": "Access Control",
+      "resetCreds": "Field Credential Reset",
+      "reset": "Reset"
+    },
+    "createMasterTitle": "New Master Connection",
+    "createPassword": "Temporary Password",
+    "abort": "Abort",
+    "status": {
+      "active": "ACTIVE",
+      "inactive": "INACTIVE",
+      "dormant": "DORMANT",
+      "suspended": "SUSPENDED",
+      "unknown": "SEM DADOS"
+    },
+    "toast": {
+      "exportOk": "Export {{format}} complete.",
+      "createOk": "Account \"{{name}}\" registered successfully.",
+      "passwordOk": "Password changed successfully.",
+      "suspended": "Account suspended.",
+      "reactivated": "Account reactivated.",
+      "statusFail": "Failed to change account status.",
+      "updated": "Account data updated.",
+      "saveFail": "Failed to save data.",
+      "charCreated": "Character \"{{name}}\" created successfully.",
+      "charCreateFail": "Error creating character.",
+      "charsLoadFail": "Failed to load characters."
+    }
+  },
+  "squads": {
+    "title": "RPG Squad Management",
+    "idLabel": "Squad Identifier (Table)",
+    "idPlaceholder": "EX: RAVENLOFT MIST",
+    "sessions": "Session Logs",
+    "noSessions": "No Temporal Records",
+    "noSelected": "No Agent Selected",
+    "available": "Available Agents",
+    "includeArchived": "Include Archived",
+    "searchAgent": "SEARCH AGENT BY CODENAME...",
+    "searchAdd": "SEARCH AGENT TO ADD...",
+    "noneAvailable": "No Available Agents",
+    "noneFound": "NO AGENT FOUND",
+    "empty": "No Squad Synced",
+    "add": "Add",
+    "abort": "ABORT",
+    "sync": "SYNC CHANGES",
+    "removeTitle": "Remove from Squad",
+    "manageMissions": "Manage Missions",
+    "smsTitle": "Distribute NPC SMS Messages",
+    "bulkIntelTitle": "Bulk Evidence Transfer",
+    "distTitle": "Distribute Intel — Squad",
+    "confirm": {
+      "deleteTitle": "Delete Group",
+      "deleteBody": "Are you sure you want to PERMANENTLY delete this squad?",
+      "deleteAction": "Delete",
+      "removeTitle": "Remove Agent",
+      "removeBody": "Remove {{name}} from the squad?",
+      "removeAction": "Remove",
+      "aliveOnlyTitle": "Distribution Condition",
+      "aliveOnlyBody": "Distribute only to ALIVE agents in the squad? (Confirm for Alive Only)",
+      "aliveOnlyAction": "Alive Only"
+    }
+  },
+  "groupMissions": {
+    "authorizedHint": "Authorized unlocks the mission in player selection.",
+    "inFieldHint": "In field sets the squad's active mission.",
+    "allAuthorized": "All missions already authorized",
+    "authorizePlaceholder": "Authorize mission...",
+    "noneAvailable": "No missions available",
+    "assignPlaceholder": "Assign mission to field...",
+    "willAuthorize": " (will authorize)",
+    "removeAuth": "Remove authorization",
+    "toast": {
+      "authorized": "Mission authorized for the squad.",
+      "authRemoved": "Authorization removed.",
+      "authFail": "Failed to manage authorization.",
+      "assigned": "Squad sent to mission (Active).",
+      "assignFail": "Assignment failed.",
+      "removedField": "Squad removed from field.",
+      "removeFail": "Failed to remove assignment."
+    }
+  },
+  "dossier": {
+    "archiveTitle": "Archive Agent",
+    "unarchiveTitle": "Unarchive Agent",
+    "archiveBody": "Archiving will remove the agent from the main list but preserve all history. Continue?",
+    "unarchiveBody": "The agent will return to active. Continue?",
+    "deleteTitle": "Delete Permanently",
+    "deleteBody": "CRITICAL WARNING: Permanent deletion will destroy all data for agent \"{{name}}\". This cannot be undone. Confirm?",
+    "deleteAction": "Delete Permanently",
+    "transferTitle": "Transfer Agent",
+    "transferBody": "This will move all character data to the selected account. Confirm?",
+    "transferAction": "Transfer",
+    "removeItemTitle": "Remove Item",
+    "removeItemBody": "Remove this item from the agent inventory?",
+    "removeItemAction": "Remove",
+    "revokeMedalTitle": "Revoke Medal",
+    "revokeMedalBody": "Revoke medal {{id}}?",
+    "revokeMedalAction": "Revoke",
+    "spotifyTitle": "Spotify Deck",
+    "spotifyPlaceholder": "https://open.spotify.com/playlist/...",
+    "spotifyHint": "Paste the agent's playlist link. Accepts intl-* links and spotify: URIs.",
+    "spotifyClear": "Clear",
+    "spotifyInvalid": "Invalid Spotify link"
+  },
+  "hardware": {
+    "title": "Access & Hardware",
+    "subtitle": "Persistent auth per account. One-shot push and Limbo/DiskRepair are on Live.",
+    "embeddedHint": "Per account (UID) · Access = reopen alone · Push = 1st open · Session push → Live",
+    "authTitle": "Hardware authorization",
+    "authSubtitle": "Bulk grant / revoke, including offline",
+    "search": "Search codename, name or email...",
+    "filter": {
+      "all": "All",
+      "online": "Online",
+      "dos": "DOS Access",
+      "mac": "Mac Access",
+      "none": "No access"
+    },
+    "revokeDos": "Revoke filtered DOS",
+    "revokeMac": "Revoke filtered Mac",
+    "selectFiltered": "Select filtered ({{n}})",
+    "clearSelection": "Clear selection ({{n}})",
+    "count": "{{n}} account(s)",
+    "empty": "No accounts in this filter",
+    "toast": {
+      "revokeDosFail": "Failed to revoke DOS",
+      "revokeMacFail": "Failed to revoke Mac"
+    }
+  },
+  "reports": {
+    "panorama": "Operational Overview",
+    "logDivider": "Core Central Log",
+    "group": {
+      "agents": "Agents",
+      "campaigns": "Campaigns",
+      "health": "System Health",
+      "engagement": "Engagement"
+    },
+    "metric": {
+      "activeAgents": "Active Agents",
+      "alive": "Alive",
+      "dead": "Dead",
+      "missing": "Missing",
+      "highDanger": "High Danger",
+      "archived": "Archived",
+      "activeCampaigns": "Active",
+      "blocked": "Blocked",
+      "archivedCampaigns": "Archived",
+      "deck": "Deck",
+      "handset": "Handset",
+      "suspended": "Suspended",
+      "dormant": "Dormant",
+      "errors24h": "Errors 24h",
+      "limbo": "Limbo",
+      "achievements": "Achievements",
+      "screw": "Screw",
+      "fidget": "Fidget",
+      "eject": "Eject without Play"
+    },
+    "hardware": "Hardware",
+    "openAccess": "Open Access →"
+  },
+  "analytics": {
+    "title": "Data Analysis & BI",
+    "subtitle": "Network Performance Monitoring",
+    "storage": "Firebase Storage",
+    "completionRate": "Completion Rate",
+    "peakHours": "Peak Hours",
+    "activeUsers": "Active Users",
+    "audioFiles": "Audio Files",
+    "mostActive": "Most Active Agents",
+    "rareAchievements": "High Rarity Achievements",
+    "engagement": "Engagement Metrics",
+    "avgPlays": "Avg Plays",
+    "uniqueContent": "Unique Content",
+    "empty": "No recorded data",
+    "noRecords": "No records",
+    "resetDone": "Reset Complete"
+  },
+  "logs": {
+    "sessionId": "Session Identifier",
+    "agentVector": "Agent Vector",
+    "source": "Origin / Source",
+    "telemetry": "Additional Telemetry Data:",
+    "unidentified": "UNIDENTIFIED",
+    "filters": "Network Filters:",
+    "origin": {
+      "all": "ORIGIN: ALL",
+      "player": "SIGNAL: PLAYER",
+      "admin": "SIGNAL: OPERATOR"
+    },
+    "type": {
+      "all": "TYPE: ALL",
+      "navigation": "Navigation",
+      "action": "Event",
+      "system": "System",
+      "auth": "Access",
+      "error": "Anomaly",
+      "admin": "Command",
+      "trace": "Trace"
+    },
+    "search": "LOCATE MESSAGE...",
+    "waiting": "Awaiting Signal Sync",
+    "density": "Density:",
+    "clearTitle": "Clear Logs",
+    "clearBody": "This will PERMANENTLY remove all records from the database. Confirm?",
+    "clearAction": "Clear All",
+    "wipeUsers": "User Wipe",
+    "wipeTitle": "⚠️ FULL USER WIPE",
+    "wipeBody": "WARNING: This operation is IRREVERSIBLE. All player, character, intel, achievements, playEvents, logs and group data will be PERMANENTLY DESTROYED. Confirm?",
+    "wipeFinalTitle": "FINAL CONFIRMATION",
+    "wipeFinalBody": "Are you ABSOLUTELY SURE? This cannot be undone. All player data will be lost.",
+    "wipeDone": "Wipe Complete",
+    "syncOk": "Sync",
+    "connectionError": "Connection Error",
+    "criticalError": "Critical Error",
+    "serverFail": "Failed to communicate with the server."
+  },
+  "redirects": {
+    "inject": "Inject New Mapping",
+    "notes": "OPERATOR NOTES",
+    "linkAction": "LINK FREQUENCIES",
+    "help": "Map physical QR → target intel. The printed code stays; the core resolves the target. To generate an intel QR, use the Content catalog.",
+    "activeGrid": "Active Mapping Sequence",
+    "loading": "LOADING GRID...",
+    "empty": "Mapping Grid Inactive",
+    "origin": "Origin",
+    "destination": "Destination",
+    "integrity": "Mapping Integrity: Optimal"
+  },
+  "achievements": {
+    "title": "Global Achievements Catalog",
+    "filter": "FILTER CATALOG...",
+    "empty": "No Records Found",
+    "countLabel": "MEDALS",
+    "localHint": "local suggestions — import to edit",
+    "allCategories": "All",
+    "create": "New",
+    "edit": "Edit",
+    "delete": "Delete",
+    "enable": "Enable",
+    "disable": "Disable",
+    "import": "Import suggestions",
+    "importTitle": "Import suggestions",
+    "importBody": "Creates default medals in Firestore that do not exist yet. Existing ones are skipped.",
+    "importAction": "Import",
+    "importOk": "{{imported}} imported, {{skipped}} already existed",
+    "importFail": "Failed to import suggestions",
+    "badgeSuggestion": "Suggestion",
+    "badgeDisabled": "Off",
+    "needImportTitle": "Local catalog",
+    "needImportBody": "Import suggestions to Firestore before editing, disabling, or deleting.",
+    "deleteTitle": "Delete achievement",
+    "deleteBody": "Remove \"{{title}}\" from the catalog? Grants already given to agents remain.",
+    "deleteAction": "Delete",
+    "deleteOk": "Achievement removed",
+    "deleteFail": "Failed to delete",
+    "saveOk": "Achievement saved",
+    "saveFail": "Failed to save achievement",
+    "validation": "ID and title are required",
+    "enabledOk": "Achievement enabled",
+    "disabledOk": "Achievement disabled"
+  },
+  "npcSms": {
+    "title": "SMS / NPC Catalog",
+    "filter": "FILTER...",
+    "empty": "No records",
+    "localHint": "local suggestions — import to edit",
+    "tabContacts": "Contacts",
+    "tabDialogues": "Dialogues",
+    "countContacts": "NPCs",
+    "countDialogues": "DIALOGUES",
+    "allNpcs": "All NPCs",
+    "import": "Import suggestions",
+    "importTitle": "Import suggestions",
+    "importBody": "Creates default NPCs and dialogues in Firestore that do not exist yet.",
+    "importAction": "Import",
+    "importOk": "{{contacts}} NPC(s) + {{dialogues}} dialogue(s); {{skipped}} already existed",
+    "importFail": "Failed to import",
+    "createContact": "New NPC",
+    "createDialogue": "New dialogue",
+    "editContact": "Edit NPC",
+    "editDialogue": "Edit dialogue",
+    "edit": "Edit",
+    "delete": "Delete",
+    "enable": "Enable",
+    "disable": "Disable",
+    "save": "Save",
+    "cancel": "Cancel",
+    "name": "Name",
+    "number": "Number",
+    "avatar": "Photo",
+    "active": "Active",
+    "dialogueTitle": "Title",
+    "turns": "Turns",
+    "addTurn": "Turn",
+    "selectNpc": "Select NPC",
+    "badgeSuggestion": "Suggestion",
+    "needImportTitle": "Local catalog",
+    "needImportBody": "Import suggestions to Firestore before editing, disabling, or deleting.",
+    "deleteContactTitle": "Delete NPC",
+    "deleteContactBody": "Remove \"{{name}}\"? Linked dialogues are not deleted automatically.",
+    "deleteDialogueTitle": "Delete dialogue",
+    "deleteDialogueBody": "Remove \"{{title}}\" from the catalog?",
+    "deleteAction": "Delete",
+    "deleteOk": "Removed",
+    "deleteFail": "Failed to delete",
+    "saveOk": "Saved",
+    "saveFail": "Failed to save",
+    "validationContact": "ID and name are required",
+    "validationDialogue": "ID, NPC and title are required",
+    "validationTurns": "Add at least one turn with text",
+    "enabledOk": "Enabled",
+    "disabledOk": "Disabled",
+    "selectDialogues": "Select dialogues",
+    "shuffleMode": "Shuffle 1 per agent",
+    "pickMode": "Manual selection",
+    "reshuffle": "Shuffle again",
+    "preview": "Distribution preview",
+    "noDialogues": "No dialogues available for this NPC"
+  },
+  "jukebox": {
+    "title": "Jukebox Broadcast Interface",
+    "selectAudio": "Select Audio for Jukebox",
+    "waiting": "BUFFER AWAITING SIGNAL",
+    "loopTitle": "Frequency Loop",
+    "inject": "Inject New Signal to Playlist",
+    "titlePlaceholder": "TRACK IDENTIFIER (OPTIONAL)",
+    "urlPlaceholder": "YOUTUBE URL...",
+    "playlist": "Active Frequency Sequence",
+    "empty": "PLAYLIST EMPTY",
+    "redundancy": "REDUNDANCY ACTIVE",
+    "invalidUrl": "Invalid URL",
+    "invalidUrlBody": "Enter a valid YouTube URL.",
+    "addFail": "Failed to add audio to jukebox.",
+    "removeTitle": "Warning",
+    "removeBody": "Remove \"{{title}}\" from the jukebox?",
+    "removeAction": "Remove"
+  }
+}

@@ -1,13 +1,15 @@
 import React, { memo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export const Barcode = memo(({ onClick, className }: { onClick: () => void, className?: string }) => {
+  const { t } = useTranslation('player');
   const lines = [2, 1, 3, 1, 1, 2, 4, 1, 2, 1, 1, 3, 2, 1, 2];
   return (
     <button 
       onClick={onClick}
       className={`flex items-end h-8 gap-[2px] opacity-60 hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-1 focus-visible:outline-accent-60 focus-visible:outline-offset-4 transition-opacity duration-150 cursor-help ${className}`}
-      title="Ver Metadata do Terminal"
-      aria-label="Ver metadata do terminal"
+      title={t('campaign.metadataTitle')}
+      aria-label={t('campaign.metadataAria')}
     >
       {lines.map((w, i) => (
         <div key={i} className="bg-current h-full" style={{ width: `${w * 1.5}px` }} />

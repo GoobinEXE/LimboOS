@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion } from 'motion/react';
 import { Group } from '../../types/player';
 import { Campaign } from '../../data/campaigns';
@@ -6,6 +7,7 @@ import { campaignAdminService } from '../../services/CampaignAdminService';
 import { campaignLabel } from '../lib/entityLabels';
 import Screw from '../../components/player/Screw';
 import OverlayPortal from './OverlayPortal';
+import { ADMIN_SPRING } from '../lib/motion';
 
 interface GroupMissionsModalProps {
   group: Group;
@@ -22,6 +24,7 @@ export default function GroupMissionsModal({
   showAlert,
   onNavigateToMission,
 }: GroupMissionsModalProps) {
+  const { t } = useTranslation('admin');
   const [busy, setBusy] = useState(false);
 
   const unlocked = group.unlockedCampaigns || [];
@@ -44,11 +47,11 @@ export default function GroupMissionsModal({
         await campaignAdminService.unlockForGroup(group.id, campaignId, unlock);
         await showAlert(
           'Sucesso',
-          unlock ? 'Missão autorizada para o esquadrão.' : 'Autorização removida.'
+          unlock ? t('groupMissions.toast.authorized') : t('groupMissions.toast.authRemoved')
         );
       } catch (err) {
         console.error(err);
-        await showAlert('Erro', 'Falha ao gerenciar autorização.');
+        await showAlert('Erro', t('groupMissions.toast.authFail'));
       }
     });
 
@@ -59,10 +62,10 @@ export default function GroupMissionsModal({
           await campaignAdminService.unlockForGroup(group.id, campaignId, true);
         }
         await campaignAdminService.assignToGroup(group.id, campaignId);
-        await showAlert('Sucesso', 'Esquadrão enviado para a missão (Ativa).');
+        await showAlert('Sucesso', t('groupMissions.toast.assigned'));
       } catch (err) {
         console.error(err);
-        await showAlert('Erro', 'Falha na atribuição.');
+        await showAlert('Erro', t('groupMissions.toast.assignFail'));
       }
     });
 
@@ -70,10 +73,10 @@ export default function GroupMissionsModal({
     withBusy(async () => {
       try {
         await campaignAdminService.unassignFromGroup(group.id);
-        await showAlert('Sucesso', 'Esquadrão removido do campo.');
+        await showAlert('Sucesso', t('groupMissions.toast.removedField'));
       } catch (err) {
         console.error(err);
-        await showAlert('Erro', 'Falha ao remover designação.');
+        await showAlert('Erro', t('groupMissions.toast.removeFail'));
       }
     });
 
@@ -89,7 +92,7 @@ export default function GroupMissionsModal({
           initial={{ x: '100%' }}
           animate={{ x: 0 }}
           exit={{ x: '100%' }}
-          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+          transition={ADMIN_SPRING}
           className="bg-[#222] border-l-8 border-[#1a1a1a] w-full max-w-xl shadow-2xl flex flex-col h-full relative overflow-hidden font-chakra"
           onClick={(e) => e.stopPropagation()}
         >
@@ -103,7 +106,7 @@ export default function GroupMissionsModal({
           <div className="p-8 border-b-4 border-[#1a1a1a] bg-black/40 relative z-10 flex justify-between items-center">
             <div>
               <h3 className="font-black text-xl text-white uppercase tracking-widest">
-                Missões_do_Esquadrão
+                Missões do Esquadrão
               </h3>
               <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-1">
                 Grupo: <span className="text-primary">{group.name}</span>
@@ -120,9 +123,8 @@ export default function GroupMissionsModal({
 
           <div className="flex-1 overflow-y-auto p-6 bg-black/10 relative z-10 custom-scrollbar space-y-8">
             <p className="text-[9px] font-display font-bold text-industrial-silver/30 uppercase tracking-widest border border-white/5 bg-black/20 px-4 py-3 rounded-sm">
-              <strong className="text-primary/80">Autorizado</strong> libera a missão na seleção do jogador.{' '}
-              <strong className="text-emerald-500/80">Em campo</strong> define a missão ativa do esquadrão.
-              Preferência: abrir o comando completo da missão para inventário e transmissão.
+              {t('groupMissions.authorizedHint')}{' '}
+              {t('groupMissions.inFieldHint')}
             </p>
 
             <div className="space-y-2">
@@ -141,8 +143,8 @@ export default function GroupMissionsModal({
               >
                 <option value="">
                   {availableToUnlock.length === 0
-                    ? 'Todas as missões já autorizadas'
-                    : 'Autorizar missão...'}
+                    ? t('groupMissions.allAuthorized')
+                    : t('groupMissions.authorizePlaceholder')}
                 </option>
                 {availableToUnlock.map((c) => (
                   <option key={c.id} value={c.id}>
@@ -169,7 +171,7 @@ export default function GroupMissionsModal({
                       disabled={busy}
                       onClick={() => handleUnlock(campaignId, false)}
                       className="p-1 text-primary/40 hover:text-red-500 material-symbols-outlined text-xs disabled:opacity-40"
-                      title="Remover autorização"
+                      title={t('groupMissions.removeAuth')}
                     >
                       close
                     </button>
@@ -199,13 +201,13 @@ export default function GroupMissionsModal({
               >
                 <option value="">
                   {availableToAssign.length === 0
-                    ? 'Nenhuma missão disponível'
-                    : 'Designar missão para campo...'}
+                    ? t('groupMissions.noneAvailable')
+                    : t('groupMissions.assignPlaceholder')}
                 </option>
                 {availableToAssign.map((c) => (
                   <option key={c.id} value={c.id}>
                     {c.name}
-                    {!unlocked.includes(c.id) ? ' (autorizará)' : ''}
+                    {!unlocked.includes(c.id) ? t('groupMissions.willAuthorize') : ''}
                   </option>
                 ))}
               </select>

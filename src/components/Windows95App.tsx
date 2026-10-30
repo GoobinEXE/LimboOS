@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'motion/react';
 import { checkMacClosed } from '../store/firestore';
 import { activityLogger } from '../services/ActivityLogger';
@@ -14,7 +15,18 @@ interface Windows95AppProps {
 type WindowType = 'myComputer' | 'diskRepair' | 'recycleBin';
 
 export default function Windows95App({ uid, characterId, onClose }: Windows95AppProps) {
+  const { t } = useTranslation('player');
+  const { t: tc } = useTranslation('common');
   const { isLandscape, viewportHeight } = useLandscapeLayout();
+
+  const getWindowLabel = useCallback((type: WindowType): string => {
+    switch (type) {
+      case 'myComputer': return t('win95.myComputer');
+      case 'diskRepair': return t('win95.diskRepair');
+      case 'recycleBin': return t('win95.recycle');
+      default: return tc('os.window');
+    }
+  }, [t, tc]);
   const [activeWindows, setActiveWindows] = useState<WindowType[]>([]);
   const [focusedWindow, setFocusedWindow] = useState<WindowType | null>(null);
   const [startMenuOpen, setStartMenuOpen] = useState(false);
@@ -99,9 +111,9 @@ export default function Windows95App({ uid, characterId, onClose }: Windows95App
             : 'flex flex-col gap-4 p-4'
         }`}
       >
-        <DesktopIcon icon="💻" label="Meu Computador" onClick={() => toggleWindow('myComputer')} compact={isLandscape} />
-        <DesktopIcon icon="🗑️" label="Lixeira" onClick={() => toggleWindow('recycleBin')} compact={isLandscape} />
-        <DesktopIcon icon="💾" label="DiskRepair Pro" onClick={() => toggleWindow('diskRepair')} compact={isLandscape} />
+        <DesktopIcon icon="💻" label={t('win95.myComputer')} onClick={() => toggleWindow('myComputer')} compact={isLandscape} />
+        <DesktopIcon icon="🗑️" label={t('win95.recycle')} onClick={() => toggleWindow('recycleBin')} compact={isLandscape} />
+        <DesktopIcon icon="💾" label={t('win95.diskRepair')} onClick={() => toggleWindow('diskRepair')} compact={isLandscape} />
       </div>
 
       {/* Windows Layer */}
@@ -124,6 +136,9 @@ export default function Windows95App({ uid, characterId, onClose }: Windows95App
               isLandscape={isLandscape}
               viewportHeight={viewportHeight}
               stackIndex={index}
+              getWindowLabel={getWindowLabel}
+              t={t}
+              tc={tc}
             />
           ))}
         </AnimatePresence>
@@ -138,7 +153,7 @@ export default function Windows95App({ uid, characterId, onClose }: Windows95App
           onClick={() => setStartMenuOpen(!startMenuOpen)}
           className={`win95-button ${isLandscape ? 'h-6 px-1.5 text-xs' : 'h-8 px-2 text-sm'} flex items-center gap-1 font-bold min-h-0 ${startMenuOpen ? 'bg-[#dfdfdf] shadow-[inset_1px_1px_#0a0a0a]' : ''}`}
         >
-          <span className={isLandscape ? 'text-sm' : 'text-lg'}>🪟</span> Iniciar
+          <span className={isLandscape ? 'text-sm' : 'text-lg'}>🪟</span> {tc('os.start')}
         </button>
         
         <div className={`flex-1 flex gap-1 ${isLandscape ? 'h-6' : 'h-8'} overflow-hidden mx-1`}>
@@ -177,14 +192,14 @@ export default function Windows95App({ uid, characterId, onClose }: Windows95App
                 <span className="start-menu-text">Windows 95</span>
               </div>
               <div className="flex-1 py-1 overflow-y-auto min-h-0">
-                <StartOption icon="💻" label="Programas" subMenu />
-                <StartOption icon="📂" label="Documentos" subMenu />
-                <StartOption icon="⚙️" label="Configurações" subMenu />
-                <StartOption icon="🔍" label="Localizar" subMenu />
-                <StartOption icon="❓" label="Ajuda" />
-                <StartOption icon="🏃" label="Executar..." />
+                <StartOption icon="💻" label={t('win95.programs')} subMenu />
+                <StartOption icon="📂" label={t('win95.documents')} subMenu />
+                <StartOption icon="⚙️" label={t('win95.settings')} subMenu />
+                <StartOption icon="🔍" label={t('win95.find')} subMenu />
+                <StartOption icon="❓" label={t('win95.help')} />
+                <StartOption icon="🏃" label={t('win95.run')} />
                 <div className="h-px bg-[#808080] border-b border-white my-1 mx-1" />
-                <StartOption icon="🚪" label="Desligar..." onClick={handleShutdown} />
+                <StartOption icon="🚪" label={tc('os.shutdown')} onClick={handleShutdown} />
               </div>
             </motion.div>
           </>
@@ -236,7 +251,10 @@ const Window: React.FC<{
   isLandscape: boolean;
   viewportHeight: number;
   stackIndex: number;
-}> = ({ type, isFocused, onFocus, onClose, uid, isLandscape, viewportHeight, stackIndex }) => {
+  getWindowLabel: (type: WindowType) => string;
+  t: (key: string, options?: Record<string, unknown>) => string;
+  tc: (key: string, options?: Record<string, unknown>) => string;
+}> = ({ type, isFocused, onFocus, onClose, uid, isLandscape, viewportHeight, stackIndex, getWindowLabel, t, tc }) => {
   const maxWindowHeight = Math.min(480, Math.max(180, viewportHeight - (isLandscape ? 36 : 48)));
   const minHeight = isLandscape ? 160 : 300;
 
@@ -274,19 +292,19 @@ const Window: React.FC<{
 
       {/* Menu Bar */}
       <div className={`flex px-1 gap-3 text-[11px] ${isLandscape ? 'h-4' : 'h-5'} items-center shrink-0`}>
-        <span className="hover:win95-border-in px-1 cursor-default">Arquivo</span>
-        <span className="hover:win95-border-in px-1 cursor-default">Editar</span>
-        <span className="hover:win95-border-in px-1 cursor-default">Exibir</span>
-        <span className="hover:win95-border-in px-1 cursor-default">Ajuda</span>
+        <span className="hover:win95-border-in px-1 cursor-default">{tc('os.file')}</span>
+        <span className="hover:win95-border-in px-1 cursor-default">{tc('os.edit')}</span>
+        <span className="hover:win95-border-in px-1 cursor-default">{tc('os.view')}</span>
+        <span className="hover:win95-border-in px-1 cursor-default">{tc('os.help')}</span>
       </div>
 
       {/* Window Content */}
       <div className={`flex-1 min-h-0 bg-white m-0.5 win95-border-in overflow-auto flex flex-col ${isLandscape ? 'p-2' : 'p-4'}`}>
         {type === 'myComputer' && (
           <div className={`grid gap-3 ${isLandscape ? 'grid-cols-3' : 'grid-cols-3 gap-6'}`}>
-            <DesktopIcon icon="💽" label="Disco Local (C:)" onClick={() => {}} labelOnLight compact={isLandscape} />
-            <DesktopIcon icon="💿" label="Drive CD (D:)" onClick={() => {}} labelOnLight compact={isLandscape} />
-            <DesktopIcon icon="💾" label="Disquete (A:)" onClick={() => {}} labelOnLight compact={isLandscape} />
+            <DesktopIcon icon="💽" label={t('win95.driveC')} onClick={() => {}} labelOnLight compact={isLandscape} />
+            <DesktopIcon icon="💿" label={t('win95.driveD')} onClick={() => {}} labelOnLight compact={isLandscape} />
+            <DesktopIcon icon="💾" label={t('win95.driveA')} onClick={() => {}} labelOnLight compact={isLandscape} />
           </div>
         )}
         
@@ -295,20 +313,10 @@ const Window: React.FC<{
         {type === 'recycleBin' && (
           <div className={`flex flex-col items-center justify-center opacity-30 ${isLandscape ? 'py-6' : 'py-12'}`}>
             <span className={`${isLandscape ? 'text-4xl mb-2' : 'text-6xl mb-4'}`}>🗑️</span>
-            <span className="text-sm font-bold">A Lixeira está vazia.</span>
+            <span className="text-sm font-bold">{t('win95.recycleEmpty')}</span>
           </div>
         )}
       </div>
     </motion.div>
   );
 };
-
-
-function getWindowLabel(type: WindowType): string {
-  switch (type) {
-    case 'myComputer': return 'Meu Computador';
-    case 'diskRepair': return 'DiskRepair Pro';
-    case 'recycleBin': return 'Lixeira';
-    default: return 'Janela';
-  }
-}

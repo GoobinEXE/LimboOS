@@ -1,17 +1,16 @@
 import React, { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Lock } from 'lucide-react';
-import { ALL_ACHIEVEMENTS } from '../../data/achievements';
 import { campaigns, getCampaignById, resolveCampaignPlatform } from '../../data/campaigns';
 import {
   groupAchievementsByCategory,
-  ACHIEVEMENT_TIER_LABELS,
-  PLATFORM_LABELS,
   filterAchievementsForScope,
   isAchievementEarned,
   type Achievement,
   type AchievementTier,
   type PlayerPlatform,
 } from '../../services/AchievementManager';
+import { useAchievementCatalog } from '../../hooks/useAchievementCatalog';
 
 function platformBorder(platform: PlayerPlatform, earned: boolean): string {
   if (!earned) return 'border-border-subtle';
@@ -20,10 +19,11 @@ function platformBorder(platform: PlayerPlatform, earned: boolean): string {
   return 'border-amber-400/45';
 }
 
-function tierBadge(tier: AchievementTier) {
+function TierBadge({ tier }: { tier: AchievementTier }) {
+  const { t } = useTranslation('common');
   return (
     <span className="text-[7px] uppercase tracking-widest text-amber-500/60 font-mono shrink-0">
-      {ACHIEVEMENT_TIER_LABELS[tier]}
+      {t(`achievement.tier.${tier}`)}
     </span>
   );
 }
@@ -61,14 +61,15 @@ function AchievementCard({
   revealed: boolean;
   campaignLabel?: string;
 }) {
-  const title = earned || revealed ? ach.title : 'Conquista Bloqueada';
+  const { t } = useTranslation('common');
+  const title = earned || revealed ? ach.title : t('achievement.locked');
   const description = earned
     ? revealed
       ? `${ach.description} (${ach.unlockCondition})`
       : ach.description
     : revealed
-      ? `Como desbloquear: ${ach.unlockCondition}`
-      : 'Permaneça atento e explore mais.';
+      ? t('achievement.unlockHow', { condition: ach.unlockCondition })
+      : t('achievement.exploreMore');
 
   return (
     <div
@@ -80,7 +81,7 @@ function AchievementCard({
     >
       <div className="flex items-center justify-between gap-1">
         <AchievementIcon ach={ach} earned={earned} />
-        {earned && tierBadge(ach.tier)}
+        {earned && <TierBadge tier={ach.tier} />}
       </div>
       <p
         className={`text-[11px] font-semibold leading-tight wrap-break-word min-w-0 ${
@@ -94,7 +95,7 @@ function AchievementCard({
       </p>
       {earned && (
         <p className="text-[7px] uppercase tracking-widest text-industrial-silver/35 font-mono">
-          {PLATFORM_LABELS[ach.primaryPlatform]}
+          {t(`achievement.platform.${ach.primaryPlatform}`)}
           {campaignLabel ? ` · ${campaignLabel}` : ''}
         </p>
       )}
@@ -111,7 +112,8 @@ function NokiaAchievementRow({
   earned: boolean;
   revealed: boolean;
 }) {
-  const title = earned || revealed ? ach.title : 'BLOQUEADO';
+  const { t } = useTranslation('common');
+  const title = earned || revealed ? ach.title : t('achievement.lockedNokia');
   return (
     <div
       className={`p-1.5 border border-[#111e14] flex gap-2 items-center ${!earned ? 'opacity-40 border-dashed' : ''}`}
@@ -126,7 +128,7 @@ function NokiaAchievementRow({
         <div className="font-black truncate text-[9px] tracking-tighter flex items-center gap-1.5">
           <span className="truncate">{title}</span>
           {earned && (
-            <span className="text-[6px] opacity-50 shrink-0 uppercase">{ACHIEVEMENT_TIER_LABELS[ach.tier]}</span>
+            <span className="text-[6px] opacity-50 shrink-0 uppercase">{t(`achievement.tier.${ach.tier}`)}</span>
           )}
         </div>
         {earned && (
@@ -151,6 +153,8 @@ export function AchievementCatalog({
   /** Campanhas que o personagem já tocou (para seletor). */
   unlockedCampaignIds?: string[];
 }) {
+  const { t } = useTranslation('common');
+  const { achievements } = useAchievementCatalog();
   const selectableCampaigns = useMemo(() => {
     const ids = new Set<string>([
       ...(campaignId ? [campaignId] : []),
@@ -169,8 +173,8 @@ export function AchievementCatalog({
   const campaign = getCampaignById(activeCampaignId);
 
   const scoped = useMemo(
-    () => filterAchievementsForScope(ALL_ACHIEVEMENTS, activeCampaignId, platform),
-    [activeCampaignId, platform]
+    () => filterAchievementsForScope(achievements, activeCampaignId, platform),
+    [achievements, activeCampaignId, platform],
   );
 
   const groups = groupAchievementsByCategory(scoped);
@@ -213,12 +217,12 @@ export function AchievementCatalog({
 
       <div className="flex items-center justify-between gap-2 px-0.5">
         <span className={`text-protocol text-[8px] uppercase tracking-[0.2em] ${platformChrome}`}>
-          {PLATFORM_LABELS[platform === 'nokia' ? 'nokia' : platform === 'walkman' ? 'walkman' : 'global']}
+          {t(`achievement.platform.${platform === 'nokia' ? 'nokia' : platform === 'walkman' ? 'walkman' : 'global'}`)}
           {campaign ? ` · ${campaign.year}` : ''}
         </span>
         <span className="text-mono-ui text-[9px] text-industrial-silver/35">
           {earnedCount}/{scoped.length}
-          {variant === 'deck' ? ` · raras ${rareEarned}` : ''}
+          {variant === 'deck' ? ` · ${t('achievement.raresCount', { count: rareEarned })}` : ''}
         </span>
       </div>
 
@@ -227,7 +231,7 @@ export function AchievementCatalog({
           {groups.map((group) => (
             <div key={group.category} className="space-y-1">
               <div className="text-[7px] font-black uppercase tracking-[0.2em] opacity-50 border-b border-[#111e14] pb-0.5">
-                {group.label}
+                {t(`achievement.category.${group.category}`)}
               </div>
               {group.items.map((ach) => (
                 <NokiaAchievementRow
@@ -246,7 +250,7 @@ export function AchievementCatalog({
             <div key={group.category} className="space-y-2">
               <div className="flex items-center gap-2 px-0.5">
                 <span className="text-protocol text-[8px] text-industrial-silver/45 uppercase tracking-[0.2em]">
-                  {group.label}
+                  {t(`achievement.category.${group.category}`)}
                 </span>
                 <span aria-hidden className="flex-1 h-px bg-border-subtle" />
                 <span className="text-mono-ui text-[9px] text-industrial-silver/30">

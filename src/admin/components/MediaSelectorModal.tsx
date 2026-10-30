@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'motion/react';
 import MediaLibraryPanel from './MediaLibraryPanel';
 import { MediaAsset, MediaType } from '../../types/media';
@@ -17,9 +18,11 @@ export default function MediaSelectorModal({
   isOpen,
   onClose,
   onSelect,
-  title = 'Selecionar Mídia',
+  title,
   allowedTypes,
 }: MediaSelectorModalProps) {
+  const { t } = useTranslation('admin');
+  const resolvedTitle = title ?? t('media.selectMedia');
   return (
     <OverlayPortal open={isOpen} onClose={onClose}>
       <AnimatePresence>
@@ -51,7 +54,7 @@ export default function MediaSelectorModal({
                 <div className="flex items-center gap-3">
                   <span className="material-symbols-outlined text-primary text-lg">perm_media</span>
                   <h3 className="font-display font-bold text-white uppercase tracking-widest text-sm">
-                    {title}
+                    {resolvedTitle}
                   </h3>
                 </div>
                 <button
@@ -81,7 +84,7 @@ export default function MediaSelectorModal({
                   onClick={onClose}
                   className="px-5 py-2 text-[10px] font-display font-bold text-industrial-silver/40 hover:text-white uppercase tracking-widest transition-colors"
                 >
-                  Cancelar
+                  {t('accounts.cancel')}
                 </button>
               </div>
             </motion.div>

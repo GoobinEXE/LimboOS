@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Play, Pause, RotateCcw, Menu, Monitor } from 'lucide-react';
 import AppleIcon from '../icons/AppleIcon';
 import { motion, AnimatePresence } from 'motion/react';
@@ -36,6 +37,7 @@ export default React.memo(function BottomControls({
   onMacOpen?: () => void;
   compact?: boolean;
 }) {
+  const { t } = useTranslation('player');
   const [showMenu, setShowMenu] = useState(false);
   
   const isPlaying = status === 'PLAYING';
@@ -75,14 +77,14 @@ export default React.memo(function BottomControls({
             className={`absolute ${compact ? 'bottom-11' : 'bottom-14'} right-1 w-40 bg-surface-panel border border-border-strong shadow-panel rounded-card overflow-hidden z-50 py-1`}
           >
             <div className="px-3 py-1.5 border-b border-border mb-1">
-              <span className="text-[9px] font-black uppercase tracking-[0.2em] text-industrial-silver/40">Sistemas</span>
+              <span className="text-[9px] font-black uppercase tracking-[0.2em] text-industrial-silver/40">{t('walkman.systems')}</span>
             </div>
             {terminalAccess && (
               <button 
                 onClick={() => { onTerminalOpen?.(); setShowMenu(false); }}
                 className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-surface-container-high active:bg-surface-container-highest transition-colors duration-150 text-[10px] font-black tracking-widest text-[#33FF33]"
               >
-                <Monitor size={14} /> MH-DOS v6.22
+                <Monitor size={14} /> {t('walkman.mhDos')}
               </button>
             )}
             {macAccess && (
@@ -90,7 +92,7 @@ export default React.memo(function BottomControls({
                 onClick={() => { onMacOpen?.(); setShowMenu(false); }}
                 className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-surface-container-high active:bg-surface-container-highest transition-colors duration-150 text-[10px] font-black tracking-widest text-zinc-300"
               >
-                <div className="w-3.5 flex justify-center"><AppleIcon size={14} /></div> MACOS v7.1
+                <div className="w-3.5 flex justify-center"><AppleIcon size={14} /></div> {t('walkman.macos')}
               </button>
             )}
           </motion.div>
@@ -132,13 +134,13 @@ export default React.memo(function BottomControls({
           {appCount > 1 ? (
             <Menu size={iconSide} className={`${showMenu ? 'text-on-background' : 'text-accent'} transition-colors`} />
           ) : terminalAccess ? (
-            <span className="text-[#33FF33] text-[10px] font-black tracking-tighter drop-shadow-[0_0_5px_rgba(51,255,51,0.5)]">MH-DOS</span>
+            <span className="text-[#33FF33] text-[10px] font-black tracking-tighter drop-shadow-[0_0_5px_rgba(51,255,51,0.5)]">{t('walkman.mhDosShort')}</span>
           ) : macAccess ? (
             <span className="text-zinc-300 drop-shadow-[0_0_5px_rgba(255,255,255,0.3)]">
               <AppleIcon size={iconSide} />
             </span>
           ) : (
-            <span className="text-accent text-xs font-bold">EQ</span>
+            <span className="text-accent text-xs font-bold">{t('walkman.eq')}</span>
           )}
         </span>
       </button>

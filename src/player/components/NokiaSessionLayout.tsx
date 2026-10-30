@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import RetroLoading from '../../components/player/RetroLoading';
 import NokiaDeviceWrapper from './NokiaDeviceWrapper';
 
@@ -11,6 +12,7 @@ import type { IntelBase } from '../../services/IntelEngine';
 const EMPTY_INTEL: IntelBase[] = [];
 
 export default function NokiaSessionLayout() {
+  const { t } = useTranslation('player');
   const session = usePlayerSession();
   const playback = usePlayerPlayback();
 
@@ -40,7 +42,7 @@ export default function NokiaSessionLayout() {
         style={{ display: screen === 'player' ? 'flex' : 'none' }}
         className="w-full h-full flex-col grow min-h-0"
       >
-        <React.Suspense fallback={<RetroLoading message="CARREGANDO HANDSET..." />}>
+        <React.Suspense fallback={<RetroLoading message={t('app.loading.handset')} />}>
           <NokiaPlayer
             currentIntel={playback.currentIntel}
             status={playback.walkmanStatus}
@@ -76,7 +78,7 @@ export default function NokiaSessionLayout() {
         style={{ display: screen === 'profile' ? 'flex' : 'none' }}
         className="w-full h-full flex-col grow min-h-0"
       >
-        <React.Suspense fallback={<RetroLoading message="ACESSANDO PERFIL..." />}>
+        <React.Suspense fallback={<RetroLoading message={t('app.loading.profile')} />}>
           <ProfileScreen
             profile={playerData}
             galleryImages={visualGalleryImages}

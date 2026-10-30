@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { AnimatePresence, motion } from 'motion/react';
 import { Camera } from 'lucide-react';
 const QrScanner = React.lazy(() => import('../QrScanner'));
@@ -27,6 +28,7 @@ export default React.memo(function CassetteVisor({
   /** Landscape: preenche a coluna sem altura fixa em px */
   fluid?: boolean;
 }) {
+  const { t } = useTranslation('player');
   const isPlaying = status === 'PLAYING';
   const isRewinding = status === 'REWINDING';
   const isLoading = status === 'LOADING';
@@ -72,7 +74,7 @@ export default React.memo(function CassetteVisor({
                 <div className="text-[10px] font-bold text-gray-600 truncate mt-0.5">{currentIntel instanceof AudioIntel ? currentIntel.metadata.artist : currentIntel.metadata?.npc}</div>
               </div>
               <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-45 h-12.5 bg-surface-container rounded-t-lg border-t-2 border-l-2 border-r-2 border-surface-sunken" />
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/60 text-white text-[10px] font-bold px-3 py-1 rounded-full backdrop-blur-sm">CLIQUE PARA EJETAR</div>
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/60 text-white text-[10px] font-bold px-3 py-1 rounded-full backdrop-blur-sm">{t('walkman.visor.eject')}</div>
             </div>
       
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-42.5 h-11.5 bg-black/40 rounded-md flex items-center justify-between px-4 border border-border-subtle shadow-[inset_0_2px_4px_rgba(0,0,0,0.5)]">
@@ -98,7 +100,7 @@ export default React.memo(function CassetteVisor({
               <React.Suspense fallback={
                 <div className="w-full h-full flex flex-col items-center justify-center p-4">
                   <RetroSpinner size="sm" className="mb-2" />
-                  <p className="text-accent text-[9px] font-bold uppercase tracking-widest animate-pulse mt-2">Iniciando scanner...</p>
+                  <p className="text-accent text-[9px] font-bold uppercase tracking-widest animate-pulse mt-2">{t('walkman.visor.startingScanner')}</p>
                 </div>
               }>
                 <QrScanner
@@ -112,7 +114,7 @@ export default React.memo(function CassetteVisor({
                 {isLoading ? (
                   <div className="flex flex-col items-center gap-2">
                     <RetroSpinner size="sm" />
-                    <p className="text-accent text-[9px] font-bold uppercase tracking-widest animate-pulse">Carregando prova...</p>
+                    <p className="text-accent text-[9px] font-bold uppercase tracking-widest animate-pulse">{t('walkman.visor.loadingProof')}</p>
                   </div>
                 ) : (
                   <>
@@ -120,8 +122,8 @@ export default React.memo(function CassetteVisor({
                       <Camera className="text-industrial-silver/50 group-hover:text-accent transition-colors" size={24} />
                     </div>
                     <div className="text-center">
-                      <p className="text-industrial-silver/70 text-[11px] font-bold uppercase tracking-widest">Compartimento Vazio</p>
-                      <p className="text-accent text-[9px] font-bold uppercase tracking-tighter mt-1">Escaneie QR para Inserir Prova</p>
+                      <p className="text-industrial-silver/70 text-[11px] font-bold uppercase tracking-widest">{t('walkman.visor.emptyBay')}</p>
+                      <p className="text-accent text-[9px] font-bold uppercase tracking-tighter mt-1">{t('walkman.visor.scanHint')}</p>
                     </div>
                   </>
                 )}

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, MapPin, Search, User, Package, Image as ImageIcon } from 'lucide-react';
 import type { GalleryImage, GalleryCategory } from '../store/firestore';
@@ -8,11 +9,11 @@ interface PlayerGalleryProps {
   variant?: 'default' | 'nokia';
 }
 
-const TABS: { id: GalleryCategory; label: string; Icon: React.FC<{ size?: number; className?: string }> }[] = [
-  { id: 'locais', label: 'Locais', Icon: MapPin },
-  { id: 'pistas', label: 'Pistas', Icon: Search },
-  { id: 'pessoas', label: 'Pessoas', Icon: User },
-  { id: 'itens', label: 'Itens', Icon: Package },
+const TABS: { id: GalleryCategory; Icon: React.FC<{ size?: number; className?: string }> }[] = [
+  { id: 'locais', Icon: MapPin },
+  { id: 'pistas', Icon: Search },
+  { id: 'pessoas', Icon: User },
+  { id: 'itens', Icon: Package },
 ];
 
 const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=800&auto=format&fit=crop';
@@ -28,17 +29,19 @@ const CornerMarks = ({ className = 'border-border-accent' }: { className?: strin
 );
 
 export default function PlayerGallery({ images, variant = 'default' }: PlayerGalleryProps) {
+  const { t } = useTranslation('common');
   const [activeTab, setActiveTab] = useState<GalleryCategory>('locais');
   const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
   const filtered = images.filter(img => img.category === activeTab);
   const getCounts = (cat: GalleryCategory) => images.filter(i => i.category === cat).length;
-  const selectedTab = selectedImage ? TABS.find(t => t.id === selectedImage.category) : null;
+  const tabLabel = (id: GalleryCategory) => t(`gallery.tab.${id}`);
+  const selectedTab = selectedImage ? TABS.find(tab => tab.id === selectedImage.category) : null;
 
   if (variant === 'nokia') {
     if (images.length === 0) {
       return (
         <div className="text-[8px] text-center border border-dashed border-[#111e14] py-3 opacity-70 font-bold">
-          ARQUIVO VAZIO.
+          {t('gallery.emptyNokia')}
         </div>
       );
     }
@@ -56,7 +59,7 @@ export default function PlayerGallery({ images, variant = 'default' }: PlayerGal
                   isActive ? 'bg-[#111e14] text-[#edfeed] font-bold' : 'hover:bg-[#111e14]/10'
                 }`}
               >
-                {tab.label.substring(0, 3)}{count > 0 && `:${count}`}
+                {tabLabel(tab.id).substring(0, 3)}{count > 0 && `:${count}`}
               </button>
             );
           })}
@@ -70,7 +73,7 @@ export default function PlayerGallery({ images, variant = 'default' }: PlayerGal
             className="grid grid-cols-2 gap-1"
           >
             {filtered.length === 0 ? (
-              <div className="col-span-2 text-center py-2 opacity-60 border border-dashed border-[#111e14]">SEM REGISTROS</div>
+              <div className="col-span-2 text-center py-2 opacity-60 border border-dashed border-[#111e14]">{t('gallery.noRecordsNokia')}</div>
             ) : (
               filtered.map((img, idx) => (
                 <div
@@ -85,7 +88,7 @@ export default function PlayerGallery({ images, variant = 'default' }: PlayerGal
                       className="w-full h-full object-cover"
                       onError={(e) => { e.currentTarget.src = FALLBACK_IMAGE; }}
                     />
-                    <span className="absolute top-0 left-0 bg-[#edfeed] text-[#111e14] text-[6px] font-bold px-0.5 leading-tight">IMG_{pad(idx + 1)}</span>
+                    <span className="absolute top-0 left-0 bg-[#edfeed] text-[#111e14] text-[6px] font-bold px-0.5 leading-tight">{t('gallery.imgIndex', { n: pad(idx + 1) })}</span>
                   </div>
                   <div className="text-[7px] font-bold truncate mt-0.5 px-0.5 text-center group-hover:text-[#edfeed]">{img.title}</div>
                 </div>
@@ -103,8 +106,8 @@ export default function PlayerGallery({ images, variant = 'default' }: PlayerGal
               onClick={() => setSelectedImage(null)}
             >
               <div className="flex justify-between items-center border-b-2 border-[#111e14] pb-1 shrink-0 font-bold mb-1">
-                <span>IMG_VIEWER.EXE</span>
-                <button className="border border-[#111e14] px-1 hover:bg-[#111e14] hover:text-[#edfeed] active:scale-95 transition-all">[X]</button>
+                <span>{t('gallery.viewerTitle')}</span>
+                <button className="border border-[#111e14] px-1 hover:bg-[#111e14] hover:text-[#edfeed] active:scale-95 transition-all">{t('actions.x')}</button>
               </div>
               <div className="flex-1 overflow-y-auto flex flex-col items-center" style={{ scrollbarWidth: 'none' }}>
                 <div className="border-4 border-[#111e14] p-1 bg-black mb-2 grayscale contrast-125 w-full">
@@ -131,8 +134,8 @@ export default function PlayerGallery({ images, variant = 'default' }: PlayerGal
         <div className="w-12 h-12 rounded-control bg-surface-sunken border border-border flex items-center justify-center mx-auto mb-3 text-primary/40">
           <ImageIcon size={20} />
         </div>
-        <p className="text-protocol text-industrial-silver/50 mb-1">Arquivo visual vazio</p>
-        <p className="text-[10px] text-industrial-silver/30 font-sans">Novas evidências aparecerão aqui quando forem liberadas.</p>
+        <p className="text-protocol text-industrial-silver/50 mb-1">{t('gallery.emptyTitle')}</p>
+        <p className="text-[10px] text-industrial-silver/30 font-sans">{t('gallery.emptyHint')}</p>
       </div>
     );
   }
@@ -161,7 +164,7 @@ export default function PlayerGallery({ images, variant = 'default' }: PlayerGal
               )}
               <span className="relative z-10 flex items-center gap-1.5">
                 <tab.Icon size={10} />
-                <span className="hidden min-[360px]:inline">{tab.label}</span>
+                <span className="hidden min-[360px]:inline">{tabLabel(tab.id)}</span>
                 {count > 0 && (
                   <span className={`text-mono-ui text-[9px] ${isActive ? 'text-primary/80' : 'text-industrial-silver/40'}`}>{count}</span>
                 )}
@@ -181,7 +184,7 @@ export default function PlayerGallery({ images, variant = 'default' }: PlayerGal
         >
           {filtered.length === 0 ? (
             <div className="rounded-card border border-dashed border-border p-6 text-center">
-              <p className="text-protocol text-[9px] text-industrial-silver/40">Nenhum registro nesta categoria</p>
+              <p className="text-protocol text-[9px] text-industrial-silver/40">{t('gallery.emptyCategory')}</p>
             </div>
           ) : (
             <div className="grid grid-cols-2 gap-2">
@@ -205,7 +208,7 @@ export default function PlayerGallery({ images, variant = 'default' }: PlayerGal
                     />
                     <div aria-hidden className="absolute inset-0 bg-linear-to-t from-black/50 via-transparent to-transparent" />
                     <span className="absolute top-1.5 left-1.5 text-mono-ui text-[8px] text-white/70 bg-black/55 backdrop-blur-sm px-1.5 py-0.5 rounded-inset">
-                      IMG_{pad(idx + 1)}
+                      {t('gallery.imgIndex', { n: pad(idx + 1) })}
                     </span>
                   </div>
                   <div className="px-2 py-1.5 border-t border-border-subtle">
@@ -256,10 +259,10 @@ export default function PlayerGallery({ images, variant = 'default' }: PlayerGal
                     {selectedTab && (
                       <span className="inline-flex items-center gap-1.5 text-protocol text-[8px] text-primary/70">
                         <selectedTab.Icon size={10} />
-                        {selectedTab.label}
+                        {tabLabel(selectedTab.id)}
                       </span>
                     )}
-                    <span className="text-mono-ui text-[9px] text-industrial-silver/30">Evidência visual</span>
+                    <span className="text-mono-ui text-[9px] text-industrial-silver/30">{t('gallery.evidenceVisual')}</span>
                   </div>
                   <p className="text-display text-base text-white uppercase">{selectedImage.title}</p>
                   {selectedImage.description && (
@@ -270,7 +273,7 @@ export default function PlayerGallery({ images, variant = 'default' }: PlayerGal
               <button
                 type="button"
                 onClick={() => setSelectedImage(null)}
-                aria-label="Fechar"
+                aria-label={t('closeAria')}
                 className="absolute -top-3 -right-3 w-9 h-9 rounded-full bg-surface-panel border border-border-strong flex items-center justify-center text-primary hover:border-border-accent hover:bg-accent-10 transition-colors shadow-panel"
               >
                 <X size={14} />

@@ -1,0 +1,456 @@
+{
+  "app": {
+    "loading": {
+      "authenticating": "AUTHENTICATING...",
+      "authenticatingSub": "Validating access credentials",
+      "initSystem": "INITIALIZING SYSTEM...",
+      "initSystemSub": "Loading low-level interface",
+      "terminal": "LOADING TERMINAL...",
+      "agents": "LISTING AGENTS...",
+      "sync": "SYNCING...",
+      "syncSub": "Retrieving agent dossier",
+      "profile": "ACCESSING PROFILE...",
+      "dossier": "OPENING DOSSIER...",
+      "mission": "SELECTING MISSION...",
+      "deck": "INITIALIZING DECK...",
+      "handset": "LOADING HANDSET..."
+    }
+  },
+  "login": {
+    "badge": "MASTER-AUTH-V1",
+    "eyebrow": "Access Network · Master Level",
+    "subtitle": "Master Terminal — Authentication Required",
+    "label": {
+      "id": "Master ID or Email (Legacy Accounts)",
+      "password": "Security Key"
+    },
+    "placeholder": {
+      "id": "RM-USER-01 or email"
+    },
+    "hint": {
+      "register": "New accounts are registered automatically on first access."
+    },
+    "submit": "Enter System",
+    "syncing": "Syncing...",
+    "orVia": "Or sign in with",
+    "google": "Google",
+    "apple": "Apple",
+    "linkNode": "Link Node: Active",
+    "side": {
+      "masterAccess": "Master Access"
+    }
+  },
+  "character": {
+    "loading": "Accessing Database...",
+    "loadingSub": "Retrieving agent records from master account",
+    "eyebrow": "Terminal RM-84 · Agent Registry",
+    "title": "Select",
+    "titleAccent": "Agent",
+    "operator": "Operator: {{name}} // Records: {{count}}",
+    "logoutTitle": "Sign Out",
+    "recruit": "Recruit New",
+    "syncFail": "Failed to sync agent. Try again.",
+    "empty": "No agents registered on this node.",
+    "create": {
+      "badge": "RECRUITMENT-PROTOCOL",
+      "title": "New",
+      "titleAccent": "Recruit",
+      "label": "Agent Codename",
+      "placeholder": "EX: PHANTOM-84",
+      "warning": "Warning: Once registered on the network, the codename becomes your primary identity. Progress will be isolated from other agents.",
+      "submit": "Confirm Registration"
+    },
+    "master": {
+      "badge": "MANDATORY PROTOCOL UPDATE",
+      "title": "Identification",
+      "titleAccent": "Master",
+      "body": "To ease network management, all operators must set a Display Name for their master account. This name will be your visual identity in the system.",
+      "nameStrong": "Display Name",
+      "label": "Display Name",
+      "placeholder": "Ex: Master Silva · OP-07",
+      "submit": "Confirm Identification"
+    },
+    "footer": {
+      "grid": "Grid-Node: {{id}}"
+    }
+  },
+  "campaign": {
+    "loading": "Syncing Database...",
+    "loadingSub": "Accessing operation records from Terminal RM-84",
+    "backAria": "Back to device",
+    "menuAria": "Security menu",
+    "eyebrow": {
+      "back": "Switch mission // Back to device",
+      "default": "Operations Log // Terminal RM-84"
+    },
+    "title": "Campaigns",
+    "titleAccent": "Active",
+    "node": "Central Node",
+    "linkActive": "Link active",
+    "prevTape": "Previous tape",
+    "nextTape": "Next tape",
+    "noTapes": "No authorized tapes",
+    "signal": "Network Signal: Stabilized",
+    "footerSys": "RM-SYS-093 // GRID PROTECTED",
+    "progressAria": "Campaign navigation",
+    "progressRecords": "Records",
+    "metadataTitle": "View Terminal Metadata",
+    "metadataAria": "View terminal metadata"
+  },
+  "cassette": {
+    "mission": "Mission // {{n}} · {{side}}",
+    "side": {
+      "handset": "HANDSET",
+      "deck": "DECK"
+    },
+    "denied": "Access Denied",
+    "deniedSub": "Insufficient authorization",
+    "spec": {
+      "system": "System",
+      "sector": "Sector",
+      "year": "Year"
+    },
+    "start": "Start Mission",
+    "select": "Select",
+    "blocked": "Protocol Locked"
+  },
+  "security": {
+    "eyebrow": "RM-84 Access Protocols",
+    "title": "Security",
+    "titleAccent": "Menu",
+    "closeAria": "Close menu",
+    "dossier": "Agent Dossier",
+    "dossierSub": "Records, files and medals",
+    "switchAgent": "Switch Agent",
+    "switchAgentSub": "Assume new field identity",
+    "logout": "Disconnect Link",
+    "logoutSub": "End session on current terminal",
+    "grid": "Grid: RM-NODE-ALPHA"
+  },
+  "metadata": {
+    "title": "Agent Metadata",
+    "loadingName": "LOADING...",
+    "idLabel": "Registry ID",
+    "syncing": "SINC...",
+    "statusLabel": "Status",
+    "lastOp": "Last Operation",
+    "noRecord": "NO RECORD",
+    "syncExit": "Sync and Exit"
+  },
+  "dossier": {
+    "title": "Agent Dossier",
+    "changePhoto": "Change photo",
+    "editCodename": "Edit codename",
+    "closeAria": "Close dossier",
+    "stat": {
+      "totalIntel": "Total Intel",
+      "medals": "Medals",
+      "evidence": "Evidence"
+    },
+    "tab": {
+      "agent": "Agent",
+      "files": "Files",
+      "medals": "Medals"
+    },
+    "section": {
+      "fieldSheet": "Field Sheet"
+    },
+    "row": {
+      "agentId": "Agent ID",
+      "codename": "Codename",
+      "status": "Status",
+      "lastMission": "Last Mission",
+      "sector": "Sector"
+    },
+    "noMission": "NO RECORD",
+    "deck": "Agent Deck",
+    "noPlaylist": "No playlist synced",
+    "recordsCount": "{{n}} records",
+    "noRecords": "No records found",
+    "fieldSystem": "Field System",
+    "opsRecords": "Operational records",
+    "secureConn": "Secure Connection",
+    "gridNode": "Grid Node: RM-LINK-84",
+    "unlockedFile": "File Unlocked"
+  },
+  "profile": {
+    "header": {
+      "agentFile": "Agent File",
+      "nokia": "FICHA AGENTE"
+    },
+    "backAria": "Back to deck",
+    "logoutAria": "Disconnect",
+    "stat": {
+      "proofs": "Evidence",
+      "achievements": "Achievements",
+      "images": "Images",
+      "proofsUpper": "EVIDENCE",
+      "medalsUpper": "MEDALS",
+      "imagesUpper": "IMAGES"
+    },
+    "action": {
+      "mission": "Switch Mission",
+      "missionSub": "Change the active reality",
+      "agent": "Switch Agent",
+      "agentSub": "Assume new identity",
+      "missionNokia": "> ALVO / MISSÃO",
+      "agentNokia": "> TROCAR AGENTE"
+    },
+    "deck": {
+      "title": "My Deck",
+      "nokia": "DECK / REDE SCN",
+      "connect": "Connect",
+      "edit": "Edit",
+      "linkShort": "[LINK]",
+      "editShort": "[EDIT]",
+      "label": "Paste your Spotify playlist link",
+      "placeholder": "https://open.spotify.com/playlist/...",
+      "placeholderNokia": "URL SPOTIFY...",
+      "hint": "Open Spotify → Playlist → Share → Copy link",
+      "emptyTitle": "No playlist connected",
+      "emptyHint": "Connect your Spotify playlist to customize your Deck.",
+      "connectCta": "Connect Spotify",
+      "noAudioNokia": "NO AUDIO CONNECTION.",
+      "error": "Invalid link. Use a Spotify playlist URL.",
+      "iframeTitle": "Spotify Deck"
+    },
+    "contact": {
+      "title": "Contact Line",
+      "nokia": "CONTATO / SMS LINK",
+      "line": "LINHA:",
+      "needUs": "You need a US phone number to send messages in the group.",
+      "generate": "Generate Random Number",
+      "generateNokia": "[GENERATE US NUMBER]"
+    },
+    "gallery": {
+      "title": "Visual Archive",
+      "nokia": "ARQUIVOS VISUAIS"
+    },
+    "achievements": {
+      "title": "Achievements",
+      "nokia": "REGISTROS OPERACIONAIS"
+    },
+    "statusPrefix": "STATUS: {{status}}",
+    "languageSection": "Preferences"
+  },
+  "evidence": {
+    "registry": "EVIDENCE LOG",
+    "archive": "ARQ//{{id}}",
+    "closeAria": "Close evidence",
+    "close": "[ CLOSE ]",
+    "category": "Category: {{cat}}",
+    "categoryFallback": "Intel",
+    "format": "Format: {{format}} // {{source}}",
+    "formatVideo": "Video",
+    "sourceYoutube": "YouTube",
+    "sourceUpload": "Upload",
+    "artist": "Artist: {{artist}}",
+    "achievement": "Achievement: {{condition}}",
+    "achievementFallback": "System",
+    "recoveredBy": "Recovered by: {{npc}}",
+    "duration": "Duration: {{time}}",
+    "hint": "Hint:",
+    "sector": "Sector: {{chapter}}",
+    "level": "Level: {{level}}",
+    "npc": "NPC: {{npc}}",
+    "checksumOk": "Checksum: OK",
+    "crcError": "CRC ERROR — INVALID CHECKSUM — DAMAGED SECTORS"
+  },
+  "toast": {
+    "playbackFail": "Playback Failed",
+    "playbackFailSub": "Press play again",
+    "wait": "Please wait",
+    "waitSub": "Profile loading...",
+    "unknownCode": "Unknown Code",
+    "unknownCodeSub": "No tape for: {{code}}",
+    "qrError": "QR Error",
+    "qrErrorSub": "Try again",
+    "intelUnlocked": "Intel Unlocked!",
+    "intelInserted": "Intel Inserted",
+    "transmissionOpen": "Transmission Open",
+    "transmissionReceived": "Transmission Received"
+  },
+  "loading": {
+    "default": "TUNING...",
+    "defaultSub": "Searching for signal on 87.5 MHz"
+  },
+  "qr": {
+    "cancelAria": "Cancel scan",
+    "retry": "Try again",
+    "cameraDenied": "Camera permission denied. Enable it in Safari settings and retry.",
+    "cameraMissing": "No camera found on this device.",
+    "cameraInsecure": "Camera requires a secure connection (HTTPS).",
+    "cameraFailed": "Could not start the camera. Please try again."
+  },
+  "walkman": {
+    "library": {
+      "title": "Evidence List",
+      "sort": {
+        "original": "Original",
+        "az": "A-Z",
+        "chapter": "Ch.",
+        "type": "Type"
+      },
+      "empty": "No evidence",
+      "emptyHint": "Scan a QR code to start"
+    },
+    "visor": {
+      "eject": "CLICK TO EJECT",
+      "startingScanner": "Starting scanner...",
+      "loadingProof": "Loading evidence...",
+      "emptyBay": "Empty Bay",
+      "scanHint": "Scan QR to Insert Evidence"
+    },
+    "systems": "Systems",
+    "mhDos": "MH-DOS v6.22",
+    "mhDosShort": "MH-DOS",
+    "macos": "MACOS v7.1",
+    "eq": "EQ",
+    "profileTitle": "Click for profile, hold to switch agent"
+  },
+  "nokia": {
+    "nav": {
+      "back": "Back",
+      "home": "Home",
+      "mute": "Mute",
+      "sound": "Sound",
+      "dos": "DOS",
+      "profile": "Profile"
+    },
+    "tab": {
+      "all": "ALL",
+      "audio": "AUD",
+      "video": "VID",
+      "docs": "DOC",
+      "sms": "SMS"
+    },
+    "divider": {
+      "clues": "CLUES / DOCS",
+      "audio": "EVIDENCE / AUDIO",
+      "videos": "VIDEOS"
+    },
+    "scannerActive": "SCANNER ACTIVE",
+    "cameraStarting": "STARTING CAMERA...",
+    "alignCode": "ALIGN THE CODE",
+    "exit": "EXIT",
+    "volume": "VOLUME",
+    "volumeLevel": "LEVEL: {{n}}%",
+    "scanCode": "SCAN CODE",
+    "fileFallback": "FILE",
+    "unknownContact": "UNKNOWN",
+    "state": {
+      "rew": "<< REW",
+      "play": "PLAY",
+      "pause": "PAUSE",
+      "playing": "PLAYING",
+      "paused": "PAUSED"
+    },
+    "mhDos": "MH-DOS",
+    "mhDosFull": "MH-DOS v6.22",
+    "macos": "MACOS",
+    "macosFull": "MACOS v7.1",
+    "sms": {
+      "registerTitle": "NUMBER REGISTRATION",
+      "registerBody": "YOU NEED A US PHONE NUMBER TO SEND MESSAGES IN THE GROUP.",
+      "generate": "[GENERATE NUMBER]",
+      "syncGroups": "SYNCING GROUPS...",
+      "noGroups": "NO ACTIVE GROUPS",
+      "noGroupsHint": "YOU DO NOT BELONG TO ANY AGENT GROUP.",
+      "from": "FROM:",
+      "groupsCount": "{{n}} GROUPS",
+      "youPrefix": "YOU: ",
+      "emptyInbox": "INBOX EMPTY",
+      "placeholder": "TYPE...",
+      "send": "[ENV]"
+    },
+    "list": {
+      "empty": "EMPTY"
+    }
+  },
+  "bios": {
+    "closeAria": "Close terminal",
+    "showKeyboard": "Show keyboard",
+    "hideKeyboard": "Hide keyboard",
+    "key": {
+      "space": "SPACE",
+      "del": "DEL",
+      "exe": "EXE"
+    },
+    "header": {
+      "compact": "MH-BIOS (C) 1994 | MH-DOS 6.22 | Haven Bytes PC #07",
+      "full": "MH-BIOS (C) 1994 Macrohard System Corp.\nCPU: Macrohard 80486DX-50 at 50MHz\nMemory Test: 640K OK\nStation: Haven Bytes — PC #07, Swallow Rest"
+    },
+    "version": "MH-DOS Version 6.22\n(C) Copyright Macrohard Corp 1981-1994.",
+    "quickHelpTitle": "Quick instructions",
+    "quickHelp": {
+      "compact": "Target IP at C:\\> | empty [EXE] = boot | HELP",
+      "full": "  DIRECT CONNECTION .... type target IP at C:\\>\n  SYSTEM BOOT ..... press [EXE] with empty field\n  FULL HELP .... type HELP"
+    },
+    "diskRepairUnavailable": "DiskRepair Pro not available on this station."
+  },
+  "diskRepair": {
+    "windowTitle": "Disk Demagnetizer v1.4",
+    "noDiskTitle": "No disk detected in Drive A:",
+    "noDiskBody": "Please insert the physically corrupted magnetic diskette into the drive to start analysis.",
+    "insert": "Insert Diskette",
+    "reading": "Reading disk sectors...",
+    "demagnetizing": "Demagnetizing MFT...",
+    "progressSub": "Progress: {{pct}}% - Analyzing magnetic tracks",
+    "crcTitle": "Read Error (CRC)",
+    "crcBody": "Volume format is unrecognizable. Magnetic headers disabled by severe magnet exposure.",
+    "fix": "Repair Diskette",
+    "failTitle": "Unable to read the diskette.",
+    "failBody": "Magnetic damage was extensive and hardware ejected the disk to prevent head lockups.",
+    "failHint": "Ensure DiskRepair.exe is authorized in the Central System.",
+    "successTitle": "Diskette Recovered!",
+    "successSub": "The Master File Table was rebuilt.",
+    "successHint": "Diskette contents can now be safely copied to the central drive.",
+    "close": "Close",
+    "recoveredFallback": "RECOVERED"
+  },
+  "macos": {
+    "welcome": "Welcome to Macintosh",
+    "machine": "Byte Haven - MAC2",
+    "login": "Log In",
+    "about": "About This Macintosh...",
+    "system": "System 7.1",
+    "shutdown": "Shut Down...",
+    "closeAria": "Close Mac OS",
+    "hd": "Macintosh HD",
+    "diskRepair": "DiskRepair Pro",
+    "trash": "Trash",
+    "controlPanel": "Control Panel",
+    "systemStatus": "System Status",
+    "speed": "Speed: 8MHz",
+    "memory": "Memory: 4MB RAM",
+    "osLine": "OS: System 7.1",
+    "diskRepairTitle": "DiskRepair Pro 4.0",
+    "insertDisk": "Insert Diskette [A:]",
+    "rebuildSectors": "Rebuild Sectors",
+    "noVolume": "No volume mounted.\nPlease insert magnetic media.",
+    "readingBlocks": "Reading blocks from volume 'DISQUETE_NIL'...",
+    "explorerPreview": "FILE EXPLORER - PREVIEW",
+    "fileLine": "File: janelas_cordas.txt ({{state}})",
+    "corrupted": "CORRUPTED",
+    "recovered": "RECOVERED",
+    "isolating": "Isolating bad sectors...\nPlease wait.",
+    "restoredBanner": "✓ DISKETTE RECOVERED. Logical blocks restored."
+  },
+  "win95": {
+    "myComputer": "My Computer",
+    "recycle": "Recycle Bin",
+    "diskRepair": "DiskRepair Pro",
+    "start": "Start",
+    "programs": "Programs",
+    "documents": "Documents",
+    "settings": "Settings",
+    "find": "Find",
+    "help": "Help",
+    "run": "Run...",
+    "shutdown": "Shut Down...",
+    "driveC": "Local Disk (C:)",
+    "driveD": "CD Drive (D:)",
+    "driveA": "Floppy (A:)",
+    "recycleEmpty": "The Recycle Bin is empty."
+  }
+}

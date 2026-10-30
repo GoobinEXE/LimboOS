@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AnimatePresence, motion } from 'motion/react';
 import { masterAccountLabel } from '../lib/entityLabels';
+import i18n from '../../i18n';
+import { ADMIN_SPRING_INDICATOR } from '../lib/motion';
 
 interface SearchableItem {
   id: string;
@@ -18,6 +21,7 @@ interface SpotlightSearchProps {
 }
 
 export default function SpotlightSearch({ open, onClose, items }: SpotlightSearchProps) {
+  const { t } = useTranslation('admin');
   const [query, setQuery] = useState('');
   const [selectedIdx, setSelectedIdx] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -49,11 +53,11 @@ export default function SpotlightSearch({ open, onClose, items }: SpotlightSearc
   }, [filtered]);
 
   const categoryLabel: Record<string, string> = {
-    tab: 'NAVEGAÇÃO',
-    account: 'CONTAS',
-    agent: 'AGENTES',
-    group: 'ESQUADRÕES',
-    mission: 'MISSÕES',
+    tab: t('spotlight.category.nav'),
+    account: t('spotlight.category.accounts'),
+    agent: t('spotlight.category.agents'),
+    group: t('spotlight.category.squads'),
+    mission: t('spotlight.category.missions'),
   };
 
   useEffect(() => {
@@ -95,7 +99,7 @@ export default function SpotlightSearch({ open, onClose, items }: SpotlightSearc
             initial={{ scale: 0.96, opacity: 0, y: -10 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.96, opacity: 0, y: -10 }}
-            transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+            transition={ADMIN_SPRING_INDICATOR}
             className="w-full max-w-lg bg-surface-container-low border border-primary/30 shadow-2xl overflow-hidden"
             onKeyDown={handleKeyDown}
           >
@@ -107,7 +111,7 @@ export default function SpotlightSearch({ open, onClose, items }: SpotlightSearc
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Buscar agentes, contas, seções..."
+                placeholder={t('spotlight.placeholder')}
                 className="flex-1 bg-transparent text-white text-sm font-display font-bold outline-none placeholder:text-industrial-silver/20 uppercase tracking-wider"
               />
               <kbd className="text-[9px] font-display font-bold text-industrial-silver/20 bg-black/30 border border-white/5 px-2 py-1 rounded-sm tracking-wider">ESC</kbd>
@@ -118,7 +122,7 @@ export default function SpotlightSearch({ open, onClose, items }: SpotlightSearc
               {filtered.length === 0 ? (
                 <div className="py-16 text-center">
                   <span className="material-symbols-outlined text-4xl text-industrial-silver/10 block mb-3">search_off</span>
-                  <p className="text-[10px] font-display font-bold text-industrial-silver/20 uppercase tracking-[0.3em]">Nenhum resultado encontrado</p>
+                  <p className="text-[10px] font-display font-bold text-industrial-silver/20 uppercase tracking-[0.3em]">{t('spotlight.empty')}</p>
                 </div>
               ) : (
                 Object.entries(grouped).map(([cat, catItems]: [string, SearchableItem[]]) => (
@@ -144,7 +148,7 @@ export default function SpotlightSearch({ open, onClose, items }: SpotlightSearc
                             {item.sublabel && <p className="text-[9px] font-mono text-industrial-silver/25 truncate mt-0.5">{item.sublabel}</p>}
                           </div>
                           {isSelected && (
-                            <span className="text-[9px] font-display font-bold text-primary/40 tracking-wider">ENTER ↵</span>
+                            <span className="text-[9px] font-display font-bold text-primary/40 tracking-wider">{t('spotlight.enter')}</span>
                           )}
                         </button>
                       );
@@ -157,18 +161,24 @@ export default function SpotlightSearch({ open, onClose, items }: SpotlightSearc
             {/* Footer */}
             <div className="px-6 py-3 border-t border-white/5 bg-black/20 flex items-center justify-between gap-3 flex-wrap">
               <div className="flex gap-3 flex-wrap">
-                <span className="text-[8px] font-display font-bold text-industrial-silver/15 uppercase tracking-widest">↑↓ Navegar</span>
-                <span className="text-[8px] font-display font-bold text-industrial-silver/15 uppercase tracking-widest">↵ Selecionar</span>
-                <span className="text-[8px] font-display font-bold text-industrial-silver/15 uppercase tracking-widest">⌘/Ctrl+K Spotlight</span>
-                <span className="text-[8px] font-display font-bold text-industrial-silver/15 uppercase tracking-widest">⌘/Ctrl+1–6 Abas</span>
+                <span className="text-[8px] font-display font-bold text-industrial-silver/15 uppercase tracking-widest">{t('spotlight.hint.navigate')}</span>
+                <span className="text-[8px] font-display font-bold text-industrial-silver/15 uppercase tracking-widest">{t('spotlight.hint.select')}</span>
+                <span className="text-[8px] font-display font-bold text-industrial-silver/15 uppercase tracking-widest">{t('spotlight.hint.shortcut')}</span>
+                <span className="text-[8px] font-display font-bold text-industrial-silver/15 uppercase tracking-widest">{t('spotlight.hint.tabs')}</span>
               </div>
-              <span className="text-[8px] font-display font-bold text-industrial-silver/15 uppercase tracking-widest">{filtered.length} resultados</span>
+              <span className="text-[8px] font-display font-bold text-industrial-silver/15 uppercase tracking-widest">
+                {t('spotlight.resultsCount', { n: filtered.length })}
+              </span>
             </div>
           </motion.div>
         </motion.div>
       )}
     </AnimatePresence>
   );
+}
+
+function adminT(key: string, opts?: Record<string, unknown>): string {
+  return i18n.t(key, { ns: 'admin', ...opts });
 }
 
 export function buildSearchItems(
@@ -188,31 +198,31 @@ export function buildSearchItems(
   const items: SearchableItem[] = [];
 
   const tabs = [
-    { id: 'live', label: 'Ao Vivo', icon: 'sensors' },
-    { id: 'mesa', label: 'Mesa', icon: 'groups' },
-    { id: 'missions', label: 'Missões', icon: 'map' },
-    { id: 'media', label: 'Conteúdo', icon: 'folder_open' },
-    { id: 'systems', label: 'Sistema', icon: 'tune' },
+    { id: 'live', label: adminT('sidebar.live'), icon: 'sensors' },
+    { id: 'mesa', label: adminT('sidebar.mesa'), icon: 'groups' },
+    { id: 'missions', label: adminT('sidebar.missions'), icon: 'map' },
+    { id: 'media', label: adminT('sidebar.media'), icon: 'folder_open' },
+    { id: 'systems', label: adminT('sidebar.systems'), icon: 'tune' },
   ];
-  tabs.forEach((t) => {
+  tabs.forEach((tab) => {
     items.push({
-      id: `tab_${t.id}`,
-      label: t.label,
+      id: `tab_${tab.id}`,
+      label: tab.label,
       category: 'tab',
-      icon: t.icon,
-      action: () => setActiveTab(t.id),
+      icon: tab.icon,
+      action: () => setActiveTab(tab.id),
     });
   });
 
   const mesaSubs: { id: 'esquadroes' | 'contas'; label: string; icon: string }[] = [
-    { id: 'esquadroes', label: 'Esquadrões', icon: 'groups' },
-    { id: 'contas', label: 'Contas', icon: 'group' },
+    { id: 'esquadroes', label: adminT('mesa.sub.squads'), icon: 'groups' },
+    { id: 'contas', label: adminT('mesa.sub.accounts'), icon: 'group' },
   ];
   mesaSubs.forEach((s) => {
     items.push({
       id: `mesa_${s.id}`,
       label: s.label,
-      sublabel: 'Mesa',
+      sublabel: adminT('spotlight.sub.mesa'),
       category: 'tab',
       icon: s.icon,
       action: () => {
@@ -223,16 +233,16 @@ export function buildSearchItems(
   });
 
   const opsSubs: { id: 'relatorios' | 'acesso' | 'qr' | 'conquistas'; label: string; icon: string }[] = [
-    { id: 'relatorios', label: 'Relatórios', icon: 'analytics' },
-    { id: 'acesso', label: 'Acesso Hardware', icon: 'lock_open' },
-    { id: 'qr', label: 'QR & Links', icon: 'qr_code' },
-    { id: 'conquistas', label: 'Conquistas', icon: 'emoji_events' },
+    { id: 'relatorios', label: adminT('systems.sub.reports'), icon: 'analytics' },
+    { id: 'acesso', label: adminT('spotlight.ops.accessHardware'), icon: 'lock_open' },
+    { id: 'qr', label: adminT('systems.sub.qr'), icon: 'qr_code' },
+    { id: 'conquistas', label: adminT('systems.sub.achievements'), icon: 'emoji_events' },
   ];
   opsSubs.forEach((s) => {
     items.push({
       id: `ops_${s.id}`,
       label: s.label,
-      sublabel: 'Sistema',
+      sublabel: adminT('spotlight.sub.systems'),
       category: 'tab',
       icon: s.icon,
       action: () => {
@@ -244,8 +254,8 @@ export function buildSearchItems(
 
   items.push({
     id: 'tab_mission_inventory',
-    label: 'Inventário de Missão',
-    sublabel: 'Abrir missões → inventário',
+    label: adminT('spotlight.item.missionInventory'),
+    sublabel: adminT('spotlight.item.missionInventorySub'),
     category: 'tab',
     icon: 'inventory_2',
     action: () => {
@@ -256,8 +266,8 @@ export function buildSearchItems(
 
   items.push({
     id: 'tab_jukebox',
-    label: 'Jukebox',
-    sublabel: 'Ao Vivo',
+    label: adminT('spotlight.item.jukebox'),
+    sublabel: adminT('spotlight.sub.live'),
     category: 'tab',
     icon: 'queue_music',
     action: () => {
@@ -272,7 +282,7 @@ export function buildSearchItems(
     items.push({
       id: `group_${g.id}`,
       label: g.name,
-      sublabel: 'Esquadrão',
+      sublabel: adminT('spotlight.sub.squad'),
       category: 'group',
       icon: 'groups',
       action: () => {
@@ -287,7 +297,7 @@ export function buildSearchItems(
     items.push({
       id: `mission_${c.id}`,
       label: c.name,
-      sublabel: 'Missão',
+      sublabel: adminT('spotlight.sub.mission'),
       category: 'mission',
       icon: 'map',
       action: () => {
@@ -300,7 +310,7 @@ export function buildSearchItems(
   accounts.forEach((acc) => {
     items.push({
       id: `acc_${acc.uid}`,
-      label: acc.masterName || acc.email || 'Conta sem nome',
+      label: acc.masterName || acc.email || adminT('entity.accountNoName'),
       sublabel: acc.email,
       category: 'account',
       icon: 'person',
@@ -317,8 +327,8 @@ export function buildSearchItems(
     const account = accountByUid.get(uid);
     items.push({
       id: `char_${char.id}`,
-      label: char.codinome || 'Agente sem codinome',
-      sublabel: masterAccountLabel(account, 'Mestre desconhecido'),
+      label: char.codinome || adminT('entity.agentNoCodename'),
+      sublabel: masterAccountLabel(account, adminT('entity.masterUnknown')),
       category: 'agent',
       icon: 'badge',
       action: () => {

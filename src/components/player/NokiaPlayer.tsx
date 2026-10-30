@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'motion/react';
 import { IntelBase, AudioIntel, VideoIntel } from '../../services/IntelEngine';
 import NokiaVideoSurface, { NokiaVideoSurfaceHandle } from './NokiaVideoSurface';
@@ -189,6 +190,8 @@ export default function NokiaPlayer({
   uid,
   onUpdatePhoneNumber,
 }: NokiaPlayerProps) {
+  const { t } = useTranslation('player');
+  const { t: tc } = useTranslation('common');
   const { isLandscape } = useLandscapeLayout();
   const [audioProgress, setAudioProgress] = useState(0);
   const [audioDuration, setAudioDuration] = useState(0);
@@ -277,7 +280,7 @@ export default function NokiaPlayer({
       if (!convMap.has(contactId)) {
         convMap.set(contactId, {
           contactId,
-          contactName: 'DESCONHECIDO',
+          contactName: t('nokia.unknownContact'),
           contactNumber: '',
           groupId: msg._groupId || '',
           lastMessage: msg,
@@ -297,11 +300,11 @@ export default function NokiaPlayer({
     for (const conv of convMap.values()) {
       const receivedMsg = conv.messages.find(m => m.senderId !== resolvedCharacterId);
       if (receivedMsg) {
-        conv.contactName = receivedMsg.senderName || 'DESCONHECIDO';
+        conv.contactName = receivedMsg.senderName || t('nokia.unknownContact');
         conv.contactNumber = receivedMsg.senderNumber || '';
       } else {
         const msgData = relevantMessages.find(m => m.recipientId === conv.contactId);
-        conv.contactName = msgData?.recipientName || 'DESCONHECIDO';
+        conv.contactName = msgData?.recipientName || t('nokia.unknownContact');
         conv.contactNumber = msgData?.recipientNumber || '';
       }
     }
@@ -311,7 +314,7 @@ export default function NokiaPlayer({
       const dateB = b.lastMessage.createdAt?.toDate() || new Date(0);
       return dateB.getTime() - dateA.getTime();
     });
-  }, [groupMessages, activeCharacter, resolvedCharacterId]);
+  }, [groupMessages, activeCharacter, resolvedCharacterId, t]);
 
   // Subscribe to character's groups
   useEffect(() => {
@@ -451,28 +454,28 @@ export default function NokiaPlayer({
 
   const sortedItems = useMemo(() => {
     if (activeTab === 'AUDIO') {
-      return [...audioItems, ...(fileItems.length > 0 ? [{ __divider: true, label: 'PISTAS / DOCS' } as any, ...fileItems] : [])];
+      return [...audioItems, ...(fileItems.length > 0 ? [{ __divider: true, label: t('nokia.divider.clues') } as any, ...fileItems] : [])];
     }
     if (activeTab === 'VIDEO') {
       return videoItems;
     }
     if (activeTab === 'DOCS') {
-      return [...fileItems, ...(audioItems.length > 0 ? [{ __divider: true, label: 'PROVAS / AUDIO' } as any, ...audioItems] : [])];
+      return [...fileItems, ...(audioItems.length > 0 ? [{ __divider: true, label: t('nokia.divider.audio') } as any, ...audioItems] : [])];
     }
     if (activeTab === 'TODOS') {
       const parts: any[] = [...audioItems];
       if (videoItems.length > 0) {
-        if (parts.length > 0) parts.push({ __divider: true, label: 'VÍDEOS' });
+        if (parts.length > 0) parts.push({ __divider: true, label: t('nokia.divider.videos') });
         parts.push(...videoItems);
       }
       if (fileItems.length > 0) {
-        if (parts.length > 0) parts.push({ __divider: true, label: 'PISTAS / DOCS' });
+        if (parts.length > 0) parts.push({ __divider: true, label: t('nokia.divider.clues') });
         parts.push(...fileItems);
       }
       return parts;
     }
     return [...audioItems, ...videoItems, ...fileItems];
-  }, [activeTab, audioItems, videoItems, fileItems]);
+  }, [activeTab, audioItems, videoItems, fileItems, t]);
 
   const isVideoIntel = currentIntel instanceof VideoIntel;
 
@@ -581,11 +584,11 @@ export default function NokiaPlayer({
   const hasActiveIntel = !!currentIntel && (status === 'LOADED' || status === 'PLAYING' || status === 'REWINDING');
 
   const tabs: { key: FilterTab; label: string; icon: React.ReactNode }[] = [
-    { key: 'TODOS', label: 'TUDO', icon: <span>[*]</span> },
-    { key: 'AUDIO', label: 'AUD', icon: <PixelIcon.Audio /> },
-    { key: 'VIDEO', label: 'VID', icon: <PixelIcon.VHS /> },
-    { key: 'DOCS', label: 'DOC', icon: <PixelIcon.Doc /> },
-    { key: 'SMS', label: 'SMS', icon: <PixelIcon.SMS /> },
+    { key: 'TODOS', label: t('nokia.tab.all'), icon: <span>[*]</span> },
+    { key: 'AUDIO', label: t('nokia.tab.audio'), icon: <PixelIcon.Audio /> },
+    { key: 'VIDEO', label: t('nokia.tab.video'), icon: <PixelIcon.VHS /> },
+    { key: 'DOCS', label: t('nokia.tab.docs'), icon: <PixelIcon.Doc /> },
+    { key: 'SMS', label: t('nokia.tab.sms'), icon: <PixelIcon.SMS /> },
   ];
 
   const showSystemsMenu = hasTerminalAccess || hasMacAccess;
@@ -596,10 +599,10 @@ export default function NokiaPlayer({
         {isScanning ? (
           <div className="w-full h-full flex flex-col justify-between bg-black relative overflow-hidden flex-grow">
             <div className="absolute top-1 left-2 z-20 text-[#edfeed] font-black text-[9px] uppercase tracking-widest bg-[#111e14] px-1 animate-pulse">
-              SCANNER ATIVO
+              {t('nokia.scannerActive')}
             </div>
             <div className="flex-grow w-full bg-[#222] relative flex items-center justify-center min-h-0">
-              <React.Suspense fallback={<div className="text-[#edfeed] text-[10px] animate-pulse">INICIANDO CAMERA...</div>}>
+              <React.Suspense fallback={<div className="text-[#edfeed] text-[10px] animate-pulse">{t('nokia.cameraStarting')}</div>}>
                 <QrScanner onDetected={onQrDetected} onCancel={onCancelScan} />
               </React.Suspense>
               {/* ASCII Crosshair */}
@@ -614,15 +617,15 @@ export default function NokiaPlayer({
               </div>
             </div>
             <div className="h-10 bg-[#edfeed] text-[#111e14] border-t-2 border-[#111e14] px-3 flex items-center justify-between text-[11px] font-black shrink-0">
-              <span className="flex items-center gap-2"><PixelIcon.Camera /> ALINHE O CÓDIGO</span>
-              <button onClick={onCancelScan} className="uppercase px-2 py-1 border border-[#111e14] active:bg-[#111e14] active:text-[#edfeed]">SAIR</button>
+              <span className="flex items-center gap-2"><PixelIcon.Camera /> {t('nokia.alignCode')}</span>
+              <button onClick={onCancelScan} className="uppercase px-2 py-1 border border-[#111e14] active:bg-[#111e14] active:text-[#edfeed]">{t('nokia.exit')}</button>
             </div>
           </div>
         ) : showVolumeBar ? (
           <div className="w-full h-full flex flex-col justify-center items-center gap-6 px-4 select-none bg-[#edfeed] flex-grow">
             <div className="text-[14px] font-black uppercase flex flex-col items-center gap-2">
               <PixelIcon.Volume />
-              <span>VOLUME</span>
+              <span>{t('nokia.volume')}</span>
             </div>
             <div className="w-full border-2 border-[#111e14] p-1.5 flex gap-1 h-12 items-center bg-[#edfeed] shadow-[2px_2px_0px_#111e14]">
               {Array.from({ length: 10 }).map((_, i) => (
@@ -636,7 +639,7 @@ export default function NokiaPlayer({
               ))}
             </div>
             <div className="text-[12px] font-black uppercase tracking-[0.2em]">
-              NIVEL: {volume}%
+              {t('nokia.volumeLevel', { n: volume })}
             </div>
           </div>
         ) : (
@@ -654,7 +657,7 @@ export default function NokiaPlayer({
                         onClick={onTerminalOpen}
                         className="flex-1 py-1 border-2 border-[#111e14] text-[8px] font-black uppercase active:bg-[#111e14] active:text-[#edfeed]"
                       >
-                        MH-DOS
+                        {t('nokia.mhDos')}
                       </button>
                     )}
                     {hasMacAccess && onMacOpen && (
@@ -662,7 +665,7 @@ export default function NokiaPlayer({
                         onClick={onMacOpen}
                         className="flex-1 py-1 border-2 border-[#111e14] text-[8px] font-black uppercase active:bg-[#111e14] active:text-[#edfeed]"
                       >
-                        MACOS
+                        {t('nokia.macos')}
                       </button>
                     )}
                   </div>
@@ -686,7 +689,7 @@ export default function NokiaPlayer({
                             {currentIntel instanceof AudioIntel
                               ? currentIntel.metadata.artist
                               : currentIntel instanceof VideoIntel
-                                ? `${currentIntel.format} · ${currentIntel.metadata?.npc || 'ARQUIVO'}`
+                                ? `${currentIntel.format} · ${currentIntel.metadata?.npc || t('nokia.fileFallback')}`
                                 : currentIntel.metadata?.npc}
                           </div>
                         </div>
@@ -728,7 +731,7 @@ export default function NokiaPlayer({
                           <div className="flex justify-between items-center text-[8px] font-black px-0.5 mb-0.5">
                             <span>{currentTimeStr}</span>
                             <span className="uppercase tracking-[0.15em] text-[7px]">
-                              {status === 'REWINDING' ? '<< REW' : isPlaying ? 'PLAY' : 'PAUSE'}
+                              {status === 'REWINDING' ? t('nokia.state.rew') : isPlaying ? t('nokia.state.play') : t('nokia.state.pause')}
                             </span>
                             <span>{durationTimeStr}</span>
                           </div>
@@ -784,7 +787,7 @@ export default function NokiaPlayer({
                         className="border-2 border-dashed border-[#111e14] p-3 h-full flex flex-col justify-center items-center cursor-pointer gap-2 active:bg-[#111e14]/10"
                       >
                         <PixelIcon.Camera />
-                        <span className="text-[9px] font-black uppercase tracking-[0.15em] text-center">ESCANEAR CÓDIGO</span>
+                        <span className="text-[9px] font-black uppercase tracking-[0.15em] text-center">{t('nokia.scanCode')}</span>
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -813,7 +816,7 @@ export default function NokiaPlayer({
                         {currentIntel instanceof AudioIntel
                           ? currentIntel.metadata.artist
                           : currentIntel instanceof VideoIntel
-                            ? `${currentIntel.format} · ${currentIntel.metadata?.npc || 'ARQUIVO'}`
+                            ? `${currentIntel.format} · ${currentIntel.metadata?.npc || t('nokia.fileFallback')}`
                             : currentIntel.metadata?.npc}
                       </div>
                     </div>
@@ -877,7 +880,7 @@ export default function NokiaPlayer({
                       <div className="flex justify-between items-center text-[9px] font-black px-0.5 mb-1">
                         <span>{currentTimeStr}</span>
                         <span className="uppercase tracking-[0.2em] text-[8px]">
-                          {status === 'REWINDING' ? '<< REW' : isPlaying ? 'PLAYING' : 'PAUSED'}
+                          {status === 'REWINDING' ? t('nokia.state.rew') : isPlaying ? t('nokia.state.playing') : t('nokia.state.paused')}
                         </span>
                         <span>{durationTimeStr}</span>
                       </div>
@@ -933,7 +936,7 @@ export default function NokiaPlayer({
                     className="border-2 border-dashed border-[#111e14] p-4 flex flex-col justify-center items-center cursor-pointer hover:bg-[#111e14]/5 active:bg-[#111e14]/10 gap-2 transition-colors"
                   >
                     <PixelIcon.Camera />
-                    <span className="text-[11px] font-black uppercase tracking-[0.2em]">ESCANEAR CÓDIGO</span>
+                    <span className="text-[11px] font-black uppercase tracking-[0.2em]">{t('nokia.scanCode')}</span>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -947,7 +950,7 @@ export default function NokiaPlayer({
                     onClick={onTerminalOpen}
                     className="flex-1 py-1 border-2 border-[#111e14] text-[8px] font-black uppercase active:bg-[#111e14] active:text-[#edfeed]"
                   >
-                    MH-DOS v6.22
+                    {t('nokia.mhDosFull')}
                   </button>
                 )}
                 {hasMacAccess && onMacOpen && (
@@ -955,7 +958,7 @@ export default function NokiaPlayer({
                     onClick={onMacOpen}
                     className="flex-1 py-1 border-2 border-[#111e14] text-[8px] font-black uppercase active:bg-[#111e14] active:text-[#edfeed]"
                   >
-                    MACOS v7.1
+                    {t('nokia.macosFull')}
                   </button>
                 )}
               </div>
@@ -992,9 +995,9 @@ export default function NokiaPlayer({
                   {!activeCharacter?.phoneNumber ? (
                     <div className="flex flex-col items-center justify-center p-4 border-2 border-[#111e14] bg-[#edfeed] gap-3 text-center my-2 shadow-[1px_1px_0px_#111e14]">
                       <div className="scale-125"><PixelIcon.SMS /></div>
-                      <span className="font-black text-[10px] uppercase">REGISTRO DE NÚMERO</span>
+                      <span className="font-black text-[10px] uppercase">{t('nokia.sms.registerTitle')}</span>
                       <p className="text-[9px] opacity-80 leading-normal font-bold">
-                        VOCÊ PRECISA DE UM NÚMERO DE TELEFONE US PARA ENVIAR MENSAGENS NO GRUPO.
+                        {t('nokia.sms.registerBody')}
                       </p>
                       <button
                         onClick={() => {
@@ -1003,30 +1006,30 @@ export default function NokiaPlayer({
                         }}
                         className="w-full py-2 border-2 border-[#111e14] bg-[#111e14] text-[#edfeed] font-black uppercase active:bg-[#edfeed] active:text-[#111e14] text-[10px] tracking-wider"
                       >
-                        [GERAR NÚMERO]
+                        {t('nokia.sms.generate')}
                       </button>
                     </div>
                   ) : !groupsLoaded ? (
                     <div className="flex flex-col items-center justify-center py-12 text-center opacity-40 gap-2">
                       <PixelIcon.SMS />
-                      <span className="font-black text-[9px] uppercase">SINCRONIZANDO GRUPOS...</span>
+                      <span className="font-black text-[9px] uppercase">{t('nokia.sms.syncGroups')}</span>
                     </div>
                   ) : userGroups.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-12 text-center opacity-40 gap-2">
                       <PixelIcon.SMS />
-                      <span className="font-black text-[9px] uppercase">NENHUM GRUPO ATIVO</span>
-                      <p className="text-[8px]">VOCÊ NÃO PERTENCE A NENHUM GRUPO DE AGENTES.</p>
+                      <span className="font-black text-[9px] uppercase">{t('nokia.sms.noGroups')}</span>
+                      <p className="text-[8px]">{t('nokia.sms.noGroupsHint')}</p>
                     </div>
                   ) : (
                     <div className="flex flex-col flex-grow min-h-0">
                       <div className="flex justify-between items-center bg-[#111e14]/5 border-b border-[#111e14]/20 p-1.5 text-[9px] font-black shrink-0 mb-1.5">
                         <div className="flex items-center gap-1">
-                          <span className="opacity-60">DE:</span>
+                          <span className="opacity-60">{t('nokia.sms.from')}</span>
                           <span className="font-mono">{activeCharacter.phoneNumber}</span>
                         </div>
                         {!activeConversationId && userGroups.length > 0 && (
                           <span className="truncate max-w-[140px] uppercase font-bold opacity-60">
-                            {userGroups.length === 1 ? userGroups[0].name : `${userGroups.length} GRUPOS`}
+                            {userGroups.length === 1 ? userGroups[0].name : t('nokia.sms.groupsCount', { n: userGroups.length })}
                           </span>
                         )}
                       </div>
@@ -1037,7 +1040,7 @@ export default function NokiaPlayer({
                           {conversations.map((conv) => {
                             const dateStr = conv.lastMessage.createdAt?.toDate 
                               ? conv.lastMessage.createdAt.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-                              : 'Agora';
+                              : tc('now');
                             return (
                               <button
                                 key={conv.contactId}
@@ -1059,14 +1062,14 @@ export default function NokiaPlayer({
                                   <span className="opacity-50 font-mono text-[8px]">{dateStr}</span>
                                 </div>
                                 <div className="text-[10px] font-bold opacity-80 truncate uppercase tracking-tighter">
-                                  {conv.lastMessage.senderId === resolvedCharacterId ? 'VOCÊ: ' : ''}{conv.lastMessage.text}
+                                  {conv.lastMessage.senderId === resolvedCharacterId ? t('nokia.sms.youPrefix') : ''}{conv.lastMessage.text}
                                 </div>
                               </button>
                             );
                           })}
                           {conversations.length === 0 && (
                             <div className="py-8 text-center opacity-30 text-[9px] font-black uppercase">
-                              CAIXA DE ENTRADA VAZIA
+                              {t('nokia.sms.emptyInbox')}
                             </div>
                           )}
                         </div>
@@ -1082,10 +1085,10 @@ export default function NokiaPlayer({
                               }}
                               className="border border-[#111e14] px-1.5 py-0.5 font-black text-[9px] hover:bg-[#111e14] hover:text-[#edfeed] active:scale-95 uppercase transition-all"
                             >
-                              [VOLTAR]
+                              {tc('actions.backBracket')}
                             </button>
                             <span className="font-black text-[10px] uppercase truncate">
-                              {conversations.find(c => c.contactId === activeConversationId)?.contactName || 'DESCONHECIDO'}
+                              {conversations.find(c => c.contactId === activeConversationId)?.contactName || t('nokia.unknownContact')}
                             </span>
                           </div>
 
@@ -1110,7 +1113,7 @@ export default function NokiaPlayer({
                                 const isMe = msg.senderId === resolvedCharacterId;
                                 const dateStr = msg.createdAt?.toDate 
                                   ? msg.createdAt.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-                                  : 'Agora';
+                                  : tc('now');
                                 return (
                                   <div
                                     key={msg.id}
@@ -1121,7 +1124,7 @@ export default function NokiaPlayer({
                                     }`}
                                   >
                                     <div className="flex justify-between items-center text-[8px] font-black opacity-70 mb-0.5">
-                                      <span>{isMe ? 'VOCÊ' : `${msg.senderName}`}</span>
+                                      <span>{isMe ? tc('you') : `${msg.senderName}`}</span>
                                       <span>{dateStr}</span>
                                     </div>
                                     <div className="leading-tight font-bold break-words whitespace-pre-wrap">
@@ -1145,7 +1148,7 @@ export default function NokiaPlayer({
                               type="text"
                               value={newMessageText}
                               onChange={(e) => setNewMessageText(e.target.value)}
-                              placeholder="DIGITE..."
+                              placeholder={t('nokia.sms.placeholder')}
                               className="flex-1 bg-[#edfeed] border-2 border-[#111e14] px-1.5 py-1 text-[10px] text-[#111e14] placeholder:text-[#111e14]/50 focus:outline-none font-bold uppercase"
                             />
                             <button
@@ -1153,7 +1156,7 @@ export default function NokiaPlayer({
                               disabled={!newMessageText.trim()}
                               className="border-2 border-[#111e14] bg-[#111e14] text-[#edfeed] font-black px-2 py-1 text-[10px] active:scale-95 disabled:opacity-40 transition-all uppercase"
                             >
-                              [ENV]
+                              {t('nokia.sms.send')}
                             </button>
                           </form>
                         </div>
@@ -1165,7 +1168,7 @@ export default function NokiaPlayer({
                 <div className="flex flex-col items-center justify-center h-full text-center py-10 opacity-30">
                   <div className="mb-2 scale-150"><PixelIcon.Doc /></div>
                   <div className="text-[11px] font-black uppercase">
-                    VAZIO
+                    {t('nokia.list.empty')}
                   </div>
                 </div>
               ) : (

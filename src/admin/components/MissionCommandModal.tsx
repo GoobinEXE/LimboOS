@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Campaign } from '../../data/campaigns';
 import { Group, MasterAccount, CharacterData } from '../../types/player';
 import { campaignAdminService } from '../../services/CampaignAdminService';
@@ -37,6 +38,7 @@ export default function MissionCommandModal({
   onSaved,
   onCharacterUpdate,
 }: MissionCommandModalProps) {
+  const { t } = useTranslation('admin');
   const { showAlert, modal } = useModal();
   const [activeTab, setActiveTab] = useState<MissionTabId>(initialTab);
   const [editingCampaign, setEditingCampaign] = useState<Partial<Campaign> | null>(null);
@@ -64,13 +66,13 @@ export default function MissionCommandModal({
       setIsPersisted(true);
       const saved = editingCampaign as Campaign;
       onSaved?.(saved);
-      showAlert('Sucesso', 'Missão salva com sucesso.');
+      showAlert('Sucesso', t('missions.toast.saved'));
       if (isNew) {
         setActiveTab('vinculos');
       }
     } catch (error) {
       console.error('Erro ao salvar campanha:', error);
-      showAlert('Erro', 'Não foi possível salvar a campanha.');
+      showAlert('Erro', t('missions.toast.saveFail'));
     } finally {
       setSaving(false);
     }
@@ -86,7 +88,7 @@ export default function MissionCommandModal({
       <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/90 p-4 backdrop-blur-md">
         <div className="bg-surface-container-low border border-primary/30 w-full max-w-5xl rounded-sm shadow-2xl flex flex-col h-[90vh] relative overflow-hidden">
           <div className="absolute -top-3 left-6 bg-primary px-2 py-0.5 text-[10px] font-display font-bold text-black tracking-widest uppercase">
-            {isNew && !isPersisted ? 'INSTALAÇÃO-DE-MISSÃO' : 'CENTRO-DE-COMANDO'}
+            {isNew && !isPersisted ? t('missions.modal.install') : 'CENTRO-DE-COMANDO'}
           </div>
 
           <div className="p-6 border-b border-white/5 flex justify-between items-center bg-black/40 shrink-0">
@@ -94,7 +96,7 @@ export default function MissionCommandModal({
               <div className="w-1.5 h-8 bg-primary shadow-[0_0_10px_rgba(255,140,0,0.4)]" />
               <div>
                 <h3 className="font-display font-bold text-xl text-white uppercase tracking-tighter">
-                  {editingCampaign.name || 'Nova Missão'}
+                  {editingCampaign.name || t('missions.modal.newTitle')}
                 </h3>
                 <p className="text-[10px] font-display font-bold text-industrial-silver/40 uppercase tracking-widest mt-0.5">
                   Gestão unificada de instância operacional
@@ -125,7 +127,7 @@ export default function MissionCommandModal({
                         ? 'text-industrial-silver/15 cursor-not-allowed'
                         : 'text-industrial-silver/40 hover:text-white hover:bg-white/5'
                   }`}
-                  title={locked ? 'Salve a missão na aba Dados primeiro' : undefined}
+                  title={locked ? t('missions.modal.saveFirst') : undefined}
                 >
                   {MISSION_TAB_LABELS[tab]}
                 </button>

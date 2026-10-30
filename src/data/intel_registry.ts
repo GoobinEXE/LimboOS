@@ -15,7 +15,7 @@ const LOCAL_INTEL_ITEMS: IntelItem[] = [
     id: 'evidence-disk-01-corrupted',
     type: 'TEXT',
     level: 3,
-    title: 'ARQUIVO_CORROMPIDO',
+    title: 'ARQUIVO CORROMPIDO',
     description: 'Um disquete ilegível. As trilhas magnéticas estão destruídas.',
     textContent: `S̸e̵ ̸o̸n̵d̴a̷ ̶s̵o̵n̶o̶r̶a̷ ̷a̶t̶i̵n̷g̷e̸ ̴∇̸ ̴∞̵ ̵n̷o̵ ̵m̶i̶l̶i̴s̸s̶e̵g̷u̴n̸d̸o̵ ̴d̵o̵ ̷e̶r̵r̵o̸ ̶t̴e̵m̴p̴o̶r̵a̵l̴.̶.̶.̷
 O̵ ̵█̶█̶█̶█̶█̶█̶█̶█̶█̶█̶ ̷n̵ã̷o̵ ̷é̴ ̵l̵i̶n̴h̷a̴.̵ ̶É̸ ̴u̶m̸ ̷l̶o̵o̵p̸ ̷d̵e̴ ̶c̵ó̸d̵i̴g̵o̵.̶
@@ -37,7 +37,7 @@ M̶e̷ ̷a̵c̵h̴e̶m̷ ̴n̶o̵ ̵z̴e̴r̶o̵.̶`,
     id: 'evidence-disk-01',
     type: 'TEXT',
     level: 2,
-    title: 'DISK_REPAIRED_01',
+    title: 'DISK REPAIRED 01',
     description: 'Um disquete magnético recuperado e desmagnetizado.',
     textContent: `A Teoria das Cordas diz que existem 11 dimensões, mas todo mundo está ignorando o óbvio: o zero é a ponte.
 Eu percebi que o que está acontecendo agora é uma colisão. É a minha frequência analógica (do deck mesmo) batendo de frente com esse "reset" digital do Bug do Milênio. Se a onda sonora atingir o infinito no exato milisegundo em que o erro temporal acontecer... a gente vai ver a verdade.

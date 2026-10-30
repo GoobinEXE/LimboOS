@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { motion } from 'motion/react';
+import { useTranslation } from 'react-i18next';
 import RetroLoading from '../../components/player/RetroLoading';
 import { analyticsTracker } from '../../services/AnalyticsTracker';
 
@@ -20,6 +21,8 @@ interface MiniAppsOverlayProps {
 const LIMBO_EASE = [0.22, 1, 0.36, 1] as const;
 
 export default function MiniAppsOverlay({ screen, playerData, limboStatus, setScreen }: MiniAppsOverlayProps) {
+  const { t } = useTranslation('player');
+
   useEffect(() => {
     if (screen === 'bios') analyticsTracker.markFlag('biosOpened');
     else if (screen === 'windows95') analyticsTracker.markFlag('win95Opened');
@@ -64,8 +67,8 @@ export default function MiniAppsOverlay({ screen, playerData, limboStatus, setSc
         fallback={
           <RetroLoading
             fullScreen
-            message="INICIALIZANDO SISTEMA..."
-            subMessage="Carregando interface de baixo nível"
+            message={t('app.loading.initSystem')}
+            subMessage={t('app.loading.initSystemSub')}
           />
         }
       >

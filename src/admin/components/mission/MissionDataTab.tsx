@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Campaign } from '../../../data/campaigns';
 import { MediaAsset } from '../../../types/media';
 import MediaSelectorModal from '../MediaSelectorModal';
@@ -20,6 +21,7 @@ export default function MissionDataTab({
   onCancel,
   saving = false,
 }: MissionDataTabProps) {
+  const { t } = useTranslation('admin');
   const [isMediaSelectorOpen, setIsMediaSelectorOpen] = useState(false);
 
   const handleMediaSelect = (asset: MediaAsset) => {
@@ -32,7 +34,7 @@ export default function MissionDataTab({
         isOpen={isMediaSelectorOpen}
         onClose={() => setIsMediaSelectorOpen(false)}
         onSelect={handleMediaSelect}
-        title="Selecionar Capa da Missão"
+        title={t('missions.data.selectCover')}
         allowedTypes={['image']}
       />
 
@@ -94,7 +96,7 @@ export default function MissionDataTab({
               </div>
               <div className="group">
                 <label className="block text-[9px] font-display font-bold text-industrial-silver/40 uppercase tracking-[0.2em] mb-2 group-focus-within:text-primary transition-colors">
-                  Acesso
+                  {t('logs.type.auth')}
                 </label>
                 <select
                   value={campaign.status || 'Ativa'}
@@ -103,9 +105,9 @@ export default function MissionDataTab({
                   }
                   className="w-full bg-surface-container-lowest border-none text-primary text-[10px] font-display font-bold px-4 py-4 outline-none rounded-sm uppercase cursor-pointer shadow-inner appearance-none"
                 >
-                  <option value="Ativa">ATIVA</option>
-                  <option value="Arquivada">ARQUIVADA</option>
-                  <option value="Bloqueada">BLOQUEADA</option>
+                  <option value="Ativa">{t('missions.status.active')}</option>
+                  <option value="Arquivada">{t('missions.status.archived')}</option>
+                  <option value="Bloqueada">{t('missions.status.blocked')}</option>
                 </select>
                 <div className="h-0.5 w-0 bg-primary transition-all duration-300 group-focus-within:w-full" />
               </div>
@@ -177,7 +179,7 @@ export default function MissionDataTab({
                     <span className="material-symbols-outlined text-sm">close</span>
                   </button>
                   <p className="absolute bottom-2 left-3 text-[8px] font-display font-bold text-white/50 uppercase tracking-widest">
-                    PREVIEW_ATIVA
+                    PREVIEW ATIVA
                   </p>
                 </div>
               )}
@@ -228,7 +230,7 @@ export default function MissionDataTab({
             className="bg-primary hover:bg-primary-container text-black px-12 py-4 rounded-sm font-display font-bold text-[11px] tracking-widest uppercase transition-all active:scale-95 glow-orange shadow-lg flex items-center justify-center gap-3 disabled:opacity-50"
           >
             <span className="material-symbols-outlined text-base">save</span>
-            {saving ? 'Salvando...' : 'Salvar Configurações'}
+            {saving ? 'Salvando...' : t('missions.data.save')}
           </button>
         </div>
       </form>

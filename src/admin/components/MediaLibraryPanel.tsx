@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useIntlLocale } from '../../i18n/dateLocale';
 import { motion, AnimatePresence } from 'motion/react';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { auth, db } from '../../lib/firebase';
@@ -40,6 +42,8 @@ export default function MediaLibraryPanel({
   allowedTypes,
   compact = false,
 }: MediaLibraryPanelProps) {
+  const { t } = useTranslation('admin');
+  const intlLocale = useIntlLocale();
   const [assets, setAssets] = useState<MediaAsset[]>([]);
   const [folders, setFolders] = useState<MediaFolder[]>([]);
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
@@ -126,7 +130,7 @@ export default function MediaLibraryPanel({
     const byId = new Map<string, Campaign>();
     localCampaigns.forEach((c) => byId.set(c.id, c));
     campaigns.forEach((c) => byId.set(c.id, c));
-    return Array.from(byId.values()).sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
+    return Array.from(byId.values()).sort((a, b) => a.name.localeCompare(b.name, intlLocale));
   }, [campaigns]);
 
   const folderNameById = useMemo(() => {
@@ -183,7 +187,7 @@ export default function MediaLibraryPanel({
       }
 
       if (uploaded.length === 0) {
-        showAlert('Upload', 'Nenhum arquivo válido para envio.');
+        showAlert(t('media.alert.upload'), t('media.alert.noValidFiles'));
         return;
       }
 
@@ -196,7 +200,7 @@ export default function MediaLibraryPanel({
           text:
             uploaded.length === 1
               ? '✓ Arquivo enviado. Complete os metadados da intel.'
-              : `✓ ${uploaded.length} arquivos enviados. Editando o primeiro — os demais estão no catálogo.`,
+              : t('media.toast.uploadOk', { n: uploaded.length }),
         });
       } else {
         intel.setFeedback({
@@ -206,7 +210,7 @@ export default function MediaLibraryPanel({
       }
     } catch (error) {
       console.error('Upload error:', error);
-      showAlert('Erro de Upload', 'Falha ao enviar um ou mais arquivos.');
+      showAlert(t('media.alert.uploadError'), t('media.alert.uploadFail'));
     } finally {
       setUploading(false);
       setUploadProgress(0);
@@ -222,7 +226,7 @@ export default function MediaLibraryPanel({
       try {
         await mediaService.deleteMedia(asset);
       } catch {
-        showAlert('Erro', 'Falha ao deletar arquivo.');
+        showAlert('Erro', t('media.alert.deleteFail'));
       }
     }
   };
@@ -231,7 +235,7 @@ export default function MediaLibraryPanel({
     try {
       await mediaFolderService.createFolder(name);
     } catch {
-      showAlert('Erro', 'Não foi possível criar a pasta.');
+      showAlert('Erro', t('media.alert.createFolderFail'));
     }
   };
 
@@ -239,21 +243,21 @@ export default function MediaLibraryPanel({
     try {
       await mediaFolderService.renameFolder(folder.id, name);
     } catch {
-      showAlert('Erro', 'Não foi possível renomear a pasta.');
+      showAlert('Erro', t('media.alert.renameFolderFail'));
     }
   };
 
   const handleDeleteFolder = async (folder: MediaFolder) => {
     const confirmed = await showConfirm(
       'APAGAR PASTA',
-      `Remover a pasta "${folder.name}"? Os arquivos não serão apagados — só saem desta pasta.`,
+      t('media.confirm.deleteFolder', { name: folder.name }),
     );
     if (!confirmed) return;
     try {
       await mediaFolderService.deleteFolder(folder);
       if (folderFilter === folder.id) setFolderFilter('all');
     } catch (err) {
-      showAlert('Erro', err instanceof Error ? err.message : 'Falha ao apagar pasta.');
+      showAlert('Erro', err instanceof Error ? err.message : t('media.alert.deleteFolderFail'));
     }
   };
 
@@ -313,11 +317,14 @@ export default function MediaLibraryPanel({
             />
             <div>
               <h2 className="font-display font-bold uppercase tracking-widest text-xl text-white">
-                Biblioteca
+                {t('media.title')}
               </h2>
               <p className="text-[10px] font-display font-bold text-industrial-silver/40 tracking-[0.2em] uppercase">
-                {filteredAssets.length} arquivos // {folders.length} pastas
-                {showCatalog ? ` // ${intel.typeStats.total} intel` : ''}
+                {t('media.subtitle', {
+                  files: filteredAssets.length,
+                  folders: folders.length,
+                  intel: showCatalog ? intel.typeStats.total : 0,
+                })}
               </p>
             </div>
           </div>
@@ -329,7 +336,7 @@ export default function MediaLibraryPanel({
               </span>
               <input
                 type="text"
-                placeholder="BUSCAR_ARQUIVO..."
+                placeholder={t('media.search')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="bg-surface-container-lowest border border-primary/10 text-[10px] font-display font-bold uppercase tracking-[0.2em] focus:border-primary/50 w-full placeholder:text-industrial-silver/20 text-white pl-10 pr-4 py-2.5 outline-none rounded-sm transition-all"
@@ -343,7 +350,7 @@ export default function MediaLibraryPanel({
                   className="bg-surface-container-high text-industrial-silver/60 px-4 py-2.5 text-[10px] font-display font-bold border border-white/5 uppercase hover:bg-white/5 transition-all rounded-sm active:scale-95 flex items-center gap-2"
                 >
                   <span className="material-symbols-outlined text-base">download</span>
-                  EXPORTAR
+                  {t('accounts.export')}
                 </button>
                 <UnifiedIntelCreateButton
                   uploading={uploading}
@@ -414,10 +421,10 @@ export default function MediaLibraryPanel({
 
           <div className="flex-1 min-w-0 space-y-4">
             <div className="flex border-b border-primary/10 overflow-x-auto">
-              <FilterTab label="Todos" active={filter === 'all'} onClick={() => setFilter('all')} icon="grid_view" />
-              <FilterTab label="Áudio" active={filter === 'audio'} onClick={() => setFilter('audio')} icon="audiotrack" />
-              <FilterTab label="Imagens" active={filter === 'image'} onClick={() => setFilter('image')} icon="image" />
-              <FilterTab label="Vídeos" active={filter === 'video'} onClick={() => setFilter('video')} icon="videocam" />
+              <FilterTab label={t('hardware.filter.all')} active={filter === 'all'} onClick={() => setFilter('all')} icon="grid_view" />
+              <FilterTab label={t('intel.type.audio')} active={filter === 'audio'} onClick={() => setFilter('audio')} icon="audiotrack" />
+              <FilterTab label={t('media.filter.images')} active={filter === 'image'} onClick={() => setFilter('image')} icon="image" />
+              <FilterTab label={t('media.filter.videos')} active={filter === 'video'} onClick={() => setFilter('video')} icon="videocam" />
             </div>
 
             <AnimatePresence mode="wait">
@@ -431,7 +438,7 @@ export default function MediaLibraryPanel({
                 >
                   <div className="w-8 h-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
                   <p className="text-[10px] font-display font-bold text-primary/40 uppercase tracking-[0.4em]">
-                    Indexando_Biblioteca...
+                    {t('media.indexing')}
                   </p>
                 </motion.div>
               ) : filteredAssets.length === 0 ? (
@@ -446,7 +453,7 @@ export default function MediaLibraryPanel({
                     folder_off
                   </span>
                   <p className="text-[10px] font-display font-bold text-industrial-silver/20 uppercase tracking-[0.3em]">
-                    Nenhum arquivo encontrado
+                    {t('media.empty')}
                   </p>
                 </motion.div>
               ) : (
@@ -547,7 +554,7 @@ export default function MediaLibraryPanel({
                             <div className="absolute bottom-1 right-1 z-20 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
                               <button
                                 type="button"
-                                title="Pastas"
+                                title={t('media.foldersTitle')}
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   setAssignFolderIds([...(asset.metadata?.tags || [])]);
@@ -623,7 +630,7 @@ export default function MediaLibraryPanel({
             onClose={() => intel.setIsMediaSelectorOpen(false)}
             onSelect={intel.handleMediaSelect}
             allowedTypes={intel.formData.type === 'VIDEO' ? ['video'] : undefined}
-            title={intel.formData.type === 'VIDEO' ? 'Selecionar Vídeo' : 'Selecionar Mídia'}
+            title={intel.formData.type === 'VIDEO' ? t('media.selectVideo') : t('media.selectMedia')}
           />
           <IntelEditorModal
             open={intel.showEditor}
@@ -675,7 +682,7 @@ export default function MediaLibraryPanel({
           try {
             await mediaFolderService.setAssetFolders(assignAsset.id, folderIds);
           } catch {
-            showAlert('Erro', 'Falha ao atualizar pastas do arquivo.');
+            showAlert('Erro', t('media.alert.updateFoldersFail'));
           }
         }}
       />
@@ -692,6 +699,7 @@ function UnifiedIntelCreateButton({
   onCreateBlank: () => void;
   onPickFiles: (files: FileList) => void;
 }) {
+  const { t } = useTranslation('admin');
   const [menuOpen, setMenuOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -771,7 +779,7 @@ function UnifiedIntelCreateButton({
               <span className="material-symbols-outlined text-primary text-base">upload_file</span>
               <span className="flex flex-col">
                 <span className="text-[10px] font-display font-bold uppercase tracking-widest text-white">
-                  Upload de arquivo
+                  {t('media.uploadFile')}
                 </span>
                 <span className="text-[8px] font-display text-industrial-silver/40 uppercase tracking-wider">
                   Áudio, imagem ou vídeo → editor

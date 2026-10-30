@@ -1,55 +1,42 @@
 import React, { useState, useMemo, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Trophy, Music, Shield, Radio, Camera, Pencil, Check } from 'lucide-react';
 import { updateCodinome, uploadProfilePhoto } from '../../store/firestore';
-import { ALL_ACHIEVEMENTS } from '../../data/achievements';
 import { AchievementCatalog } from '../achievements/AchievementCatalog';
+import { useAchievementCatalog } from '../../hooks/useAchievementCatalog';
 import type { PlayerData } from '../../types/player';
 import { campaigns } from '../../data/campaigns';
 import type { AccessLevel } from '../../types/intel';
-import { ACCESS_LEVEL_LABELS } from '../../types/intel';
 import { IntelManager, IntelBase, VisualIntel, TextIntel } from '../../services/IntelEngine';
 import RetroSpinner from '../player/RetroSpinner';
+import { extractSpotifyEmbedUrl, isValidSpotifyPlaylistInput } from '../../lib/spotify';
 
-const STATUS_CONFIG = {
-  vivo: { label: 'ATIVO', color: 'text-green-400', dot: 'bg-green-400', border: 'border-green-500/30' },
-  morto: { label: 'ELIMINADO', color: 'text-red-400', dot: 'bg-red-400', border: 'border-red-500/30' },
-  desaparecido: { label: 'DESAPARECIDO', color: 'text-yellow-400', dot: 'bg-yellow-400', border: 'border-yellow-500/30' },
+const STATUS_STYLE = {
+  vivo: { labelKey: 'status.ativo', color: 'text-green-400', dot: 'bg-green-400', border: 'border-green-500/30' },
+  morto: { labelKey: 'status.eliminado', color: 'text-red-400', dot: 'bg-red-400', border: 'border-red-500/30' },
+  desaparecido: { labelKey: 'status.desaparecido', color: 'text-yellow-400', dot: 'bg-yellow-400', border: 'border-yellow-500/30' },
 } as const;
 
-const DANGER_LABELS = ['—', 'BAIXO', 'MODERADO', 'ELEVADO', 'ALTO', 'CRÍTICO'] as const;
+const DANGER_KEYS = ['none', 'baixo', 'moderado', 'elevado', 'alto', 'critico'] as const;
+
+const ACCESS_LEVEL_KEYS: Record<AccessLevel, string> = {
+  1: 'access.restrito',
+  2: 'access.confidencial',
+  3: 'access.sigiloso',
+  4: 'access.topSecret',
+};
+
 const TABS = [
-  { id: 'agente', label: 'Agente', Icon: Shield },
-  { id: 'intel', label: 'Arquivos', Icon: Radio },
-  { id: 'conquistas', label: 'Medalhas', Icon: Trophy },
+  { id: 'agente', labelKey: 'dossier.tab.agent', Icon: Shield },
+  { id: 'intel', labelKey: 'dossier.tab.files', Icon: Radio },
+  { id: 'conquistas', labelKey: 'dossier.tab.medals', Icon: Trophy },
 ] as const;
 
 type DossierTab = typeof TABS[number]['id'];
 
 const FALLBACK_PHOTO = 'https://images.unsplash.com/photo-1514516311115-91220997d662?q=80&w=800&auto=format&fit=crop';
 const FALLBACK_EVIDENCE = 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=800&auto=format&fit=crop';
-
-const extractSpotifyEmbedUrl = (url: string) => {
-  if (!url) return null;
-  try {
-    if (url.startsWith('spotify:')) {
-      const uriMatch = url.match(/^spotify:(playlist|album|track|episode|show):([a-zA-Z0-9]+)$/);
-      if (!uriMatch) return null;
-      return `https://open.spotify.com/embed/${uriMatch[1]}/${uriMatch[2]}?utm_source=generator&theme=0`;
-    }
-    const parsed = new URL(url);
-    if (parsed.protocol !== 'https:' || parsed.hostname !== 'open.spotify.com') return null;
-    const embedMatch = parsed.pathname.match(/^\/embed\/(playlist|album|track|episode|show)\/([a-zA-Z0-9]+)\/?$/);
-    if (embedMatch) {
-      return `https://open.spotify.com/embed/${embedMatch[1]}/${embedMatch[2]}?utm_source=generator&theme=0`;
-    }
-    const match = parsed.pathname.match(/^\/(playlist|album|track|episode|show)\/([a-zA-Z0-9]+)\/?$/);
-    if (!match) return null;
-    return `https://open.spotify.com/embed/${match[1]}/${match[2]}?utm_source=generator&theme=0`;
-  } catch {
-    return null;
-  }
-};
 
 const CornerMarks = () => (
   <>
@@ -81,9 +68,12 @@ interface AgentDossierOverlayProps {
   onClose: () => void;
   playerData: PlayerData;
   intelManager: IntelManager | null;
+  onUpdateSpotify?: (url: string) => Promise<void> | void;
 }
 
-export const AgentDossierOverlay = ({ onClose, playerData, intelManager }: AgentDossierOverlayProps) => {
+export const AgentDossierOverlay = ({ onClose, playerData, intelManager, onUpdateSpotify }: AgentDossierOverlayProps) => {
+  const { t } = useTranslation(['player', 'common']);
+  const { achievements } = useAchievementCatalog();
   const [activeTab, setActiveTab] = useState<DossierTab>('agente');
   const [selectedIntel, setSelectedIntel] = useState<IntelBase | null>(null);
   const [activeLevel, setActiveLevel] = useState<AccessLevel>(1);
@@ -93,18 +83,29 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager }: Agent
   const [uploading, setUploading] = useState(false);
   const [currentPhotoUrl, setCurrentPhotoUrl] = useState(playerData.character.profilePhotoUrl || '');
   const [currentUsername, setCurrentUsername] = useState(playerData.character.codinome);
+  const [isEditingSpotify, setIsEditingSpotify] = useState(false);
+  const [spotifyInput, setSpotifyInput] = useState(playerData.character.spotifyPlaylistUrl || '');
+  const [spotifyError, setSpotifyError] = useState('');
+  const [savingSpotify, setSavingSpotify] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const stats = useMemo(() => ({
-    statusCfg: STATUS_CONFIG[playerData.character.agentStatus || 'vivo'],
-    dangerLevel: playerData.character.dangerLevel || 0,
-    dangerLabel: DANGER_LABELS[playerData.character.dangerLevel || 0],
-    lastCampaign: campaigns.find(c => c.id === playerData.character.campaignId),
-    earnedIds: new Set(playerData.achievementIds || []),
-    embedUrl: extractSpotifyEmbedUrl(playerData.character.spotifyPlaylistUrl || ''),
-    initials: currentUsername.split(/[\s\-_]+/).slice(0, 2).map(w => w[0]?.toUpperCase() ?? '').join('')
-  }), [playerData, currentUsername]);
+  const stats = useMemo(() => {
+    const statusKey = playerData.character.agentStatus || 'vivo';
+    const statusStyle = STATUS_STYLE[statusKey] || STATUS_STYLE.vivo;
+    const dangerLevel = playerData.character.dangerLevel || 0;
+    return {
+      statusCfg: { ...statusStyle, label: t(statusStyle.labelKey, { ns: 'common' }) },
+      dangerLevel,
+      dangerLabel: t(`danger.${DANGER_KEYS[dangerLevel] || 'none'}`, { ns: 'common' }),
+      lastCampaign: campaigns.find(c => c.id === playerData.character.campaignId),
+      earnedIds: new Set(playerData.achievementIds || []),
+      embedUrl: extractSpotifyEmbedUrl(playerData.character.spotifyPlaylistUrl || ''),
+      initials: currentUsername.split(/[\s\-_]+/).slice(0, 2).map(w => w[0]?.toUpperCase() ?? '').join('')
+    };
+  }, [playerData, currentUsername, t]);
+
+  const accessLabel = (lvl: AccessLevel) => t(ACCESS_LEVEL_KEYS[lvl], { ns: 'common' });
 
   const levelItems = intelManager?.getByLevel(activeLevel) ?? [];
   const isOpenable = (item: IntelBase) => item instanceof VisualIntel || item instanceof TextIntel;
@@ -115,6 +116,38 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager }: Agent
     setSavingName(true);
     try { await updateCodinome(playerData.uid, playerData.activeCharacterId, trimmed); setCurrentUsername(trimmed); } catch (err) { console.error(err); }
     finally { setSavingName(false); setIsEditingName(false); }
+  };
+
+  const startEditingSpotify = () => {
+    setSpotifyInput(playerData.character.spotifyPlaylistUrl || '');
+    setSpotifyError('');
+    setIsEditingSpotify(true);
+  };
+
+  const cancelEditingSpotify = () => {
+    setSpotifyInput(playerData.character.spotifyPlaylistUrl || '');
+    setSpotifyError('');
+    setIsEditingSpotify(false);
+  };
+
+  const handleSaveSpotify = async () => {
+    if (!onUpdateSpotify) return;
+    const trimmed = spotifyInput.trim();
+    if (!isValidSpotifyPlaylistInput(trimmed)) {
+      setSpotifyError(t('profile.deck.error'));
+      return;
+    }
+    setSavingSpotify(true);
+    setSpotifyError('');
+    try {
+      await onUpdateSpotify(trimmed);
+      setIsEditingSpotify(false);
+    } catch (err) {
+      console.error(err);
+      setSpotifyError(t('profile.deck.error'));
+    } finally {
+      setSavingSpotify(false);
+    }
   };
 
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -146,13 +179,13 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager }: Agent
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            aria-label="Alterar foto"
+            aria-label={t('dossier.changePhoto')}
             className="relative w-16 h-16 rounded-card overflow-hidden bg-surface-sunken border border-border-strong flex items-center justify-center text-primary text-display text-xl shrink-0 group glow-orange-subtle"
           >
             {currentPhotoUrl ? (
               <img
                 src={currentPhotoUrl}
-                alt="Perfil"
+                alt={t('profileAlt', { ns: 'common' })}
                 className="w-full h-full object-cover"
                 onError={(e) => { e.currentTarget.src = FALLBACK_PHOTO; }}
               />
@@ -163,7 +196,7 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager }: Agent
             {uploading && <div className="absolute inset-0 bg-black/70 flex items-center justify-center"><RetroSpinner size="sm" /></div>}
           </button>
           <div className="flex-1 min-w-0">
-            <span className="text-protocol text-[8px] text-primary/60">Dossiê do Agente</span>
+            <span className="text-protocol text-[8px] text-primary/60">{t('dossier.title')}</span>
             {isEditingName ? (
               <div className="flex items-center gap-2 mt-0.5">
                 <input
@@ -179,7 +212,7 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager }: Agent
             ) : (
               <div className="flex items-center gap-2 mt-0.5 min-w-0">
                 <h4 className="text-display text-xl uppercase text-white truncate">{currentUsername}</h4>
-                <button type="button" onClick={() => setIsEditingName(true)} aria-label="Editar codinome" className="p-1 text-primary/30 hover:text-primary transition-colors shrink-0"><Pencil size={13} /></button>
+                <button type="button" onClick={() => setIsEditingName(true)} aria-label={t('dossier.editCodename')} className="p-1 text-primary/30 hover:text-primary transition-colors shrink-0"><Pencil size={13} /></button>
               </div>
             )}
             <div className="flex items-center gap-2 mt-1.5 flex-wrap">
@@ -194,7 +227,7 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager }: Agent
         <button
           type="button"
           onClick={onClose}
-          aria-label="Fechar dossiê"
+          aria-label={t('dossier.closeAria')}
           className="w-11 h-11 rounded-control border border-border bg-surface-panel text-primary flex items-center justify-center hover:border-border-accent hover:bg-accent-10 active:scale-95 transition-all duration-200 group shrink-0"
         >
           <X size={20} className="group-hover:rotate-90 transition-transform duration-300" />
@@ -204,9 +237,9 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager }: Agent
       {/* Leituras */}
       <div className="flex border-b border-border-subtle bg-surface-sunken/60 shrink-0 relative z-20">
         {[
-          { val: intelManager?.getAll().length || 0, lab: 'Total Intel' },
-          { val: stats.earnedIds.size, lab: 'Medalhas' },
-          { val: intelManager?.getByType('VISUAL').length || 0, lab: 'Evidências' }
+          { val: intelManager?.getAll().length || 0, lab: t('dossier.stat.totalIntel') },
+          { val: stats.earnedIds.size, lab: t('dossier.stat.medals') },
+          { val: intelManager?.getByType('VISUAL').length || 0, lab: t('dossier.stat.evidence') }
         ].map((s, i) => (
           <div key={i} className="flex-1 flex flex-col items-center py-3 border-r border-border-subtle last:border-r-0">
             <span className="text-mono-ui text-xl font-semibold text-primary leading-none">{String(s.val).padStart(2, '0')}</span>
@@ -228,7 +261,7 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager }: Agent
                 isActive ? 'text-primary' : 'text-industrial-silver/40 hover:text-industrial-silver/70'
               }`}
             >
-              <tab.Icon size={13} /> <span>{tab.label}</span>
+              <tab.Icon size={13} /> <span>{t(tab.labelKey)}</span>
               {isActive && (
                 <motion.span
                   layoutId="dossier-tab-indicator"
@@ -249,19 +282,19 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager }: Agent
               <div className="relative rounded-card bg-surface-panel border border-border-strong shadow-panel p-5 space-y-4 overflow-hidden">
                 <div aria-hidden className="absolute inset-x-0 top-0 h-0.75 bg-linear-to-r from-accent via-accent-60 to-transparent" />
                 <span aria-hidden className="absolute top-4 right-4 -rotate-6 border border-red-500/40 text-red-400/70 text-protocol text-[7px] px-1.5 py-0.5 rounded-inset">
-                  Classificado
+                  {t('classifiedAlt', { ns: 'common' })}
                 </span>
-                <SectionLabel index="01" title="Ficha de Campo" />
+                <SectionLabel index="01" title={t('dossier.section.fieldSheet')} />
                 <div className="space-y-2.5 pt-1">
-                  <Row label="Agent_ID"><span className="text-primary font-semibold">RM-{playerData.character.agentId || '...'}</span></Row>
-                  <Row label="Codinome"><span className="text-white">{currentUsername}</span></Row>
-                  <Row label="Status"><span className={stats.statusCfg.color}>{stats.statusCfg.label}</span></Row>
-                  <Row label="Última_Missão"><span className="text-white/80">{stats.lastCampaign?.name || 'SEM REGISTRO'}</span></Row>
-                  {stats.lastCampaign && <Row label="Setor"><span className="text-white/80">{stats.lastCampaign.location}</span></Row>}
+                  <Row label={t('dossier.row.agentId')}><span className="text-primary font-semibold">RM-{playerData.character.agentId || '...'}</span></Row>
+                  <Row label={t('dossier.row.codename')}><span className="text-white">{currentUsername}</span></Row>
+                  <Row label={t('dossier.row.status')}><span className={stats.statusCfg.color}>{stats.statusCfg.label}</span></Row>
+                  <Row label={t('dossier.row.lastMission')}><span className="text-white/80">{stats.lastCampaign?.name || t('dossier.noMission')}</span></Row>
+                  {stats.lastCampaign && <Row label={t('dossier.row.sector')}><span className="text-white/80">{stats.lastCampaign.location}</span></Row>}
                 </div>
                 <div className="pt-4 border-t border-border-subtle">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-protocol text-[9px] text-industrial-silver/40">Periculosidade</span>
+                    <span className="text-protocol text-[9px] text-industrial-silver/40">{t('danger.label', { ns: 'common' })}</span>
                     <span className={`text-protocol text-[9px] ${stats.dangerLevel >= 4 ? 'text-red-400' : stats.dangerLevel >= 2 ? 'text-primary' : 'text-industrial-silver/40'}`}>{stats.dangerLabel}</span>
                   </div>
                   <div className="flex gap-1.5">
@@ -281,16 +314,75 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager }: Agent
 
               {/* Deck */}
               <div className="space-y-3">
-                <SectionLabel index="02" title="Deck do Agente" tone="text-[#1DB954]" />
-                {stats.embedUrl ? (
+                <div className="flex items-center justify-between gap-2">
+                  <SectionLabel index="02" title={t('dossier.deck')} tone="text-[#1DB954]" />
+                  {onUpdateSpotify && !isEditingSpotify && (
+                    <button
+                      type="button"
+                      onClick={startEditingSpotify}
+                      className="flex items-center gap-1 text-protocol text-[8px] text-industrial-silver/40 hover:text-[#1DB954] transition-colors shrink-0"
+                    >
+                      <Pencil size={9} />
+                      {stats.embedUrl ? t('profile.deck.edit') : t('profile.deck.connect')}
+                    </button>
+                  )}
+                </div>
+                {isEditingSpotify ? (
+                  <div className="space-y-2">
+                    <div className="rounded-card border border-border bg-surface-raised p-3">
+                      <label className="text-protocol text-[8px] text-industrial-silver/40 block mb-2">
+                        {t('profile.deck.label')}
+                      </label>
+                      <input
+                        type="url"
+                        value={spotifyInput}
+                        onChange={(e) => { setSpotifyInput(e.target.value); setSpotifyError(''); }}
+                        placeholder={t('profile.deck.placeholder')}
+                        className="w-full bg-surface-sunken border border-border rounded-control px-3 py-2 text-base text-white placeholder:text-industrial-silver/20 focus:border-[#1DB954]/60 focus:outline-none transition-colors font-mono"
+                        autoFocus
+                      />
+                      {spotifyError && <p className="text-red-400 text-[10px] mt-1.5 font-sans">{spotifyError}</p>}
+                      <p className="text-[9px] text-industrial-silver/30 mt-2 leading-relaxed font-sans">
+                        {t('profile.deck.hint')}
+                      </p>
+                    </div>
+                    <div className="flex gap-2 justify-end">
+                      <button
+                        type="button"
+                        onClick={cancelEditingSpotify}
+                        disabled={savingSpotify}
+                        className="flex items-center gap-1 px-3 py-1.5 rounded-control border border-border bg-surface-raised text-industrial-silver/60 text-protocol text-[8px] hover:text-white transition-colors"
+                      >
+                        <X size={10} /> {t('cancel', { ns: 'common' })}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleSaveSpotify}
+                        disabled={savingSpotify}
+                        className="flex items-center gap-1 px-3 py-1.5 rounded-control bg-[#1DB954] text-black text-protocol text-[8px] font-bold hover:bg-[#1ed760] transition-colors disabled:opacity-50"
+                      >
+                        {savingSpotify ? <RetroSpinner size="sm" /> : <Check size={10} />}
+                        {t('actions.saveShort', { ns: 'common' })}
+                      </button>
+                    </div>
+                  </div>
+                ) : stats.embedUrl ? (
                   <div className="rounded-card overflow-hidden border border-border bg-surface-sunken shadow-[0_0_24px_-8px_rgba(29,185,84,0.25)]">
                     <iframe src={stats.embedUrl} width="100%" height="152" frameBorder="0" allow="autoplay; encrypted-media; fullscreen" loading="lazy" className="block" title="Spotify" />
                   </div>
                 ) : (
-                  <div className="rounded-card border border-dashed border-border bg-surface-raised/40 p-6 text-center flex flex-col items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={onUpdateSpotify ? startEditingSpotify : undefined}
+                    disabled={!onUpdateSpotify}
+                    className="w-full rounded-card border border-dashed border-border bg-surface-raised/40 p-6 text-center flex flex-col items-center gap-2 hover:border-[#1DB954]/40 hover:bg-[#1DB954]/5 transition-colors disabled:pointer-events-none"
+                  >
                     <Music size={20} className="text-[#1DB954]/50" />
-                    <p className="text-protocol text-[9px] text-industrial-silver/40">Nenhuma playlist sincronizada</p>
-                  </div>
+                    <p className="text-protocol text-[9px] text-industrial-silver/40">{t('dossier.noPlaylist')}</p>
+                    {onUpdateSpotify && (
+                      <span className="text-protocol text-[8px] text-[#1DB954]/80 mt-1">{t('profile.deck.connectCta')}</span>
+                    )}
+                  </button>
                 )}
               </div>
             </motion.div>
@@ -319,7 +411,7 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager }: Agent
                       )}
                       <span className="relative z-10 flex flex-col items-center leading-none gap-1">
                         <span className="text-mono-ui text-[9px] opacity-70">N{lvl}</span>
-                        <span className="hidden min-[400px]:inline">{ACCESS_LEVEL_LABELS[lvl]}</span>
+                        <span className="hidden min-[400px]:inline">{accessLabel(lvl)}</span>
                       </span>
                     </button>
                   );
@@ -327,15 +419,15 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager }: Agent
               </div>
 
               <div className="flex items-center justify-between px-1">
-                <span className="text-protocol text-[8px] text-industrial-silver/40">{ACCESS_LEVEL_LABELS[activeLevel]}</span>
-                <span className="text-mono-ui text-[10px] text-industrial-silver/30">{String(levelItems.length).padStart(2, '0')} registros</span>
+                <span className="text-protocol text-[8px] text-industrial-silver/40">{accessLabel(activeLevel)}</span>
+                <span className="text-mono-ui text-[10px] text-industrial-silver/30">{t('dossier.recordsCount', { n: String(levelItems.length).padStart(2, '0') })}</span>
               </div>
 
               <div className="space-y-2">
                 {levelItems.length === 0 ? (
                   <div className="rounded-card border border-dashed border-border bg-surface-raised/40 p-10 text-center flex flex-col items-center gap-3 text-industrial-silver/30">
                     <Radio size={28} />
-                    <span className="text-protocol text-[9px]">Nenhum registro encontrado</span>
+                    <span className="text-protocol text-[9px]">{t('dossier.noRecords')}</span>
                   </div>
                 ) : (
                   levelItems.map((item, i) => {
@@ -358,7 +450,7 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager }: Agent
                         </div>
                         <div className="min-w-0 flex-1">
                           <p className="text-[11px] font-semibold text-white group-hover:text-primary transition-colors truncate uppercase tracking-wide">{item.title}</p>
-                          <p className="text-mono-ui text-[9px] text-industrial-silver/40 mt-0.5 truncate">{item.metadata?.npc || 'Sistema de Campo'} · {item.getTypeLabel()}</p>
+                          <p className="text-mono-ui text-[9px] text-industrial-silver/40 mt-0.5 truncate">{item.metadata?.npc || t('dossier.fieldSystem')} · {item.getTypeLabel()}</p>
                         </div>
                         <span className="text-mono-ui text-[9px] text-industrial-silver/30 shrink-0">{String(i + 1).padStart(2, '0')}</span>
                       </motion.button>
@@ -372,8 +464,8 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager }: Agent
           {activeTab === 'conquistas' && (
             <motion.div key="conquistas" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} className="p-5 sm:p-6 space-y-4">
               <div className="flex items-center justify-between px-1">
-                <span className="text-protocol text-[8px] text-industrial-silver/40">Registros operacionais</span>
-                <span className="text-mono-ui text-[10px] text-industrial-silver/30">{stats.earnedIds.size}/{ALL_ACHIEVEMENTS.length}</span>
+                <span className="text-protocol text-[8px] text-industrial-silver/40">{t('dossier.opsRecords')}</span>
+                <span className="text-mono-ui text-[10px] text-industrial-silver/30">{stats.earnedIds.size}/{achievements.length}</span>
               </div>
               <AchievementCatalog
                 grantDocIds={playerData.achievementIds || []}
@@ -389,9 +481,9 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager }: Agent
 
       <footer className="px-5 sm:px-6 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] flex justify-between items-center bg-surface-raised/80 border-t border-border-subtle shrink-0 relative z-20">
         <div className="flex items-center gap-2 text-protocol text-[8px] text-industrial-silver/50">
-          <span className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse glow-orange-subtle" /> Conexão Segura
+          <span className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse glow-orange-subtle" /> {t('dossier.secureConn')}
         </div>
-        <div className="text-mono-ui text-[9px] text-industrial-silver/25">Grid Node: RM-LINK-84</div>
+        <div className="text-mono-ui text-[9px] text-industrial-silver/25">{t('dossier.gridNode')}</div>
       </footer>
 
       <AnimatePresence>
@@ -413,7 +505,7 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager }: Agent
               <div className="relative rounded-card bg-surface-panel border border-border-strong shadow-panel overflow-hidden">
                 <div aria-hidden className="absolute inset-x-0 top-0 h-0.75 bg-linear-to-r from-accent via-accent-60 to-transparent z-10" />
                 <div className="flex items-center justify-between px-4 pt-4">
-                  <span className="text-protocol text-[8px] text-primary/70">Arquivo Desbloqueado</span>
+                  <span className="text-protocol text-[8px] text-primary/70">{t('dossier.unlockedFile')}</span>
                   <span className="text-mono-ui text-[9px] text-industrial-silver/30">{selectedIntel.getFormattedLevel()}</span>
                 </div>
                 {selectedIntel instanceof VisualIntel ? (
@@ -445,7 +537,7 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager }: Agent
               <button
                 type="button"
                 onClick={() => setSelectedIntel(null)}
-                aria-label="Fechar"
+                aria-label={t('closeAria', { ns: 'common' })}
                 className="absolute -top-3 -right-3 w-9 h-9 rounded-full bg-surface-panel border border-border-strong flex items-center justify-center text-primary hover:border-border-accent hover:bg-accent-10 transition-colors shadow-panel"
               >
                 <X size={14} />

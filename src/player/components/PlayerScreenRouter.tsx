@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useTranslation } from 'react-i18next';
 import RetroLoading from '../../components/player/RetroLoading';
 import { usePlayerSession } from '../context/PlayerProviders';
 import { usePlayerPlayback } from '../context/PlayerProviders';
@@ -25,6 +26,7 @@ const screenMotion = {
 };
 
 export default function PlayerScreenRouter() {
+  const { t } = useTranslation('player');
   const session = usePlayerSession();
   const playback = usePlayerPlayback();
 
@@ -53,7 +55,7 @@ export default function PlayerScreenRouter() {
           {...screenMotion}
           className="w-full h-full flex items-center justify-center"
         >
-          <React.Suspense fallback={<RetroLoading message="CARREGANDO TERMINAL..." />}>
+          <React.Suspense fallback={<RetroLoading message={t('app.loading.terminal')} />}>
             <LoginScreen onLogin={handleLogin} />
           </React.Suspense>
         </motion.div>
@@ -63,7 +65,7 @@ export default function PlayerScreenRouter() {
           {...screenMotion}
           className="w-full h-full flex items-center justify-center"
         >
-          <React.Suspense fallback={<RetroLoading message="LISTANDO AGENTES..." />}>
+          <React.Suspense fallback={<RetroLoading message={t('app.loading.agents')} />}>
             <CharacterSelectionScreen
               account={masterAccount}
               onSelect={handleCharacterSelect}
@@ -72,14 +74,14 @@ export default function PlayerScreenRouter() {
           </React.Suspense>
         </motion.div>
       ) : playerData === null ? (
-        <RetroLoading message="SINCRONIZANDO..." subMessage="Recuperando dossiê do agente" />
+        <RetroLoading message={t('app.loading.sync')} subMessage={t('app.loading.syncSub')} />
       ) : screen === 'profile' ? (
         <motion.div
           key="profile"
           {...screenMotion}
           className="w-full h-full flex items-center justify-center"
         >
-          <React.Suspense fallback={<RetroLoading message="ACESSANDO PERFIL..." />}>
+          <React.Suspense fallback={<RetroLoading message={t('app.loading.profile')} />}>
             <ProfileScreen
               profile={playerData}
               galleryImages={visualGalleryImages}
@@ -99,11 +101,12 @@ export default function PlayerScreenRouter() {
           className="w-full h-full flex items-center justify-center p-0 sm:p-4"
         >
           <div className="w-full h-full max-w-130 rounded-none sm:rounded-panel shadow-panel border-0 sm:border border-border-accent relative flex flex-col mx-auto overflow-hidden bg-surface">
-            <React.Suspense fallback={<RetroLoading message="ABRINDO DOSSIÊ..." />}>
+            <React.Suspense fallback={<RetroLoading message={t('app.loading.dossier')} />}>
               <AgentDossierOverlay
                 onClose={() => setScreen('campaignSelection')}
                 playerData={playerData}
                 intelManager={intelManager}
+                onUpdateSpotify={updateSpotify}
               />
             </React.Suspense>
           </div>
@@ -114,7 +117,7 @@ export default function PlayerScreenRouter() {
           {...screenMotion}
           className="w-full h-full flex items-center justify-center p-0 sm:p-4"
         >
-          <React.Suspense fallback={<RetroLoading message="SELECIONANDO MISSÃO..." />}>
+          <React.Suspense fallback={<RetroLoading message={t('app.loading.mission')} />}>
             <CampaignSelection
               onSelect={async (c) => {
                 await selectCampaign(c);
@@ -133,7 +136,7 @@ export default function PlayerScreenRouter() {
           </React.Suspense>
         </motion.div>
       ) : screen === 'player' ? (
-        <React.Suspense fallback={<RetroLoading message="INICIALIZANDO DECK..." />}>
+        <React.Suspense fallback={<RetroLoading message={t('app.loading.deck')} />}>
           <WalkmanShell
             currentIntel={playback.currentIntel}
             walkmanStatus={playback.walkmanStatus}
@@ -158,7 +161,7 @@ export default function PlayerScreenRouter() {
           />
         </React.Suspense>
       ) : (
-        <React.Suspense fallback={<RetroLoading message="INICIALIZANDO SISTEMA..." />}>
+        <React.Suspense fallback={<RetroLoading message={t('app.loading.initSystem')} />}>
           <MiniAppsOverlay
             screen={screen}
             playerData={playerData}

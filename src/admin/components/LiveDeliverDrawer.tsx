@@ -1,17 +1,20 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { motion } from 'motion/react';
+import { useTranslation } from 'react-i18next';
+import { motion, AnimatePresence } from 'motion/react';
 import type { CharacterData, Group } from '../../types/player';
 import type { IntelGrantTarget } from '../../services/IntelService';
 import { userService } from '../../services/UserService';
 import { groupService } from '../../services/GroupService';
 import { activityLogger } from '../../services/ActivityLogger';
-import { ALL_ACHIEVEMENTS } from '../../data/achievements';
 import { resolveCampaignPlatform } from '../../data/campaigns';
-import { npcMessages, type NpcSmsDialogue } from '../../data/npcMessages';
+import { toLegacyDialogue } from '../../data/npcMessages';
+import { useAchievementCatalog } from '../../hooks/useAchievementCatalog';
+import { useNpcSmsCatalog } from '../../hooks/useNpcSmsCatalog';
 import IntelDistributionDrawer from './IntelDistributionDrawer';
 import OverlayPortal from './OverlayPortal';
 import Screw from '../../components/player/Screw';
 import { useToast } from './ToastProvider';
+import { ADMIN_SPRING, overlayFade } from '../lib/motion';
 
 export type LiveDeliverKind = 'intel' | 'achievements' | 'sms' | 'video';
 
@@ -28,21 +31,6 @@ interface LiveDeliverDrawerProps {
   onClose: () => void;
   onSuccess: () => void;
 }
-
-const KIND_LABELS: Record<LiveDeliverKind, string> = {
-  intel: 'Entregar Intel',
-  achievements: 'Outorgar Conquista',
-  sms: 'Distribuir SMS NPC',
-  video: 'Transmitir Vídeo',
-};
-
-const NPC_LIST = [
-  { id: 'NIL_ECHO', name: 'Nil' },
-  { id: 'MAI_ARCHIVE', name: 'Mai' },
-  { id: 'JADEN', name: 'Jaden' },
-  { id: 'JOE_AMPED', name: 'Joe' },
-  { id: 'BIGMOUTH_BOCAO', name: 'Bocão' },
-];
 
 function shuffleArray<T>(array: T[]): T[] {
   const arr = [...array];
@@ -62,16 +50,23 @@ export default function LiveDeliverDrawer({
   onClose,
   onSuccess,
 }: LiveDeliverDrawerProps) {
+  const { t } = useTranslation('admin');
+  const kindLabels: Record<LiveDeliverKind, string> = {
+    intel: t('deliver.kind.intel'),
+    achievements: t('deliver.kind.achievements'),
+    sms: t('deliver.kind.sms'),
+    video: t('deliver.kind.video'),
+  };
   if (kind === 'intel' || kind === 'video') {
-    const grantTargets: IntelGrantTarget[] = targets.map((t) => ({
-      uid: t.uid,
-      characterId: t.characterId,
+    const grantTargets: IntelGrantTarget[] = targets.map((target) => ({
+      uid: target.uid,
+      characterId: target.characterId,
     }));
     return (
       <IntelDistributionDrawer
         onClose={onClose}
         onSuccess={onSuccess}
-        title={KIND_LABELS[kind]}
+        title={kindLabels[kind]}
         targets={grantTargets}
         broadcastMode={kind === 'video'}
       />
@@ -100,30 +95,32 @@ function AchievementDeliverPane({
   onClose: () => void;
   onSuccess: () => void;
 }) {
+  const { t } = useTranslation('admin');
   const toast = useToast();
+  const { achievements } = useAchievementCatalog();
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    if (!q) return ALL_ACHIEVEMENTS;
-    return ALL_ACHIEVEMENTS.filter(
+    if (!q) return achievements;
+    return achievements.filter(
       (a) =>
         a.title.toLowerCase().includes(q) ||
         a.id.toLowerCase().includes(q) ||
         (a.description || '').toLowerCase().includes(q)
     );
-  }, [search]);
+  }, [search, achievements]);
 
   const handleGrant = async () => {
     if (!selectedId || targets.length === 0) return;
     setLoading(true);
     try {
-      for (const t of targets) {
-        const campaignId = t.character.campaignId || 'unscoped';
-        const platform = resolveCampaignPlatform(t.character.campaignId);
-        await userService.grantUserAchievement(t.uid, t.characterId, selectedId, {
+      for (const target of targets) {
+        const campaignId = target.character.campaignId || 'unscoped';
+        const platform = resolveCampaignPlatform(target.character.campaignId);
+        await userService.grantUserAchievement(target.uid, target.characterId, selectedId, {
           campaignId,
           platform,
         });
@@ -134,25 +131,25 @@ function AchievementDeliverPane({
         `Outorgou ${selectedId} para ${targets.length} agente(s) ao vivo`,
         { achievementId: selectedId, count: targets.length }
       );
-      toast.success(`Conquista outorgada a ${targets.length} agente(s)`);
+      toast.success(t('deliver.toast.achievementOk', { n: targets.length }));
       onSuccess();
       onClose();
     } catch (err) {
       console.error(err);
-      toast.error('Falha ao outorgar conquista');
+      toast.error(t('deliver.toast.achievementFail'));
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <DeliverShell title={KIND_LABELS.achievements} targets={targets} onClose={loading ? undefined : onClose}>
+    <DeliverShell title={t('deliver.kind.achievements')} targets={targets} onClose={loading ? undefined : onClose}>
       <div className="px-6 py-3 border-b border-white/5">
         <input
           type="search"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="BUSCAR CONQUISTA..."
+          placeholder={t('deliver.searchAchievement')}
           className="w-full bg-black/50 border border-white/10 px-4 py-2.5 text-[10px] font-display font-bold uppercase tracking-widest text-white placeholder:text-zinc-700 outline-none focus:border-primary/40"
         />
       </div>
@@ -191,16 +188,26 @@ function AchievementDeliverPane({
           onClick={onClose}
           className="px-4 py-2 text-[10px] font-display font-bold uppercase tracking-widest text-zinc-500 hover:text-white"
         >
-          Cancelar
+          {t('accounts.cancel')}
         </button>
-        <button
+        <motion.button
           type="button"
           disabled={loading || !selectedId}
           onClick={handleGrant}
-          className="px-5 py-2 bg-primary text-black text-[10px] font-display font-black uppercase tracking-widest disabled:opacity-30"
+          whileTap={{ scale: 0.97 }}
+          animate={loading ? { scale: [1, 0.98, 1] } : { scale: 1 }}
+          transition={loading ? { repeat: Infinity, duration: 0.8 } : ADMIN_SPRING}
+          className="px-5 py-2 bg-primary text-black text-[10px] font-display font-black uppercase tracking-widest disabled:opacity-30 flex items-center gap-2"
         >
-          {loading ? 'Outorgando...' : `Outorgar a ${targets.length}`}
-        </button>
+          {loading ? (
+            <>
+              <span className="material-symbols-outlined text-sm animate-spin">progress_activity</span>
+              Outorgando...
+            </>
+          ) : (
+            `Outorgar a ${targets.length}`
+          )}
+        </motion.button>
       </div>
     </DeliverShell>
   );
@@ -215,7 +222,9 @@ function SmsDeliverPane({
   onClose: () => void;
   onSuccess: () => void;
 }) {
+  const { t } = useTranslation('admin');
   const toast = useToast();
+  const { enabledContacts, enabledDialogues, getContact } = useNpcSmsCatalog();
   const [groups, setGroups] = useState<Group[]>([]);
   const [selectedNpc, setSelectedNpc] = useState('all');
   const [loading, setLoading] = useState(false);
@@ -240,23 +249,25 @@ function SmsDeliverPane({
     if (ready.length === 0) return;
     setLoading(true);
     try {
-      const npcIds = selectedNpc === 'all' ? NPC_LIST.map((n) => n.id) : [selectedNpc];
+      const npcIds =
+        selectedNpc === 'all' ? enabledContacts.map((n) => n.id) : [selectedNpc];
       let sent = 0;
 
       for (const npcId of npcIds) {
-        const dialogues = (npcMessages[npcId] || []) as NpcSmsDialogue[];
+        const dialogues = enabledDialogues.filter((d) => d.npcId === npcId);
         if (dialogues.length === 0) continue;
         const shuffled = shuffleArray(dialogues);
 
         for (let i = 0; i < ready.length; i++) {
-          const t = ready[i];
+          const target = ready[i];
           const dialogue = shuffled[i % shuffled.length];
+          const legacy = toLegacyDialogue(dialogue, getContact(npcId));
           await groupService.sendNpcDialogueToCharacter(
-            t.group!.id,
-            t.characterId,
-            t.character.codinome || 'Agente',
-            t.character.phoneNumber || '(Sem Telefone)',
-            dialogue
+            target.group!.id,
+            target.characterId,
+            target.character.codinome || 'Agente',
+            target.character.phoneNumber || '(Sem Telefone)',
+            legacy
           );
           sent++;
         }
@@ -267,19 +278,19 @@ function SmsDeliverPane({
         'npc_sms_distributed_live',
         `SMS ao vivo: ${sent} diálogo(s) para ${ready.length} agente(s)`
       );
-      toast.success(`${sent} torpedo(s) enviados`);
+      toast.success(t('deliver.toast.smsOk', { n: sent }));
       onSuccess();
       onClose();
     } catch (err) {
       console.error(err);
-      toast.error('Falha ao distribuir SMS');
+      toast.error(t('deliver.toast.smsFail'));
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <DeliverShell title={KIND_LABELS.sms} targets={targets} onClose={loading ? undefined : onClose}>
+    <DeliverShell title={t('deliver.kind.sms')} targets={targets} onClose={loading ? undefined : onClose}>
       <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
         <div>
           <p className="text-[9px] font-display font-bold uppercase tracking-widest text-zinc-500 mb-2">
@@ -290,8 +301,8 @@ function SmsDeliverPane({
             onChange={(e) => setSelectedNpc(e.target.value)}
             className="w-full bg-black/50 border border-white/10 px-4 py-3 text-[10px] font-display font-bold uppercase tracking-widest text-primary outline-none"
           >
-            <option value="all">Todos os NPCs</option>
-            {NPC_LIST.map((n) => (
+            <option value="all">{t('deliver.npcAll')}</option>
+            {enabledContacts.map((n) => (
               <option key={n.id} value={n.id}>
                 {n.name}
               </option>
@@ -337,16 +348,26 @@ function SmsDeliverPane({
           onClick={onClose}
           className="px-4 py-2 text-[10px] font-display font-bold uppercase tracking-widest text-zinc-500 hover:text-white"
         >
-          Cancelar
+          {t('accounts.cancel')}
         </button>
-        <button
+        <motion.button
           type="button"
           disabled={loading || ready.length === 0}
           onClick={handleDistribute}
-          className="px-5 py-2 bg-primary text-black text-[10px] font-display font-black uppercase tracking-widest disabled:opacity-30"
+          whileTap={{ scale: 0.97 }}
+          animate={loading ? { scale: [1, 0.98, 1] } : { scale: 1 }}
+          transition={loading ? { repeat: Infinity, duration: 0.8 } : ADMIN_SPRING}
+          className="px-5 py-2 bg-primary text-black text-[10px] font-display font-black uppercase tracking-widest disabled:opacity-30 flex items-center gap-2"
         >
-          {loading ? 'Enviando...' : `Enviar a ${ready.length}`}
-        </button>
+          {loading ? (
+            <>
+              <span className="material-symbols-outlined text-sm animate-spin">progress_activity</span>
+              Enviando...
+            </>
+          ) : (
+            `Enviar a ${ready.length}`
+          )}
+        </motion.button>
       </div>
     </DeliverShell>
   );
@@ -363,46 +384,62 @@ function DeliverShell({
   onClose?: () => void;
   children: React.ReactNode;
 }) {
+  const [visible, setVisible] = useState(true);
+
+  const requestClose = () => {
+    if (!onClose) return;
+    setVisible(false);
+  };
+
   return (
-    <OverlayPortal open onClose={onClose}>
-      <div
-        className="fixed inset-0 z-[120] flex justify-end bg-black/80 backdrop-blur-sm"
-        onClick={() => onClose?.()}
-      >
-        <motion.div
-          initial={{ x: '100%' }}
-          animate={{ x: 0 }}
-          exit={{ x: '100%' }}
-          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-          className="bg-[#222] border-l-8 border-[#1a1a1a] w-full max-w-xl shadow-2xl flex flex-col h-full relative overflow-hidden font-display"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <Screw className="top-4 left-4" />
-          <Screw className="top-4 right-4 -rotate-90" />
-          <div className="noise-overlay" />
-          <div className="scanlines" />
+    <OverlayPortal open onClose={onClose ? requestClose : undefined}>
+      <AnimatePresence onExitComplete={() => { if (!visible) onClose?.(); }}>
+        {visible && (
+          <motion.div
+            key="deliver-backdrop"
+            variants={overlayFade}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="fixed inset-0 z-[120] flex justify-end bg-black/80 backdrop-blur-sm"
+            onClick={() => requestClose()}
+          >
+            <motion.div
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={ADMIN_SPRING}
+              className="bg-[#222] border-l-8 border-[#1a1a1a] w-full max-w-xl shadow-2xl flex flex-col h-full relative overflow-hidden font-display"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Screw className="top-4 left-4" />
+              <Screw className="top-4 right-4 -rotate-90" />
+              <div className="noise-overlay" />
+              <div className="scanlines" />
 
-          <div className="p-6 border-b-4 border-[#1a1a1a] bg-black/40 relative z-10 flex justify-between items-start gap-4">
-            <div className="min-w-0">
-              <h3 className="font-black text-xl text-white uppercase tracking-widest truncate">{title}</h3>
-              <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-1 truncate">
-                {targets.length} alvo(s): {targets.map((t) => t.label).join(', ')}
-              </p>
-            </div>
-            {onClose && (
-              <button
-                type="button"
-                onClick={onClose}
-                className="p-2 text-zinc-600 hover:text-white material-symbols-outlined shrink-0"
-              >
-                close
-              </button>
-            )}
-          </div>
+              <div className="p-6 border-b-4 border-[#1a1a1a] bg-black/40 relative z-10 flex justify-between items-start gap-4">
+                <div className="min-w-0">
+                  <h3 className="font-black text-xl text-white uppercase tracking-widest truncate">{title}</h3>
+                  <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-1 truncate">
+                    {targets.length} alvo(s): {targets.map((t) => t.label).join(', ')}
+                  </p>
+                </div>
+                {onClose && (
+                  <button
+                    type="button"
+                    onClick={requestClose}
+                    className="p-2 text-zinc-600 hover:text-white material-symbols-outlined shrink-0"
+                  >
+                    close
+                  </button>
+                )}
+              </div>
 
-          <div className="flex-1 flex flex-col min-h-0 relative z-10">{children}</div>
-        </motion.div>
-      </div>
+              <div className="flex-1 flex flex-col min-h-0 relative z-10">{children}</div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </OverlayPortal>
   );
 }

@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { motion } from 'motion/react';
 import { useModal } from './ConfirmModal';
 import { adminAnalyticsService, PlayEvent, AudioMetadata, UserAchievement, UserData } from '../../services/AdminAnalyticsService';
 import { PlayerStats } from '../../types/player';
 import { intelTitleLabel } from '../lib/entityLabels';
 import { activityLogger } from '../../services/ActivityLogger';
+import { staggerContainer, staggerItem } from '../lib/motion';
 
 type IntelSubTabId = 'acervo' | 'jukebox' | 'qr' | 'conquistas';
 
@@ -17,6 +20,7 @@ interface AnalyticsPanelProps {
 }
 
 export default function AnalyticsPanel({ onNavigate }: AnalyticsPanelProps = {}) {
+  const { t } = useTranslation('admin');
   const [playEvents, setPlayEvents] = useState<PlayEvent[]>([]);
   const [users, setUsers] = useState<UserData[]>([]);
   const [audios, setAudios] = useState<AudioMetadata[]>([]);
@@ -31,7 +35,7 @@ export default function AnalyticsPanel({ onNavigate }: AnalyticsPanelProps = {})
     try {
       await adminAnalyticsService.resetAnalytics();
       activityLogger.logAdmin('gm.mpg', 'bi_reset', 'Resetou painel de BI (play events + stats)');
-      await showAlert('Reset Concluído', '✅ Painel de BI resetado com sucesso!');
+      await showAlert(t('analytics.resetDone'), '✅ Painel de BI resetado com sucesso!');
     } catch (e) {
       console.error('Falha ao resetar BI', e);
       await showAlert('Erro', 'Falha ao resetar os dados. Verifique o console.');
@@ -90,14 +94,19 @@ export default function AnalyticsPanel({ onNavigate }: AnalyticsPanelProps = {})
   }, [analytics, aggregatedData]);
 
   return (
-    <div className="space-y-8 font-sans">
+    <motion.div
+      className="space-y-8 font-sans"
+      variants={staggerContainer}
+      initial="hidden"
+      animate="visible"
+    >
       {modal}
-      <div className="flex items-center justify-between">
+      <motion.div variants={staggerItem} className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <div className="w-1.5 h-8 bg-primary shadow-[0_0_10px_rgba(255,140,0,0.4)]" />
           <div>
-            <h2 className="font-display font-bold uppercase tracking-widest text-lg text-white">Análise de Dados e BI</h2>
-            <p className="text-[10px] font-display font-bold text-industrial-silver/40 uppercase tracking-widest mt-1">Monitoramento de Performance da Rede</p>
+            <h2 className="font-display font-bold uppercase tracking-widest text-lg text-white">{t('analytics.title')}</h2>
+            <p className="text-[10px] font-display font-bold text-industrial-silver/40 uppercase tracking-widest mt-1">{t('analytics.subtitle')}</p>
           </div>
         </div>
         <button
@@ -108,12 +117,12 @@ export default function AnalyticsPanel({ onNavigate }: AnalyticsPanelProps = {})
           <span className="material-symbols-outlined text-base">delete_forever</span>
           {isResetting ? 'Executando Reset...' : 'Zerar Banco de Dados BI'}
         </button>
-      </div>
+      </motion.div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <KPICard label="Usuários Ativos" value={users.length} icon="group" color="text-primary" onClick={() => onNavigate?.('players')} />
+      <motion.div variants={staggerItem} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <KPICard label={t('analytics.activeUsers')} value={users.length} icon="group" color="text-primary" onClick={() => onNavigate?.('players')} />
         <KPICard label="Ativos 7d" value={displayAnalytics.activeUsers} icon="trending_up" color="text-tertiary" onClick={() => onNavigate?.('players')} />
-        <KPICard label="Arquivos Áudio" value={audios.length} icon="library_music" color="text-secondary" onClick={() => onNavigate?.('media')} />
+        <KPICard label={t('analytics.audioFiles')} value={audios.length} icon="library_music" color="text-secondary" onClick={() => onNavigate?.('media')} />
         <KPICard
           label="Eventos Play"
           value={aggregatedData?.totalPlays ?? playEvents.length}
@@ -121,14 +130,14 @@ export default function AnalyticsPanel({ onNavigate }: AnalyticsPanelProps = {})
           color="text-primary"
           onClick={() => onNavigate?.('dashboard', { scrollTo: 'admin-analytics' })}
         />
-      </div>
+      </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <motion.div variants={staggerItem} className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <ClickableSection onClick={() => onNavigate?.('media')} className="bg-surface-container-low border border-primary/10 p-6 shadow-xl group hover:border-primary/20 transition-all">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               <span className="material-symbols-outlined text-secondary text-base">cloud_done</span>
-              <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-industrial-silver/40">Armazenamento Firebase</h3>
+              <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-industrial-silver/40">{t('analytics.storage')}</h3>
             </div>
             <span className="text-[10px] font-display font-bold text-industrial-silver/60">{(analytics.totalStorageSize / (1024 * 1024)).toFixed(1)} MB / 5 GB</span>
           </div>
@@ -141,7 +150,7 @@ export default function AnalyticsPanel({ onNavigate }: AnalyticsPanelProps = {})
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               <span className="material-symbols-outlined text-primary text-base">check_circle</span>
-              <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-industrial-silver/40">Taxa de Conclusão</h3>
+              <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-industrial-silver/40">{t('analytics.completionRate')}</h3>
             </div>
             <span className="text-[10px] font-display font-bold text-industrial-silver/60">{displayAnalytics.completionRate.toFixed(1)}% Concluído</span>
           </div>
@@ -149,9 +158,9 @@ export default function AnalyticsPanel({ onNavigate }: AnalyticsPanelProps = {})
             <div className="h-full bg-primary shadow-[0_0_10px_rgba(255,140,0,0.2)] transition-all duration-1000" style={{ width: `${displayAnalytics.completionRate}%` }} />
           </div>
         </section>
-      </div>
+      </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <motion.div variants={staggerItem} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <section className="bg-surface-container-low border border-primary/10 p-6 shadow-xl lg:col-span-2">
           <div className="flex items-center gap-3 mb-8">
             <span className="material-symbols-outlined text-primary text-base">timeline</span>
@@ -176,7 +185,7 @@ export default function AnalyticsPanel({ onNavigate }: AnalyticsPanelProps = {})
         <section className="bg-surface-container-low border border-primary/10 p-6 shadow-xl">
           <div className="flex items-center gap-3 mb-8">
             <span className="material-symbols-outlined text-primary text-base">schedule</span>
-            <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-industrial-silver/40">Horários de Pico</h3>
+            <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-industrial-silver/40">{t('analytics.peakHours')}</h3>
           </div>
           <div className="grid grid-cols-6 gap-3">
             {analytics.peakHours.map(({ hour, count }) => (
@@ -190,16 +199,16 @@ export default function AnalyticsPanel({ onNavigate }: AnalyticsPanelProps = {})
             ))}
           </div>
         </section>
-      </div>
+      </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <motion.div variants={staggerItem} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <ClickableSection onClick={() => onNavigate?.('media')} className="bg-surface-container-low border border-primary/10 p-6 shadow-xl">
           <div className="flex items-center gap-3 mb-8">
             <span className="material-symbols-outlined text-primary text-base">leaderboard</span>
             <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-industrial-silver/40">Top Conteúdo (Plays)</h3>
           </div>
           <div className="space-y-5">
-            {displayAnalytics.mostPlayed.length === 0 ? (<p className="text-industrial-silver/20 text-[10px] font-display font-bold uppercase tracking-widest py-8 text-center border border-dashed border-white/5 rounded-sm">Sem dados registrados</p>) : (
+            {displayAnalytics.mostPlayed.length === 0 ? (<p className="text-industrial-silver/20 text-[10px] font-display font-bold uppercase tracking-widest py-8 text-center border border-dashed border-white/5 rounded-sm">{t('analytics.empty')}</p>) : (
               displayAnalytics.mostPlayed.map(([tapeId, count]: [string, any], idx: number) => {
                 const maxCount = displayAnalytics.mostPlayed[0][1] as number;
                 const tapeName = intelTitleLabel(tapeId, audios);
@@ -225,10 +234,10 @@ export default function AnalyticsPanel({ onNavigate }: AnalyticsPanelProps = {})
         <ClickableSection onClick={() => onNavigate?.('players')} className="bg-surface-container-low border border-primary/10 p-6 shadow-xl">
           <div className="flex items-center gap-3 mb-8">
             <span className="material-symbols-outlined text-primary text-base">person_play</span>
-            <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-industrial-silver/40">Agentes Mais Ativos</h3>
+            <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-industrial-silver/40">{t('analytics.mostActive')}</h3>
           </div>
           <div className="space-y-5">
-            {analytics.mostActiveUsers.length === 0 ? (<p className="text-industrial-silver/20 text-[10px] font-display font-bold uppercase tracking-widest py-8 text-center border border-dashed border-white/5 rounded-sm">Sem dados registrados</p>) : (
+            {analytics.mostActiveUsers.length === 0 ? (<p className="text-industrial-silver/20 text-[10px] font-display font-bold uppercase tracking-widest py-8 text-center border border-dashed border-white/5 rounded-sm">{t('analytics.empty')}</p>) : (
               analytics.mostActiveUsers.map((user, idx) => {
                 const maxCount = analytics.mostActiveUsers[0].count;
                 return (
@@ -251,13 +260,13 @@ export default function AnalyticsPanel({ onNavigate }: AnalyticsPanelProps = {})
             )}
           </div>
         </ClickableSection>
-      </div>
+      </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <motion.div variants={staggerItem} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <ClickableSection onClick={() => onNavigate?.('systems', { intelSubTab: 'conquistas' })} className="bg-surface-container-low border border-primary/10 p-6 shadow-xl">
           <div className="flex items-center gap-3 mb-8">
             <span className="material-symbols-outlined text-primary text-base">stars</span>
-            <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-industrial-silver/40">Conquistas de Alta Raridade</h3>
+            <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-industrial-silver/40">{t('analytics.rareAchievements')}</h3>
           </div>
           <div className="space-y-6">
             {analytics.rarityList.slice(0, 5).map((ach) => (
@@ -289,7 +298,7 @@ export default function AnalyticsPanel({ onNavigate }: AnalyticsPanelProps = {})
               <span className="material-symbols-outlined text-primary text-base">group_add</span>
               <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-industrial-silver/40">Crescimento de Rede (Semanal)</h3>
             </div>
-            {analytics.weeklyGrowth.size === 0 ? (<p className="text-industrial-silver/20 text-[10px] font-display font-bold uppercase tracking-widest py-8 text-center">Sem registros</p>) : (
+            {analytics.weeklyGrowth.size === 0 ? (<p className="text-industrial-silver/20 text-[10px] font-display font-bold uppercase tracking-widest py-8 text-center">{t('analytics.noRecords')}</p>) : (
               <div className="flex items-end gap-2 h-24">
                 {Array.from(analytics.weeklyGrowth.entries()).sort(([a], [b]) => a.localeCompare(b)).slice(-12).map(([week, count]) => {
                   const maxWeekly = Math.max(...analytics.weeklyGrowth.values(), 1);
@@ -309,18 +318,18 @@ export default function AnalyticsPanel({ onNavigate }: AnalyticsPanelProps = {})
           <section className="bg-surface-container-low border border-primary/10 p-6 shadow-xl">
             <div className="flex items-center gap-3 mb-6">
               <span className="material-symbols-outlined text-primary text-base">analytics</span>
-              <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-industrial-silver/40">Métricas de Engajamento</h3>
+              <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-industrial-silver/40">{t('analytics.engagement')}</h3>
             </div>
             <div className="grid grid-cols-2 gap-x-8 gap-y-6">
-              <MetricRow label="Média de Plays" value={users.length > 0 ? ((aggregatedData?.totalPlays ?? playEvents.length) / users.length).toFixed(1) : '0'} />
-              <MetricRow label="Conteúdos Únicos" value={new Set([...playEvents.map(e => e.tapeId), ...Object.keys(aggregatedData?.tapePlayCount || {})]).size.toString()} />
+              <MetricRow label={t('analytics.avgPlays')} value={users.length > 0 ? ((aggregatedData?.totalPlays ?? playEvents.length) / users.length).toFixed(1) : '0'} />
+              <MetricRow label={t('analytics.uniqueContent')} value={new Set([...playEvents.map(e => e.tapeId), ...Object.keys(aggregatedData?.tapePlayCount || {})]).size.toString()} />
               <MetricRow label="Tempo de Escuta" value={formatSecs(displayAnalytics.totalListenSecs)} />
               <MetricRow label="Taxa de Abandono" value={`${displayAnalytics.abandonRate.toFixed(1)}%`} />
             </div>
           </section>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
 
@@ -350,7 +359,7 @@ function KPICard({
       )}
       <div className="flex items-center justify-between relative z-10">
         <div>
-          <p className="text-[10px] font-display font-bold uppercase tracking-widest text-industrial-silver/40 mb-2">{label.replace('_', ' ')}</p>
+          <p className="text-[10px] font-display font-bold uppercase tracking-widest text-industrial-silver/40 mb-2">{label.replaceAll('_', ' ')}</p>
           <p className={`text-3xl font-display font-bold tracking-tighter ${color}`}>{value}</p>
         </div>
         <div className="w-12 h-12 bg-black/20 rounded-sm flex items-center justify-center border border-white/5 group-hover:border-primary/20 transition-all">

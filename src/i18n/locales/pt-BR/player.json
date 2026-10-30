@@ -1,0 +1,456 @@
+{
+  "app": {
+    "loading": {
+      "authenticating": "AUTENTICANDO...",
+      "authenticatingSub": "Validando credenciais de acesso",
+      "initSystem": "INICIALIZANDO SISTEMA...",
+      "initSystemSub": "Carregando interface de baixo nível",
+      "terminal": "CARREGANDO TERMINAL...",
+      "agents": "LISTANDO AGENTES...",
+      "sync": "SINCRONIZANDO...",
+      "syncSub": "Recuperando dossiê do agente",
+      "profile": "ACESSANDO PERFIL...",
+      "dossier": "ABRINDO DOSSIÊ...",
+      "mission": "SELECIONANDO MISSÃO...",
+      "deck": "INICIALIZANDO DECK...",
+      "handset": "CARREGANDO HANDSET..."
+    }
+  },
+  "login": {
+    "badge": "MASTER-AUTH-V1",
+    "eyebrow": "Rede de Acesso · Nível Mestre",
+    "subtitle": "Terminal Mestre — Autenticação Requerida",
+    "label": {
+      "id": "ID Mestre ou E-mail (Contas Antigas)",
+      "password": "Chave de Segurança"
+    },
+    "placeholder": {
+      "id": "RM-USER-01 ou e-mail"
+    },
+    "hint": {
+      "register": "Novas contas são registradas automaticamente no primeiro acesso."
+    },
+    "submit": "Entrar no Sistema",
+    "syncing": "Sincronizando...",
+    "orVia": "Ou autentique-se via",
+    "google": "Google",
+    "apple": "Apple",
+    "linkNode": "Nó de Link: Ativo",
+    "side": {
+      "masterAccess": "Acesso Mestre"
+    }
+  },
+  "character": {
+    "loading": "Acessando Banco de Dados...",
+    "loadingSub": "Recuperando registros de agentes da conta mestra",
+    "eyebrow": "Terminal RM-84 · Registro de Agentes",
+    "title": "Seleção de",
+    "titleAccent": "Agente",
+    "operator": "Operador: {{name}} // Registros: {{count}}",
+    "logoutTitle": "Sair da Conta",
+    "recruit": "Recrutar Novo",
+    "syncFail": "Falha ao sincronizar agente. Tente novamente.",
+    "empty": "Nenhum agente registrado neste nó.",
+    "create": {
+      "badge": "PROTOCOLO-RECRUTAMENTO",
+      "title": "Novo",
+      "titleAccent": "Recruta",
+      "label": "Codinome do Agente",
+      "placeholder": "EX: PHANTOM-84",
+      "warning": "Aviso: Uma vez registrado na rede, o codinome se torna sua identidade primária. O progresso será isolado de outros agentes.",
+      "submit": "Confirmar Registro"
+    },
+    "master": {
+      "badge": "ATUALIZAÇÃO DE PROTOCOLO OBRIGATÓRIA",
+      "title": "Identificação",
+      "titleAccent": "Mestra",
+      "body": "Para facilitar o gerenciamento da rede, todos os operadores devem definir um Nome Geral para sua conta mestra. Este nome será sua identidade visual no sistema.",
+      "nameStrong": "Nome Geral",
+      "label": "Nome Geral de Exibição",
+      "placeholder": "Ex: Mestre Silva · OP-07",
+      "submit": "Confirmar Identificação"
+    },
+    "footer": {
+      "grid": "Grid-Node: {{id}}"
+    }
+  },
+  "campaign": {
+    "loading": "Sincronizando Banco de Dados...",
+    "loadingSub": "Acessando registros de operações do Terminal RM-84",
+    "backAria": "Voltar ao dispositivo",
+    "menuAria": "Menu de segurança",
+    "eyebrow": {
+      "back": "Troca de missão // Voltar ao dispositivo",
+      "default": "Registro de Operações // Terminal RM-84"
+    },
+    "title": "Campanhas",
+    "titleAccent": "Ativas",
+    "node": "Nó Central",
+    "linkActive": "Link ativo",
+    "prevTape": "Fita anterior",
+    "nextTape": "Próxima fita",
+    "noTapes": "Nenhuma fita autorizada",
+    "signal": "Sinal de Rede: Estabilizado",
+    "footerSys": "RM-SYS-093 // GRID PROTECTED",
+    "progressAria": "Navegação entre campanhas",
+    "progressRecords": "Registros",
+    "metadataTitle": "Ver Metadata do Terminal",
+    "metadataAria": "Ver metadata do terminal"
+  },
+  "cassette": {
+    "mission": "Missão // {{n}} · {{side}}",
+    "side": {
+      "handset": "HANDSET",
+      "deck": "DECK"
+    },
+    "denied": "Acesso Negado",
+    "deniedSub": "Autorização insuficiente",
+    "spec": {
+      "system": "Sistema",
+      "sector": "Setor",
+      "year": "Ano"
+    },
+    "start": "Iniciar Missão",
+    "select": "Selecionar",
+    "blocked": "Protocolo Bloqueado"
+  },
+  "security": {
+    "eyebrow": "Protocolos de Acesso RM-84",
+    "title": "Menu de",
+    "titleAccent": "Segurança",
+    "closeAria": "Fechar menu",
+    "dossier": "Dossiê do Agente",
+    "dossierSub": "Registros, arquivos e medalhas",
+    "switchAgent": "Alternar Agente",
+    "switchAgentSub": "Assumir nova identidade de campo",
+    "logout": "Desconectar Link",
+    "logoutSub": "Encerrar sessão no terminal atual",
+    "grid": "Grid: RM-NODE-ALPHA"
+  },
+  "metadata": {
+    "title": "Metadados do Agente",
+    "loadingName": "CARREGANDO...",
+    "idLabel": "ID Registro",
+    "syncing": "SINC...",
+    "statusLabel": "Status",
+    "lastOp": "Última Operação",
+    "noRecord": "NENHUM REGISTRO",
+    "syncExit": "Sincronizar e Sair"
+  },
+  "dossier": {
+    "title": "Dossiê do Agente",
+    "changePhoto": "Alterar foto",
+    "editCodename": "Editar codinome",
+    "closeAria": "Fechar dossiê",
+    "stat": {
+      "totalIntel": "Total Intel",
+      "medals": "Medalhas",
+      "evidence": "Evidências"
+    },
+    "tab": {
+      "agent": "Agente",
+      "files": "Arquivos",
+      "medals": "Medalhas"
+    },
+    "section": {
+      "fieldSheet": "Ficha de Campo"
+    },
+    "row": {
+      "agentId": "Agent ID",
+      "codename": "Codinome",
+      "status": "Status",
+      "lastMission": "Última Missão",
+      "sector": "Setor"
+    },
+    "noMission": "SEM REGISTRO",
+    "deck": "Deck do Agente",
+    "noPlaylist": "Nenhuma playlist sincronizada",
+    "recordsCount": "{{n}} registros",
+    "noRecords": "Nenhum registro encontrado",
+    "fieldSystem": "Sistema de Campo",
+    "opsRecords": "Registros operacionais",
+    "secureConn": "Conexão Segura",
+    "gridNode": "Grid Node: RM-LINK-84",
+    "unlockedFile": "Arquivo Desbloqueado"
+  },
+  "profile": {
+    "header": {
+      "agentFile": "Ficha do Agente",
+      "nokia": "FICHA AGENTE"
+    },
+    "backAria": "Voltar ao deck",
+    "logoutAria": "Desconectar",
+    "stat": {
+      "proofs": "Provas",
+      "achievements": "Conquistas",
+      "images": "Imagens",
+      "proofsUpper": "PROVAS",
+      "medalsUpper": "MEDALHAS",
+      "imagesUpper": "IMAGENS"
+    },
+    "action": {
+      "mission": "Alternar Missão",
+      "missionSub": "Trocar a realidade ativa",
+      "agent": "Trocar Agente",
+      "agentSub": "Assumir nova identidade",
+      "missionNokia": "> ALVO / MISSÃO",
+      "agentNokia": "> TROCAR AGENTE"
+    },
+    "deck": {
+      "title": "Meu Deck",
+      "nokia": "DECK / REDE SCN",
+      "connect": "Conectar",
+      "edit": "Editar",
+      "linkShort": "[LINK]",
+      "editShort": "[EDIT]",
+      "label": "Cole o link da sua playlist do Spotify",
+      "placeholder": "https://open.spotify.com/playlist/...",
+      "placeholderNokia": "URL SPOTIFY...",
+      "hint": "Abra o Spotify → Playlist → Compartilhar → Copiar link",
+      "emptyTitle": "Nenhuma playlist conectada",
+      "emptyHint": "Conecte sua playlist do Spotify para personalizar seu Deck.",
+      "connectCta": "Conectar Spotify",
+      "noAudioNokia": "SEM CONEXÃO DE ÁUDIO.",
+      "error": "Link inválido. Use o link de uma playlist do Spotify.",
+      "iframeTitle": "Spotify Deck"
+    },
+    "contact": {
+      "title": "Linha de Contato",
+      "nokia": "CONTATO / SMS LINK",
+      "line": "LINHA:",
+      "needUs": "Você precisa de um número americano para enviar mensagens no grupo.",
+      "generate": "Gerar Número Aleatório",
+      "generateNokia": "[GERAR NÚMERO US]"
+    },
+    "gallery": {
+      "title": "Arquivo Visual",
+      "nokia": "ARQUIVOS VISUAIS"
+    },
+    "achievements": {
+      "title": "Conquistas",
+      "nokia": "REGISTROS OPERACIONAIS"
+    },
+    "statusPrefix": "STATUS: {{status}}",
+    "languageSection": "Preferências"
+  },
+  "evidence": {
+    "registry": "REGISTRO DE EVIDÊNCIA",
+    "archive": "ARQ//{{id}}",
+    "closeAria": "Fechar evidência",
+    "close": "[ FECHAR ]",
+    "category": "Categoria: {{cat}}",
+    "categoryFallback": "Intel",
+    "format": "Formato: {{format}} // {{source}}",
+    "formatVideo": "Vídeo",
+    "sourceYoutube": "YouTube",
+    "sourceUpload": "Upload",
+    "artist": "Artista: {{artist}}",
+    "achievement": "Conquista: {{condition}}",
+    "achievementFallback": "Sistema",
+    "recoveredBy": "Recuperado por: {{npc}}",
+    "duration": "Duração: {{time}}",
+    "hint": "Dica:",
+    "sector": "Setor: {{chapter}}",
+    "level": "Nível: {{level}}",
+    "npc": "NPC: {{npc}}",
+    "checksumOk": "Checksum: OK",
+    "crcError": "ERRO CRC — CHECKSUM INVÁLIDO — SETORES DANIFICADOS"
+  },
+  "toast": {
+    "playbackFail": "Falha na Reprodução",
+    "playbackFailSub": "Toque em play novamente",
+    "wait": "Aguarde",
+    "waitSub": "Perfil carregando...",
+    "unknownCode": "Código Desconhecido",
+    "unknownCodeSub": "Nenhuma fita para: {{code}}",
+    "qrError": "Erro QR",
+    "qrErrorSub": "Tente dnv",
+    "intelUnlocked": "Intel Desbloqueada!",
+    "intelInserted": "Intel Inserida",
+    "transmissionOpen": "Transmissão Aberta",
+    "transmissionReceived": "Transmissão Recebida"
+  },
+  "loading": {
+    "default": "SINTONIZANDO...",
+    "defaultSub": "Buscando sinal na frequência 87.5 MHz"
+  },
+  "qr": {
+    "cancelAria": "Cancelar leitura",
+    "retry": "Tentar de novo",
+    "cameraDenied": "Permissão de câmera negada. Ative nas configurações do Safari e tente de novo.",
+    "cameraMissing": "Nenhuma câmera encontrada neste dispositivo.",
+    "cameraInsecure": "Câmera exige conexão segura (HTTPS).",
+    "cameraFailed": "Não foi possível iniciar a câmera. Tente de novo."
+  },
+  "walkman": {
+    "library": {
+      "title": "Lista de Provas",
+      "sort": {
+        "original": "Original",
+        "az": "A-Z",
+        "chapter": "Cap.",
+        "type": "Tipo"
+      },
+      "empty": "Nenhuma prova",
+      "emptyHint": "Escaneie um QR code para começar"
+    },
+    "visor": {
+      "eject": "CLIQUE PARA EJETAR",
+      "startingScanner": "Iniciando scanner...",
+      "loadingProof": "Carregando prova...",
+      "emptyBay": "Compartimento Vazio",
+      "scanHint": "Escaneie QR para Inserir Prova"
+    },
+    "systems": "Sistemas",
+    "mhDos": "MH-DOS v6.22",
+    "mhDosShort": "MH-DOS",
+    "macos": "MACOS v7.1",
+    "eq": "EQ",
+    "profileTitle": "Clique para perfil, segure para trocar agente"
+  },
+  "nokia": {
+    "nav": {
+      "back": "Voltar",
+      "home": "Inicio",
+      "mute": "Mudo",
+      "sound": "Som",
+      "dos": "DOS",
+      "profile": "Perfil"
+    },
+    "tab": {
+      "all": "TUDO",
+      "audio": "AUD",
+      "video": "VID",
+      "docs": "DOC",
+      "sms": "SMS"
+    },
+    "divider": {
+      "clues": "PISTAS / DOCS",
+      "audio": "PROVAS / AUDIO",
+      "videos": "VÍDEOS"
+    },
+    "scannerActive": "SCANNER ATIVO",
+    "cameraStarting": "INICIANDO CAMERA...",
+    "alignCode": "ALINHE O CÓDIGO",
+    "exit": "SAIR",
+    "volume": "VOLUME",
+    "volumeLevel": "NIVEL: {{n}}%",
+    "scanCode": "ESCANEAR CÓDIGO",
+    "fileFallback": "ARQUIVO",
+    "unknownContact": "DESCONHECIDO",
+    "state": {
+      "rew": "<< REW",
+      "play": "PLAY",
+      "pause": "PAUSE",
+      "playing": "PLAYING",
+      "paused": "PAUSED"
+    },
+    "mhDos": "MH-DOS",
+    "mhDosFull": "MH-DOS v6.22",
+    "macos": "MACOS",
+    "macosFull": "MACOS v7.1",
+    "sms": {
+      "registerTitle": "REGISTRO DE NÚMERO",
+      "registerBody": "VOCÊ PRECISA DE UM NÚMERO DE TELEFONE US PARA ENVIAR MENSAGENS NO GRUPO.",
+      "generate": "[GERAR NÚMERO]",
+      "syncGroups": "SINCRONIZANDO GRUPOS...",
+      "noGroups": "NENHUM GRUPO ATIVO",
+      "noGroupsHint": "VOCÊ NÃO PERTENCE A NENHUM GRUPO DE AGENTES.",
+      "from": "DE:",
+      "groupsCount": "{{n}} GRUPOS",
+      "youPrefix": "VOCÊ: ",
+      "emptyInbox": "CAIXA DE ENTRADA VAZIA",
+      "placeholder": "DIGITE...",
+      "send": "[ENV]"
+    },
+    "list": {
+      "empty": "VAZIO"
+    }
+  },
+  "bios": {
+    "closeAria": "Fechar terminal",
+    "showKeyboard": "Mostrar teclado",
+    "hideKeyboard": "Ocultar teclado",
+    "key": {
+      "space": "ESPAÇO",
+      "del": "DEL",
+      "exe": "EXE"
+    },
+    "header": {
+      "compact": "MH-BIOS (C) 1994 | MH-DOS 6.22 | Haven Bytes PC #07",
+      "full": "MH-BIOS (C) 1994 Macrohard System Corp.\nCPU: Macrohard 80486DX-50 at 50MHz\nTeste de Memória: 640K OK\nEstação: Haven Bytes — PC #07, Swallow Rest"
+    },
+    "version": "MH-DOS Versão 6.22\n(C) Copyright Macrohard Corp 1981-1994.",
+    "quickHelpTitle": "Instruções rápidas",
+    "quickHelp": {
+      "compact": "IP alvo em C:\\> | [EXE] vazio = boot | HELP",
+      "full": "  CONEXÃO DIRETA .... digite o IP alvo em C:\\>\n  BOOT DO SISTEMA ..... pressione [EXE] com campo vazio\n  AJUDA COMPLETA .... digite HELP"
+    },
+    "diskRepairUnavailable": "DiskRepair Pro não disponível nesta estação."
+  },
+  "diskRepair": {
+    "windowTitle": "Desmagnetizador de Disco v1.4",
+    "noDiskTitle": "Nenhum disco detectado no Drive A:",
+    "noDiskBody": "Por favor, insira o disquete magnético corrompido fisicamente no leitor para iniciar a análise.",
+    "insert": "Inserir Disquete",
+    "reading": "Lendo setores do disco...",
+    "demagnetizing": "Desmagnetizando MFT...",
+    "progressSub": "Progresso: {{pct}}% - Analisando trilhas magnéticas",
+    "crcTitle": "Erro de Leitura (CRC)",
+    "crcBody": "O formato do volume é irreconhecível. Os cabeçários magnéticos estão desativados por exposição severa a ímãs.",
+    "fix": "Arrumar Disquete",
+    "failTitle": "Não é possível ler o disquete.",
+    "failBody": "Os danos magnéticos foram extensos e o hardware ejetou o disco para previnir travamentos na agulha.",
+    "failHint": "Certifique-se que o processo DiskRepair.exe está autorizado no Sistema Central.",
+    "successTitle": "Disquete Descorrompido!",
+    "successSub": "O Master File Table foi reconstruído.",
+    "successHint": "O conteúdo do disquete agora pode ser copiado com segurança para a unidade central.",
+    "close": "Fechar",
+    "recoveredFallback": "RECUPERADO"
+  },
+  "macos": {
+    "welcome": "Bem-vindo ao Macintosh",
+    "machine": "Byte Haven - MAC2",
+    "login": "Entrar",
+    "about": "Sobre este Macintosh...",
+    "system": "System 7.1",
+    "shutdown": "Desligar...",
+    "closeAria": "Fechar Mac OS",
+    "hd": "Macintosh HD",
+    "diskRepair": "DiskRepair Pro",
+    "trash": "Lixo",
+    "controlPanel": "Painel de Controle",
+    "systemStatus": "Status do Sistema",
+    "speed": "Velocidade: 8MHz",
+    "memory": "Memória: 4MB RAM",
+    "osLine": "SO: System 7.1",
+    "diskRepairTitle": "DiskRepair Pro 4.0",
+    "insertDisk": "Inserir Disquete [A:]",
+    "rebuildSectors": "Reconstruir Setores",
+    "noVolume": "Nenhum volume montado.\nPor favor, insira uma mídia magnética.",
+    "readingBlocks": "Lendo blocos do volume 'DISQUETE_NIL'...",
+    "explorerPreview": "EXPLORADOR DE ARQUIVOS - PREVIEW",
+    "fileLine": "Arquivo: janelas_cordas.txt ({{state}})",
+    "corrupted": "CORROMPIDO",
+    "recovered": "RECUPERADO",
+    "isolating": "Isolando setores defeituosos...\nPor favor, aguarde.",
+    "restoredBanner": "✓ DISQUETE DESCORROMPIDO. Blocos lógicos restaurados."
+  },
+  "win95": {
+    "myComputer": "Meu Computador",
+    "recycle": "Lixeira",
+    "diskRepair": "DiskRepair Pro",
+    "start": "Iniciar",
+    "programs": "Programas",
+    "documents": "Documentos",
+    "settings": "Configurações",
+    "find": "Localizar",
+    "help": "Ajuda",
+    "run": "Executar...",
+    "shutdown": "Desligar...",
+    "driveC": "Disco Local (C:)",
+    "driveD": "Drive CD (D:)",
+    "driveA": "Disquete (A:)",
+    "recycleEmpty": "A Lixeira está vazia."
+  }
+}

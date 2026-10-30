@@ -101,7 +101,7 @@ class ActivityLogger {
       return `Navegação: ${screens[from] || from} → ${screens[to] || to}`;
     }
 
-    if (message.includes('WebChannelConnection')) return "SINC_DB: Oscilação na conexão em tempo real";
+    if (message.includes('WebChannelConnection')) return "SINC DB: Oscilação na conexão em tempo real";
     if (message.includes('Failed to fetch')) return "REDE: Falha ao carregar recurso externo";
     
     const actionMap: Record<string, string> = {

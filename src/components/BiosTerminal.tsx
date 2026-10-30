@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'motion/react';
 import { checkTerminalClosed } from '../store/firestore';
 import { activityLogger } from '../services/ActivityLogger';
@@ -19,14 +20,6 @@ const PHOSPHOR = '#33FF33';
 const PHOSPHOR_DIM = 'rgba(51, 255, 51, 0.65)';
 
 type KeyDef = string | { label: string; val: string; w?: string };
-
-const KEYBOARD_ROWS: KeyDef[][] = [
-  ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'],
-  ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
-  ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', { label: 'DEL', val: 'Backspace', w: 'flex-[1.6]' }],
-  ['Z', 'X', 'C', 'V', 'B', 'N', 'M', '.', { label: 'EXE', val: 'Enter', w: 'flex-[1.6]' }],
-  [{ label: 'ESPAÇO', val: ' ', w: 'flex-[6] max-w-[260px]' }],
-];
 
 function TerminalBlock({
   children,
@@ -81,13 +74,21 @@ function TerminalKeyboard({
   compact?: boolean;
   className?: string;
 }) {
+  const { t } = useTranslation('player');
+  const keyboardRows = useMemo<KeyDef[][]>(() => [
+    ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'],
+    ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
+    ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', { label: t('bios.key.del'), val: 'Backspace', w: 'flex-[1.6]' }],
+    ['Z', 'X', 'C', 'V', 'B', 'N', 'M', '.', { label: t('bios.key.exe'), val: 'Enter', w: 'flex-[1.6]' }],
+    [{ label: t('bios.key.space'), val: ' ', w: 'flex-[6] max-w-[260px]' }],
+  ], [t]);
   const keyHeight = compact ? 'h-11 min-h-[44px]' : 'h-11';
   const keyMaxW = compact ? 'max-w-[40px]' : 'max-w-[44px]';
   const fontSize = compact ? 'text-[11px]' : 'text-xs sm:text-sm';
 
   return (
     <div className={`flex flex-col gap-2 ${className}`}>
-      {KEYBOARD_ROWS.map((row, i) => (
+      {keyboardRows.map((row, i) => (
         <div key={i} className={`flex justify-center gap-1.5 w-full px-1 ${compact ? '' : 'max-w-lg mx-auto px-2'}`}>
           {row.map((keyObj, j) => {
             const isObj = typeof keyObj === 'object';
@@ -133,6 +134,7 @@ export default function BiosTerminal({
   onAppLaunch,
   onBootSystem,
 }: BiosTerminalProps) {
+  const { t } = useTranslation('player');
   const { isLandscape } = useLandscapeLayout();
   const [history, setHistory] = useState<React.ReactNode[]>([]);
   const [currentLine, setCurrentLine] = useState('');
@@ -197,7 +199,7 @@ export default function BiosTerminal({
             return;
           }
           response = (
-            <TerminalResponse key={resKey} text="DiskRepair Pro não disponível nesta estação." variant="error" />
+            <TerminalResponse key={resKey} text={t('bios.diskRepairUnavailable')} variant="error" />
           );
           break;
         case 'exit':
@@ -219,7 +221,7 @@ export default function BiosTerminal({
       setHistory(newHistory);
       setCurrentLine('');
     },
-    [history, onIpDetected, onAppLaunch, uid, characterName, characterId, handleClose, onBootSystem]
+    [history, onIpDetected, onAppLaunch, uid, characterName, characterId, handleClose, onBootSystem, t]
   );
 
   const handleKeyInput = useCallback(
@@ -288,7 +290,7 @@ export default function BiosTerminal({
           onClick={() => setKeyboardVisible((v) => !v)}
           className="pointer-events-auto touch-manipulation text-[#33FF33]/70 font-bold text-sm hover:text-[#33FF33] transition-colors px-2 py-1 min-h-11 border border-[#33FF33]/20 hover:border-[#33FF33]/50"
           style={{ textShadow: `0 0 4px ${PHOSPHOR}40` }}
-          title={keyboardVisible ? 'Ocultar teclado' : 'Mostrar teclado'}
+          title={keyboardVisible ? t('bios.hideKeyboard') : t('bios.showKeyboard')}
         >
           [⌨]
         </button>
@@ -297,7 +299,7 @@ export default function BiosTerminal({
           onClick={handleClose}
           className="pointer-events-auto touch-manipulation text-[#33FF33]/70 font-bold text-lg hover:text-[#33FF33] transition-colors px-2 py-1 min-h-11 border border-[#33FF33]/20 hover:border-[#33FF33]/50"
           style={{ textShadow: `0 0 4px ${PHOSPHOR}40` }}
-          aria-label="Fechar terminal"
+          aria-label={t('bios.closeAria')}
         >
           [X]
         </button>
@@ -338,18 +340,12 @@ export default function BiosTerminal({
         >
           <div className={`${compactUi ? 'mb-3 pb-2' : 'mb-5 pb-4'} border-b border-[#33FF33]/15`}>
             <TerminalBlock className={`text-[#33FF33] ${compactUi ? 'text-[12px]' : ''}`}>
-              {compactUi
-                ? `MH-BIOS (C) 1994 | MH-DOS 6.22 | Haven Bytes PC #07`
-                : `MH-BIOS (C) 1994 Macrohard System Corp.
-CPU: Macrohard 80486DX-50 at 50MHz
-Teste de Memória: 640K OK
-Estação: Haven Bytes — PC #07, Swallow Rest`}
+              {compactUi ? t('bios.header.compact') : t('bios.header.full')}
             </TerminalBlock>
             {!compactUi && (
               <>
                 <div className="h-3" />
-                <TerminalBlock className="text-[#33FF33]/85">{`MH-DOS Versão 6.22
-(C) Copyright Macrohard Corp 1981-1994.`}</TerminalBlock>
+                <TerminalBlock className="text-[#33FF33]/85">{t('bios.version')}</TerminalBlock>
               </>
             )}
           </div>
@@ -363,18 +359,14 @@ Estação: Haven Bytes — PC #07, Swallow Rest`}
                 className="text-[10px] sm:text-[11px] font-bold tracking-[0.15em] uppercase mb-2"
                 style={{ color: PHOSPHOR_DIM }}
               >
-                Instruções rápidas
+                {t('bios.quickHelpTitle')}
               </div>
             )}
             <TerminalBlock
               className={`${compactUi ? 'text-[11px] leading-normal' : 'text-[12px] sm:text-[13px] leading-[1.7]'}`}
               style={{ color: PHOSPHOR_DIM }}
             >
-              {compactUi
-                ? `IP alvo em C:\\> | [EXE] vazio = boot | HELP`
-                : `  CONEXÃO DIRETA .... digite o IP alvo em C:\\>
-  BOOT DO SISTEMA ..... pressione [EXE] com campo vazio
-  AJUDA COMPLETA .... digite HELP`}
+              {compactUi ? t('bios.quickHelp.compact') : t('bios.quickHelp.full')}
             </TerminalBlock>
           </div>
 

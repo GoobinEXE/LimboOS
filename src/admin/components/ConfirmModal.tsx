@@ -1,6 +1,8 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AnimatePresence, motion } from 'motion/react';
 import Screw from '../../components/player/Screw';
+import { ADMIN_SPRING_SNAP, overlayFade } from '../lib/motion';
 import OverlayPortal from './OverlayPortal';
 
 type ModalVariant = 'confirm' | 'alert';
@@ -19,7 +21,8 @@ interface ConfirmModalProps {
 }
 
 export function ConfirmModal({ state, onConfirm, onCancel }: ConfirmModalProps) {
-  const isDanger = state.title.toLowerCase().includes('atenção') || state.title.toLowerCase().includes('delete') || state.title.toLowerCase().includes('apagar') || state.title.toLowerCase().includes('zerar') || state.title.toLowerCase().includes('reset') || state.title.toLowerCase().includes('excluir') || state.title.toLowerCase().includes('remover');
+  const { t } = useTranslation('admin');
+  const isDanger = state.title.toLowerCase().includes('atenção') || state.title.toLowerCase().includes('attention') || state.title.toLowerCase().includes('delete') || state.title.toLowerCase().includes('apagar') || state.title.toLowerCase().includes('zerar') || state.title.toLowerCase().includes('reset') || state.title.toLowerCase().includes('excluir') || state.title.toLowerCase().includes('remover');
   const confirmRef = useRef<HTMLButtonElement>(null);
   
   useEffect(() => {
@@ -31,9 +34,10 @@ export function ConfirmModal({ state, onConfirm, onCancel }: ConfirmModalProps) 
     <AnimatePresence>
       {state.open && (
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
+          variants={overlayFade}
+          initial="hidden"
+          animate="visible"
+          exit="exit"
           className="fixed inset-0 z-9999 flex items-center justify-center bg-black/90 backdrop-blur-xl p-4"
           onMouseDown={(e) => { if (e.target === e.currentTarget) onCancel(); }}
         >
@@ -41,7 +45,7 @@ export function ConfirmModal({ state, onConfirm, onCancel }: ConfirmModalProps) 
             initial={{ scale: 0.94, opacity: 0, y: 20 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.94, opacity: 0, y: 20 }}
-            transition={{ type: 'spring', stiffness: 360, damping: 30 }}
+            transition={ADMIN_SPRING_SNAP}
             className="bg-[#222] border-8 border-[#1a1a1a] w-full max-w-md rounded-[32px] shadow-2xl flex flex-col relative overflow-hidden font-chakra"
           >
             <Screw className="top-4 left-4" /><Screw className="top-4 right-4 -rotate-90" /><Screw className="bottom-4 left-4 -rotate-90" /><Screw className="bottom-4 right-4" />
@@ -69,7 +73,7 @@ export function ConfirmModal({ state, onConfirm, onCancel }: ConfirmModalProps) 
                   onClick={onCancel}
                   className="flex-1 px-6 py-4 text-[10px] font-black uppercase tracking-widest text-zinc-600 hover:text-white transition-all bg-[#333] hover:bg-[#444] rounded-sm active:scale-95"
                 >
-                  ABORTAR
+                  {t('confirm.abort')}
                 </button>
               )}
               <button
@@ -81,7 +85,7 @@ export function ConfirmModal({ state, onConfirm, onCancel }: ConfirmModalProps) 
                     : 'bg-primary hover:bg-primary-container text-black glow-orange'
                 }`}
               >
-                {state.confirmLabel ?? (state.variant === 'confirm' ? 'CONFIRMAR' : 'ENTENDIDO')}
+                {state.confirmLabel ?? (state.variant === 'confirm' ? t('confirm.confirm') : t('confirm.understood'))}
               </button>
             </div>
           </motion.div>

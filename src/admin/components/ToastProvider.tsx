@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useCallback, useRef } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
+import { ADMIN_SPRING_TOAST } from '../lib/motion';
 
 type ToastType = 'success' | 'error' | 'info';
 
@@ -54,7 +55,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
               initial={{ opacity: 0, x: 80, scale: 0.95 }}
               animate={{ opacity: 1, x: 0, scale: 1 }}
               exit={{ opacity: 0, x: 80, scale: 0.95 }}
-              transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+              transition={ADMIN_SPRING_TOAST}
               className={`pointer-events-auto flex items-center gap-4 px-6 py-4 border shadow-2xl backdrop-blur-md font-display ${getToastStyles(toast.type)}`}
               onClick={() => setToasts((prev) => prev.filter((t) => t.id !== toast.id))}
             >

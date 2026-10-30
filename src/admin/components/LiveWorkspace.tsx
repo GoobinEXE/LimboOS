@@ -1,7 +1,10 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { useTranslation } from 'react-i18next';
+import { useDateLocale } from '../../i18n/dateLocale';
 import { formatDistanceToNow } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
 import { collection, onSnapshot } from 'firebase/firestore';
+import { AnimatePresence, motion } from 'motion/react';
 import { db } from '../../lib/firebase';
 import type { MasterAccount, CharacterData, Group } from '../../types/player';
 import type { Campaign } from '../../data/campaigns';
@@ -18,6 +21,7 @@ import LiveDeliverDrawer, {
 } from './LiveDeliverDrawer';
 import JukeboxPanel from './JukeboxPanel';
 import SystemLogPanel from './SystemLogPanel';
+import { ADMIN_FADE, listItem, staggerDelay } from '../lib/motion';
 
 interface LiveWorkspaceProps {
   accounts: MasterAccount[];
@@ -66,6 +70,8 @@ export default function LiveWorkspace({
   onOpenFullLog,
   onOpenMission,
 }: LiveWorkspaceProps) {
+  const { t } = useTranslation('admin');
+  const dateLocale = useDateLocale();
   const toast = useToast();
   const { showConfirm, modal } = useModal();
   const { pushDos, pushMac, grantDos, grantMac, isBusy } = useHardwareAccessActions();
@@ -73,6 +79,7 @@ export default function LiveWorkspace({
   const [selectedUids, setSelectedUids] = useState<Set<string>>(new Set());
   const [deliverKind, setDeliverKind] = useState<LiveDeliverKind | null>(null);
   const [deliverTargets, setDeliverTargets] = useState<LiveDeliverTarget[]>([]);
+  const [flashUid, setFlashUid] = useState<string | null>(null);
   const [groups, setGroups] = useState<Group[]>([]);
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [sessionOnly, setSessionOnly] = useState(true);
@@ -93,6 +100,15 @@ export default function LiveWorkspace({
   useEffect(() => {
     if (activeSession?.groupId) setSessionOnly(true);
   }, [activeSession?.groupId]);
+
+  useEffect(() => {
+    if (!menuUid) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMenuUid(null);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [menuUid]);
 
   const activeGroup = useMemo(
     () => groups.find((g) => g.id === activeSession?.groupId) || null,
@@ -144,7 +160,7 @@ export default function LiveWorkspace({
     });
 
     online.sort((a, b) => b.lastLoginMs - a.lastLoginMs);
-    return online.slice(0, 24);
+    return online;
   }, [accounts, characters, sessionMemberKeys]);
 
   const filteringBySession = Boolean(activeSession?.groupId && sessionOnly && sessionMemberUids.length > 0);
@@ -168,18 +184,18 @@ export default function LiveWorkspace({
         : onlineUids;
 
     if (uids.length === 0) {
-      toast.info('Nenhum agente online para entregar');
+      toast.info(t('live.toast.noOnline'));
       return null;
     }
 
     if (!preferUids?.length && selectedUids.size === 0 && onlineUids.length > 0) {
       const scopeLabel = filteringBySession
-        ? `todos os ${onlineUids.length} da sessão online`
-        : `todos os ${onlineUids.length} online`;
+        ? t('live.confirm.scopeSession', { n: onlineUids.length })
+        : t('live.confirm.scopeAll', { n: onlineUids.length });
       const ok = await showConfirm(
-        filteringBySession ? 'Entregar à sessão online' : 'Entregar a todos online',
-        `Nenhum agente marcado. Entregar para ${scopeLabel}?`,
-        'Entregar'
+        filteringBySession ? t('live.confirm.deliverSession') : t('live.confirm.deliverAll'),
+        t('live.confirm.deliverBody', { scope: scopeLabel }),
+        t('live.confirm.deliverAction')
       );
       if (!ok) return null;
       uids = onlineUids;
@@ -198,7 +214,7 @@ export default function LiveWorkspace({
     }
 
     if (targets.length === 0) {
-      toast.error('Alvos sem personagem ativo');
+      toast.error(t('live.toast.noCharacter'));
       return null;
     }
     return targets;
@@ -228,18 +244,18 @@ export default function LiveWorkspace({
   const handlePushDos = async (row: PresenceRow) => {
     try {
       await pushDos([row.uid], row.agentName || row.label);
-      toast.success(`DOS empurrado para ${row.agentName || row.label}`);
+      toast.success(t('live.toast.dosOk', { target: row.agentName || row.label }));
     } catch {
-      toast.error('Falha ao empurrar DOS');
+      toast.error(t('live.toast.dosFail'));
     }
   };
 
   const handlePushMac = async (row: PresenceRow) => {
     try {
       await pushMac([row.uid], row.agentName || row.label);
-      toast.success(`Mac empurrado para ${row.agentName || row.label}`);
+      toast.success(t('live.toast.macOk', { target: row.agentName || row.label }));
     } catch {
-      toast.error('Falha ao empurrar Mac');
+      toast.error(t('live.toast.macFail'));
     }
   };
 
@@ -274,10 +290,10 @@ export default function LiveWorkspace({
             <span className="material-symbols-outlined text-emerald-400 text-xl">event_available</span>
             <div className="min-w-0">
               <h2 className="font-display font-bold uppercase tracking-widest text-sm text-white">
-                Sessão Ativa
+                {t('live.session.title')}
               </h2>
               <p className="text-[9px] font-display uppercase tracking-[0.25em] text-industrial-silver/40 truncate">
-                Esquadrão + missão da noite (só neste browser)
+                {t('live.session.subtitle')}
               </p>
             </div>
           </div>
@@ -288,7 +304,7 @@ export default function LiveWorkspace({
                 onClick={() => onOpenMission(activeSession.campaignId)}
                 className="text-[9px] font-display font-bold uppercase tracking-widest px-3 py-1.5 border border-primary/30 text-primary hover:bg-primary/10"
               >
-                Abrir missão
+                {t('live.session.openMission')}
               </button>
             )}
             {activeSession?.groupId && (
@@ -297,7 +313,7 @@ export default function LiveWorkspace({
                 onClick={() => onOpenMesa(activeSession.groupId)}
                 className="text-[9px] font-display font-bold uppercase tracking-widest px-3 py-1.5 border border-primary/30 text-primary hover:bg-primary/10"
               >
-                Abrir esquadrão
+                {t('live.session.openSquad')}
               </button>
             )}
             {activeSession && (
@@ -306,7 +322,7 @@ export default function LiveWorkspace({
                 onClick={() => onSessionChange(null)}
                 className="text-[9px] font-display font-bold uppercase tracking-widest px-3 py-1.5 border border-white/10 text-zinc-500 hover:text-red-400 hover:border-red-500/30"
               >
-                Limpar
+                {t('live.session.clear')}
               </button>
             )}
           </div>
@@ -314,14 +330,14 @@ export default function LiveWorkspace({
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <label className="space-y-1.5">
             <span className="text-[9px] font-display font-bold uppercase tracking-widest text-zinc-500">
-              Esquadrão
+              {t('live.session.squad')}
             </span>
             <select
               value={activeSession?.groupId || ''}
               onChange={(e) => handleGroupSelect(e.target.value)}
               className="w-full bg-black/50 border border-white/10 px-3 py-2.5 text-[10px] font-display font-bold uppercase tracking-widest text-white outline-none focus:border-emerald-500/40"
             >
-              <option value="">Nenhum</option>
+              <option value="">{t('live.session.noneSquad')}</option>
               {groups.map((g) => (
                 <option key={g.id} value={g.id}>
                   {g.name}
@@ -331,7 +347,7 @@ export default function LiveWorkspace({
           </label>
           <label className="space-y-1.5">
             <span className="text-[9px] font-display font-bold uppercase tracking-widest text-zinc-500">
-              Missão
+              {t('live.session.mission')}
             </span>
             <select
               value={activeSession?.campaignId || ''}
@@ -339,7 +355,7 @@ export default function LiveWorkspace({
               disabled={!activeSession?.groupId}
               className="w-full bg-black/50 border border-white/10 px-3 py-2.5 text-[10px] font-display font-bold uppercase tracking-widest text-white outline-none focus:border-emerald-500/40 disabled:opacity-30"
             >
-              <option value="">Nenhuma</option>
+              <option value="">{t('live.session.noneMission')}</option>
               {campaigns.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name}
@@ -357,7 +373,7 @@ export default function LiveWorkspace({
               className="accent-emerald-500"
             />
             <span className="text-[9px] font-display font-bold uppercase tracking-widest text-industrial-silver/50 group-hover:text-emerald-400">
-              Só sessão na presença / entrega
+              {t('live.session.onlySession')}
             </span>
           </label>
         )}
@@ -365,16 +381,16 @@ export default function LiveWorkspace({
 
       {/* Faixa compacta */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <MiniStat label="Online" value={String(onlineCount || allOnlineRows.length)} icon="sensors" accent="emerald" />
-        <MiniStat label="Erros 24h" value={String(errors24h)} icon="error" accent="primary" />
+        <MiniStat label={t('hardware.filter.online')} value={String(onlineCount || allOnlineRows.length)} icon="sensors" accent="emerald" />
+        <MiniStat label={t('reports.metric.errors24h')} value={String(errors24h)} icon="error" accent="primary" />
         <MiniStat
-          label="Limbo"
-          value={limboSeized ? 'TOMADO' : 'LIVRE'}
+          label={t('reports.metric.limbo')}
+          value={limboSeized ? t('live.stat.limboTaken') : t('live.stat.limboFree')}
           icon="security"
           accent={limboSeized ? 'red' : 'emerald'}
         />
         <MiniStat
-          label="Selecionados"
+          label={t('live.stat.selected')}
           value={String(selectedUids.size || (rows.length > 0 ? 'todos*' : '0'))}
           icon="checklist"
           accent="primary"
@@ -382,37 +398,40 @@ export default function LiveWorkspace({
       </div>
 
       {/* Presença + Entregar */}
-      <section className="border border-primary/20 bg-surface-container-low/60 overflow-hidden">
+      <section className="border border-primary/20 bg-surface-container-low/60">
         <div className="flex flex-col gap-3 px-4 sm:px-6 py-4 border-b border-primary/10 bg-black/20">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center gap-3 min-w-0">
               <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
               <div className="min-w-0">
                 <h2 className="font-display font-bold uppercase tracking-widest text-sm text-white truncate">
-                  Mesa ao Vivo
+                  {t('live.presence.title')}
                 </h2>
                 <p className="text-[9px] font-display uppercase tracking-[0.25em] text-industrial-silver/40 truncate">
                   {filteringBySession
-                    ? `${rows.length} da sessão online // ${activeGroup?.name || 'esquadrão'}`
-                    : `${rows.length} online // selecione e entregue`}
+                    ? t('live.presence.subtitleSession', {
+                        n: rows.length,
+                        group: activeGroup?.name || t('header.squadFallback').toLowerCase(),
+                      })
+                    : t('live.presence.subtitleOnline', { n: rows.length })}
                 </p>
               </div>
             </div>
             <div className="flex flex-wrap gap-2">
-              <QuickBtn label="Sistema" icon="tune" onClick={onOpenSystems} />
-              <QuickBtn label="Mesa" icon="groups" onClick={() => onOpenMesa()} />
-              <QuickBtn label="Conteúdo" icon="folder_open" onClick={onOpenMedia} />
+              <QuickBtn label={t('logs.type.system')} icon="tune" onClick={onOpenSystems} />
+              <QuickBtn label={t('live.quick.mesa')} icon="groups" onClick={() => onOpenMesa()} />
+              <QuickBtn label={t('live.quick.media')} icon="folder_open" onClick={onOpenMedia} />
             </div>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-[9px] font-display font-bold uppercase tracking-widest text-industrial-silver/40 mr-1">
-              Entregar
+              {t('live.confirm.deliverAction')}
             </span>
-            <DeliverBtn label="Intel" icon="inventory_2" onClick={() => openDeliver('intel')} disabled={rows.length === 0} />
-            <DeliverBtn label="Conquista" icon="emoji_events" onClick={() => openDeliver('achievements')} disabled={rows.length === 0} />
-            <DeliverBtn label="SMS" icon="sms" onClick={() => openDeliver('sms')} disabled={rows.length === 0} />
-            <DeliverBtn label="Vídeo" icon="videocam" onClick={() => openDeliver('video')} disabled={rows.length === 0} />
+            <DeliverBtn label={t('live.deliver.intel')} icon="inventory_2" onClick={() => openDeliver('intel')} disabled={rows.length === 0} />
+            <DeliverBtn label={t('live.deliver.achievement')} icon="emoji_events" onClick={() => openDeliver('achievements')} disabled={rows.length === 0} />
+            <DeliverBtn label={t('live.deliver.sms')} icon="sms" onClick={() => openDeliver('sms')} disabled={rows.length === 0} />
+            <DeliverBtn label={t('intel.type.video')} icon="videocam" onClick={() => openDeliver('video')} disabled={rows.length === 0} />
 
             <span className="w-px h-5 bg-white/10 mx-1 hidden sm:block" />
 
@@ -422,15 +441,15 @@ export default function LiveWorkspace({
               onClick={async () => {
                 try {
                   await pushDos(onlineUids, onlineLabels || `${onlineUids.length} online`);
-                  toast.success(`DOS empurrado para ${onlineUids.length} online`);
+                  toast.success(t('live.toast.dosOk', { target: onlineUids.length }));
                 } catch {
-                  toast.error('Falha ao empurrar DOS');
+                  toast.error(t('live.toast.dosFail'));
                 }
               }}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary text-black text-[9px] font-display font-bold uppercase tracking-widest hover:bg-primary-container transition-colors disabled:opacity-20"
             >
               <span className="material-symbols-outlined text-sm">terminal</span>
-              DOS → todos
+              {t('live.deliver.dosAll')}
             </button>
             <button
               type="button"
@@ -438,15 +457,15 @@ export default function LiveWorkspace({
               onClick={async () => {
                 try {
                   await pushMac(onlineUids, onlineLabels || `${onlineUids.length} online`);
-                  toast.success(`Mac empurrado para ${onlineUids.length} online`);
+                  toast.success(t('live.toast.macOk', { target: onlineUids.length }));
                 } catch {
-                  toast.error('Falha ao empurrar Mac');
+                  toast.error(t('live.toast.macFail'));
                 }
               }}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-zinc-200 text-black text-[9px] font-display font-bold uppercase tracking-widest hover:bg-white transition-colors disabled:opacity-20"
             >
               <span className="material-symbols-outlined text-sm">laptop_mac</span>
-              Mac → todos
+              {t('live.deliver.macAll')}
             </button>
           </div>
         </div>
@@ -455,8 +474,8 @@ export default function LiveWorkspace({
           <div className="px-6 py-10 text-center">
             <p className="text-[10px] font-display font-bold uppercase tracking-[0.3em] text-industrial-silver/25">
               {filteringBySession
-                ? 'Nenhum membro da sessão online'
-                : 'Nenhum agente com login recente'}
+                ? t('live.presence.emptySession')
+                : t('live.presence.empty')}
             </p>
             {filteringBySession ? (
               <button
@@ -464,7 +483,7 @@ export default function LiveWorkspace({
                 onClick={() => setSessionOnly(false)}
                 className="mt-4 text-[9px] font-display font-bold uppercase tracking-widest text-primary/60 hover:text-primary"
               >
-                Ver todos online
+                {t('live.presence.seeAllOnline')}
               </button>
             ) : (
               <button
@@ -472,7 +491,7 @@ export default function LiveWorkspace({
                 onClick={onOpenSystems}
                 className="mt-4 text-[9px] font-display font-bold uppercase tracking-widest text-primary/60 hover:text-primary"
               >
-                Abrir Sistema → Acesso (grants offline)
+                {t('live.presence.openAccess')}
               </button>
             )}
           </div>
@@ -485,23 +504,35 @@ export default function LiveWorkspace({
                 className="text-[9px] font-display font-bold uppercase tracking-widest text-zinc-500 hover:text-primary"
               >
                 {selectedUids.size === rows.length
-                  ? `Limpar seleção (${selectedUids.size})`
-                  : `Selecionar todos (${rows.length})`}
+                  ? t('live.presence.clearSelection', { n: selectedUids.size })
+                  : t('live.presence.selectAll', { n: rows.length })}
               </button>
               <span className="text-[9px] font-mono text-zinc-600 uppercase tracking-widest">
-                {selectedUids.size > 0 ? `${selectedUids.size} marcados` : 'sem marca = todos*'}
+                {selectedUids.size > 0 ? t('live.presence.marked', { n: selectedUids.size }) : t('live.presence.noMark')}
               </span>
             </div>
-            <ul className="divide-y divide-white/5">
-              {rows.map((row) => {
+            <ul className="divide-y divide-white/5 max-h-[min(60vh,520px)] overflow-y-auto custom-scrollbar">
+              <AnimatePresence mode="popLayout">
+              {rows.map((row, index) => {
                 const selected = selectedUids.has(row.uid);
                 const dosBusy = isBusy('dos', 'push', row.uid) || isBusy('dos', 'revoke', row.uid);
                 const macBusy = isBusy('mac', 'push', row.uid) || isBusy('mac', 'revoke', row.uid);
+                const flashed = flashUid === row.uid;
                 return (
-                  <li
+                  <motion.li
                     key={row.uid}
+                    layout
+                    variants={listItem}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                    transition={{ ...ADMIN_FADE, delay: staggerDelay(index) }}
                     className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 sm:px-6 py-3 transition-colors ${
-                      selected ? 'bg-primary/5' : 'hover:bg-primary/5'
+                      flashed
+                        ? 'bg-primary/20'
+                        : selected
+                          ? 'bg-primary/5'
+                          : 'hover:bg-primary/5'
                     }`}
                   >
                     <div className="flex items-start gap-3 min-w-0">
@@ -525,7 +556,7 @@ export default function LiveWorkspace({
                           ) : null}
                         </p>
                         <p className="text-[9px] font-mono text-industrial-silver/35 truncate mt-0.5">
-                          {formatDistanceToNow(row.lastLoginMs, { addSuffix: true, locale: ptBR })}
+                          {formatDistanceToNow(row.lastLoginMs, { addSuffix: true, locale: dateLocale })}
                           {row.email ? ` · ${row.email}` : ''}
                         </p>
                       </div>
@@ -533,7 +564,7 @@ export default function LiveWorkspace({
                     <div className="flex flex-wrap items-center gap-2 shrink-0 sm:pl-8">
                       {row.pendingVideo && (
                         <span className="text-[8px] font-display font-bold uppercase tracking-wider px-2 py-0.5 border border-orange-400/40 text-orange-400/80">
-                          Vídeo
+                          {t('intel.type.video')}
                         </span>
                       )}
                       {row.forceTerminal ? (
@@ -542,7 +573,7 @@ export default function LiveWorkspace({
                         </span>
                       ) : row.hasTerminalAccess ? (
                         <span className="text-[8px] font-display font-bold uppercase tracking-wider px-2 py-0.5 border border-emerald-500/30 text-emerald-500/80">
-                          Acesso DOS
+                          {t('hardware.filter.dos')}
                         </span>
                       ) : null}
                       {row.forceMac ? (
@@ -551,7 +582,7 @@ export default function LiveWorkspace({
                         </span>
                       ) : row.hasMacAccess ? (
                         <span className="text-[8px] font-display font-bold uppercase tracking-wider px-2 py-0.5 border border-white/20 text-industrial-silver/60">
-                          Acesso Mac
+                          {t('hardware.filter.mac')}
                         </span>
                       ) : null}
 
@@ -561,7 +592,7 @@ export default function LiveWorkspace({
                         className="text-[8px] font-display font-bold uppercase tracking-wider px-2 py-1 border border-primary/30 text-primary/80 hover:bg-primary/10"
                         title="Entregar a este agente"
                       >
-                        Entregar
+                        {t('live.confirm.deliverAction')}
                       </button>
                       <button
                         type="button"
@@ -579,93 +610,87 @@ export default function LiveWorkspace({
                       >
                         Mac
                       </button>
-                      <div className="relative">
+                      <PresenceRowMenu
+                        open={menuUid === row.uid}
+                        onToggle={() => setMenuUid((prev) => (prev === row.uid ? null : row.uid))}
+                        onClose={() => setMenuUid(null)}
+                      >
                         <button
                           type="button"
-                          onClick={() => setMenuUid((prev) => (prev === row.uid ? null : row.uid))}
-                          className="text-[8px] font-display font-bold uppercase tracking-wider px-2 py-1 border border-white/10 text-industrial-silver/50 hover:text-white"
+                          onClick={() => {
+                            setMenuUid(null);
+                            openDeliver('achievements', [row.uid]);
+                          }}
+                          className="w-full text-left px-3 py-2 text-[9px] font-display font-bold uppercase tracking-widest text-zinc-400 hover:bg-primary/10 hover:text-primary"
                         >
-                          ⋯
+                          Outorgar conquista
                         </button>
-                        {menuUid === row.uid && (
-                          <div className="absolute right-0 top-full mt-1 z-20 min-w-40 bg-[#1a1a1a] border border-white/10 shadow-xl py-1">
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setMenuUid(null);
-                                openDeliver('achievements', [row.uid]);
-                              }}
-                              className="w-full text-left px-3 py-2 text-[9px] font-display font-bold uppercase tracking-widest text-zinc-400 hover:bg-primary/10 hover:text-primary"
-                            >
-                              Outorgar conquista
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setMenuUid(null);
-                                openDeliver('sms', [row.uid]);
-                              }}
-                              className="w-full text-left px-3 py-2 text-[9px] font-display font-bold uppercase tracking-widest text-zinc-400 hover:bg-primary/10 hover:text-primary"
-                            >
-                              Enviar SMS
-                            </button>
-                            <button
-                              type="button"
-                              disabled={!row.hasTerminalAccess && !row.forceTerminal}
-                              onClick={async () => {
-                                setMenuUid(null);
-                                try {
-                                  await grantDos([row.uid], false, row.agentName || row.label);
-                                  toast.info(`DOS revogado: ${row.agentName || row.label}`);
-                                } catch {
-                                  toast.error('Falha ao revogar DOS');
-                                }
-                              }}
-                              className="w-full text-left px-3 py-2 text-[9px] font-display font-bold uppercase tracking-widest text-zinc-400 hover:bg-red-500/10 hover:text-red-400 disabled:opacity-20"
-                            >
-                              Revogar DOS
-                            </button>
-                            <button
-                              type="button"
-                              disabled={!row.hasMacAccess && !row.forceMac}
-                              onClick={async () => {
-                                setMenuUid(null);
-                                try {
-                                  await grantMac([row.uid], false, row.agentName || row.label);
-                                  toast.info(`Mac revogado: ${row.agentName || row.label}`);
-                                } catch {
-                                  toast.error('Falha ao revogar Mac');
-                                }
-                              }}
-                              className="w-full text-left px-3 py-2 text-[9px] font-display font-bold uppercase tracking-widest text-zinc-400 hover:bg-red-500/10 hover:text-red-400 disabled:opacity-20"
-                            >
-                              Revogar Mac
-                            </button>
-                          </div>
-                        )}
-                      </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setMenuUid(null);
+                            openDeliver('sms', [row.uid]);
+                          }}
+                          className="w-full text-left px-3 py-2 text-[9px] font-display font-bold uppercase tracking-widest text-zinc-400 hover:bg-primary/10 hover:text-primary"
+                        >
+                          Enviar SMS
+                        </button>
+                        <button
+                          type="button"
+                          disabled={!row.hasTerminalAccess && !row.forceTerminal}
+                          onClick={async () => {
+                            setMenuUid(null);
+                            try {
+                              await grantDos([row.uid], false, row.agentName || row.label);
+                              toast.info(`DOS revogado: ${row.agentName || row.label}`);
+                            } catch {
+                              toast.error(t('hardware.toast.revokeDosFail'));
+                            }
+                          }}
+                          className="w-full text-left px-3 py-2 text-[9px] font-display font-bold uppercase tracking-widest text-zinc-400 hover:bg-red-500/10 hover:text-red-400 disabled:opacity-20"
+                        >
+                          Revogar DOS
+                        </button>
+                        <button
+                          type="button"
+                          disabled={!row.hasMacAccess && !row.forceMac}
+                          onClick={async () => {
+                            setMenuUid(null);
+                            try {
+                              await grantMac([row.uid], false, row.agentName || row.label);
+                              toast.info(`Mac revogado: ${row.agentName || row.label}`);
+                            } catch {
+                              toast.error(t('hardware.toast.revokeMacFail'));
+                            }
+                          }}
+                          className="w-full text-left px-3 py-2 text-[9px] font-display font-bold uppercase tracking-widest text-zinc-400 hover:bg-red-500/10 hover:text-red-400 disabled:opacity-20"
+                        >
+                          Revogar Mac
+                        </button>
+                      </PresenceRowMenu>
                     </div>
-                  </li>
+                  </motion.li>
                 );
               })}
+              </AnimatePresence>
             </ul>
           </>
         )}
       </section>
 
       <section className="space-y-3">
-        <SectionLabel title="Controles_de_Sessão" />
+        <SectionLabel title={t('live.controls')} />
         <SessionGlobalsPanel />
       </section>
 
       <section id="admin-jukebox" className="space-y-3">
-        <SectionLabel title="Jukebox_da_Mesa" />
+        <SectionLabel title="Jukebox da Mesa" />
         <JukeboxPanel embedded />
       </section>
 
       <section className="space-y-3 border-t border-primary/10 pt-8">
         <div className="flex items-center justify-between gap-3">
-          <SectionLabel title="Log_Recente" />
+          <SectionLabel title="Log Recente" />
           <button
             type="button"
             onClick={onOpenFullLog}
@@ -677,21 +702,122 @@ export default function LiveWorkspace({
         <SystemLogPanel compact filterUids={filteringBySession ? sessionMemberUids : undefined} />
       </section>
 
-      {deliverKind && (
-        <LiveDeliverDrawer
-          kind={deliverKind}
-          targets={deliverTargets}
-          onClose={() => {
-            setDeliverKind(null);
-            setDeliverTargets([]);
-          }}
-          onSuccess={() => {
-            setDeliverKind(null);
-            setDeliverTargets([]);
-          }}
-        />
-      )}
+      <AnimatePresence>
+        {deliverKind && (
+          <LiveDeliverDrawer
+            key={deliverKind}
+            kind={deliverKind}
+            targets={deliverTargets}
+            onClose={() => {
+              setDeliverKind(null);
+              setDeliverTargets([]);
+            }}
+            onSuccess={() => {
+              const first = deliverTargets[0]?.uid;
+              if (first) {
+                setFlashUid(first);
+                window.setTimeout(() => setFlashUid(null), 600);
+              }
+              setDeliverKind(null);
+              setDeliverTargets([]);
+            }}
+          />
+        )}
+      </AnimatePresence>
     </div>
+  );
+}
+
+/**
+ * Menu de ações da linha de presença.
+ * Renderiza via portal com position:fixed para não ser cortado por overflow
+ * dos painéis (section / main com scroll / backdrop-blur).
+ */
+function PresenceRowMenu({
+  open,
+  onToggle,
+  onClose,
+  children,
+}: {
+  open: boolean;
+  onToggle: () => void;
+  onClose: () => void;
+  children: React.ReactNode;
+}) {
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const [coords, setCoords] = useState<{ top: number; left: number } | null>(null);
+
+  useEffect(() => {
+    if (!open || !btnRef.current) {
+      setCoords(null);
+      return;
+    }
+    const place = () => {
+      const r = btnRef.current!.getBoundingClientRect();
+      const menuW = 176;
+      const menuH = menuRef.current?.offsetHeight ?? 160;
+      const gap = 4;
+      let left = r.right - menuW;
+      left = Math.max(8, Math.min(left, window.innerWidth - menuW - 8));
+      // Preferir abrir para cima; se não couber, abre para baixo
+      const openUp = r.top >= menuH + gap + 8;
+      const top = openUp ? r.top - gap - menuH : r.bottom + gap;
+      setCoords({ top, left });
+    };
+    place();
+    // Reposiciona após o menu montar (altura real)
+    const raf = requestAnimationFrame(place);
+    window.addEventListener('scroll', place, true);
+    window.addEventListener('resize', place);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('scroll', place, true);
+      window.removeEventListener('resize', place);
+    };
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    const onDoc = (e: MouseEvent) => {
+      const t = e.target as Node;
+      if (btnRef.current?.contains(t) || menuRef.current?.contains(t)) return;
+      onClose();
+    };
+    document.addEventListener('mousedown', onDoc);
+    return () => document.removeEventListener('mousedown', onDoc);
+  }, [open, onClose]);
+
+  return (
+    <>
+      <button
+        ref={btnRef}
+        type="button"
+        onClick={onToggle}
+        aria-expanded={open}
+        aria-haspopup="menu"
+        className="text-[8px] font-display font-bold uppercase tracking-wider px-2 py-1 border border-white/10 text-industrial-silver/50 hover:text-white"
+      >
+        ⋯
+      </button>
+      {open &&
+        typeof document !== 'undefined' &&
+        createPortal(
+          <div
+            ref={menuRef}
+            role="menu"
+            style={
+              coords
+                ? { position: 'fixed', top: coords.top, left: coords.left }
+                : { position: 'fixed', top: -9999, left: -9999, visibility: 'hidden' }
+            }
+            className="z-[200] min-w-44 bg-[#1a1a1a] border border-white/10 shadow-2xl py-1"
+          >
+            {children}
+          </div>,
+          document.body,
+        )}
+    </>
   );
 }
 

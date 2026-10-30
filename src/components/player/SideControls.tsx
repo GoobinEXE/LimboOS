@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, useMotionValue, useTransform, animate } from 'motion/react';
 import { User } from 'lucide-react';
 import { analyticsTracker } from '../../services/AnalyticsTracker';
@@ -9,6 +10,7 @@ export default React.memo(function SideControls({ volume, setVolume, onModeChang
   onCharacterSwitch?: () => void;
   landscape?: boolean;
 }) {
+  const { t } = useTranslation('player');
   const dragY = useMotionValue(0);
   const firedRef = useRef(false);
   const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -74,7 +76,7 @@ export default React.memo(function SideControls({ volume, setVolume, onModeChang
           }
         }}
         className={`${landscape ? 'w-9 h-9 min-h-9' : 'w-10 h-10'} rounded-full bg-radial-[at_35%_30%] from-surface-bright to-surface-container-highest border-2 border-surface-sunken shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_4px_10px_-3px_rgba(0,0,0,0.9)] flex items-center justify-center hover:from-accent-20 hover:to-surface-container-highest transition-all duration-150 ease-limbo shrink-0 active:scale-90 active:shadow-[inset_0_2px_5px_rgba(0,0,0,0.7)]`}
-        title="Clique para perfil, segure para trocar agente"
+        title={t('walkman.profileTitle')}
       >
         <User size={landscape ? 14 : 16} className="text-accent" />
       </button>

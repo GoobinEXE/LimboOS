@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useTranslation } from 'react-i18next';
 import { Lock, Terminal, Cpu, AlertTriangle, ChevronRight } from 'lucide-react';
 import { loginOrCreate, loginWithProvider } from '../store/profile';
 import type { MasterAccount } from '../types/player';
@@ -11,6 +12,8 @@ interface LoginScreenProps {
 import RetroSpinner from './player/RetroSpinner';
 
 export default function LoginScreen({ onLogin }: LoginScreenProps) {
+  const { t } = useTranslation('player');
+  const { t: tCommon } = useTranslation('common');
   const [masterId, setMasterId] = useState('');
   const [password, setPassword] = useState('');
   const [isLoggingIn, setIsLoggingIn] = useState(false);
@@ -22,7 +25,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
     
     const forbiddenChars = /[<>{}"'`=]/;
     if (forbiddenChars.test(masterId) || forbiddenChars.test(password)) {
-      setError('CARACTERES PROIBIDOS DETECTADOS PELA SEGURANÇA');
+      setError(t('auth.error.forbiddenChars', { ns: 'common' }));
       return;
     }
 
@@ -69,30 +72,30 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
         exit={{ opacity: 0, scale: 1.03, y: -16 }} transition={{ duration: 0.36, ease: [0.22, 1, 0.36, 1] }} className="w-full max-w-md relative">
         <div className="bg-surface-raised rounded-card border border-border shadow-panel relative overflow-hidden">
           <div className="absolute -top-3 right-6 bg-accent px-2 py-0.5 text-[10px] font-display font-bold text-black tracking-widest uppercase z-10 rounded-inset">
-            MASTER-AUTH-V1
+            {t('login.badge')}
           </div>
           <div className="p-8">
             <div className="mb-10 border-l-2 border-accent pl-6">
-              <div className="text-protocol text-industrial-silver/40 mb-3">Rede de Acesso · Nível Mestre</div>
+              <div className="text-protocol text-industrial-silver/40 mb-3">{t('login.eyebrow')}</div>
               <h1 className="text-display text-4xl sm:text-5xl text-white mb-2">
-                Limbo<span className="text-accent">OS</span>
+                {tCommon('brand.limbo')}<span className="text-accent">{tCommon('brand.os')}</span>
               </h1>
               <p className="text-protocol text-industrial-silver/50">
-                Terminal Mestre — Autenticação Requerida
+                {t('login.subtitle')}
               </p>
             </div>
             <form onSubmit={handleLogin} className="space-y-8">
               <div className="space-y-6">
                 <div className="group">
                   <label className="text-protocol text-industrial-silver/50 group-focus-within:text-accent transition-colors duration-(--duration-fast) mb-2 block">
-                    ID Mestre ou E-mail (Contas Antigas)
+                    {t('login.label.id')}
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-industrial-silver/40 group-focus-within:text-accent transition-colors duration-(--duration-fast)">
                       <Terminal size={16} />
                     </div>
                     <input type="text" required value={masterId} onChange={e => setMasterId(e.target.value)}
-                      placeholder="RM-USER-01 ou e-mail"
+                      placeholder={t('login.placeholder.id')}
                       className="w-full bg-surface-sunken border border-border rounded-control py-4 pl-12 pr-4 text-white font-sans text-base tracking-wide focus:ring-0 focus:border-border-accent placeholder:text-industrial-silver/20 outline-none transition-colors duration-(--duration-fast)" />
                     <div className="absolute bottom-0 left-4 right-4 h-px bg-accent scale-x-0 origin-left transition-transform duration-(--duration-base) ease-limbo group-focus-within:scale-x-100" />
                   </div>
@@ -100,7 +103,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
 
                 <div className="group">
                   <label className="text-protocol text-industrial-silver/50 group-focus-within:text-accent transition-colors duration-(--duration-fast) mb-2 block">
-                    Chave de Segurança
+                    {t('login.label.password')}
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-industrial-silver/40 group-focus-within:text-accent transition-colors duration-(--duration-fast)">
@@ -126,17 +129,17 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
 
               <div className="flex items-center justify-between gap-6 pt-2">
                 <p className="text-[9px] font-display text-industrial-silver/30 uppercase tracking-widest leading-relaxed">
-                  Novas contas são registradas<br />automaticamente no primeiro acesso.
+                  {t('login.hint.register')}
                 </p>
                 <button type="submit" disabled={isLoggingIn}
                   className="shrink-0 bg-accent hover:brightness-110 text-black font-display font-bold text-xs uppercase tracking-[0.2em] py-4 px-8 rounded-control transition-all duration-(--duration-fast) flex items-center justify-center gap-3 group disabled:opacity-50 disabled:cursor-not-allowed glow-orange active:scale-95">
                   {isLoggingIn ? (
                     <>
                       <RetroSpinner size="sm" />
-                      Sincronizando...
+                      {t('login.syncing')}
                     </>
                   ) : (
-                    <>Entrar no Sistema<ChevronRight size={16} className="transition-transform group-hover:translate-x-1" /></>
+                    <>{t('login.submit')}<ChevronRight size={16} className="transition-transform group-hover:translate-x-1" /></>
                   )}
                 </button>
               </div>
@@ -145,7 +148,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
             <div className="mt-8 pt-6 border-t border-border space-y-4">
               <div className="text-center">
                 <span className="bg-surface-raised px-4 text-[9px] font-display font-bold uppercase tracking-[0.2em] text-industrial-silver/40">
-                  Ou autentique-se via
+                  {t('login.orVia')}
                 </span>
               </div>
               <div className="grid grid-cols-2 gap-4">
@@ -161,7 +164,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
                     <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
                     <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
                   </svg>
-                  <span className="text-protocol text-industrial-silver">Google</span>
+                  <span className="text-protocol text-industrial-silver">{t('login.google')}</span>
                 </button>
                 <button
                   type="button"
@@ -172,7 +175,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
                   <svg viewBox="0 0 24 24" className="w-4 h-4 fill-industrial-silver" xmlns="http://www.w3.org/2000/svg">
                     <path d="M16.365 1.43c-.004.015-.008.03-.013.045C16.143 2.115 15.534 3.02 14.618 3.7c-.895.663-1.956 1.077-3.04 1.184a2.95 2.95 0 0 1-.027-.373c-.015-.99.373-1.996 1.055-2.732.682-.736 1.63-1.185 2.57-1.312a3.81 3.81 0 0 1 .158-.02c.003-.005.006-.01.009-.015a.014.014 0 0 1 .01-.01.012.012 0 0 1 .01.006.012.012 0 0 1 .002.002h.001ZM18.96 19.866c-1.137 1.634-2.316 3.266-4.135 3.303-1.782.037-2.366-1.042-4.412-1.042-2.046 0-2.684 1.005-4.375 1.08-1.782.073-3.136-1.78-4.274-3.414C-.626 16.33-1.396 10.96 1.013 7.643c1.173-1.614 2.946-2.64 4.885-2.677 1.745-.037 3.376 1.168 4.45 1.168 1.074 0 3.053-1.458 5.176-1.238 2.197.23 3.992 1.256 5.105 2.875-4.486 2.65-3.753 8.91 1.033 10.87-1.026 2.553-2.684 5.34-3.87 7.054Z"/>
                   </svg>
-                  <span className="text-protocol text-industrial-silver">Apple</span>
+                  <span className="text-protocol text-industrial-silver">{t('login.apple')}</span>
                 </button>
               </div>
             </div>
@@ -183,14 +186,14 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
                 <div key={i} className={`w-1.5 h-3 rounded-inset ${isLoggingIn ? 'animate-pulse bg-accent' : 'bg-border-strong'}`} style={{ animationDelay: `${i * 0.1}s` }} />
               ))}
             </div>
-            <div className="text-protocol text-industrial-silver/30">Nó de Link: Ativo</div>
+            <div className="text-protocol text-industrial-silver/30">{t('login.linkNode')}</div>
           </div>
         </div>
       </motion.div>
 
       <div className="hidden lg:block absolute left-12 top-1/2 -translate-y-1/2 space-y-12">
         <div className="space-y-4">
-          <div className="flex items-center gap-3"><Cpu size={14} className="text-accent" /><span className="text-protocol text-industrial-silver">Acesso Mestre</span></div>
+          <div className="flex items-center gap-3"><Cpu size={14} className="text-accent" /><span className="text-protocol text-industrial-silver">{t('login.side.masterAccess')}</span></div>
           <div className="w-48 h-1 bg-surface-panel rounded-inset overflow-hidden">
             <motion.div animate={{ x: ['-100%', '100%'] }} transition={{ duration: 2, repeat: Infinity, ease: 'linear' }} className="w-1/3 h-full bg-accent" />
           </div>

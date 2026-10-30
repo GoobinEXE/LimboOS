@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { db } from '../../../lib/firebase';
 import {
   collection,
@@ -25,6 +26,7 @@ export default function MissionInventoryTab({
   groups,
   allCharacters,
 }: MissionInventoryTabProps) {
+  const { t } = useTranslation('admin');
   const [loading, setLoading] = useState(true);
   const [characterInventories, setCharacterInventories] = useState<
     Record<string, { id: string; unlockedAt: unknown }[]>
@@ -108,7 +110,7 @@ export default function MissionInventoryTab({
       results.forEach((asset) => {
         if (!asset?.id) return;
         titles[asset.id] =
-          asset.metadata?.title || asset.filename || asset.originalName || 'Intel desconhecido';
+          asset.metadata?.title || asset.filename || asset.originalName || t('entity.intelUnknown');
       });
       setRemoteIntelTitles(titles);
     });
@@ -131,9 +133,9 @@ export default function MissionInventoryTab({
 
   const handleRevokeIntel = async (uid: string, charId: string, intelId: string) => {
     const ok = await showConfirm(
-      'Revogar Evidência',
-      'Remover este item do inventário do personagem para esta campanha?',
-      'Remover'
+      t('missions.inventory.revokeTitle'),
+      t('missions.inventory.revokeBody'),
+      t('jukebox.removeAction')
     );
     if (!ok) return;
     try {

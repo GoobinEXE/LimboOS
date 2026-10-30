@@ -18,6 +18,7 @@ import {
   arrayUnion,
 } from 'firebase/firestore';
 import { Group, GroupCharacterSlot } from '../types/player';
+import type { GroupMessage } from '../types/npcSms';
 import { intelService } from './IntelService';
 
 function deriveMemberUids(slots: GroupCharacterSlot[]): string[] {
@@ -256,14 +257,14 @@ export class GroupService {
    */
   public subscribeToMessagesForGroups(
     groupIds: string[],
-    callback: (messages: Array<Record<string, unknown> & { _groupId: string }>) => void
+    callback: (messages: GroupMessage[]) => void
   ): () => void {
     if (groupIds.length === 0) {
       callback([]);
       return () => {};
     }
 
-    const messagesByGroup = new Map<string, any[]>();
+    const messagesByGroup = new Map<string, GroupMessage[]>();
     const unsubs: (() => void)[] = [];
 
     const emit = () => {
@@ -287,16 +288,16 @@ export class GroupService {
   /**
    * Subscribe to messages in a specific group.
    */
-  public subscribeToGroupMessages(groupId: string, callback: (messages: any[]) => void): () => void {
+  public subscribeToGroupMessages(groupId: string, callback: (messages: GroupMessage[]) => void): () => void {
     const q = query(
       collection(db, 'groups', groupId, 'messages'),
       orderBy('createdAt', 'asc')
     );
     return onSnapshot(q, (snapshot) => {
-      const messages = snapshot.docs.map(docSnap => ({
+      const messages = snapshot.docs.map((docSnap) => ({
         id: docSnap.id,
-        ...docSnap.data()
-      }));
+        ...docSnap.data(),
+      })) as GroupMessage[];
       callback(messages);
     }, (error) => {
       console.warn('[GroupService] subscribeToGroupMessages error:', error);
@@ -342,6 +343,7 @@ export class GroupService {
     characterCodename: string,
     characterPhoneNumber: string,
     dialogue: {
+      id?: string;
       npcId: string;
       npcName: string;
       npcNumber: string;
@@ -352,10 +354,10 @@ export class GroupService {
     for (let i = 0; i < dialogue.messages.length; i++) {
       const msg = dialogue.messages[i];
       const messageRef = doc(collection(db, 'groups', groupId, 'messages'));
-      
+
       const isPlayer = msg.speaker === 'player';
-      
-      await setDoc(messageRef, {
+
+      const data: Record<string, unknown> = {
         id: messageRef.id,
         senderId: isPlayer ? characterId : dialogue.npcId,
         senderName: isPlayer ? characterCodename : dialogue.npcName,
@@ -364,8 +366,12 @@ export class GroupService {
         recipientId: isPlayer ? dialogue.npcId : characterId,
         recipientName: isPlayer ? dialogue.npcName : characterCodename,
         recipientNumber: isPlayer ? dialogue.npcNumber : characterPhoneNumber,
-        createdAt: Timestamp.fromMillis(baseTime + i * 2000)
-      });
+        createdAt: Timestamp.fromMillis(baseTime + i * 2000),
+        npcId: dialogue.npcId,
+      };
+      if (dialogue.id) data.dialogueId = dialogue.id;
+
+      await setDoc(messageRef, data);
     }
   }
 }

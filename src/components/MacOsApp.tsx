@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'motion/react';
 import AppleIcon from './icons/AppleIcon';
 import { checkMacClosed, firestoreUnlockIntel } from '../store/firestore';
@@ -23,7 +24,7 @@ Cálculo de transição: (E=h⋅f)/Y2K_Bug=ACESSO
 Se eu sumir hoje, significa que a frequência funcionou. Não me procurem no futuro. Me achem no zero.`;
 type RepairStep = 'idle' | 'reading' | 'corrupted' | 'repairing' | 'restored';
 type ActiveWindow = null | 'controlPanel' | 'diskRepair';
-function WindowTitleBar({ title, onClose }: { title: string; onClose: () => void }) {
+function WindowTitleBar({ title, onClose, closeAria }: { title: string; onClose: () => void; closeAria: string }) {
   return (
     <div
       className="h-5.5 shrink-0 border-b border-black flex items-center justify-center relative"
@@ -33,7 +34,7 @@ function WindowTitleBar({ title, onClose }: { title: string; onClose: () => void
         onClick={onClose}
         className="absolute left-1.5 w-3 h-3 bg-white border border-black active:bg-black"
         style={{ boxShadow: 'inset 1px 1px 0 #ccc' }}
-        aria-label="Fechar janela"
+        aria-label={closeAria}
       />
       <div className="bg-[#ddd] px-2 text-[12px] font-bold border-x border-black">{title}</div>
     </div>
@@ -87,6 +88,8 @@ import { diskRepairService } from '../services/DiskRepairService';
 import { intelRegistry } from '../data/intel_registry';
 
 export default function MacOsApp({ uid, characterId, onClose }: MacOsAppProps) {
+  const { t } = useTranslation('player');
+  const { t: tc } = useTranslation('common');
   const { isLandscape, viewportHeight } = useLandscapeLayout();
   const [phase, setPhase] = useState<'login' | 'desktop'>('login');
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -186,25 +189,25 @@ export default function MacOsApp({ uid, characterId, onClose }: MacOsAppProps) {
                 className="absolute top-full left-0 mt-px w-48 bg-white border border-black shadow-[2px_2px_0_rgba(0,0,0,0.4)] z-50 py-0.5"
                 onClick={(e) => e.stopPropagation()}
               >
-                <div className="px-3 py-1 text-[11px] text-gray-400 cursor-default">Sobre este Macintosh...</div>
+                <div className="px-3 py-1 text-[11px] text-gray-400 cursor-default">{t('macos.about')}</div>
                 <div className="h-px bg-black mx-1 my-0.5" />
-                <div className="px-3 py-1 text-[11px] text-gray-400 cursor-default">System 7.1</div>
-                <div className="px-3 py-1 text-[11px] text-gray-400 cursor-default">Byte Haven - MAC2</div>
+                <div className="px-3 py-1 text-[11px] text-gray-400 cursor-default">{t('macos.system')}</div>
+                <div className="px-3 py-1 text-[11px] text-gray-400 cursor-default">{t('macos.machine')}</div>
                 <div className="h-px bg-black mx-1 my-0.5" />
                 <div
                   className="px-3 py-1 text-[11px] font-bold cursor-pointer hover:bg-black hover:text-white"
                   onClick={handleClose}
                 >
-                  Desligar...
+                  {tc('os.shutdown')}
                 </div>
               </motion.div>
             )}
           </AnimatePresence>
           {phase === 'desktop' && (
             <>
-              <div className="cursor-default px-2 hover:bg-black hover:text-white transition-colors">Arquivo</div>
-              <div className="cursor-default px-2 hover:bg-black hover:text-white transition-colors">Editar</div>
-              <div className="cursor-default px-2 hover:bg-black hover:text-white transition-colors">Especial</div>
+              <div className="cursor-default px-2 hover:bg-black hover:text-white transition-colors">{tc('os.file')}</div>
+              <div className="cursor-default px-2 hover:bg-black hover:text-white transition-colors">{tc('os.edit')}</div>
+              <div className="cursor-default px-2 hover:bg-black hover:text-white transition-colors">{tc('os.special')}</div>
             </>
           )}
         </div>
@@ -218,8 +221,8 @@ export default function MacOsApp({ uid, characterId, onClose }: MacOsAppProps) {
             }}
             className="w-4 h-4 flex items-center justify-center border border-black bg-white text-[10px] leading-none hover:bg-black hover:text-white active:bg-black active:text-white"
             style={{ boxShadow: 'inset 1px 1px 0 #ccc' }}
-            aria-label="Fechar Mac OS"
-            title="Fechar"
+            aria-label={t('macos.closeAria')}
+            title={tc('os.close')}
           >
             ×
           </button>
@@ -241,19 +244,19 @@ export default function MacOsApp({ uid, characterId, onClose }: MacOsAppProps) {
                 style={{ boxShadow: '2px 2px 0 rgba(0,0,0,1)' }}
               >
                 <div className="text-5xl text-black py-2"><AppleIcon size={48} /></div>
-                <h2 className="font-bold text-lg tracking-tight">Bem-vindo ao Macintosh</h2>
+                <h2 className="font-bold text-lg tracking-tight">{t('macos.welcome')}</h2>
                 <div
                   className="w-full h-8 border border-black flex items-center justify-center text-xs font-black tracking-widest uppercase"
                   style={{ background: 'repeating-linear-gradient(45deg, #eee, #eee 1px, #fff 1px, #fff 2px)' }}
                 >
-                  Byte Haven - MAC2
+                  {t('macos.machine')}
                 </div>
                 <button
                   onClick={handleLogin}
                   className="mt-2 w-24 h-8 bg-[#eee] border-2 border-black font-bold text-sm tracking-widest uppercase active:translate-x-px active:translate-y-px"
                   style={{ boxShadow: '1px 1px 0 white, inset 1px 1px 0 white' }}
                 >
-                  Entrar
+                  {t('macos.login')}
                 </button>
               </div>
             </motion.div>
@@ -274,10 +277,10 @@ export default function MacOsApp({ uid, characterId, onClose }: MacOsAppProps) {
                     : 'right-0 top-0 bottom-0 w-24 flex flex-col items-center gap-8 p-4'
                 }`}
               >
-                <DesktopIcon emoji="💿" label="Macintosh HD" onClick={() => setActiveWindow('controlPanel')} />
-                <DesktopIcon emoji="💾" label="DiskRepair Pro" highlighted onClick={openDiskRepair} />
+                <DesktopIcon emoji="💿" label={t('macos.hd')} onClick={() => setActiveWindow('controlPanel')} />
+                <DesktopIcon emoji="💾" label={t('macos.diskRepair')} highlighted onClick={openDiskRepair} />
                 <div className={isLandscape ? '' : 'mt-auto'}>
-                  <DesktopIcon emoji="🗑️" label="Lixo" />
+                  <DesktopIcon emoji="🗑️" label={t('macos.trash')} />
                 </div>
               </div>
 
@@ -299,12 +302,12 @@ export default function MacOsApp({ uid, characterId, onClose }: MacOsAppProps) {
                       className={`pointer-events-auto w-full ${isLandscape ? 'max-w-md' : 'max-w-sm'} bg-[#ddd] border border-black flex flex-col min-h-0 overflow-hidden`}
                       style={{ boxShadow: '2px 2px 0 rgba(0,0,0,0.5)', maxHeight: windowMaxHeight }}
                     >
-                      <WindowTitleBar title="Painel de Controle" onClose={closeWindow} />
+                      <WindowTitleBar title={t('macos.controlPanel')} onClose={closeWindow} closeAria={tc('os.closeWindowAria')} />
                       <div className="p-4 bg-white m-1 border border-black text-[11px] font-medium leading-relaxed">
-                        <p className="mb-2 uppercase font-black text-center border-b border-black pb-1">Status do Sistema</p>
-                        <p>Velocidade: 8MHz</p>
-                        <p>Memória: 4MB RAM</p>
-                        <p>SO: System 7.1</p>
+                        <p className="mb-2 uppercase font-black text-center border-b border-black pb-1">{t('macos.systemStatus')}</p>
+                        <p>{t('macos.speed')}</p>
+                        <p>{t('macos.memory')}</p>
+                        <p>{t('macos.osLine')}</p>
                         <hr className="my-2 border-black border-dashed" />
                         <p className="italic">"The computer for the rest of us."</p>
                       </div>
@@ -320,7 +323,7 @@ export default function MacOsApp({ uid, characterId, onClose }: MacOsAppProps) {
                       className={`pointer-events-auto w-full ${isLandscape ? 'max-w-md' : 'max-w-lg'} bg-[#ddd] border border-black flex flex-col min-h-0 overflow-hidden`}
                       style={{ boxShadow: '2px 2px 0 rgba(0,0,0,0.5)', maxHeight: windowMaxHeight }}
                     >
-                      <WindowTitleBar title="DiskRepair Pro 4.0" onClose={closeWindow} />
+                      <WindowTitleBar title={t('macos.diskRepairTitle')} onClose={closeWindow} closeAria={tc('os.closeWindowAria')} />
                       <div className="p-3 sm:p-4 flex flex-col min-h-0 flex-1 overflow-hidden">
                   
                         <div className="flex gap-2 mb-3 pb-2 shrink-0" style={{ borderBottom: '2px groove #fff' }}>
@@ -328,24 +331,24 @@ export default function MacOsApp({ uid, characterId, onClose }: MacOsAppProps) {
                             disabled={repairStep !== 'idle'} 
                             onClick={insertDisk}
                           >
-                            Inserir Disquete [A:]
+                            {t('macos.insertDisk')}
                           </PlatinumButton>
                           <PlatinumButton 
                             disabled={repairStep !== 'corrupted'} 
                             onClick={startRepair}
                           >
-                            Reconstruir Setores
+                            {t('macos.rebuildSectors')}
                           </PlatinumButton>
                         </div>
                   
                         {repairStep === 'idle' && (
-                          <div className="flex-1 flex items-center justify-center text-center text-sm font-bold opacity-60">
-                            Nenhum volume montado.<br />Por favor, insira uma mídia magnética.
+                          <div className="flex-1 flex items-center justify-center text-center text-sm font-bold opacity-60 whitespace-pre-wrap">
+                            {t('macos.noVolume')}
                           </div>
                         )}
                         {repairStep === 'reading' && (
                           <div className="flex-1 flex items-center justify-center text-center text-sm font-bold animate-pulse">
-                            Lendo blocos do volume &apos;DISQUETE_NIL&apos;...
+                            {t('macos.readingBlocks')}
                           </div>
                         )}
                         {(repairStep === 'corrupted' || repairStep === 'restored') && (
@@ -353,15 +356,15 @@ export default function MacOsApp({ uid, characterId, onClose }: MacOsAppProps) {
                             style={{ border: '2px inset #888' }}
                           >
                             <div className="text-[10px] text-gray-500 mb-2 border-b border-gray-200 pb-1">
-                              EXPLORADOR DE ARQUIVOS - PREVIEW<br />
-                              Arquivo: janelas_cordas.txt ({repairStep === 'corrupted' ? 'CORROMPIDO' : 'RECUPERADO'})
+                              {t('macos.explorerPreview')}<br />
+                              {t('macos.fileLine', { state: repairStep === 'corrupted' ? t('macos.corrupted') : t('macos.recovered') })}
                             </div>
                             {repairStep === 'corrupted' ? TEXTO_CORROMPIDO : TEXTO_LIMPO}
                           </div>
                         )}
                         {repairStep === 'repairing' && (
                           <div className="flex-1 flex flex-col items-center justify-center gap-4">
-                            <div className="text-sm font-bold text-center">Isolando setores defeituosos...<br />Por favor, aguarde.</div>
+                            <div className="text-sm font-bold text-center whitespace-pre-wrap">{t('macos.isolating')}</div>
                             <div className="w-4/5 h-5 border-2 border-black bg-white p-0.5">
                               <div className="h-full bg-black transition-all duration-100" style={{ width: `${repairProgress}%` }} />
                             </div>
@@ -369,7 +372,7 @@ export default function MacOsApp({ uid, characterId, onClose }: MacOsAppProps) {
                         )}
                         {repairStep === 'restored' && (
                           <div className="shrink-0 text-green-700 text-center font-bold text-xs mt-2 py-1 bg-green-50 border border-green-200 uppercase tracking-tight">
-                            ✓ DISQUETE DESCORROMPIDO. Blocos lógicos restaurados.
+                            {t('macos.restoredBanner')}
                           </div>
                         )}
                       </div>

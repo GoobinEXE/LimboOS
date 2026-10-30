@@ -40,6 +40,8 @@ export default defineConfig(({mode}) => {
           "default-src 'self'",
           // apis.google.com ≠ *.googleapis.com — necessário para Google Auth (gapi).
           "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://apis.google.com https://*.googleapis.com https://*.gstatic.com https://*.firebaseio.com https://*.firebaseapp.com",
+          // qr-scanner usa Web Worker via blob: — sem isso o Safari mobile não decodifica QR.
+          "worker-src 'self' blob:",
           "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
           "font-src 'self' https://fonts.gstatic.com data:",
           "img-src 'self' data: blob: https:",

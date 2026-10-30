@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion } from 'motion/react';
 import { LogOut, User, X, ShieldAlert, Users, ChevronRight, type LucideIcon } from 'lucide-react';
 
@@ -55,6 +56,7 @@ const ActionBtn = ({ onClick, icon: Icon, index, title, sub, tone = 'accent' }: 
 };
 
 export const SecurityMenu = ({ onClose, onLogout, onShowProfile, onChangeCharacter }: SecurityMenuProps) => {
+  const { t } = useTranslation(['player', 'common']);
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
     window.addEventListener('keydown', handleEsc);
@@ -79,16 +81,16 @@ export const SecurityMenu = ({ onClose, onLogout, onShowProfile, onChangeCharact
             <ShieldAlert size={28} />
           </div>
           <div className="min-w-0">
-            <p className="text-protocol text-[9px] text-primary/60">Protocolos de Acesso RM-84</p>
+            <p className="text-protocol text-[9px] text-primary/60">{t('security.eyebrow')}</p>
             <h2 className="text-display text-2xl text-white uppercase mt-0.5 truncate">
-              Menu de <span className="text-primary">Segurança</span>
+              {t('security.title')} <span className="text-primary">{t('security.titleAccent')}</span>
             </h2>
           </div>
         </div>
         <button
           type="button"
           onClick={onClose}
-          aria-label="Fechar menu"
+          aria-label={t('security.closeAria')}
           className="w-11 h-11 rounded-control border border-border bg-surface-panel text-primary flex items-center justify-center hover:border-border-accent hover:bg-accent-10 active:scale-95 transition-all duration-200 group shrink-0"
         >
           <X size={22} className="group-hover:rotate-90 transition-transform duration-300" />
@@ -96,15 +98,15 @@ export const SecurityMenu = ({ onClose, onLogout, onShowProfile, onChangeCharact
       </header>
 
       <div className="flex-1 px-6 sm:px-8 py-6 space-y-3 relative z-20 overflow-y-auto custom-scrollbar">
-        <ActionBtn index="01" onClick={onShowProfile} icon={User} title="Dossiê do Agente" sub="Registros, arquivos e medalhas" />
-        <ActionBtn index="02" onClick={onChangeCharacter} icon={Users} title="Alternar Agente" sub="Assumir nova identidade de campo" />
-        <ActionBtn index="03" onClick={onLogout} icon={LogOut} title="Desconectar Link" sub="Encerrar sessão no terminal atual" tone="danger" />
+        <ActionBtn index="01" onClick={onShowProfile} icon={User} title={t('security.dossier')} sub={t('security.dossierSub')} />
+        <ActionBtn index="02" onClick={onChangeCharacter} icon={Users} title={t('security.switchAgent')} sub={t('security.switchAgentSub')} />
+        <ActionBtn index="03" onClick={onLogout} icon={LogOut} title={t('security.logout')} sub={t('security.logoutSub')} tone="danger" />
       </div>
 
       <footer className="px-6 sm:px-8 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] border-t border-border-subtle bg-surface-raised/40 relative z-20">
         <div className="flex justify-between items-center text-mono-ui text-[9px] text-industrial-silver/30">
-          <span>Indústrias Smile © 2026</span>
-          <span>Grid: RM-NODE-ALPHA</span>
+          <span>{t('brand.smileCopyright', { ns: 'common' })}</span>
+          <span>{t('security.grid')}</span>
         </div>
       </footer>
     </motion.div>

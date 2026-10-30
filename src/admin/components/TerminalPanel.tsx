@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useIntlLocale } from '../../i18n/dateLocale';
 import { PlayerMeta } from '../../store/firestore';
 import { activityLogger } from '../../services/ActivityLogger';
 import { userService } from '../../services/UserService';
@@ -30,6 +32,8 @@ interface TerminalPanelProps {
  * Sistema → Acesso — autorização persistente de hardware (sem Limbo/DiskRepair; esses ficam no Ao Vivo).
  */
 export default function TerminalPanel({ embedded = false }: TerminalPanelProps) {
+  const { t } = useTranslation('admin');
+  const intlLocale = useIntlLocale();
   const toast = useToast();
   const { pushDos, pushMac, grantDos, grantMac, isBusy } = useHardwareAccessActions();
 
@@ -54,7 +58,7 @@ export default function TerminalPanel({ embedded = false }: TerminalPanelProps) 
     characters.forEach(({ uid, char }) => {
       if (char.archived) return;
       const list = charsByUid.get(uid) || [];
-      list.push(char.codinome || 'Sem codinome');
+      list.push(char.codinome || t('entity.noCodename'));
       charsByUid.set(uid, list);
     });
 
@@ -76,7 +80,7 @@ export default function TerminalPanel({ embedded = false }: TerminalPanelProps) 
         };
       })
       .filter((row) => row.agents.length > 0 || row.hasTerminalAccess || row.hasMacAccess)
-      .sort((a, b) => a.label.localeCompare(b.label, 'pt-BR'));
+      .sort((a, b) => a.label.localeCompare(b.label, intlLocale));
   }, [accounts, characters]);
 
   const filtered = useMemo(() => {
@@ -127,17 +131,17 @@ export default function TerminalPanel({ embedded = false }: TerminalPanelProps) 
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-4">
             <div className="w-1.5 h-8 bg-primary shadow-[0_0_10px_rgba(255,140,0,0.4)]" />
-            <h2 className="font-bold uppercase tracking-widest text-lg text-white">Acesso & Hardware</h2>
+            <h2 className="font-bold uppercase tracking-widest text-lg text-white">{t('hardware.title')}</h2>
           </div>
           <p className="text-[10px] font-bold uppercase tracking-widest text-industrial-silver/40 pl-6">
-            Autorização persistente por conta. Push one-shot e Limbo/DiskRepair ficam no Ao Vivo.
+            {t('hardware.subtitle')}
           </p>
         </div>
       )}
 
       {embedded && (
         <p className="text-[10px] font-bold uppercase tracking-widest text-industrial-silver/40">
-          Por conta (UID) · Acesso = reabrir sozinho · Empurrar = 1ª abertura · Push durante sessão → Ao Vivo
+          {t('hardware.embeddedHint')}
         </p>
       )}
 
@@ -145,9 +149,9 @@ export default function TerminalPanel({ embedded = false }: TerminalPanelProps) 
         <div className="p-5 border-b border-primary/10 bg-black/30 space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <h3 className="text-[11px] font-bold uppercase tracking-widest text-white">Autorização de hardware</h3>
+              <h3 className="text-[11px] font-bold uppercase tracking-widest text-white">{t('hardware.authTitle')}</h3>
               <p className="text-[9px] font-bold uppercase tracking-widest text-industrial-silver/40 mt-1">
-                Grant / revoke em massa, inclusive offline
+                {t('hardware.authSubtitle')}
               </p>
             </div>
             {selectedList.length > 0 && (
@@ -161,12 +165,12 @@ export default function TerminalPanel({ embedded = false }: TerminalPanelProps) 
                       toast.info(`DOS revogado em ${selectedList.length}`);
                       setSelectedUids(new Set());
                     } catch {
-                      toast.error('Falha ao revogar DOS');
+                      toast.error(t('hardware.toast.revokeDosFail'));
                     }
                   }}
                   className="px-3 py-1.5 text-[9px] font-black uppercase tracking-widest bg-[#333] border border-white/5 text-zinc-300 hover:bg-[#444] disabled:opacity-30"
                 >
-                  Revogar DOS filtrados
+                  {t('hardware.revokeDos')}
                 </button>
                 <button
                   type="button"
@@ -177,12 +181,12 @@ export default function TerminalPanel({ embedded = false }: TerminalPanelProps) 
                       toast.info(`Mac revogado em ${selectedList.length}`);
                       setSelectedUids(new Set());
                     } catch {
-                      toast.error('Falha ao revogar Mac');
+                      toast.error(t('hardware.toast.revokeMacFail'));
                     }
                   }}
                   className="px-3 py-1.5 text-[9px] font-black uppercase tracking-widest bg-[#333] border border-white/5 text-zinc-300 hover:bg-[#444] disabled:opacity-30"
                 >
-                  Revogar Mac filtrados
+                  {t('hardware.revokeMac')}
                 </button>
               </div>
             )}
@@ -193,17 +197,17 @@ export default function TerminalPanel({ embedded = false }: TerminalPanelProps) 
               type="search"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Buscar codinome, nome ou email..."
+              placeholder={t('hardware.search')}
               className="flex-1 bg-black/50 border border-white/10 px-4 py-2.5 text-xs font-bold uppercase tracking-wide text-white placeholder:text-zinc-700 focus:outline-none focus:border-primary/40"
             />
             <div className="flex flex-wrap gap-1.5">
               {(
                 [
-                  ['all', 'Todos'],
-                  ['online', 'Online'],
-                  ['dos', 'Acesso DOS'],
-                  ['mac', 'Acesso Mac'],
-                  ['none', 'Sem acesso'],
+                  ['all', t('hardware.filter.all')],
+                  ['online', t('hardware.filter.online')],
+                  ['dos', t('hardware.filter.dos')],
+                  ['mac', t('hardware.filter.mac')],
+                  ['none', t('hardware.filter.none')],
                 ] as const
               ).map(([id, label]) => (
                 <button
@@ -229,17 +233,17 @@ export default function TerminalPanel({ embedded = false }: TerminalPanelProps) 
             onClick={selectFiltered}
             className="text-[9px] font-black uppercase tracking-widest text-zinc-500 hover:text-primary"
           >
-            {selectedUids.size > 0 ? `Limpar seleção (${selectedUids.size})` : `Selecionar filtrados (${filtered.length})`}
+            {selectedUids.size > 0 ? t('hardware.clearSelection', { n: selectedUids.size }) : t('hardware.selectFiltered', { n: filtered.length })}
           </button>
           <span className="text-[9px] font-mono text-zinc-700 uppercase tracking-widest">
-            {filtered.length} conta(s)
+            {t('hardware.count', { n: filtered.length })}
           </span>
         </div>
 
         <ul className="divide-y divide-white/5 max-h-[560px] overflow-y-auto">
           {filtered.length === 0 ? (
             <li className="p-12 text-center text-zinc-600 text-[10px] font-black uppercase tracking-widest">
-              Nenhuma conta neste filtro
+              {t('hardware.empty')}
             </li>
           ) : (
             filtered.map((row) => {
@@ -279,7 +283,7 @@ export default function TerminalPanel({ embedded = false }: TerminalPanelProps) 
                         <p className="text-xs font-black uppercase text-zinc-100 tracking-wide">{row.label}</p>
                         {row.isOnline && (
                           <span className="text-[8px] font-black uppercase tracking-widest text-emerald-500 border border-emerald-500/30 px-1.5 py-0.5">
-                            Online
+                            {t('hardware.filter.online')}
                           </span>
                         )}
                         {row.forceTerminalOpen && (
@@ -305,7 +309,7 @@ export default function TerminalPanel({ embedded = false }: TerminalPanelProps) 
                   <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:pl-9">
                     <div className="flex flex-wrap items-center gap-4">
                       <GrantToggle
-                        label="Acesso DOS"
+                        label={t('hardware.filter.dos')}
                         active={row.hasTerminalAccess}
                         disabled={dosBusy}
                         onToggle={async () => {
@@ -324,7 +328,7 @@ export default function TerminalPanel({ embedded = false }: TerminalPanelProps) 
                         }}
                       />
                       <GrantToggle
-                        label="Acesso Mac"
+                        label={t('hardware.filter.mac')}
                         active={row.hasMacAccess}
                         disabled={macBusy}
                         accent="cyan"
@@ -347,9 +351,9 @@ export default function TerminalPanel({ embedded = false }: TerminalPanelProps) 
                         onClick={async () => {
                           try {
                             await pushDos([row.uid], rowLabel(row));
-                            toast.success(`DOS empurrado: ${rowLabel(row)}`);
+                            toast.success(t('live.toast.dosOk', { target: rowLabel(row) }));
                           } catch {
-                            toast.error('Falha ao empurrar DOS');
+                            toast.error(t('live.toast.dosFail'));
                           }
                         }}
                         className="px-3 py-1.5 text-[9px] font-black uppercase tracking-widest bg-primary text-black hover:bg-primary-container disabled:opacity-30"
@@ -362,9 +366,9 @@ export default function TerminalPanel({ embedded = false }: TerminalPanelProps) 
                         onClick={async () => {
                           try {
                             await pushMac([row.uid], rowLabel(row));
-                            toast.success(`Mac empurrado: ${rowLabel(row)}`);
+                            toast.success(t('live.toast.macOk', { target: rowLabel(row) }));
                           } catch {
-                            toast.error('Falha ao empurrar Mac');
+                            toast.error(t('live.toast.macFail'));
                           }
                         }}
                         className="px-3 py-1.5 text-[9px] font-black uppercase tracking-widest bg-zinc-200 text-black hover:bg-white disabled:opacity-30"

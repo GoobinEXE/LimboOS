@@ -1,5 +1,6 @@
 import type { PlayerStats } from '../types/player';
 import type { IntelItem } from '../types/intel';
+import type { AchievementDef, AchievementRuleSpec } from '../types/achievement';
 
 export type AchievementCategory = 'progression' | 'exploration' | 'lore' | 'mechanics' | 'honor';
 export type AchievementTier = 'common' | 'rare' | 'legendary';
@@ -172,6 +173,50 @@ export class ManualRule extends AchievementRule {
   }
 }
 
+export function ruleFromSpec(spec: AchievementRuleSpec): AchievementRule {
+  switch (spec.type) {
+    case 'manual':
+      return new ManualRule();
+    case 'audioTapeCount':
+      return new AudioTapeCountRule(spec.count);
+    case 'tapeCount':
+      return new TapeCountRule(spec.count);
+    case 'listenTime':
+      return new ListenTimeRule(spec.seconds);
+    case 'secretTape':
+      return new SecretTapeRule();
+    case 'loreKeyword':
+      return new LoreRule(spec.keyword);
+    case 'rapidScan':
+      return new RapidScanRule(spec.count);
+    case 'mechanics':
+      return new MechanicsRule(spec.statKey, spec.target);
+    case 'flag':
+      return new FlagRule(spec.statKey);
+    case 'allFlags':
+      return new AllFlagsRule(spec.statKeys);
+    default:
+      return new ManualRule();
+  }
+}
+
+export function achievementFromDef(def: AchievementDef): Achievement {
+  return new Achievement(
+    def.id,
+    def.title,
+    def.description,
+    def.iconUrl,
+    def.hint || '???',
+    ruleFromSpec(def.rule),
+    def.unlockCondition,
+    def.category,
+    def.tier,
+    def.isSecret !== false,
+    def.platforms?.length ? def.platforms : ['global'],
+    def.campaignIds ?? 'global',
+  );
+}
+
 export class Achievement {
   public id: string;
   public title: string;
@@ -264,6 +309,7 @@ export function groupAchievementsByCategory(achievements: Achievement[]): {
 export class AchievementManager {
   private static instance: AchievementManager;
   private achievements: Map<string, Achievement> = new Map();
+  private listeners = new Set<() => void>();
 
   private constructor() {}
 
@@ -276,6 +322,22 @@ export class AchievementManager {
 
   public register(ach: Achievement) {
     this.achievements.set(ach.id, ach);
+    this.notify();
+  }
+
+  public clear() {
+    this.achievements.clear();
+    this.notify();
+  }
+
+  /** Substitui o catálogo em memória (defs enabled). */
+  public replaceCatalog(defs: AchievementDef[]) {
+    this.achievements.clear();
+    for (const def of defs) {
+      if (def.enabled === false) continue;
+      this.achievements.set(def.id, achievementFromDef(def));
+    }
+    this.notify();
   }
 
   public getAchievement(id: string): Achievement | undefined {
@@ -284,6 +346,21 @@ export class AchievementManager {
 
   public getAll(): Achievement[] {
     return Array.from(this.achievements.values());
+  }
+
+  public subscribe(listener: () => void): () => void {
+    this.listeners.add(listener);
+    return () => this.listeners.delete(listener);
+  }
+
+  private notify() {
+    this.listeners.forEach((fn) => {
+      try {
+        fn();
+      } catch (err) {
+        console.warn('[AchievementManager] listener error:', err);
+      }
+    });
   }
 
   public evaluateNewAchievements(context: EvaluationContext): Achievement[] {

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'motion/react';
 import type { IntelItem, IntelType } from '../../../types/intel';
 import { MediaAsset } from '../../../types/media';
@@ -49,6 +50,7 @@ export default function IntelCatalogPane({
   onQr,
   onPlayAudio,
 }: IntelCatalogPaneProps) {
+  const { t } = useTranslation('admin');
   const listRef = useRef<HTMLDivElement>(null);
   const rowRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
@@ -119,7 +121,7 @@ export default function IntelCatalogPane({
                 : 'border-white/5 text-industrial-silver/30'
             }`}
           >
-            Todos
+            {t('hardware.filter.all')}
           </button>
           {INTEL_TYPE_OPTIONS.map((t) => (
             <button
@@ -215,14 +217,14 @@ export default function IntelCatalogPane({
                   </div>
                   <div className="flex justify-end gap-0.5 mt-2 opacity-70 group-hover:opacity-100">
                     {item.type === 'AUDIO' && item.mediaUrl && (
-                      <IconBtn icon="play_arrow" title="Prévia" onClick={() => onPlayAudio(item)} />
+                      <IconBtn icon="play_arrow" title={t('intel.catalog.preview')} onClick={() => onPlayAudio(item)} />
                     )}
                     <IconBtn icon="qr_code_2" title="QR" onClick={() => onQr(item)} />
                     <IconBtn icon="edit_note" title="Editar" onClick={() => onEdit(item)} />
                     {asset?.storagePath && (
                       <IconBtn icon="folder_delete" title="Remover arquivo" onClick={() => onDeleteFile(item)} tone="amber" />
                     )}
-                    <IconBtn icon="delete" title="Remover" onClick={() => onDelete(item)} tone="red" />
+                    <IconBtn icon="delete" title={t('jukebox.removeAction')} onClick={() => onDelete(item)} tone="red" />
                   </div>
                 </motion.div>
               );

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'motion/react';
 import Screw from '../../components/player/Screw';
 import { db } from '../../lib/firebase';
@@ -12,6 +13,7 @@ import { userService } from '../../services/UserService';
 import MissionCommandModal from './MissionCommandModal';
 import OverlayPortal from './OverlayPortal';
 import { MissionTabId } from './mission/types';
+import { ADMIN_SPRING } from '../lib/motion';
 
 export interface MissionDeepLink {
   campaignId: string;
@@ -40,6 +42,7 @@ export default function CampaignsPanel({
   missionDeepLink,
   onDeepLinkConsumed,
 }: CampaignsPanelProps) {
+  const { t } = useTranslation('admin');
   const { showAlert, showConfirm, modal } = useModal();
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [persistentItems, setPersistentItems] = useState<string[]>([]);
@@ -126,9 +129,9 @@ export default function CampaignsPanel({
 
   const handleDeleteCampaign = async (id: string, name: string) => {
     const ok = await showConfirm(
-      'Apagar Missão',
-      `Tem certeza que deseja apagar "${name}"? Referências em agentes e esquadrões (campaignId / unlockedCampaigns) não serão limpas automaticamente.`,
-      'Apagar'
+      t('missions.deleteConfirmTitle'),
+      t('missions.deleteConfirmBody', { name }),
+      t('missions.deleteAction')
     );
     if (!ok) return;
 
@@ -136,7 +139,7 @@ export default function CampaignsPanel({
       await campaignAdminService.deleteCampaign(id);
     } catch (error) {
       console.error('Erro ao deletar campanha:', error);
-      showAlert('Erro', 'Falha ao remover campanha.');
+      showAlert('Erro', t('missions.deleteFail'));
     }
   };
 
@@ -164,7 +167,7 @@ export default function CampaignsPanel({
   if (loading) {
     return (
       <div className="p-24 text-center animate-pulse font-display font-bold text-primary text-xs uppercase tracking-[0.4em]">
-        Sincronizando Missões...
+        {t('missions.loading')}
       </div>
     );
   }
@@ -180,10 +183,10 @@ export default function CampaignsPanel({
           <div className="w-1.5 h-8 bg-primary shadow-[0_0_10px_rgba(255,140,0,0.4)]" />
           <div>
             <h2 className="font-display font-bold uppercase tracking-widest text-lg text-white">
-              Centro de Comando
+              {t('missions.title')}
             </h2>
             <p className="text-[10px] font-display font-bold text-industrial-silver/40 uppercase tracking-widest mt-1">
-              Gestão de Instâncias e Missões Ativas
+              {t('missions.subtitle')}
             </p>
           </div>
         </div>
@@ -193,14 +196,14 @@ export default function CampaignsPanel({
             className="flex items-center gap-3 bg-surface-container-high text-industrial-silver/60 px-6 py-3 rounded-sm font-display font-bold text-[11px] tracking-widest hover:bg-white/5 transition-all border border-white/5 active:scale-95 uppercase"
           >
             <span className="material-symbols-outlined text-base">inventory_2</span>
-            Itens Persistentes
+            {t('missions.persistentItems')}
           </button>
           <button
             onClick={openNewMission}
             className="flex items-center gap-3 bg-primary text-black px-6 py-3 rounded-sm font-display font-bold text-[11px] tracking-widest hover:bg-primary-container transition-all active:scale-95 glow-orange shadow-lg uppercase"
           >
             <span className="material-symbols-outlined text-base">add_circle</span>
-            Nova Missão
+            {t('missions.modal.newTitle')}
           </button>
         </div>
       </div>
@@ -267,7 +270,7 @@ export default function CampaignsPanel({
                     <span className="material-symbols-outlined text-base text-industrial-silver/20">
                       devices
                     </span>
-                    {campaign.playerType === 'nokia' ? 'HANDSET LCD' : 'DECK'}
+                    {campaign.playerType === 'nokia' ? t('missions.playerType.handset') : t('missions.playerType.deck')}
                   </div>
                   <span
                     className={`px-3 py-1 rounded-sm border font-display font-bold ${
@@ -285,12 +288,12 @@ export default function CampaignsPanel({
                 <div className="flex flex-wrap gap-2 text-[8px] font-display font-bold uppercase tracking-widest">
                   {authorizedGroups > 0 && (
                     <span className="bg-primary/5 text-primary/70 border border-primary/20 px-2 py-1 rounded-sm">
-                      {authorizedGroups} esq. autorizados
+                      {t('missions.badge.authorized', { n: authorizedGroups })}
                     </span>
                   )}
                   {(operatingGroups > 0 || operatingAgents > 0) && (
                     <span className="bg-emerald-500/10 text-emerald-500 border border-emerald-500/30 px-2 py-1 rounded-sm animate-pulse">
-                      {operatingGroups + operatingAgents} em campo
+                      {t('missions.badge.inField', { n: operatingGroups + operatingAgents })}
                     </span>
                   )}
                 </div>
@@ -301,12 +304,12 @@ export default function CampaignsPanel({
                     className="flex-1 flex items-center justify-center gap-2 bg-primary text-black px-4 py-3 rounded-sm font-display font-bold text-[10px] uppercase tracking-widest hover:bg-primary-container transition-all active:scale-95 glow-orange"
                   >
                     <span className="material-symbols-outlined text-sm">tune</span>
-                    Gerenciar
+                    {t('missions.manage')}
                   </button>
                   <button
                     onClick={() => handleDeleteCampaign(campaign.id, campaign.name)}
                     className="w-12 flex items-center justify-center bg-black/40 border border-white/10 rounded-sm text-industrial-silver/40 hover:text-red-500 hover:border-red-500/30 transition-all active:scale-90"
-                    title="Apagar missão"
+                    title={t('missions.deleteTitle')}
                   >
                     <span className="material-symbols-outlined text-xl">delete</span>
                   </button>
@@ -340,7 +343,7 @@ export default function CampaignsPanel({
                 initial={{ x: '100%' }}
                 animate={{ x: 0 }}
                 exit={{ x: '100%' }}
-                transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                transition={ADMIN_SPRING}
                 className="bg-[#222] border-l-8 border-[#1a1a1a] w-full max-w-2xl shadow-2xl flex flex-col h-full relative overflow-hidden font-chakra"
                 onClick={(e) => e.stopPropagation()}
               >
@@ -357,7 +360,7 @@ export default function CampaignsPanel({
                       Retenção de <span className="text-primary">Recursos</span>
                     </h3>
                     <p className="text-[10px] font-bold text-industrial-silver/40 uppercase tracking-widest mt-1">
-                      Itens disponíveis em todas as missões
+                      {t('missions.persistent.subtitle')}
                     </p>
                   </div>
                   <button
@@ -375,7 +378,7 @@ export default function CampaignsPanel({
                     </span>
                     <input
                       type="text"
-                      placeholder="LOCALIZAR ITEM NO ACERVO..."
+                      placeholder={t('missions.persistent.search')}
                       value={itemSearch}
                       onChange={(e) => setItemSearch(e.target.value)}
                       className="w-full bg-black/60 border-2 border-[#1a1a1a] text-[11px] font-bold px-12 py-4 text-white outline-none rounded-sm uppercase tracking-widest transition-all shadow-inner focus:ring-1 focus:ring-primary placeholder:text-zinc-700"

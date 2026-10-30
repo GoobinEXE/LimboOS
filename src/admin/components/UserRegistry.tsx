@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
+import { useTranslation } from 'react-i18next';
+import { useDateLocale } from '../../i18n/dateLocale';
 import { format, formatDistanceToNow } from "date-fns";
-import { ptBR } from "date-fns/locale";
 import { useModal } from './ConfirmModal';
 import { useToast } from './ToastProvider';
 import { userService } from "../../services/UserService";
@@ -10,6 +11,7 @@ import RetroSpinner from '../../components/player/RetroSpinner';
 import AgentDossierView from "./AgentDossierView";
 import OverlayPortal from './OverlayPortal';
 import { motion, AnimatePresence } from 'motion/react';
+import { ADMIN_SPRING, ADMIN_FADE, listItem, staggerDelay } from '../lib/motion';
 
 type SortField = 'masterName' | 'role' | 'createdAt' | 'lastLogin';
 type SortDir = 'asc' | 'desc';
@@ -29,17 +31,25 @@ function getAccountStatus(acc: MasterAccount): 'active' | 'inactive' | 'dormant'
   return 'dormant';
 }
 
-const STATUS_MAP = new Map<ReturnType<typeof getAccountStatus>, { label: string; cls: string }>([
-  ['active', { label: 'ATIVO', cls: 'border-emerald-500/30 text-emerald-500 bg-emerald-500/5' }],
-  ['inactive', { label: 'INATIVO', cls: 'border-yellow-500/30 text-yellow-500 bg-yellow-500/5' }],
-  ['dormant', { label: 'DORMENTE', cls: 'border-red-500/30 text-red-500 bg-red-500/5' }],
-  ['suspended', { label: 'SUSPENSA', cls: 'border-red-500/40 text-red-400 bg-red-500/10' }],
-  ['unknown', { label: 'SEM_DADOS', cls: 'border-white/5 text-industrial-silver/30' }],
+const STATUS_STYLES = new Map<ReturnType<typeof getAccountStatus>, string>([
+  ['active', 'border-emerald-500/30 text-emerald-500 bg-emerald-500/5'],
+  ['inactive', 'border-yellow-500/30 text-yellow-500 bg-yellow-500/5'],
+  ['dormant', 'border-red-500/30 text-red-500 bg-red-500/5'],
+  ['suspended', 'border-red-500/40 text-red-400 bg-red-500/10'],
+  ['unknown', 'border-white/5 text-industrial-silver/30'],
 ]);
 
-function statusBadge(status: ReturnType<typeof getAccountStatus>) {
-  const s = STATUS_MAP.get(status) ?? { label: 'SEM_DADOS', cls: 'border-white/5 text-industrial-silver/30' };
-  return <span className={`text-[9px] font-display font-bold px-2 py-0.5 rounded-sm uppercase tracking-widest border ${s.cls}`}>{s.label}</span>;
+const STATUS_KEYS: Record<ReturnType<typeof getAccountStatus>, string> = {
+  active: 'accounts.status.active',
+  inactive: 'accounts.status.inactive',
+  dormant: 'accounts.status.dormant',
+  suspended: 'accounts.status.suspended',
+  unknown: 'accounts.status.unknown',
+};
+
+function statusBadge(status: ReturnType<typeof getAccountStatus>, label: string) {
+  const cls = STATUS_STYLES.get(status) ?? 'border-white/5 text-industrial-silver/30';
+  return <span className={`text-[9px] font-display font-bold px-2 py-0.5 rounded-sm uppercase tracking-widest border ${cls}`}>{label}</span>;
 }
 
 export default function UserRegistry({
@@ -55,6 +65,8 @@ export default function UserRegistry({
   deepLinkAgent?: { uid: string; charId: string } | null;
   onDeepLinkConsumed?: () => void;
 }) {
+  const { t } = useTranslation('admin');
+  const dateLocale = useDateLocale();
   const [accounts, setAccounts] = useState<MasterAccount[]>([]);
   const [charactersByUid, setCharactersByUid] = useState<Record<string, CharacterData[]>>({});
   const [expandedAccounts, setExpandedAccounts] = useState<Set<string>>(new Set());
@@ -150,7 +162,7 @@ export default function UserRegistry({
     a.click();
     URL.revokeObjectURL(url);
     setShowExportMenu(false);
-    toast.success(`Exportação ${format.toUpperCase()} concluída.`);
+    toast.success(t('accounts.toast.exportOk', { format: format.toUpperCase() }));
   };
 
   const refreshAgents = async () => {
@@ -230,7 +242,7 @@ export default function UserRegistry({
     setCreateUserLoading(true);
     try {
       await userService.adminCreateUser(newUserCodinome, newUserPassword, newUserRole as 'player' | 'admin');
-      toast.success(`Conta "${newUserCodinome}" registrada com sucesso.`);
+      toast.success(t('accounts.toast.createOk', { name: newUserCodinome }));
       setNewUserCodinome(""); setNewUserPassword("");
       setShowCreateUser(false);
     } catch (error: any) { toast.error(error.message); }
@@ -242,7 +254,7 @@ export default function UserRegistry({
     setResetPasswordLoading(true);
     try {
       await userService.resetUserPassword(uid, resetPasswordValue.trim());
-      toast.success('Senha alterada com sucesso.');
+      toast.success(t('accounts.toast.passwordOk'));
       setResetPasswordValue("");
     } catch (err: any) {
       toast.error(err.message);
@@ -255,9 +267,9 @@ export default function UserRegistry({
     try {
       await userService.updateMasterAccount(uid, { suspended: !currentSuspended });
       setEditingAccount(prev => prev ? { ...prev, suspended: !currentSuspended } : null);
-      toast.success(!currentSuspended ? 'Conta suspensa.' : 'Conta reativada.');
+      toast.success(!currentSuspended ? t('accounts.toast.suspended') : t('accounts.toast.reactivated'));
     } catch (err) {
-      toast.error('Falha ao alterar status da conta.');
+      toast.error(t('accounts.toast.statusFail'));
     }
   };
 
@@ -265,9 +277,9 @@ export default function UserRegistry({
     try {
       await userService.updateMasterAccount(uid, { masterName: editMasterName, notes: editNotes });
       setEditingAccount(prev => prev ? { ...prev, masterName: editMasterName, notes: editNotes } : null);
-      toast.success('Dados da conta atualizados.');
+      toast.success(t('accounts.toast.updated'));
     } catch (err) {
-      toast.error('Falha ao salvar dados.');
+      toast.error(t('accounts.toast.saveFail'));
     }
   };
 
@@ -299,7 +311,7 @@ export default function UserRegistry({
     setCreateCharLoading(true);
     try {
       await userService.createCharacterForAccount(showCreateCharacter, newCharCodinome);
-      toast.success(`Personagem "${newCharCodinome}" criado com sucesso.`);
+      toast.success(t('accounts.toast.charCreated', { name: newCharCodinome }));
       setNewCharCodinome('');
       setShowCreateCharacter(null);
       refreshAgents();
@@ -310,7 +322,7 @@ export default function UserRegistry({
         return next;
       });
     } catch (error: any) {
-      toast.error('Erro ao criar personagem.');
+      toast.error(t('accounts.toast.charCreateFail'));
       console.error(error);
     } finally {
       setCreateCharLoading(false);
@@ -332,7 +344,7 @@ export default function UserRegistry({
         const chars = await userService.fetchCharactersForUser(uid);
         setCharactersByUid(prev => ({ ...prev, [uid]: chars }));
       } catch (err) {
-        toast.error('Falha ao carregar personagens.');
+        toast.error(t('accounts.toast.charsLoadFail'));
       }
     }
   };
@@ -379,8 +391,8 @@ export default function UserRegistry({
           <div className="flex items-center gap-4">
             <div className="w-1.5 h-8 bg-primary shadow-[0_0_10px_rgba(255,140,0,0.4)]" />
             <div>
-              <h2 className="font-display font-bold uppercase tracking-widest text-lg text-white">Gestão de Identidades</h2>
-              <p className="text-[10px] font-display font-bold text-industrial-silver/40 uppercase tracking-widest mt-1">Contas Mestras e Personagens Vinculados</p>
+              <h2 className="font-display font-bold uppercase tracking-widest text-lg text-white">{t('accounts.title')}</h2>
+              <p className="text-[10px] font-display font-bold text-industrial-silver/40 uppercase tracking-widest mt-1">{t('accounts.subtitle')}</p>
             </div>
           </div>
         </div>
@@ -403,7 +415,7 @@ export default function UserRegistry({
               <div className={`w-8 h-4 rounded-full transition-all relative ${showArchived ? 'bg-primary/30 border border-primary' : 'bg-surface-container-lowest border border-white/10'}`}>
                 <div className={`absolute top-0.5 w-2.5 h-2.5 rounded-full bg-white transition-all ${showArchived ? 'left-4.5 bg-primary' : 'left-1 bg-industrial-silver/40'}`} />
               </div>
-              <span className="text-[9px] font-display font-bold text-industrial-silver/30 group-hover:text-primary transition-colors uppercase tracking-widest">Incluir Arquivados</span>
+              <span className="text-[9px] font-display font-bold text-industrial-silver/30 group-hover:text-primary transition-colors uppercase tracking-widest">{t('accounts.includeArchived')}</span>
             </label>
           </div>
           <div className="flex flex-1 max-w-2xl gap-3">
@@ -411,7 +423,7 @@ export default function UserRegistry({
               <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-industrial-silver/20 text-base group-focus-within:text-primary transition-colors">search</span>
               <input 
                 type="text" 
-                placeholder="BUSCAR CONTA OU PERSONAGEM..." 
+                placeholder={t('accounts.search')} 
                 value={searchQuery} 
                 onChange={(e) => setSearchQuery(e.target.value)} 
                 className="w-full bg-surface-container-lowest border border-white/5 text-[11px] font-display font-bold uppercase tracking-[0.2em] text-white pl-10 pr-3 py-3 focus:border-primary/40 outline-none rounded-sm transition-all" 
@@ -421,7 +433,7 @@ export default function UserRegistry({
               <div className="flex gap-3">
                 <div className="relative">
                   <button onClick={() => setShowExportMenu(prev => !prev)} className="flex items-center gap-2 bg-surface-container-lowest border border-white/5 text-industrial-silver/40 hover:text-primary hover:border-primary/20 px-4 py-3 rounded-sm font-display font-bold text-[10px] tracking-widest transition-all active:scale-95">
-                    <span className="material-symbols-outlined text-base">download</span> EXPORTAR
+                    <span className="material-symbols-outlined text-base">download</span> {t('accounts.export')}
                   </button>
                   {showExportMenu && (
                     <div className="absolute top-full right-0 mt-1 bg-surface-container-low border border-primary/20 shadow-2xl z-50 min-w-35">
@@ -435,7 +447,7 @@ export default function UserRegistry({
                   )}
                 </div>
                 <button onClick={() => setShowCreateUser(true)} className="flex items-center gap-3 bg-primary hover:bg-primary-container text-black px-6 py-3 rounded-sm font-display font-bold text-[11px] tracking-widest transition-all active:scale-95 glow-orange shadow-lg">
-                  <span className="material-symbols-outlined text-base">person_add</span> CRIAR CONTA
+                  <span className="material-symbols-outlined text-base">person_add</span> {t('accounts.create')}
                 </button>
               </div>
             )}
@@ -449,43 +461,56 @@ export default function UserRegistry({
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-black/40 border-b border-white/5 text-[10px] font-display font-bold uppercase tracking-widest text-industrial-silver/30">
-                <SortHeader label="Nome Mestre" field="masterName" current={sortField} dir={sortDir} onSort={toggleSort} />
-                <th className="p-6">Identificação de Rede</th>
-                <SortHeader label="Autoridade" field="role" current={sortField} dir={sortDir} onSort={toggleSort} />
-                <th className="p-6">Status</th>
-                <th className="p-6">Agentes</th>
-                <SortHeader label="Registro" field="createdAt" current={sortField} dir={sortDir} onSort={toggleSort} />
-                <SortHeader label="Último Acesso" field="lastLogin" current={sortField} dir={sortDir} onSort={toggleSort} />
-                <th className="p-6 text-right">Ações da Conta</th>
+                <SortHeader label={t('accounts.edit.masterName')} field="masterName" current={sortField} dir={sortDir} onSort={toggleSort} />
+                <th className="p-6">{t('accounts.col.networkId')}</th>
+                <SortHeader label={t('accounts.col.authority')} field="role" current={sortField} dir={sortDir} onSort={toggleSort} />
+                <th className="p-6">{t('accounts.col.status')}</th>
+                <th className="p-6">{t('reports.group.agents')}</th>
+                <SortHeader label={t('accounts.col.created')} field="createdAt" current={sortField} dir={sortDir} onSort={toggleSort} />
+                <SortHeader label={t('accounts.col.lastAccess')} field="lastLogin" current={sortField} dir={sortDir} onSort={toggleSort} />
+                <th className="p-6 text-right">{t('accounts.col.actions')}</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
               {loading ? (
+                <tbody className="divide-y divide-white/5">
                 <tr>
                   <td colSpan={8} className="p-16 text-center">
                     <RetroSpinner />
                     <p className="text-[10px] font-display font-bold uppercase tracking-widest text-industrial-silver/30 mt-4">
-                      Carregando_Contas...
+                      Carregando Contas...
                     </p>
                   </td>
                 </tr>
+                </tbody>
               ) : filteredAccounts.length === 0 ? (
+                <tbody className="divide-y divide-white/5">
                 <tr>
                   <td colSpan={8} className="p-16 text-center text-industrial-silver/30">
                     <span className="material-symbols-outlined text-3xl mb-2 opacity-50">group_off</span>
                     <p className="text-[10px] font-display font-bold uppercase tracking-widest">
-                      {searchQuery ? 'Nenhuma conta encontrada para esta busca' : 'Nenhuma conta registrada'}
+                      {searchQuery ? t('accounts.empty.search') : t('accounts.empty.none')}
                     </p>
                   </td>
                 </tr>
+                </tbody>
               ) : (
-              filteredAccounts.map((acc) => {
+              <AnimatePresence mode="popLayout">
+              {filteredAccounts.map((acc, index) => {
                 const status = getAccountStatus(acc);
                 const isExpanded = expandedAccounts.has(acc.uid);
                 const chars = allCharacters.filter(c => c.uid === acc.uid && (!c.char.archived || showArchived));
 
                 return (
-                  <React.Fragment key={acc.uid}>
+                  <motion.tbody
+                    key={acc.uid}
+                    layout
+                    variants={listItem}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                    transition={{ ...ADMIN_FADE, delay: staggerDelay(index, 0.02, 0.15) }}
+                    className="divide-y divide-white/5"
+                  >
                     <tr 
                       onClick={() => toggleExpand(acc.uid)}
                       className={`hover:bg-primary/5 transition-all group cursor-pointer ${acc.suspended ? 'opacity-40' : ''} ${isExpanded ? 'bg-white/5' : ''}`}
@@ -497,7 +522,7 @@ export default function UserRegistry({
                           </span>
                           <div className="flex flex-col">
                             <span className="font-display font-bold text-xs text-white uppercase tracking-wider">
-                              {acc.displayName || acc.masterName || <span className="text-industrial-silver/20 italic text-[10px]">PENDENTE...</span>}
+                              {acc.displayName || acc.masterName || <span className="text-industrial-silver/20 italic text-[10px]">{t('accounts.pending')}</span>}
                             </span>
                             {acc.displayName && (
                               <span className="text-[9px] text-industrial-silver/30 font-mono uppercase tracking-tighter">ID: {acc.masterName}</span>
@@ -506,7 +531,7 @@ export default function UserRegistry({
                         </div>
                       </td>
                       <td className="p-6">
-                        <p className="font-mono text-[11px] text-industrial-silver/60 group-hover:text-primary transition-colors">{acc.email || "SEM_EMAIL_VINCULADO"}</p>
+                        <p className="font-mono text-[11px] text-industrial-silver/60 group-hover:text-primary transition-colors">{acc.email || t('accounts.noEmail')}</p>
                         <p className="font-mono text-[9px] text-industrial-silver/20 mt-1 uppercase tracking-tighter">UID: {(acc.uid || "").slice(0, 16)}...</p>
                       </td>
                       <td className="p-6">
@@ -514,7 +539,7 @@ export default function UserRegistry({
                           {acc.role}
                         </span>
                       </td>
-                      <td className="p-6">{statusBadge(status)}</td>
+                      <td className="p-6">{statusBadge(status, t(STATUS_KEYS[status]))}</td>
                       <td className="p-6">
                         <span className="text-[10px] font-display font-bold text-industrial-silver/40 bg-black/30 border border-white/5 px-2 py-0.5 rounded-sm">
                           {agentCountMap.get(acc.uid) ?? 0}
@@ -522,10 +547,10 @@ export default function UserRegistry({
                       </td>
                       <td className="p-6 font-display font-bold text-[10px] text-industrial-silver/20">{acc.createdAt ? format(acc.createdAt.toDate(), "yyyy.MM.dd") : "---"}</td>
                       <td className="p-6 font-display font-bold text-[10px] text-industrial-silver/20">
-                        {acc.lastLogin ? formatDistanceToNow(acc.lastLogin.toDate(), { addSuffix: true, locale: ptBR }) : "---"}
+                        {acc.lastLogin ? formatDistanceToNow(acc.lastLogin.toDate(), { addSuffix: true, locale: dateLocale }) : "---"}
                       </td>
                       <td className="p-6 text-right">
-                         <button onClick={(e) => handleOpenEdit(e, acc)} className="p-2.5 text-industrial-silver/20 hover:text-primary hover:bg-primary/10 rounded-sm material-symbols-outlined text-xl transition-all active:scale-90" title="Configurações de Protocolo">settings</button>
+                         <button onClick={(e) => handleOpenEdit(e, acc)} className="p-2.5 text-industrial-silver/20 hover:text-primary hover:bg-primary/10 rounded-sm material-symbols-outlined text-xl transition-all active:scale-90" title={t('accounts.settingsTitle')}>settings</button>
                       </td>
                     </tr>
                     
@@ -536,13 +561,13 @@ export default function UserRegistry({
                           <div className="p-6 pl-18 border-l-2 border-primary/30 shadow-inner">
                             <div className="flex justify-between items-center mb-6">
                               <h4 className="text-[10px] font-display font-bold uppercase tracking-widest text-industrial-silver/40 flex items-center gap-2">
-                                <span className="material-symbols-outlined text-sm">group</span> Personagens Vinculados
+                                <span className="material-symbols-outlined text-sm">group</span> {t('accounts.linkedChars')}
                               </h4>
                               <button 
                                 onClick={(e) => { e.stopPropagation(); setShowCreateCharacter(acc.uid); }} 
                                 className="flex items-center gap-2 text-[9px] font-display font-bold uppercase tracking-widest text-primary hover:text-black hover:bg-primary transition-all border border-primary/20 px-4 py-2 rounded-sm active:scale-95"
                               >
-                                <span className="material-symbols-outlined text-sm">person_add</span> CRIAR PERSONAGEM
+                                <span className="material-symbols-outlined text-sm">person_add</span> {t('accounts.createChar')}
                               </button>
                             </div>
                             
@@ -566,7 +591,7 @@ export default function UserRegistry({
                                       </div>
                                    </div>
                                    <div className="flex items-center gap-4 opacity-30 group-hover:opacity-100 transition-opacity">
-                                     <span className="text-[9px] font-display font-bold uppercase tracking-widest text-primary">DOSSIÊ</span>
+                                     <span className="text-[9px] font-display font-bold uppercase tracking-widest text-primary">{t('accounts.dossier')}</span>
                                      <span className="material-symbols-outlined text-sm text-primary">arrow_forward_ios</span>
                                    </div>
                                 </div>
@@ -574,7 +599,7 @@ export default function UserRegistry({
                               {chars.length === 0 && (
                                 <div className="col-span-full py-8 text-center border border-dashed border-white/5 rounded-sm flex flex-col items-center justify-center text-industrial-silver/20">
                                   <span className="material-symbols-outlined text-3xl mb-2 opacity-50">person_off</span>
-                                  <p className="text-[10px] font-display font-bold uppercase tracking-widest">Nenhum personagem registrado</p>
+                                  <p className="text-[10px] font-display font-bold uppercase tracking-widest">{t('accounts.noChars')}</p>
                                 </div>
                               )}
                             </div>
@@ -582,11 +607,11 @@ export default function UserRegistry({
                         </td>
                       </tr>
                     )}
-                  </React.Fragment>
+                  </motion.tbody>
                 );
-              })
+              })}
+              </AnimatePresence>
               )}
-            </tbody>
           </table>
         </div>
       </div>
@@ -630,12 +655,12 @@ export default function UserRegistry({
             
             <form onSubmit={handleCreateCharacter} className="space-y-8">
               <div className="group">
-                <label className="block text-[9px] font-display font-bold text-industrial-silver/40 uppercase tracking-widest mb-2 group-focus-within:text-primary transition-colors">Codinome do Agente</label>
+                <label className="block text-[9px] font-display font-bold text-industrial-silver/40 uppercase tracking-widest mb-2 group-focus-within:text-primary transition-colors">{t('accounts.codename')}</label>
                 <input 
                   type="text" 
                   value={newCharCodinome} 
                   onChange={(e) => setNewCharCodinome(e.target.value)} 
-                  placeholder="EX: FALCÃO" 
+                  placeholder={t('accounts.codenamePlaceholder')} 
                   className="w-full bg-surface-container-lowest border-none text-white px-5 py-4 text-[11px] font-display font-bold outline-none uppercase rounded-sm shadow-inner transition-all" 
                   required 
                   autoFocus
@@ -644,7 +669,7 @@ export default function UserRegistry({
               </div>
 
               <div className="flex justify-end gap-4">
-                <button type="button" onClick={() => setShowCreateCharacter(null)} className="px-6 py-3 text-[10px] font-display font-bold text-industrial-silver/30 hover:text-white uppercase tracking-widest transition-colors">Cancelar</button>
+                <button type="button" onClick={() => setShowCreateCharacter(null)} className="px-6 py-3 text-[10px] font-display font-bold text-industrial-silver/30 hover:text-white uppercase tracking-widest transition-colors">{t('accounts.cancel')}</button>
                 <button type="submit" disabled={createCharLoading} className="bg-primary text-black px-8 py-3 rounded-sm font-display font-bold text-[10px] tracking-widest uppercase hover:bg-primary-container transition-all active:scale-95 shadow-lg flex items-center gap-2">
                   {createCharLoading ? <RetroSpinner /> : 'CRIAR'}
                 </button>
@@ -672,12 +697,12 @@ export default function UserRegistry({
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
-            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            transition={ADMIN_SPRING}
             className="bg-[#222] border-l-8 border-[#1a1a1a] w-full max-w-2xl shadow-2xl flex flex-col h-full relative overflow-hidden font-chakra"
           >
             <div className="p-8 border-b-4 border-[#1a1a1a] flex justify-between items-start bg-black/40 relative z-20 shrink-0">
                <div>
-                 <div className="bg-primary px-2 py-0.5 text-[10px] font-black text-black tracking-widest uppercase inline-block mb-2">MODIFICAÇÃO-DE-PROTOCOLO</div>
+                 <div className="bg-primary px-2 py-0.5 text-[10px] font-black text-black tracking-widest uppercase inline-block mb-2">{t('accounts.edit.protocol')}</div>
                  <h3 className="font-black text-3xl text-white uppercase tracking-tighter">Diretrizes da <span className="text-primary">Conta</span></h3>
                </div>
                <button onClick={() => { setEditingAccount(null); setResetPasswordValue(""); }} className="text-zinc-600 hover:text-white transition-all material-symbols-outlined -mt-2">close</button>
@@ -685,7 +710,7 @@ export default function UserRegistry({
             
             <div className="flex-1 overflow-y-auto custom-scrollbar p-8 bg-black/40 space-y-10">
               <div className="bg-[#1a1a1a] p-5 border-l-4 border-primary rounded-r-sm shadow-inner group">
-                 <span className="text-[9px] font-black text-zinc-500 uppercase tracking-[0.3em] block mb-2 group-hover:text-primary transition-colors">Canal de Comunicação Autenticado</span>
+                 <span className="text-[9px] font-black text-zinc-500 uppercase tracking-[0.3em] block mb-2 group-hover:text-primary transition-colors">{t('accounts.edit.channel')}</span>
                  <span className="text-sm font-mono font-bold text-primary tracking-widest">{editingAccount.email}</span>
                  <p className="font-mono text-[9px] text-zinc-600 uppercase tracking-widest font-bold mt-2">
                    UID: {editingAccount.uid}
@@ -695,25 +720,25 @@ export default function UserRegistry({
               {/* Nome Mestre + Notas */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="group">
-                  <label className="block text-[9px] font-black text-zinc-500 uppercase tracking-[0.3em] mb-2">Nome Mestre</label>
+                  <label className="block text-[9px] font-black text-zinc-500 uppercase tracking-[0.3em] mb-2">{t('accounts.edit.masterName')}</label>
                   <div className="relative">
-                    <input type="text" value={editMasterName} onChange={(e) => setEditMasterName(e.target.value)} placeholder="EX: JOÃO_SILVA"
+                    <input type="text" value={editMasterName} onChange={(e) => setEditMasterName(e.target.value)} placeholder={t('accounts.edit.masterPlaceholder')}
                       className="w-full bg-black/60 border-2 border-[#1a1a1a] text-white px-4 py-4 text-[11px] font-black outline-none uppercase rounded-sm transition-all focus:border-primary placeholder:text-zinc-700" />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-[9px] font-black text-zinc-500 uppercase tracking-[0.3em] mb-2">Observações do GM</label>
+                  <label className="block text-[9px] font-black text-zinc-500 uppercase tracking-[0.3em] mb-2">{t('accounts.edit.notes')}</label>
                   <textarea value={editNotes} onChange={(e) => setEditNotes(e.target.value)} placeholder="Notas sobre este jogador..." rows={3}
                     className="w-full bg-black/60 border-2 border-[#1a1a1a] text-white px-4 py-3 text-[11px] font-sans outline-none rounded-sm transition-all focus:border-primary placeholder:text-zinc-700 resize-none custom-scrollbar" />
                 </div>
               </div>
               <div className="flex justify-end">
-                <button onClick={() => handleSaveAccountDetails(editingAccount.uid)} className="bg-primary hover:bg-primary-container text-black px-8 py-3 rounded-sm font-black text-[10px] tracking-widest uppercase transition-all active:scale-95 glow-orange shadow-lg">Salvar Dados</button>
+                <button onClick={() => handleSaveAccountDetails(editingAccount.uid)} className="bg-primary hover:bg-primary-container text-black px-8 py-3 rounded-sm font-black text-[10px] tracking-widest uppercase transition-all active:scale-95 glow-orange shadow-lg">{t('accounts.edit.save')}</button>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-10 pt-8 border-t border-white/5">
                  <div className="space-y-4">
-                    <label className="block text-[9px] font-black text-zinc-500 uppercase tracking-[0.3em] mb-4">Hardware</label>
+                    <label className="block text-[9px] font-black text-zinc-500 uppercase tracking-[0.3em] mb-4">{t('reports.hardware')}</label>
                     <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest leading-relaxed">
                       Autorização DOS/Mac fica em Sistema → Acesso (grants persistentes). Push durante a sessão fica no Ao Vivo.
                     </p>
@@ -726,7 +751,7 @@ export default function UserRegistry({
                     </a>
                  </div>
                  <div className="space-y-4">
-                    <label className="block text-[9px] font-black text-zinc-500 uppercase tracking-[0.3em] mb-4">Nível de Autoridade</label>
+                    <label className="block text-[9px] font-black text-zinc-500 uppercase tracking-[0.3em] mb-4">{t('accounts.edit.authorityLevel')}</label>
                     <select value={editingAccount.role} onChange={(e) => handleUpdateAccountFlag(editingAccount.uid, 'role', e.target.value as any)}
                       className="w-full bg-black/60 border-2 border-[#1a1a1a] text-primary text-[11px] font-black px-4 py-4 outline-none transition-all uppercase rounded-sm cursor-pointer shadow-inner focus:border-primary">
                       <option value="player">PLAYER (RECRUTA)</option>
@@ -737,7 +762,7 @@ export default function UserRegistry({
 
               {/* Suspender Conta */}
               <div className="pt-8 border-t border-white/5">
-                <label className="block text-[9px] font-black text-zinc-500 uppercase tracking-[0.3em] mb-4">Controle de Acesso</label>
+                <label className="block text-[9px] font-black text-zinc-500 uppercase tracking-[0.3em] mb-4">{t('accounts.edit.accessControl')}</label>
                 <button onClick={() => handleToggleSuspend(editingAccount.uid, !!editingAccount.suspended)}
                   className={`w-full flex items-center justify-between px-6 py-5 border-2 transition-all rounded-sm shadow-inner ${editingAccount.suspended ? 'bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20' : 'bg-[#1a1a1a] border-transparent text-zinc-400 hover:text-white hover:border-white/10'}`}>
                   <span className="text-[10px] font-black uppercase tracking-widest">{editingAccount.suspended ? '⛔ CONTA SUSPENSA — CLIQUE PARA REATIVAR' : 'SUSPENDER CONTA'}</span>
@@ -746,12 +771,12 @@ export default function UserRegistry({
               </div>
 
               <div className="pt-8 border-t border-white/5 pb-8">
-                <label className="block text-[9px] font-black text-zinc-500 uppercase tracking-[0.3em] mb-4">Redefinição de Credenciais de Campo</label>
+                <label className="block text-[9px] font-black text-zinc-500 uppercase tracking-[0.3em] mb-4">{t('accounts.edit.resetCreds')}</label>
                 <div className="flex gap-4">
-                  <input type="password" value={resetPasswordValue} onChange={(e) => setResetPasswordValue(e.target.value)} placeholder="NOVA_SENHA_SIGILOSA..."
+                  <input type="password" value={resetPasswordValue} onChange={(e) => setResetPasswordValue(e.target.value)} placeholder="NOVA SENHA SIGILOSA..."
                     className="flex-1 bg-black/60 border-2 border-[#1a1a1a] text-white px-4 py-4 text-[11px] font-mono outline-none uppercase rounded-sm transition-all focus:border-primary placeholder:text-zinc-700" />
                   <button onClick={() => handleResetPassword(editingAccount.uid)} disabled={resetPasswordLoading || !resetPasswordValue}
-                    className="bg-[#1a1a1a] text-primary hover:bg-primary hover:text-black disabled:opacity-20 disabled:hover:bg-[#1a1a1a] disabled:hover:text-primary px-8 py-4 text-[11px] font-black uppercase tracking-widest transition-all rounded-sm active:scale-95 shadow-lg border-2 border-primary/20 hover:border-primary">Resetar</button>
+                    className="bg-[#1a1a1a] text-primary hover:bg-primary hover:text-black disabled:opacity-20 disabled:hover:bg-[#1a1a1a] disabled:hover:text-primary px-8 py-4 text-[11px] font-black uppercase tracking-widest transition-all rounded-sm active:scale-95 shadow-lg border-2 border-primary/20 hover:border-primary">{t('accounts.edit.reset')}</button>
                 </div>
               </div>
             </div>
@@ -792,13 +817,13 @@ export default function UserRegistry({
                 <div className="h-0.5 w-0 bg-emerald-500 transition-all duration-300 group-focus-within:w-full" />
               </div>
               <div className="group">
-                <label className="block text-[9px] font-display font-bold text-industrial-silver/40 uppercase tracking-widest mb-2 group-focus-within:text-emerald-500 transition-colors">Senha Provisória</label>
+                <label className="block text-[9px] font-display font-bold text-industrial-silver/40 uppercase tracking-widest mb-2 group-focus-within:text-emerald-500 transition-colors">{t('accounts.createPassword')}</label>
                 <input type="password" value={newUserPassword} onChange={(e) => setNewUserPassword(e.target.value)} placeholder="••••••" className="w-full bg-surface-container-lowest border-none text-white px-5 py-4 text-[11px] font-mono outline-none uppercase rounded-sm shadow-inner transition-all" required minLength={6} />
                 <div className="h-0.5 w-0 bg-emerald-500 transition-all duration-300 group-focus-within:w-full" />
               </div>
 
               <div className="pt-10 flex justify-end gap-6 items-center">
-                <button type="button" onClick={() => setShowCreateUser(false)} className="text-[10px] font-display font-bold text-industrial-silver/30 hover:text-white uppercase tracking-widest transition-colors">Abortar</button>
+                <button type="button" onClick={() => setShowCreateUser(false)} className="text-[10px] font-display font-bold text-industrial-silver/30 hover:text-white uppercase tracking-widest transition-colors">{t('accounts.abort')}</button>
                 <button type="submit" disabled={createUserLoading} className="bg-emerald-600 text-black px-12 py-4 rounded-sm font-display font-bold text-[11px] tracking-widest uppercase hover:bg-emerald-500 transition-all active:scale-95 shadow-lg flex items-center gap-3">
                   {createUserLoading ? <RetroSpinner /> : 'REGISTRAR'}
                 </button>

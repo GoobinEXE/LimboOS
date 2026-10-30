@@ -1,4 +1,5 @@
 import React, { useRef, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion } from 'motion/react';
 import { INDICATOR_SPRING } from './constants';
 
@@ -11,6 +12,7 @@ interface TapeProgressProps {
 const pad = (n: number) => String(n).padStart(2, '0');
 
 export const TapeProgress = ({ total, current, onChange }: TapeProgressProps) => {
+  const { t } = useTranslation('player');
   const barRef = useRef<HTMLDivElement>(null);
 
   const resolveIndex = useCallback((clientX: number) => {
@@ -43,7 +45,7 @@ export const TapeProgress = ({ total, current, onChange }: TapeProgressProps) =>
         className="relative w-full py-4 -my-4 touch-none"
         onPointerDown={handlePointerDown}
         role="slider"
-        aria-label="Navegação entre campanhas"
+        aria-label={t('campaign.progressAria')}
         aria-valuemin={0}
         aria-valuemax={total - 1}
         aria-valuenow={current}
@@ -74,7 +76,7 @@ export const TapeProgress = ({ total, current, onChange }: TapeProgressProps) =>
         <span className="text-primary/80">{pad(Math.min(current + 1, Math.max(total, 1)))}</span>
         <span className="opacity-50">/</span>
         <span>{pad(total)}</span>
-        <span className="text-protocol text-[8px] ml-2 opacity-70">Registros</span>
+        <span className="text-protocol text-[8px] ml-2 opacity-70">{t('campaign.progressRecords')}</span>
       </div>
     </div>
   );

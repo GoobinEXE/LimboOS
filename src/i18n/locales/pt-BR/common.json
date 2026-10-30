@@ -1,0 +1,163 @@
+{
+  "language": {
+    "label": "Idioma"
+  },
+  "loading": "SINTONIZANDO...",
+  "loadingSub": "Buscando sinal na frequência 87.5 MHz",
+  "loadingSystem": "SISTEMA CARREGANDO...",
+  "loadingSystemSub": "Inicializando protocolos de acesso",
+  "cancel": "Cancelar",
+  "close": "Fechar",
+  "save": "Salvar",
+  "edit": "Editar",
+  "back": "Voltar",
+  "confirm": "Confirmar",
+  "retry": "Tentar Novamente",
+  "error": "Erro",
+  "unknown": "Desconhecido",
+  "none": "—",
+  "you": "VOCÊ",
+  "now": "Agora",
+  "active": "Ativa",
+  "classified": "CLASSIFICADO",
+  "classifiedAlt": "Classificado",
+  "nivel": "Nível",
+  "statusLabel": "Status",
+  "id": "ID",
+  "profileAlt": "Perfil",
+  "closeAria": "Fechar",
+  "brand": {
+    "limbo": "Limbo",
+    "os": "OS",
+    "rmLink": "RM-LINK",
+    "smileIndustries": "Indústrias Smile // Divisão de Segurança",
+    "smileCopyright": "Indústrias Smile © 2026"
+  },
+  "actions": {
+    "cancelShort": "[CANC]",
+    "saveShort": "[SALV]",
+    "backBracket": "[VOLTAR]",
+    "exitBracket": "[SAIR]",
+    "closeBracket": "[ FECHAR ]",
+    "disconnectBracket": "[ DESCONECTAR ]",
+    "x": "[X]",
+    "env": "[ENV]"
+  },
+  "status": {
+    "ativo": "ATIVO",
+    "eliminado": "ELIMINADO",
+    "desaparecido": "DESAPARECIDO"
+  },
+  "danger": {
+    "none": "—",
+    "baixo": "BAIXO",
+    "moderado": "MODERADO",
+    "elevado": "ELEVADO",
+    "alto": "ALTO",
+    "critico": "CRÍTICO",
+    "label": "Periculosidade",
+    "labelUpper": "PERICULOSIDADE"
+  },
+  "access": {
+    "restrito": "RESTRITO",
+    "confidencial": "CONFIDENCIAL",
+    "sigiloso": "SIGILOSO",
+    "topSecret": "TOP SECRET",
+    "desconhecido": "DESCONHECIDO"
+  },
+  "intelType": {
+    "audio": "📼 Áudio",
+    "text": "💾 Textos",
+    "visual": "📷 Imagens",
+    "meta": "🏆 Conquistas",
+    "video": "📺 Vídeo",
+    "unknown": "❓ Desconhecido"
+  },
+  "achievement": {
+    "tier": {
+      "common": "Comum",
+      "rare": "Rara",
+      "legendary": "Lendária",
+      "commonUpper": "COMUM",
+      "rareUpper": "RARA",
+      "legendaryUpper": "LENDÁRIA"
+    },
+    "platform": {
+      "walkman": "Walkman",
+      "nokia": "Nokia",
+      "global": "Agência"
+    },
+    "category": {
+      "progression": "Progressão",
+      "exploration": "Exploração",
+      "lore": "Lore",
+      "mechanics": "Mecânica",
+      "honor": "Honra"
+    },
+    "locked": "Conquista Bloqueada",
+    "lockedNokia": "BLOQUEADO",
+    "unlockHow": "Como desbloquear: {{condition}}",
+    "exploreMore": "Permaneça atento e explore mais.",
+    "raresCount": "raras {{count}}"
+  },
+  "gallery": {
+    "tab": {
+      "locais": "Locais",
+      "pistas": "Pistas",
+      "pessoas": "Pessoas",
+      "itens": "Itens"
+    },
+    "emptyTitle": "Arquivo visual vazio",
+    "emptyHint": "Novas evidências aparecerão aqui quando forem liberadas.",
+    "emptyCategory": "Nenhum registro nesta categoria",
+    "emptyNokia": "ARQUIVO VAZIO.",
+    "noRecordsNokia": "SEM REGISTROS",
+    "viewerTitle": "IMG_VIEWER.EXE",
+    "evidenceVisual": "Evidência visual",
+    "imgIndex": "IMG_{{n}}"
+  },
+  "toast": {
+    "protocol": {
+      "intel": "SINAL // INTEL",
+      "error": "FALHA // SISTEMA"
+    },
+    "achievement": {
+      "header": "REGISTRO // MEDALHA DESBLOQUEADA",
+      "class": "CLASSE // {{tier}}"
+    }
+  },
+  "errorBoundary": {
+    "title": "CRITICAL SYSTEM FAILURE",
+    "body": "O módulo encontrou uma instabilidade irrecuperável nos protocolos de interface. O registro foi enviado para o centro de comando.",
+    "reload": "Reiniciar Protocolos"
+  },
+  "auth": {
+    "error": {
+      "forbiddenChars": "CARACTERES PROIBIDOS DETECTADOS PELA SEGURANÇA",
+      "suspended": "CONTA SUSPENSA: Contate o administrador.",
+      "weakPassword": "Senha muito fraca (mínimo 6 caracteres).",
+      "wrongPassword": "FALHA NA AUTENTICAÇÃO: SENHA INCORRETA",
+      "invalidCredentials": "FALHA NA AUTENTICAÇÃO: CREDENCIAIS INVÁLIDAS",
+      "noConnection": "SEM CONEXÃO: verifique a rede.",
+      "createProfile": "Erro ao criar perfil.",
+      "profileNotFound": "Perfil não encontrado. Contate o administrador.",
+      "profileTimeout": "Perfil não provisionado a tempo. Tente novamente em instantes.",
+      "cancelled": "OPERAÇÃO CANCELADA PELO USUÁRIO",
+      "emailInUse": "E-mail já cadastrado através de outro método de login.",
+      "unexpected": "Erro inesperado ({{code}})",
+      "provider": "Erro no login via provedor ({{code}})"
+    }
+  },
+  "os": {
+    "file": "Arquivo",
+    "edit": "Editar",
+    "view": "Exibir",
+    "help": "Ajuda",
+    "special": "Especial",
+    "close": "Fechar",
+    "closeWindowAria": "Fechar janela",
+    "start": "Iniciar",
+    "shutdown": "Desligar...",
+    "window": "Janela"
+  }
+}

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { createPortal } from 'react-dom';
 import { format } from 'date-fns';
 import { motion } from 'motion/react';
@@ -13,13 +14,15 @@ import { intelService } from '../../services/IntelService';
 import IntelDistributionDrawer from './IntelDistributionDrawer';
 import { useModal } from './ConfirmModal';
 import Screw from '../../components/player/Screw';
-import { ALL_ACHIEVEMENTS } from '../../data/achievements';
+import { useAchievementCatalog } from '../../hooks/useAchievementCatalog';
 import { achievementLabel, intelTitleLabel } from '../lib/entityLabels';
+import { ADMIN_SPRING } from '../lib/motion';
 import {
   isAchievementEarned,
   parseAchievementGrantId,
 } from '../../services/AchievementManager';
 import { resolveCampaignPlatform } from '../../data/campaigns';
+import { extractSpotifyEmbedUrl, isValidSpotifyPlaylistInput } from '../../lib/spotify';
 
 interface AgentDossierViewProps {
   uid: string;
@@ -30,6 +33,7 @@ interface AgentDossierViewProps {
 }
 
 export default function AgentDossierView({ uid, character, masterAccount, onClose, onUpdate }: AgentDossierViewProps) {
+  const { t } = useTranslation('admin');
   const [details, setDetails] = useState<{
     intel: { id: string; unlockedAt: any }[];
     playCounts: any[];
@@ -41,6 +45,7 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
   const [showGrantModal, setShowGrantModal] = useState(false);
   const [editingChar, setEditingChar] = useState<Partial<CharacterData>>(character);
   const [saveLoading, setSaveLoading] = useState(false);
+  const [spotifyError, setSpotifyError] = useState('');
   
   const [showTransferModal, setShowTransferModal] = useState(false);
   const [allAccounts, setAllAccounts] = useState<MasterAccount[]>([]);
@@ -59,6 +64,7 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
   []);
 
   const { showConfirm, modal } = useModal();
+  const { achievements } = useAchievementCatalog();
 
   useEffect(() => {
     loadDetails();
@@ -84,9 +90,25 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
 
 
   const handleUpdateChar = async () => {
+    const spotifyUrl = (editingChar.spotifyPlaylistUrl || '').trim();
+    if (!isValidSpotifyPlaylistInput(spotifyUrl)) {
+      setSpotifyError(t('dossier.spotifyInvalid'));
+      return;
+    }
+    setSpotifyError('');
     setSaveLoading(true);
     try {
-      await userService.updateCharacter(uid, character.id, editingChar);
+      await userService.updateCharacter(uid, character.id, {
+        dangerLevel: editingChar.dangerLevel,
+        agentStatus: editingChar.agentStatus,
+        spotifyPlaylistUrl: spotifyUrl,
+      });
+      activityLogger.logAdmin(
+        'gm.mpg',
+        'character_update',
+        `Atualizou dossiê de ${character.codinome}`,
+        { uid, charId: character.id, spotify: Boolean(spotifyUrl) }
+      );
       onUpdate();
     } catch (error) {
       console.error("Error updating character:", error);
@@ -119,7 +141,7 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
   };
 
   const handleDeleteChar = async () => {
-    const ok = await showConfirm('Excluir Definitivamente', `AVISO CRÍTICO: Exclusão permanente destruirá todos os dados do agente "${character.codinome}". Esta ação não pode ser desfeita. Confirmar?`, 'Excluir Permanentemente');
+    const ok = await showConfirm(t('dossier.deleteTitle'), t('dossier.deleteBody', { name: character.codinome }), t('dossier.deleteAction'));
     if (!ok) return;
     setSaveLoading(true);
     try {
@@ -149,7 +171,7 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
 
   const handleConfirmTransfer = async () => {
     if (!transferTarget) return;
-    const ok = await showConfirm('Transferir Agente', 'Esta operação moverá todos os dados do personagem para a conta selecionada. Confirmar?', 'Transferir');
+    const ok = await showConfirm(t('dossier.transferTitle'), t('dossier.transferBody'), t('dossier.transferAction'));
     if (!ok) return;
     setSaveLoading(true);
     try {
@@ -165,7 +187,7 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
   };
 
   const handleRemoveIntel = async (intelId: string) => {
-    const ok = await showConfirm('Remover Item', "Remover este item do inventário do agente?", 'Remover');
+    const ok = await showConfirm(t('dossier.removeItemTitle'), t('dossier.removeItemBody'), t('jukebox.removeAction'));
     if (!ok) return;
     await intelService.revokeIntel(uid, character.id, intelId);
     activityLogger.logAdmin('gm.mpg', 'inventory_remove', `Removeu intel ${intelId} de ${character.codinome}`, { uid, charId: character.id, intelId });
@@ -182,7 +204,7 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
   };
 
   const handleRevokeAchievement = async (achId: string) => {
-    const ok = await showConfirm('Revogar Medalha', `Deseja revogar a medalha ${achId}?`, 'Revogar');
+    const ok = await showConfirm(t('dossier.revokeMedalTitle'), t('dossier.revokeMedalBody', { id: achId }), t('dossier.revokeMedalAction'));
     if (!ok) return;
     await userService.revokeUserAchievement(uid, character.id, achId);
     activityLogger.logAdmin('gm.mpg', 'achievement_revoke', `Revogou medalha ${achId} de ${character.codinome}`, { uid, charId: character.id, achId });
@@ -202,8 +224,8 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
         initial={{ x: '100%' }}
         animate={{ x: 0 }}
         exit={{ x: '100%' }}
-        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-        className="bg-[#222] border-l-8 border-[#1a1a1a] w-full max-w-3xl shadow-2xl flex flex-col h-full relative overflow-hidden font-chakra"
+        transition={ADMIN_SPRING}
+        className="bg-[#222] border-l-8 border-[#1a1a1a] w-full max-w-5xl shadow-2xl flex flex-col h-full relative overflow-hidden font-chakra"
       >
         <Screw className="top-4 left-4" /><Screw className="top-4 right-4 -rotate-90" /><Screw className="bottom-4 left-4 -rotate-90" /><Screw className="bottom-4 right-4" />
         <div className="noise-overlay" /><div className="scanlines" />
@@ -252,7 +274,7 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
                 
                 <div className="flex flex-wrap gap-8 items-end mt-4">
                    <div className="space-y-2">
-                      <span className="text-[9px] font-black text-zinc-500 uppercase tracking-widest block">Nível_de_Ameaça</span>
+                      <span className="text-[9px] font-black text-zinc-500 uppercase tracking-widest block">Nível de Ameaça</span>
                       <div className="flex gap-1.5">
                         {[1,2,3,4,5].map(lv => (
                           <div 
@@ -264,13 +286,13 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
                       </div>
                    </div>
                    <div className="space-y-2">
-                      <span className="text-[9px] font-black text-zinc-500 uppercase tracking-widest block">Status_Identidade</span>
+                      <span className="text-[9px] font-black text-zinc-500 uppercase tracking-widest block">Status Identidade</span>
                       <select 
                         value={editingChar.agentStatus} 
                         onChange={(e) => setEditingChar(prev => ({ ...prev, agentStatus: e.target.value as any }))}
                         className="bg-black/60 border-2 border-[#1a1a1a] text-[10px] font-black text-primary px-4 py-2 outline-none uppercase rounded-sm focus:border-primary"
                       >
-                        <option value="vivo">ATIVO</option>
+                        <option value="vivo">{t('accounts.status.active')}</option>
                         <option value="morto">ELIMINADO</option>
                         <option value="desaparecido">DESAPARECIDO</option>
                       </select>
@@ -295,14 +317,14 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
                             <div className="fixed inset-0 z-40" onClick={() => setIsMenuOpen(false)} />
                             <div className="absolute top-full right-0 mt-2 bg-black border-2 border-[#1a1a1a] shadow-xl rounded-sm w-48 z-50">
                               <button onClick={() => { setIsMenuOpen(false); handleOpenTransfer(); }} className="w-full text-left px-4 py-3 text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-2 border-b border-[#1a1a1a]">
-                                <span className="material-symbols-outlined text-sm">swap_horiz</span> Transferir
+                                <span className="material-symbols-outlined text-sm">swap_horiz</span> {t('dossier.transferAction')}
                               </button>
                               <button onClick={() => { setIsMenuOpen(false); handleArchiveChar(); }} className="w-full text-left px-4 py-3 text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-yellow-500 hover:bg-yellow-500/10 transition-all flex items-center gap-2 border-b border-[#1a1a1a]">
                                 <span className="material-symbols-outlined text-sm">{character.archived ? 'unarchive' : 'inventory_2'}</span> 
                                 {character.archived ? 'Desarquivar' : 'Arquivar'}
                               </button>
                               <button onClick={() => { setIsMenuOpen(false); handleDeleteChar(); }} className="w-full text-left px-4 py-3 text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-red-500 hover:bg-red-500/10 transition-all flex items-center gap-2">
-                                <span className="material-symbols-outlined text-sm">delete_forever</span> Excluir
+                                <span className="material-symbols-outlined text-sm">delete_forever</span> {t('squads.confirm.deleteAction')}
                               </button>
                             </div>
                           </>
@@ -318,7 +340,7 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
         <div className="flex-1 flex flex-col lg:flex-row overflow-hidden relative z-10">
           
           {/* Sidebar / Stats */}
-          <div className="w-full lg:w-80 border-r-4 border-[#1a1a1a] bg-black/20 p-8 space-y-10 overflow-y-auto custom-scrollbar">
+          <div className="w-full lg:w-96 lg:shrink-0 border-r-4 border-[#1a1a1a] bg-black/20 p-8 space-y-10 overflow-y-auto overflow-x-hidden custom-scrollbar min-w-0">
              <div>
                 <div className="flex justify-between items-center mb-4 border-b border-white/5 pb-2">
                    <h3 className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.3em]">Esquadrões Vinculados</h3>
@@ -339,25 +361,75 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
              </div>
 
              <div>
-                <h3 className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.3em] mb-6 border-b border-white/5 pb-2">Atividade_em_Campo</h3>
-                <div className="grid grid-cols-2 gap-4">
-                   <StatBox label="Tempo_Escuta" value={formatSecs(details?.stats?.totalListenTime || 0)} />
-                   <StatBox label="Fidget_Log" value={details?.stats?.fidgetClicks || 0} />
-                   <StatBox label="Screw_Log" value={details?.stats?.screwClicks || 0} />
-                   <StatBox label="Pico_Volume" value={formatSecs(details?.stats?.maxVolumeTime || 0)} />
+                <div className="flex flex-wrap justify-between items-center gap-2 mb-4 border-b border-white/5 pb-2">
+                   <h3 className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.3em]">{t('dossier.spotifyTitle')}</h3>
+                   {(editingChar.spotifyPlaylistUrl || '').trim() && (
+                     <button
+                       type="button"
+                       onClick={() => {
+                         setEditingChar((prev) => ({ ...prev, spotifyPlaylistUrl: '' }));
+                         setSpotifyError('');
+                       }}
+                       className="text-[9px] font-black uppercase tracking-widest text-zinc-600 hover:text-red-400 transition-colors shrink-0"
+                     >
+                       {t('dossier.spotifyClear')}
+                     </button>
+                   )}
+                </div>
+                <div className="space-y-3">
+                  <input
+                    type="url"
+                    value={editingChar.spotifyPlaylistUrl || ''}
+                    onChange={(e) => {
+                      setEditingChar((prev) => ({ ...prev, spotifyPlaylistUrl: e.target.value }));
+                      setSpotifyError('');
+                    }}
+                    placeholder={t('dossier.spotifyPlaceholder')}
+                    className="w-full bg-black/60 border-2 border-[#1a1a1a] text-[10px] font-mono text-zinc-300 px-3 py-2.5 outline-none rounded-sm focus:border-primary placeholder:text-zinc-700"
+                  />
+                  <p className="text-[8px] font-bold text-zinc-600 uppercase tracking-wider leading-relaxed">
+                    {t('dossier.spotifyHint')}
+                  </p>
+                  {spotifyError && (
+                    <p className="text-[9px] font-black text-red-400 uppercase tracking-wider">{spotifyError}</p>
+                  )}
+                  {extractSpotifyEmbedUrl(editingChar.spotifyPlaylistUrl || '') && (
+                    <div className="overflow-hidden rounded-sm border border-white/5 bg-black">
+                      <iframe
+                        src={extractSpotifyEmbedUrl(editingChar.spotifyPlaylistUrl || '')!}
+                        width="100%"
+                        height="152"
+                        frameBorder="0"
+                        allow="autoplay; encrypted-media; fullscreen"
+                        loading="lazy"
+                        title="Spotify"
+                        className="block"
+                      />
+                    </div>
+                  )}
                 </div>
              </div>
 
              <div>
-                <div className="flex justify-between items-center mb-6 border-b border-white/5 pb-2">
-                   <h3 className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.3em]">Medalhas_Detectadas</h3>
-                   <div className="relative">
-                     <button onClick={() => setShowAchievementSelect(!showAchievementSelect)} className="text-[9px] bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 px-2 py-1 rounded-sm uppercase font-black transition-all">OUTORGAR_MEDALHA</button>
+                <h3 className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.3em] mb-6 border-b border-white/5 pb-2">Atividade em Campo</h3>
+                <div className="grid grid-cols-2 gap-4">
+                   <StatBox label="Tempo Escuta" value={formatSecs(details?.stats?.totalListenTime || 0)} />
+                   <StatBox label="Fidget Log" value={details?.stats?.fidgetClicks || 0} />
+                   <StatBox label="Screw Log" value={details?.stats?.screwClicks || 0} />
+                   <StatBox label="Pico Volume" value={formatSecs(details?.stats?.maxVolumeTime || 0)} />
+                </div>
+             </div>
+
+             <div>
+                <div className="flex flex-wrap justify-between items-center gap-2 mb-6 border-b border-white/5 pb-2">
+                   <h3 className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.3em]">Medalhas Detectadas</h3>
+                   <div className="relative shrink-0">
+                     <button onClick={() => setShowAchievementSelect(!showAchievementSelect)} className="text-[9px] bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 px-2 py-1 rounded-sm uppercase font-black transition-all">OUTORGAR MEDALHA</button>
                      {showAchievementSelect && (
                        <>
                          <div className="fixed inset-0 z-40" onClick={() => setShowAchievementSelect(false)} />
                          <div className="absolute top-full right-0 mt-2 bg-black border-2 border-[#1a1a1a] shadow-xl rounded-sm w-56 z-50 max-h-64 overflow-y-auto custom-scrollbar">
-                           {ALL_ACHIEVEMENTS.filter(
+                           {achievements.filter(
                              (a) => !isAchievementEarned(details?.achievements || [], a.id, character.campaignId)
                            ).map((a) => (
                              <button key={a.id} onClick={() => handleGrantAchievement(a.id)} className="w-full text-left px-4 py-3 text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3 border-b border-[#1a1a1a]">
@@ -373,7 +445,7 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
                    {details?.achievements && details.achievements.length > 0 ? (
                      details.achievements.map(achId => {
                        const { achievementId, campaignId: grantCamp } = parseAchievementGrantId(achId);
-                       const achDef = ALL_ACHIEVEMENTS.find(a => a.id === achievementId);
+                       const achDef = achievements.find(a => a.id === achievementId);
                        return (
                          <div key={achId} className="flex items-center justify-between p-3 bg-black/40 border border-white/5 rounded-sm group hover:border-primary/20 transition-all">
                             <div className="flex items-center gap-4">
@@ -397,7 +469,7 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
                      })
                    ) : (
                      <div className="p-8 text-center border-2 border-dashed border-white/5 rounded-sm opacity-20">
-                        <p className="text-[9px] font-black uppercase tracking-widest">Nenhuma_Medalha</p>
+                        <p className="text-[9px] font-black uppercase tracking-widest">Nenhuma Medalha</p>
                      </div>
                    )}
                 </div>
@@ -408,19 +480,19 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
                   onClick={() => setShowGrantModal(true)}
                   className="w-full py-4 bg-primary/5 text-primary border-2 border-primary/20 font-black text-[10px] uppercase tracking-[0.3em] hover:bg-primary hover:text-black transition-all flex items-center justify-center gap-3 rounded-sm active:scale-95 shadow-lg"
                 >
-                  <span className="material-symbols-outlined text-sm">add_box</span> LIBERAR_INTEL
+                  <span className="material-symbols-outlined text-sm">add_box</span> LIBERAR INTEL
                 </button>
              </div>
           </div>
 
           {/* Main Inventory Grid */}
-          <div className="flex-1 bg-black/40 p-8 overflow-y-auto custom-scrollbar">
+          <div className="flex-1 min-w-0 bg-black/40 p-8 overflow-y-auto custom-scrollbar">
              <div className="flex justify-between items-center mb-8">
                 <div className="flex items-center gap-3">
                    <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                   <h3 className="text-[11px] font-black text-white uppercase tracking-[0.3em]">Cofre_de_Evidências</h3>
+                   <h3 className="text-[11px] font-black text-white uppercase tracking-[0.3em]">Cofre de Evidências</h3>
                 </div>
-                <span className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest">Registros_Totais: {details?.intel.length}</span>
+                <span className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest">Registros Totais: {details?.intel.length}</span>
              </div>
 
              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -472,7 +544,7 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
                 {details?.intel.length === 0 && (
                   <div className="col-span-full p-32 text-center border-4 border-dashed border-[#1a1a1a] rounded-2xl opacity-20 flex flex-col items-center justify-center">
                     <span className="material-symbols-outlined text-6xl mb-4">folder_off</span>
-                    <p className="text-[12px] font-black uppercase tracking-[0.4em]">Inventário_Inativo</p>
+                    <p className="text-[12px] font-black uppercase tracking-[0.4em]">Inventário Inativo</p>
                   </div>
                 )}
              </div>
@@ -509,7 +581,7 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
               </select>
 
               <div className="flex justify-end gap-3">
-                <button onClick={() => setShowTransferModal(false)} className="px-6 py-3 text-[10px] font-black text-zinc-500 hover:text-white uppercase tracking-widest transition-colors">Cancelar</button>
+                <button onClick={() => setShowTransferModal(false)} className="px-6 py-3 text-[10px] font-black text-zinc-500 hover:text-white uppercase tracking-widest transition-colors">{t('accounts.cancel')}</button>
                 <button 
                   onClick={handleConfirmTransfer} 
                   disabled={!transferTarget || saveLoading}

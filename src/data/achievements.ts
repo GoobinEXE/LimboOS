@@ -1,18 +1,9 @@
 import type { PlayerStats } from '../types/player';
 import type { IntelItem } from '../types/intel';
+import type { AchievementDef } from '../types/achievement';
 import {
-  Achievement,
-  AudioTapeCountRule,
-  ListenTimeRule,
-  SecretTapeRule,
-  LoreRule,
-  RapidScanRule,
-  MechanicsRule,
-  FlagRule,
-  AllFlagsRule,
-  ManualRule,
   achievementManager,
-  EvaluationContext,
+  type EvaluationContext,
   type PlayerPlatform,
 } from '../services/AchievementManager';
 
@@ -21,203 +12,501 @@ const icon = (id: string) => `/achievements/${id}.png`;
 const WALKMAN_LR: PlayerPlatform[] = ['walkman'];
 const NOKIA_SB: PlayerPlatform[] = ['nokia'];
 const GLOBAL: PlayerPlatform[] = ['global'];
-const CAM_LR = ['last-rewind'] as string[];
-const CAM_SB = ['last-rewind-side-b'] as string[];
+const CAM_LR = ['last-rewind'];
+const CAM_SB = ['last-rewind-side-b'];
 
-const registerAchievements = () => {
-  // --- Progressão (Walkman / LAST REWIND) ---
-  achievementManager.register(new Achievement(
-    'ACH-FIRST', 'Primeiro Contato', 'Deu o primeiro passo neste abismo.', icon('ACH-FIRST'), '???',
-    new AudioTapeCountRule(1), 'Encontrar e escanear 1 fita de áudio.', 'progression', 'common', true, WALKMAN_LR, CAM_LR
-  ));
-  achievementManager.register(new Achievement(
-    'ACH-THREE', 'Colecionador', 'Uma pequena amostra do que está por vir.', icon('ACH-THREE'), '???',
-    new AudioTapeCountRule(3), 'Escanear 3 fitas de áudio diferentes.', 'progression', 'common', true, WALKMAN_LR, CAM_LR
-  ));
-  achievementManager.register(new Achievement(
-    'ACH-FIVE', 'Arquivista', 'A busca pelo conhecimento nunca termina.', icon('ACH-FIVE'), '???',
-    new AudioTapeCountRule(4), 'Escanear 4 fitas de áudio diferentes.', 'progression', 'rare', true, WALKMAN_LR, CAM_LR
-  ));
-  achievementManager.register(new Achievement(
-    'ACH-ALL', 'Biblioteca Completa', 'Nada mais escapa da sua percepção.', icon('ACH-ALL'), '???',
-    new AudioTapeCountRule(5), 'Escanear todas as 5 fitas normais da 1ª temporada.', 'progression', 'legendary', true, WALKMAN_LR, CAM_LR
-  ));
-  achievementManager.register(new Achievement(
-    'ACH-LISTENER', 'Agente Ativo', 'Apenas escutando os recados.', icon('ACH-LISTENER'), '???',
-    new ListenTimeRule(120), 'Acumular 2 minutos de escuta.', 'progression', 'common', true, WALKMAN_LR, CAM_LR
-  ));
-  achievementManager.register(new Achievement(
-    'ACH-TIME-30', 'Sinal Sustentado', 'O ruído branco já não incomoda.', icon('ACH-TIME-30'), '???',
-    new ListenTimeRule(1800), 'Acumular 30 minutos de escuta total.', 'progression', 'common', true, WALKMAN_LR, CAM_LR
-  ));
-  achievementManager.register(new Achievement(
-    'ACH-TIME-1', 'Ouvinte Assíduo', 'Sons começam a fazer parte do silêncio.', icon('ACH-TIME-1'), '???',
-    new ListenTimeRule(3600), 'Acumular 1 hora de escuta.', 'progression', 'rare', true, WALKMAN_LR, CAM_LR
-  ));
-  achievementManager.register(new Achievement(
-    'ACH-TIME-10', 'Audiófilo', 'Vozes ecoam pela cabeça.', icon('ACH-TIME-10'), '???',
-    new ListenTimeRule(36000), 'Acumular 10 horas de escuta.', 'progression', 'rare', true, WALKMAN_LR, CAM_LR
-  ));
-  achievementManager.register(new Achievement(
-    'ACH-TIME-50', 'Fita Gasta', 'Você já esqueceu como era a vida antes.', icon('ACH-TIME-50'), '???',
-    new ListenTimeRule(180000), 'Acumular 50 horas de reprodução.', 'progression', 'legendary', true, WALKMAN_LR, CAM_LR
-  ));
-  achievementManager.register(new Achievement(
-    'ACH-FULL-LISTEN', 'Fim da Fita', 'O clique final do carretel.', icon('ACH-FULL-LISTEN'), '???',
-    new MechanicsRule('fullTapeListens', 1), 'Ouvir uma fita inteira até o fim.', 'progression', 'common', true, WALKMAN_LR, CAM_LR
-  ));
-  achievementManager.register(new Achievement(
-    'ACH-FAST-SCAN', 'Data Miner', 'Rápido demais para o sistema.', icon('ACH-FAST-SCAN'), '???',
-    new RapidScanRule(3), 'Escanear 3 fitas em menos de 5 minutos.', 'progression', 'rare', true, WALKMAN_LR, CAM_LR
-  ));
+function def(
+  partial: Omit<AchievementDef, 'enabled' | 'source' | 'hint' | 'isSecret'> & {
+    hint?: string;
+    isSecret?: boolean;
+    enabled?: boolean;
+    source?: AchievementDef['source'];
+  },
+): AchievementDef {
+  return {
+    hint: '???',
+    isSecret: true,
+    enabled: true,
+    source: 'suggestion',
+    ...partial,
+  };
+}
 
-  // --- Exploração ---
-  achievementManager.register(new Achievement(
-    'ACH-BIOS-BOOT', 'POST Completo', 'O firmware ainda responde.', icon('ACH-BIOS-BOOT'), '???',
-    new FlagRule('biosOpened'), 'Abrir o terminal BIOS pela primeira vez.', 'exploration', 'common', true, GLOBAL, 'global'
-  ));
-  achievementManager.register(new Achievement(
-    'ACH-WIN95-BOOT', 'Plug and Play', 'Bem-vindo a 1995.', icon('ACH-WIN95-BOOT'), '???',
-    new FlagRule('win95Opened'), 'Inicializar o Windows 95 pelo terminal.', 'exploration', 'common', true, GLOBAL, 'global'
-  ));
-  achievementManager.register(new Achievement(
-    'ACH-OS-TRIPLE', 'Trindade de Interfaces', 'CLI, GUI e o que veio antes.', icon('ACH-OS-TRIPLE'), '???',
-    new AllFlagsRule(['biosOpened', 'win95Opened', 'macosOpened']),
-    'Visitar BIOS, Windows 95 e Mac OS pelo menos uma vez.', 'exploration', 'rare', true, GLOBAL, 'global'
-  ));
-  achievementManager.register(new Achievement(
-    'ACH-ARCHIVE-OPEN', 'Arquivo Aberto', 'Papel, pixels e ruído de scanner.', icon('ACH-ARCHIVE-OPEN'), '???',
-    new FlagRule('archiveOpened'), 'Abrir um intel visual ou textual no leitor de evidências.', 'exploration', 'common', true, WALKMAN_LR, CAM_LR
-  ));
-  achievementManager.register(new Achievement(
-    'ACH-REPAIR-APP', 'Engenheiro de Software', 'Interfaces visuais em um mundo CLI.', icon('ACH-REPAIR-APP'), '???',
-    new ManualRule(), 'Iniciar o aplicativo de reparo de discos.', 'exploration', 'common', true, GLOBAL, 'global'
-  ));
-  achievementManager.register(new Achievement(
-    'ACH-REPAIR-FAIL', 'Setor Defeituoso', 'A agulha não consegue ler o caos de primeira.', icon('ACH-REPAIR-FAIL'), '???',
-    new ManualRule(), 'Diagnosticar o disquete corrompido.', 'exploration', 'rare', true, GLOBAL, 'global'
-  ));
-  achievementManager.register(new Achievement(
-    'ACH-REPAIR-SUCCESS', 'A Verdade no Zero', 'O conteúdo da fenda foi restaurado.', icon('ACH-REPAIR-SUCCESS'), '???',
-    new ManualRule(), 'Reparar o disquete e ler a mensagem oculta.', 'exploration', 'legendary', true, GLOBAL, 'global'
-  ));
+/** Pack de sugestões (não registra no boot — importável pelo admin). */
+export const SUGGESTED_ACHIEVEMENTS: AchievementDef[] = [
+  def({
+    id: 'ACH-FIRST',
+    title: 'Primeiro Contato',
+    description: 'Deu o primeiro passo neste abismo.',
+    iconUrl: icon('ACH-FIRST'),
+    rule: { type: 'audioTapeCount', count: 1 },
+    unlockCondition: 'Encontrar e escanear 1 fita de áudio.',
+    category: 'progression',
+    tier: 'common',
+    platforms: WALKMAN_LR,
+    campaignIds: CAM_LR,
+  }),
+  def({
+    id: 'ACH-THREE',
+    title: 'Colecionador',
+    description: 'Uma pequena amostra do que está por vir.',
+    iconUrl: icon('ACH-THREE'),
+    rule: { type: 'audioTapeCount', count: 3 },
+    unlockCondition: 'Escanear 3 fitas de áudio diferentes.',
+    category: 'progression',
+    tier: 'common',
+    platforms: WALKMAN_LR,
+    campaignIds: CAM_LR,
+  }),
+  def({
+    id: 'ACH-FIVE',
+    title: 'Arquivista',
+    description: 'A busca pelo conhecimento nunca termina.',
+    iconUrl: icon('ACH-FIVE'),
+    rule: { type: 'audioTapeCount', count: 4 },
+    unlockCondition: 'Escanear 4 fitas de áudio diferentes.',
+    category: 'progression',
+    tier: 'rare',
+    platforms: WALKMAN_LR,
+    campaignIds: CAM_LR,
+  }),
+  def({
+    id: 'ACH-ALL',
+    title: 'Biblioteca Completa',
+    description: 'Nada mais escapa da sua percepção.',
+    iconUrl: icon('ACH-ALL'),
+    rule: { type: 'audioTapeCount', count: 5 },
+    unlockCondition: 'Escanear todas as 5 fitas normais da 1ª temporada.',
+    category: 'progression',
+    tier: 'legendary',
+    platforms: WALKMAN_LR,
+    campaignIds: CAM_LR,
+  }),
+  def({
+    id: 'ACH-LISTENER',
+    title: 'Agente Ativo',
+    description: 'Apenas escutando os recados.',
+    iconUrl: icon('ACH-LISTENER'),
+    rule: { type: 'listenTime', seconds: 120 },
+    unlockCondition: 'Acumular 2 minutos de escuta.',
+    category: 'progression',
+    tier: 'common',
+    platforms: WALKMAN_LR,
+    campaignIds: CAM_LR,
+  }),
+  def({
+    id: 'ACH-TIME-30',
+    title: 'Sinal Sustentado',
+    description: 'O ruído branco já não incomoda.',
+    iconUrl: icon('ACH-TIME-30'),
+    rule: { type: 'listenTime', seconds: 1800 },
+    unlockCondition: 'Acumular 30 minutos de escuta total.',
+    category: 'progression',
+    tier: 'common',
+    platforms: WALKMAN_LR,
+    campaignIds: CAM_LR,
+  }),
+  def({
+    id: 'ACH-TIME-1',
+    title: 'Ouvinte Assíduo',
+    description: 'Sons começam a fazer parte do silêncio.',
+    iconUrl: icon('ACH-TIME-1'),
+    rule: { type: 'listenTime', seconds: 3600 },
+    unlockCondition: 'Acumular 1 hora de escuta.',
+    category: 'progression',
+    tier: 'rare',
+    platforms: WALKMAN_LR,
+    campaignIds: CAM_LR,
+  }),
+  def({
+    id: 'ACH-TIME-10',
+    title: 'Audiófilo',
+    description: 'Vozes ecoam pela cabeça.',
+    iconUrl: icon('ACH-TIME-10'),
+    rule: { type: 'listenTime', seconds: 36000 },
+    unlockCondition: 'Acumular 10 horas de escuta.',
+    category: 'progression',
+    tier: 'rare',
+    platforms: WALKMAN_LR,
+    campaignIds: CAM_LR,
+  }),
+  def({
+    id: 'ACH-TIME-50',
+    title: 'Fita Gasta',
+    description: 'Você já esqueceu como era a vida antes.',
+    iconUrl: icon('ACH-TIME-50'),
+    rule: { type: 'listenTime', seconds: 180000 },
+    unlockCondition: 'Acumular 50 horas de reprodução.',
+    category: 'progression',
+    tier: 'legendary',
+    platforms: WALKMAN_LR,
+    campaignIds: CAM_LR,
+  }),
+  def({
+    id: 'ACH-FULL-LISTEN',
+    title: 'Fim da Fita',
+    description: 'O clique final do carretel.',
+    iconUrl: icon('ACH-FULL-LISTEN'),
+    rule: { type: 'mechanics', statKey: 'fullTapeListens', target: 1 },
+    unlockCondition: 'Ouvir uma fita inteira até o fim.',
+    category: 'progression',
+    tier: 'common',
+    platforms: WALKMAN_LR,
+    campaignIds: CAM_LR,
+  }),
+  def({
+    id: 'ACH-FAST-SCAN',
+    title: 'Data Miner',
+    description: 'Rápido demais para o sistema.',
+    iconUrl: icon('ACH-FAST-SCAN'),
+    rule: { type: 'rapidScan', count: 3 },
+    unlockCondition: 'Escanear 3 fitas em menos de 5 minutos.',
+    category: 'progression',
+    tier: 'rare',
+    platforms: WALKMAN_LR,
+    campaignIds: CAM_LR,
+  }),
+  def({
+    id: 'ACH-BIOS-BOOT',
+    title: 'POST Completo',
+    description: 'O firmware ainda responde.',
+    iconUrl: icon('ACH-BIOS-BOOT'),
+    rule: { type: 'flag', statKey: 'biosOpened' },
+    unlockCondition: 'Abrir o terminal BIOS pela primeira vez.',
+    category: 'exploration',
+    tier: 'common',
+    platforms: GLOBAL,
+    campaignIds: 'global',
+  }),
+  def({
+    id: 'ACH-WIN95-BOOT',
+    title: 'Plug and Play',
+    description: 'Bem-vindo a 1995.',
+    iconUrl: icon('ACH-WIN95-BOOT'),
+    rule: { type: 'flag', statKey: 'win95Opened' },
+    unlockCondition: 'Inicializar o Windows 95 pelo terminal.',
+    category: 'exploration',
+    tier: 'common',
+    platforms: GLOBAL,
+    campaignIds: 'global',
+  }),
+  def({
+    id: 'ACH-OS-TRIPLE',
+    title: 'Trindade de Interfaces',
+    description: 'CLI, GUI e o que veio antes.',
+    iconUrl: icon('ACH-OS-TRIPLE'),
+    rule: { type: 'allFlags', statKeys: ['biosOpened', 'win95Opened', 'macosOpened'] },
+    unlockCondition: 'Visitar BIOS, Windows 95 e Mac OS pelo menos uma vez.',
+    category: 'exploration',
+    tier: 'rare',
+    platforms: GLOBAL,
+    campaignIds: 'global',
+  }),
+  def({
+    id: 'ACH-ARCHIVE-OPEN',
+    title: 'Arquivo Aberto',
+    description: 'Papel, pixels e ruído de scanner.',
+    iconUrl: icon('ACH-ARCHIVE-OPEN'),
+    rule: { type: 'flag', statKey: 'archiveOpened' },
+    unlockCondition: 'Abrir um intel visual ou textual no leitor de evidências.',
+    category: 'exploration',
+    tier: 'common',
+    platforms: WALKMAN_LR,
+    campaignIds: CAM_LR,
+  }),
+  def({
+    id: 'ACH-REPAIR-APP',
+    title: 'Engenheiro de Software',
+    description: 'Interfaces visuais em um mundo CLI.',
+    iconUrl: icon('ACH-REPAIR-APP'),
+    rule: { type: 'manual' },
+    unlockCondition: 'Iniciar o aplicativo de reparo de discos.',
+    category: 'exploration',
+    tier: 'common',
+    platforms: GLOBAL,
+    campaignIds: 'global',
+  }),
+  def({
+    id: 'ACH-REPAIR-FAIL',
+    title: 'Setor Defeituoso',
+    description: 'A agulha não consegue ler o caos de primeira.',
+    iconUrl: icon('ACH-REPAIR-FAIL'),
+    rule: { type: 'manual' },
+    unlockCondition: 'Diagnosticar o disquete corrompido.',
+    category: 'exploration',
+    tier: 'rare',
+    platforms: GLOBAL,
+    campaignIds: 'global',
+  }),
+  def({
+    id: 'ACH-REPAIR-SUCCESS',
+    title: 'A Verdade no Zero',
+    description: 'O conteúdo da fenda foi restaurado.',
+    iconUrl: icon('ACH-REPAIR-SUCCESS'),
+    rule: { type: 'manual' },
+    unlockCondition: 'Reparar o disquete e ler a mensagem oculta.',
+    category: 'exploration',
+    tier: 'legendary',
+    platforms: GLOBAL,
+    campaignIds: 'global',
+  }),
+  def({
+    id: 'ACH-SECRET',
+    title: 'Você Não Deveria Estar Aqui',
+    description: 'Algumas coisas devem permanecer ocultas.',
+    iconUrl: icon('ACH-SECRET'),
+    rule: { type: 'secretTape' },
+    unlockCondition: 'Desbloquear qualquer intel marcado como secreto.',
+    category: 'lore',
+    tier: 'rare',
+    platforms: GLOBAL,
+    campaignIds: 'global',
+  }),
+  def({
+    id: 'ACH-LORE-ANALOG',
+    title: 'Viajante Analógico',
+    description: 'A entidade na fita magnetizada.',
+    iconUrl: icon('ACH-LORE-ANALOG'),
+    rule: { type: 'loreKeyword', keyword: 'analog_traveler' },
+    unlockCondition: 'Desbloquear uma fita do artista Analog_Traveler.',
+    category: 'lore',
+    tier: 'rare',
+    platforms: GLOBAL,
+    campaignIds: 'global',
+  }),
+  def({
+    id: 'ACH-LIMBO-FOUND',
+    title: 'Despertar',
+    description: 'Onde nós realmente estamos?',
+    iconUrl: icon('ACH-LIMBO-FOUND'),
+    rule: { type: 'manual' },
+    unlockCondition: 'Acessar o BBS secreto Limbo_01.',
+    category: 'lore',
+    tier: 'rare',
+    platforms: GLOBAL,
+    campaignIds: 'global',
+  }),
+  def({
+    id: 'ACH-LIMBO-READ',
+    title: 'O Ponto Zero',
+    description: 'Agora você não pode mais fechar os olhos.',
+    iconUrl: icon('ACH-LIMBO-READ'),
+    rule: { type: 'manual' },
+    unlockCondition: 'Ler todas as threads do arquivo do BBS Limbo_01.',
+    category: 'lore',
+    tier: 'legendary',
+    platforms: GLOBAL,
+    campaignIds: 'global',
+  }),
+  def({
+    id: 'ACH-MECH-SCREW',
+    title: 'Mecânico',
+    description: 'Curiosidade desmontada.',
+    iconUrl: icon('ACH-MECH-SCREW'),
+    rule: { type: 'mechanics', statKey: 'screwClicks', target: 15 },
+    unlockCondition: 'Clicar nos parafusos do deck (mín. 15).',
+    category: 'mechanics',
+    tier: 'common',
+    platforms: WALKMAN_LR,
+    campaignIds: CAM_LR,
+  }),
+  def({
+    id: 'ACH-MECH-MARRETA',
+    title: 'Eu vou pegar a minha marreeeeeta',
+    description: 'Como os botões podem ser fidget toys.',
+    iconUrl: icon('ACH-MECH-MARRETA'),
+    rule: { type: 'mechanics', statKey: 'fidgetClicks', target: 500 },
+    unlockCondition: 'Acumular 500 cliques em botões, scroll e parafusos.',
+    category: 'mechanics',
+    tier: 'legendary',
+    platforms: WALKMAN_LR,
+    campaignIds: CAM_LR,
+  }),
+  def({
+    id: 'ACH-MECH-INDECISIVE',
+    title: 'Indeciso',
+    description: 'A ilusão da escolha.',
+    iconUrl: icon('ACH-MECH-INDECISIVE'),
+    rule: { type: 'mechanics', statKey: 'ejectWithoutPlay', target: 10 },
+    unlockCondition: 'Ejetar a fita 10 vezes sem dar play.',
+    category: 'mechanics',
+    tier: 'rare',
+    platforms: WALKMAN_LR,
+    campaignIds: CAM_LR,
+  }),
+  def({
+    id: 'ACH-VOL-MAX',
+    title: 'Tímpanos de Aço',
+    description: 'Gritos abafados pelo ruído.',
+    iconUrl: icon('ACH-VOL-MAX'),
+    rule: { type: 'mechanics', statKey: 'maxVolumeTime', target: 300 },
+    unlockCondition: 'Manter volume em 100% por 5 minutos cumulativos.',
+    category: 'mechanics',
+    tier: 'rare',
+    platforms: WALKMAN_LR,
+    campaignIds: CAM_LR,
+  }),
+  def({
+    id: 'ACH-VOL-ZERO',
+    title: 'Silêncio Tático',
+    description: 'Apenas o silêncio.',
+    iconUrl: icon('ACH-VOL-ZERO'),
+    rule: { type: 'mechanics', statKey: 'zeroVolumeTime', target: 180 },
+    unlockCondition: 'Manter volume em 0 com áudio tocando por 3 minutos.',
+    category: 'mechanics',
+    tier: 'rare',
+    platforms: WALKMAN_LR,
+    campaignIds: CAM_LR,
+  }),
+  def({
+    id: 'ACH-MODE-FIDGET',
+    title: 'Sinal Confuso',
+    description: 'O display não sabe o que mostrar.',
+    iconUrl: icon('ACH-MODE-FIDGET'),
+    rule: { type: 'mechanics', statKey: 'modeSwitches', target: 25 },
+    unlockCondition: 'Alternar o modo de display do walkman 25 vezes.',
+    category: 'mechanics',
+    tier: 'common',
+    platforms: WALKMAN_LR,
+    campaignIds: CAM_LR,
+  }),
+  def({
+    id: 'ACH-VETERAN',
+    title: 'Veterano da Agência',
+    description: 'Uma honra concedida apenas pelo Alto Escalão.',
+    iconUrl: icon('ACH-VETERAN'),
+    rule: { type: 'manual' },
+    unlockCondition: 'Outorgada manualmente pelo administrador.',
+    category: 'honor',
+    tier: 'legendary',
+    platforms: GLOBAL,
+    campaignIds: 'global',
+  }),
+  def({
+    id: 'ACH-LR-WAKES',
+    title: 'Velório sob Chuva',
+    description: 'A cidade ainda não sabe o que perdeu.',
+    iconUrl: icon('ACH-LR-WAKES'),
+    rule: { type: 'manual' },
+    unlockCondition: 'Outorgar após Cap. 1 (velório / igreja).',
+    category: 'lore',
+    tier: 'common',
+    platforms: WALKMAN_LR,
+    campaignIds: CAM_LR,
+  }),
+  def({
+    id: 'ACH-LR-DEMO',
+    title: 'Demo Urgente',
+    description: 'Uma fita que não deveria existir.',
+    iconUrl: icon('ACH-LR-DEMO'),
+    rule: { type: 'manual' },
+    unlockCondition: 'Outorgar após a banda ouvir a fita DEMO na garagem (Ato 1 Cap 2).',
+    category: 'lore',
+    tier: 'common',
+    platforms: WALKMAN_LR,
+    campaignIds: CAM_LR,
+  }),
+  def({
+    id: 'ACH-LR-CLOCK',
+    title: 'Contra o Relógio',
+    description: 'Trinta minutos. Nem um a mais.',
+    iconUrl: icon('ACH-LR-CLOCK'),
+    rule: { type: 'manual' },
+    unlockCondition: 'Outorgar após investigação do quarto (sem nomear Ponto Zero na UI do jogador).',
+    category: 'exploration',
+    tier: 'rare',
+    platforms: WALKMAN_LR,
+    campaignIds: CAM_LR,
+  }),
+  def({
+    id: 'ACH-LR-BENCH',
+    title: 'Bancada Quente',
+    description: 'Solda, cheiro de estanho, circuito aberto.',
+    iconUrl: icon('ACH-LR-BENCH'),
+    rule: { type: 'manual' },
+    unlockCondition: 'Outorgar após Circuitos da Emy / Walkman na mesa.',
+    category: 'exploration',
+    tier: 'rare',
+    platforms: WALKMAN_LR,
+    campaignIds: CAM_LR,
+  }),
+  def({
+    id: 'ACH-LR-CAB',
+    title: 'Zero no Painel',
+    description: 'O contador parou onde não deveria.',
+    iconUrl: icon('ACH-LR-CAB'),
+    rule: { type: 'manual' },
+    unlockCondition: 'Outorgar após Crazy Zone (arcade travado). Ícone genérico — sem Crazy Taxi.',
+    category: 'exploration',
+    tier: 'rare',
+    platforms: WALKMAN_LR,
+    campaignIds: CAM_LR,
+  }),
+  def({
+    id: 'ACH-LR-STAGE',
+    title: 'Palco Escolhido',
+    description: 'Barricada, cabo e volume.',
+    iconUrl: icon('ACH-LR-STAGE'),
+    rule: { type: 'manual' },
+    unlockCondition: 'Outorgar após preparativos do Ato 3 (sem spoiler de combate/resgate).',
+    category: 'lore',
+    tier: 'rare',
+    platforms: WALKMAN_LR,
+    campaignIds: CAM_LR,
+  }),
+  def({
+    id: 'ACH-SB-SIGNAL',
+    title: 'Inbox Fantasma',
+    description: 'O aparelho vibra com o que a cidade não admite.',
+    iconUrl: icon('ACH-SB-SIGNAL'),
+    rule: { type: 'manual' },
+    unlockCondition: 'Auto: primeira leitura de SMS no companion Nokia. Fallback: outorgar na mesa.',
+    category: 'lore',
+    tier: 'common',
+    platforms: NOKIA_SB,
+    campaignIds: CAM_SB,
+  }),
+  def({
+    id: 'ACH-SB-SHARED',
+    title: 'Mesma Frequência',
+    description: 'Todos acordaram com o mesmo ruído.',
+    iconUrl: icon('ACH-SB-SHARED'),
+    rule: { type: 'manual' },
+    unlockCondition: 'Outorgar após cena do pesadelo compartilhado (sem 03:33 legível no ícone).',
+    category: 'lore',
+    tier: 'rare',
+    platforms: NOKIA_SB,
+    campaignIds: CAM_SB,
+  }),
+  def({
+    id: 'ACH-SB-KNOCK',
+    title: 'Batida na Porta',
+    description: 'Papelada à meia-noite.',
+    iconUrl: icon('ACH-SB-KNOCK'),
+    rule: { type: 'manual' },
+    unlockCondition: 'Outorgar após batida policial.',
+    category: 'lore',
+    tier: 'rare',
+    platforms: NOKIA_SB,
+    campaignIds: CAM_SB,
+  }),
+  def({
+    id: 'ACH-SB-PAGER',
+    title: 'Bipe Fora de Época',
+    description: 'Um sinal que não deveria existir em 2003.',
+    iconUrl: icon('ACH-SB-PAGER'),
+    rule: { type: 'manual' },
+    unlockCondition:
+      'Manual até existir QR/pager no Firestore. Outorgar ao escanear o pager prop do guia LimboOS.',
+    category: 'exploration',
+    tier: 'rare',
+    platforms: NOKIA_SB,
+    campaignIds: CAM_SB,
+  }),
+];
 
-  // --- Lore ---
-  achievementManager.register(new Achievement(
-    'ACH-SECRET', 'Você Não Deveria Estar Aqui', 'Algumas coisas devem permanecer ocultas.', icon('ACH-SECRET'), '???',
-    new SecretTapeRule(), 'Desbloquear qualquer intel marcado como secreto.', 'lore', 'rare', true, GLOBAL, 'global'
-  ));
-  achievementManager.register(new Achievement(
-    'ACH-LORE-ANALOG', 'Viajante Analógico', 'A entidade na fita magnetizada.', icon('ACH-LORE-ANALOG'), '???',
-    new LoreRule('analog_traveler'), 'Desbloquear uma fita do artista Analog_Traveler.', 'lore', 'rare', true, GLOBAL, 'global'
-  ));
-  achievementManager.register(new Achievement(
-    'ACH-LIMBO-FOUND', 'Despertar', 'Onde nós realmente estamos?', icon('ACH-LIMBO-FOUND'), '???',
-    new ManualRule(), 'Acessar o BBS secreto Limbo_01.', 'lore', 'rare', true, GLOBAL, 'global'
-  ));
-  achievementManager.register(new Achievement(
-    'ACH-LIMBO-READ', 'O Ponto Zero', 'Agora você não pode mais fechar os olhos.', icon('ACH-LIMBO-READ'), '???',
-    new ManualRule(), 'Ler todas as threads do arquivo do BBS Limbo_01.', 'lore', 'legendary', true, GLOBAL, 'global'
-  ));
-
-  // --- Mecânica / easter eggs (Walkman) ---
-  achievementManager.register(new Achievement(
-    'ACH-MECH-SCREW', 'Mecânico', 'Curiosidade desmontada.', icon('ACH-MECH-SCREW'), '???',
-    new MechanicsRule('screwClicks', 15), 'Clicar nos parafusos do deck (mín. 15).', 'mechanics', 'common', true, WALKMAN_LR, CAM_LR
-  ));
-  achievementManager.register(new Achievement(
-    'ACH-MECH-MARRETA', 'Eu vou pegar a minha marreeeeeta', 'Como os botões podem ser fidget toys.', icon('ACH-MECH-MARRETA'), '???',
-    new MechanicsRule('fidgetClicks', 500), 'Acumular 500 cliques em botões, scroll e parafusos.', 'mechanics', 'legendary', true, WALKMAN_LR, CAM_LR
-  ));
-  achievementManager.register(new Achievement(
-    'ACH-MECH-INDECISIVE', 'Indeciso', 'A ilusão da escolha.', icon('ACH-MECH-INDECISIVE'), '???',
-    new MechanicsRule('ejectWithoutPlay', 10), 'Ejetar a fita 10 vezes sem dar play.', 'mechanics', 'rare', true, WALKMAN_LR, CAM_LR
-  ));
-  achievementManager.register(new Achievement(
-    'ACH-VOL-MAX', 'Tímpanos de Aço', 'Gritos abafados pelo ruído.', icon('ACH-VOL-MAX'), '???',
-    new MechanicsRule('maxVolumeTime', 300), 'Manter volume em 100% por 5 minutos cumulativos.', 'mechanics', 'rare', true, WALKMAN_LR, CAM_LR
-  ));
-  achievementManager.register(new Achievement(
-    'ACH-VOL-ZERO', 'Silêncio Tático', 'Apenas o silêncio.', icon('ACH-VOL-ZERO'), '???',
-    new MechanicsRule('zeroVolumeTime', 180), 'Manter volume em 0 com áudio tocando por 3 minutos.', 'mechanics', 'rare', true, WALKMAN_LR, CAM_LR
-  ));
-  achievementManager.register(new Achievement(
-    'ACH-MODE-FIDGET', 'Sinal Confuso', 'O display não sabe o que mostrar.', icon('ACH-MODE-FIDGET'), '???',
-    new MechanicsRule('modeSwitches', 25), 'Alternar o modo de display do walkman 25 vezes.', 'mechanics', 'common', true, WALKMAN_LR, CAM_LR
-  ));
-
-  // --- Honra ---
-  achievementManager.register(new Achievement(
-    'ACH-VETERAN', 'Veterano da Agência', 'Uma honra concedida apenas pelo Alto Escalão.', icon('ACH-VETERAN'), '???',
-    new ManualRule(), 'Outorgada manualmente pelo administrador.', 'honor', 'legendary', true, GLOBAL, 'global'
-  ));
-
-  // --- Lore narrativa T1 — LAST REWIND (Walkman) — outorga GM ---
-  achievementManager.register(new Achievement(
-    'ACH-LR-WAKES', 'Velório sob Chuva', 'A cidade ainda não sabe o que perdeu.', icon('ACH-LR-WAKES'), '???',
-    new ManualRule(),
-    'Outorgar após Cap. 1 (velório / igreja).',
-    'lore', 'common', true, WALKMAN_LR, CAM_LR
-  ));
-  achievementManager.register(new Achievement(
-    'ACH-LR-DEMO', 'Demo Urgente', 'Uma fita que não deveria existir.', icon('ACH-LR-DEMO'), '???',
-    new ManualRule(),
-    'Outorgar após a banda ouvir a fita DEMO na garagem (Ato 1 Cap 2).',
-    'lore', 'common', true, WALKMAN_LR, CAM_LR
-  ));
-  achievementManager.register(new Achievement(
-    'ACH-LR-CLOCK', 'Contra o Relógio', 'Trinta minutos. Nem um a mais.', icon('ACH-LR-CLOCK'), '???',
-    new ManualRule(),
-    'Outorgar após investigação do quarto (sem nomear Ponto Zero na UI do jogador).',
-    'exploration', 'rare', true, WALKMAN_LR, CAM_LR
-  ));
-  achievementManager.register(new Achievement(
-    'ACH-LR-BENCH', 'Bancada Quente', 'Solda, cheiro de estanho, circuito aberto.', icon('ACH-LR-BENCH'), '???',
-    new ManualRule(),
-    'Outorgar após Circuitos da Emy / Walkman na mesa.',
-    'exploration', 'rare', true, WALKMAN_LR, CAM_LR
-  ));
-  achievementManager.register(new Achievement(
-    'ACH-LR-CAB', 'Zero no Painel', 'O contador parou onde não deveria.', icon('ACH-LR-CAB'), '???',
-    new ManualRule(),
-    'Outorgar após Crazy Zone (arcade travado). Ícone genérico — sem Crazy Taxi.',
-    'exploration', 'rare', true, WALKMAN_LR, CAM_LR
-  ));
-  achievementManager.register(new Achievement(
-    'ACH-LR-STAGE', 'Palco Escolhido', 'Barricada, cabo e volume.', icon('ACH-LR-STAGE'), '???',
-    new ManualRule(),
-    'Outorgar após preparativos do Ato 3 (sem spoiler de combate/resgate).',
-    'lore', 'rare', true, WALKMAN_LR, CAM_LR
-  ));
-
-  // --- Lore narrativa T2 — SIDE B (Nokia) ---
-  achievementManager.register(new Achievement(
-    'ACH-SB-SIGNAL', 'Inbox Fantasma', 'O aparelho vibra com o que a cidade não admite.', icon('ACH-SB-SIGNAL'), '???',
-    new ManualRule(),
-    'Auto: primeira leitura de SMS no companion Nokia. Fallback: outorgar na mesa.',
-    'lore', 'common', true, NOKIA_SB, CAM_SB
-  ));
-  achievementManager.register(new Achievement(
-    'ACH-SB-SHARED', 'Mesma Frequência', 'Todos acordaram com o mesmo ruído.', icon('ACH-SB-SHARED'), '???',
-    new ManualRule(),
-    'Outorgar após cena do pesadelo compartilhado (sem 03:33 legível no ícone).',
-    'lore', 'rare', true, NOKIA_SB, CAM_SB
-  ));
-  achievementManager.register(new Achievement(
-    'ACH-SB-KNOCK', 'Batida na Porta', 'Papelada à meia-noite.', icon('ACH-SB-KNOCK'), '???',
-    new ManualRule(),
-    'Outorgar após batida policial.',
-    'lore', 'rare', true, NOKIA_SB, CAM_SB
-  ));
-  achievementManager.register(new Achievement(
-    'ACH-SB-PAGER', 'Bipe Fora de Época', 'Um sinal que não deveria existir em 2003.', icon('ACH-SB-PAGER'), '???',
-    new ManualRule(),
-    'Manual até existir QR/pager no Firestore. Outorgar ao escanear o pager prop do guia LimboOS.',
-    'exploration', 'rare', true, NOKIA_SB, CAM_SB
-  ));
-};
-
-registerAchievements();
+// Fallback em memória até o subscribe remoto (ou se coleção vazia).
+achievementManager.replaceCatalog(SUGGESTED_ACHIEVEMENTS);
 
 export interface AchievableProfile {
   unlockedIntelIds: string[];
@@ -225,14 +514,17 @@ export interface AchievableProfile {
   stats: PlayerStats;
 }
 
-export const ALL_ACHIEVEMENTS = achievementManager.getAll();
+/** Snapshot vivo do manager (preferir useAchievementCatalog na UI). */
+export function getAllAchievements() {
+  return achievementManager.getAll();
+}
 
 export function checkNewAchievements(
   profile: AchievableProfile,
   unlockedIntel: IntelItem[],
   rapidScanCount: number = 0,
   campaignId: string = 'unscoped',
-  platform: PlayerPlatform = 'walkman'
+  platform: PlayerPlatform = 'walkman',
 ) {
   const context: EvaluationContext = {
     profile,

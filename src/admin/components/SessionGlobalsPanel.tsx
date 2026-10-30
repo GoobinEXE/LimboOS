@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 import { ShieldBan, ShieldCheck } from 'lucide-react';
 import { db } from '../../lib/firebase';
@@ -11,6 +12,7 @@ import { LIMBO_THREAD_COUNT } from '../../components/LimboBoard';
  * Controles globais de sessão (Limbo + DiskRepair) — vivem no Ao Vivo.
  */
 export default function SessionGlobalsPanel() {
+  const { t } = useTranslation('admin');
   const [limboState, setLimboState] = useState<LimboGlobalState>({ seized: false });
   const [diskRepairAllowed, setDiskRepairAllowed] = useState(false);
 
@@ -55,18 +57,18 @@ export default function SessionGlobalsPanel() {
       >
         <div className="flex items-center justify-between">
           <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-industrial-silver/40">
-            LIMBO_01 global
+            {t('sessionGlobals.limboTitle')}
           </h3>
           {limboState.seized && <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />}
         </div>
         <div className="flex items-center gap-3 font-display font-black uppercase text-base">
           {limboState.seized ? (
             <span className="text-red-500 flex items-center gap-2">
-              <ShieldBan size={18} /> MILITAR_LOCK
+              <ShieldBan size={18} /> {t('sessionGlobals.militaryLock')}
             </span>
           ) : (
             <span className="text-emerald-500 flex items-center gap-2">
-              <ShieldCheck size={18} /> GRID_OPEN
+              <ShieldCheck size={18} /> {t('sessionGlobals.gridOpen')}
             </span>
           )}
         </div>
@@ -75,11 +77,14 @@ export default function SessionGlobalsPanel() {
             limboState.seized ? 'text-red-500/70' : 'text-emerald-500/70'
           }`}
         >
-          Leitura global [{(limboState.readThreadIds || []).length}/{LIMBO_THREAD_COUNT}]
+          {t('sessionGlobals.readGlobal', {
+            read: (limboState.readThreadIds || []).length,
+            total: LIMBO_THREAD_COUNT,
+          })}
         </p>
         <div className="bg-primary/5 border border-primary/20 p-3 rounded-sm">
           <p className="text-[9px] font-display font-black text-primary uppercase tracking-widest mb-1">
-            IP DOS → Limbo
+            {t('sessionGlobals.ipHint')}
           </p>
           <p className="text-sm font-mono font-black text-white tracking-wider">212.45.1.1</p>
         </div>
@@ -92,18 +97,18 @@ export default function SessionGlobalsPanel() {
               : 'bg-[#333] border-white/5 text-zinc-400 hover:bg-[#444]'
           } active:scale-95`}
         >
-          {limboState.seized ? 'NORMALIZAR' : 'FORÇAR USArmy'}
+          {limboState.seized ? t('sessionGlobals.normalize') : t('sessionGlobals.forceUsarmy')}
         </button>
       </div>
 
       <div className="bg-surface-container-low border border-primary/10 p-5 rounded-sm flex flex-col gap-4">
         <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-industrial-silver/40">
-          Protocolos RPG
+          {t('sessionGlobals.protocols')}
         </h3>
         <div className="flex items-center justify-between p-4 bg-black/40 border border-white/5 rounded-sm">
           <div>
-            <p className="font-display font-black text-sm text-white uppercase">DiskRepair.exe</p>
-            <p className="text-[9px] text-zinc-600 font-bold uppercase mt-1">Desmagnetização remota</p>
+            <p className="font-display font-black text-sm text-white uppercase">{t('sessionGlobals.diskRepair')}</p>
+            <p className="text-[9px] text-zinc-600 font-bold uppercase mt-1">{t('sessionGlobals.diskRepairDesc')}</p>
           </div>
           <button
             type="button"
@@ -125,7 +130,7 @@ export default function SessionGlobalsPanel() {
           </button>
         </div>
         <p className="text-[9px] text-zinc-600 font-display font-bold uppercase tracking-wide leading-relaxed">
-          Controles de sessão. Autorização persistente de hardware fica em Sistema → Acesso.
+          {t('sessionGlobals.hint')}
         </p>
       </div>
     </div>

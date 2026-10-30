@@ -1,11 +1,15 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { collection, onSnapshot, query, orderBy, limit, getDocs, writeBatch, Timestamp, collectionGroup } from 'firebase/firestore';
+import { motion, AnimatePresence } from 'motion/react';
 import { db } from '../../lib/firebase';
 import { useModal } from './ConfirmModal';
 import { wipeAllUserData, type WipeProgress } from '../wipeUsers';
 import { userService } from '../../services/UserService';
 import { masterAccountLabelByUid, characterLabelByKey } from '../lib/entityLabels';
 import type { MasterAccount } from '../../types/player';
+import { getIntlLocale } from '../../i18n/dateLocale';
+import { ADMIN_FADE, listItem, staggerDelay } from '../lib/motion';
 
 interface LogEntry {
   id: string;
@@ -56,13 +60,16 @@ const LogRow = React.memo(({
   onToggle,
   users,
   characterMap,
+  index = 0,
 }: {
   entry: LogEntry;
   isExpanded: boolean;
   onToggle: (id: string) => void;
   users: MasterAccount[];
   characterMap: Map<string, string>;
+  index?: number;
 }) => {
+  const { t } = useTranslation('admin');
   const severity = SEVERITY[entry.type] || SEVERITY.action;
   const typeColor = TYPE_COLORS[entry.type] || TYPE_COLORS.action;
   const typeIcon = TYPE_ICONS[entry.type] || TYPE_ICONS.action;
@@ -70,12 +77,21 @@ const LogRow = React.memo(({
   const formatTimestamp = (ts: any) => {
     if (!ts?.toDate) return '—';
     const d = ts.toDate();
-    return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }) +
-      ' ' + d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    const loc = getIntlLocale();
+    return d.toLocaleDateString(loc, { day: '2-digit', month: '2-digit' }) +
+      ' ' + d.toLocaleTimeString(loc, { hour: '2-digit', minute: '2-digit', second: '2-digit' });
   };
 
   return (
-    <div className="border-b border-white/5">
+    <motion.div
+      layout
+      variants={listItem}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+      transition={{ ...ADMIN_FADE, delay: staggerDelay(index, 0.02, 0.15) }}
+      className="border-b border-white/5"
+    >
       <button
         onClick={() => onToggle(entry.id)}
         className={`w-full flex items-center gap-4 px-6 py-3 text-left hover:bg-white/5 transition-colors ${
@@ -121,27 +137,27 @@ const LogRow = React.memo(({
         <div className="px-16 py-6 bg-black/40 border-t border-white/5 animate-in slide-in-from-top-2 duration-300">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-[11px] font-mono mb-6">
             <div className="space-y-1">
-              <p className="text-[8px] font-display font-bold text-industrial-silver/20 uppercase tracking-widest">Identificador de Sessão</p>
+              <p className="text-[8px] font-display font-bold text-industrial-silver/20 uppercase tracking-widest">{t('logs.sessionId')}</p>
               <p className="text-industrial-silver/60 break-all">
                 {masterAccountLabelByUid(entry.uid, users, entry.uid || 'SISTEMA')}
               </p>
             </div>
             <div className="space-y-1">
-              <p className="text-[8px] font-display font-bold text-industrial-silver/20 uppercase tracking-widest">Vetor do Agente</p>
+              <p className="text-[8px] font-display font-bold text-industrial-silver/20 uppercase tracking-widest">{t('logs.agentVector')}</p>
               <p className="text-primary/60">
                 {entry.characterId
-                  ? characterLabelByKey(entry.uid, entry.characterId, characterMap, 'NÃO_IDENTIFICADO')
-                  : 'NÃO_IDENTIFICADO'}
+                  ? characterLabelByKey(entry.uid, entry.characterId, characterMap, t('logs.unidentified'))
+                  : t('logs.unidentified')}
               </p>
             </div>
             <div className="space-y-1">
-              <p className="text-[8px] font-display font-bold text-industrial-silver/20 uppercase tracking-widest">Procedência / Fonte</p>
+              <p className="text-[8px] font-display font-bold text-industrial-silver/20 uppercase tracking-widest">{t('logs.source')}</p>
               <p className="text-industrial-silver/60 uppercase">{entry.source} // {entry.category}</p>
             </div>
           </div>
           {entry.metadata && Object.keys(entry.metadata).length > 0 && (
             <div className="space-y-2">
-              <p className="text-[8px] font-display font-bold text-industrial-silver/20 uppercase tracking-widest">Dados Adicionais de Telemetria:</p>
+              <p className="text-[8px] font-display font-bold text-industrial-silver/20 uppercase tracking-widest">{t('logs.telemetry')}</p>
               <pre className="text-[10px] font-mono text-primary/40 bg-surface-container-lowest border border-white/5 p-4 rounded-sm overflow-x-auto max-h-60 shadow-inner">
                 {JSON.stringify(entry.metadata, null, 2)}
               </pre>
@@ -149,7 +165,7 @@ const LogRow = React.memo(({
           )}
         </div>
       )}
-    </div>
+    </motion.div>
   );
 });
 
@@ -161,6 +177,7 @@ interface SystemLogPanelProps {
 }
 
 export default function SystemLogPanel({ compact = false, filterUids }: SystemLogPanelProps) {
+  const { t } = useTranslation('admin');
   const [entries, setEntries] = useState<LogEntry[]>([]);
   const [users, setUsers] = useState<MasterAccount[]>([]);
   const [characterMap, setCharacterMap] = useState<Map<string, string>>(new Map());
@@ -184,7 +201,7 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
         const uid = docSnap.ref.parent.parent?.id;
         if (!uid) return;
         const data = docSnap.data() as { codinome?: string };
-        map.set(`${uid}_${docSnap.id}`, data.codinome?.trim() || 'Agente sem codinome');
+        map.set(`${uid}_${docSnap.id}`, data.codinome?.trim() || t('entity.agentNoCodename'));
       });
       setCharacterMap(map);
     }, (err) => console.warn('[SystemLogPanel] characters listener error:', err));
@@ -231,7 +248,7 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
   }, []);
 
   const handleClearLogs = async () => {
-    const ok = await showConfirm('Limpar Logs', 'Isso removerá PERMANENTEMENTE todos os registros do banco de dados. Confirmar?', 'Limpar Tudo');
+    const ok = await showConfirm(t('logs.clearTitle'), t('logs.clearBody'), t('logs.clearAction'));
     if (!ok) return;
 
     setIsClearing(true);
@@ -248,10 +265,10 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
         }
       });
       await batch.commit();
-      await showAlert('Sincronização', `✓ ${count} registros eliminados do servidor.`);
+      await showAlert(t('logs.syncOk'), `✓ ${count} registros eliminados do servidor.`);
     } catch (err) {
       console.error('Failed to clear logs:', err);
-      await showAlert('Erro de Conexão', 'Falha ao processar requisição de limpeza.');
+      await showAlert(t('logs.connectionError'), 'Falha ao processar requisição de limpeza.');
     } finally {
       setIsClearing(false);
     }
@@ -259,16 +276,16 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
 
   const handleWipeUsers = async () => {
     const ok = await showConfirm(
-      '⚠️ WIPE COMPLETO DE USUÁRIOS', 
-      'ATENÇÃO: Esta operação é IRREVERSÍVEL. Todos os dados de jogadores, personagens, intel, achievements, playEvents, logs e grupos serão PERMANENTEMENTE DESTRUÍDOS. Confirmar?', 
+      t('logs.wipeTitle'), 
+      t('logs.wipeBody'), 
       'CONFIRMAR WIPE TOTAL'
     );
     if (!ok) return;
 
     // Double confirmation
     const ok2 = await showConfirm(
-      'CONFIRMAÇÃO FINAL',
-      'Tem CERTEZA ABSOLUTA? Não há como reverter esta operação. Todos os dados de todos os jogadores serão perdidos.',
+      t('logs.wipeFinalTitle'),
+      t('logs.wipeFinalBody'),
       'SIM, DESTRUIR TUDO'
     );
     if (!ok2) return;
@@ -280,14 +297,14 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
         setWipeProgress(progress);
       });
       if (result.success) {
-        await showAlert('Wipe Concluído', `${result.usersDeleted} usuários foram removidos permanentemente. A página será recarregada.`);
+        await showAlert(t('logs.wipeDone'), `${result.usersDeleted} usuários foram removidos permanentemente. A página será recarregada.`);
         window.location.reload();
       } else {
         await showAlert('Erro', `Wipe parcial: ${result.usersDeleted} removidos. Erros: ${result.errors.join('; ')}`);
       }
     } catch (err) {
       console.error(err);
-      await showAlert('Erro Crítico', 'Falha na comunicação com o servidor.');
+      await showAlert(t('logs.criticalError'), t('logs.serverFail'));
     } finally {
       setIsWiping(false);
       setWipeProgress(null);
@@ -360,7 +377,7 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
                 }`}
               >
                 <span className="material-symbols-outlined text-base">delete_forever</span>
-                {isWiping ? (wipeProgress ? `${wipeProgress.phase}: ${wipeProgress.usersProcessed}/${wipeProgress.totalUsers}` : 'APAGANDO...') : 'Wipe de Usuários'}
+                {isWiping ? (wipeProgress ? `${wipeProgress.phase}: ${wipeProgress.usersProcessed}/${wipeProgress.totalUsers}` : 'APAGANDO...') : t('logs.wipeUsers')}
               </button>
 
               <button
@@ -383,7 +400,7 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
       <div className="flex items-center gap-4 px-8 py-4 bg-black/20 border-b border-white/5 shrink-0 flex-wrap">
         <div className="flex items-center gap-3 mr-4">
           <span className="material-symbols-outlined text-industrial-silver/20 text-base">filter_list</span>
-          <span className="text-[9px] font-display font-bold text-industrial-silver/30 tracking-widest uppercase">Filtros de Rede:</span>
+          <span className="text-[9px] font-display font-bold text-industrial-silver/30 tracking-widest uppercase">{t('logs.filters')}</span>
         </div>
         
         <select
@@ -391,9 +408,9 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
           onChange={(e) => setFilterSource(e.target.value)}
           className="bg-surface-container-lowest border border-white/5 text-[10px] font-display font-bold uppercase tracking-widest text-primary px-4 py-2 outline-none rounded-sm transition-all cursor-pointer shadow-inner"
         >
-          <option value="all">ORIGEM: TUDO</option>
-          <option value="player">SINAL: JOGADOR</option>
-          <option value="admin">SINAL: OPERADOR</option>
+          <option value="all">{t('logs.origin.all')}</option>
+          <option value="player">{t('logs.origin.player')}</option>
+          <option value="admin">{t('logs.origin.admin')}</option>
         </select>
         
         <select
@@ -401,14 +418,14 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
           onChange={(e) => setFilterType(e.target.value)}
           className="bg-surface-container-lowest border border-white/5 text-[10px] font-display font-bold uppercase tracking-widest text-primary px-4 py-2 outline-none rounded-sm transition-all cursor-pointer shadow-inner"
         >
-          <option value="all">TIPO: TUDO</option>
-          <option value="navigation">Navegação</option>
-          <option value="action">Evento</option>
-          <option value="system">Sistema</option>
-          <option value="auth">Acesso</option>
-          <option value="error">Anomalia</option>
-          <option value="admin">Comando</option>
-          <option value="trace">Rastro</option>
+          <option value="all">{t('logs.type.all')}</option>
+          <option value="navigation">{t('logs.type.navigation')}</option>
+          <option value="action">{t('logs.type.action')}</option>
+          <option value="system">{t('logs.type.system')}</option>
+          <option value="auth">{t('logs.type.auth')}</option>
+          <option value="error">{t('logs.type.error')}</option>
+          <option value="admin">{t('logs.type.admin')}</option>
+          <option value="trace">{t('logs.type.trace')}</option>
         </select>
 
         <div className="flex-1" />
@@ -417,7 +434,7 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
           <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-industrial-silver/20 text-base group-focus-within:text-primary transition-colors pointer-events-none">search</span>
           <input
             type="text"
-            placeholder="LOCALIZAR MENSAGEM..."
+            placeholder={t('logs.search')}
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
             className="bg-surface-container-lowest border border-white/5 text-[10px] font-display font-bold uppercase tracking-widest text-white placeholder:text-industrial-silver/10 pl-10 pr-4 py-2.5 w-full focus:border-primary/40 outline-none rounded-sm transition-all shadow-inner"
@@ -429,19 +446,22 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
         {filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-industrial-silver/10 gap-6 py-20">
             <span className="material-symbols-outlined text-7xl animate-pulse">radar</span>
-            <p className="font-display font-bold text-[14px] uppercase tracking-[0.6em]">Aguardando Sincronização de Sinal</p>
+            <p className="font-display font-bold text-[14px] uppercase tracking-[0.6em]">{t('logs.waiting')}</p>
           </div>
         ) : (
-          filtered.map((entry) => (
-            <LogRow
-              key={entry.id}
-              entry={entry}
-              isExpanded={expandedId === entry.id}
-              onToggle={handleToggle}
-              users={users}
-              characterMap={characterMap}
-            />
-          ))
+          <AnimatePresence mode="popLayout" initial={false}>
+            {filtered.map((entry, index) => (
+              <LogRow
+                key={entry.id}
+                entry={entry}
+                isExpanded={expandedId === entry.id}
+                onToggle={handleToggle}
+                users={users}
+                characterMap={characterMap}
+                index={index}
+              />
+            ))}
+          </AnimatePresence>
         )}
       </div>
 
@@ -456,7 +476,7 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
         </div>
         
         <div className="flex items-center gap-4">
-          <span className="text-[9px] font-display font-bold text-industrial-silver/20 uppercase tracking-widest">Densidade:</span>
+          <span className="text-[9px] font-display font-bold text-industrial-silver/20 uppercase tracking-widest">{t('logs.density')}</span>
           <div className="flex bg-black/40 p-1 rounded-sm border border-white/5">
             {[200, 500, 1000].map((n) => (
               <button

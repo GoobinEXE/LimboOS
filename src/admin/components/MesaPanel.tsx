@@ -1,7 +1,9 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'motion/react';
 import GroupManager from './GroupManager';
 import UserRegistry from './UserRegistry';
+import { ADMIN_FADE, ADMIN_SPRING_INDICATOR } from '../lib/motion';
 
 export type MesaSubId = 'esquadroes' | 'contas';
 
@@ -16,21 +18,6 @@ interface MesaPanelProps {
   onDeepLinkConsumed?: () => void;
 }
 
-const SUBS: { id: MesaSubId; label: string; icon: string; blurb: string }[] = [
-  {
-    id: 'esquadroes',
-    label: 'Esquadrões',
-    icon: 'groups',
-    blurb: 'Mesas de jogo, membros e ações em lote',
-  },
-  {
-    id: 'contas',
-    label: 'Contas',
-    icon: 'group',
-    blurb: 'Contas mestras, personagens e dossiês',
-  },
-];
-
 /**
  * Hub Mesa — Esquadrões (default) + Contas no mesmo destino.
  */
@@ -44,6 +31,23 @@ export default function MesaPanel({
   deepLinkGroupId,
   onDeepLinkConsumed,
 }: MesaPanelProps) {
+  const { t } = useTranslation('admin');
+
+  const SUBS: { id: MesaSubId; label: string; icon: string; blurb: string }[] = [
+    {
+      id: 'esquadroes',
+      label: t('mesa.sub.squads'),
+      icon: 'groups',
+      blurb: t('mesa.sub.squadsBlurb'),
+    },
+    {
+      id: 'contas',
+      label: t('mesa.sub.accounts'),
+      icon: 'group',
+      blurb: t('mesa.sub.accountsBlurb'),
+    },
+  ];
+
   const current = SUBS.find((s) => s.id === activeSub) || SUBS[0];
 
   return (
@@ -52,7 +56,7 @@ export default function MesaPanel({
         <div className="flex items-center gap-4">
           <div className="w-1.5 h-8 bg-primary shadow-[0_0_12px_rgba(255,140,0,0.45)]" />
           <div>
-            <h2 className="font-display font-bold uppercase tracking-widest text-xl text-white">Mesa</h2>
+            <h2 className="font-display font-bold uppercase tracking-widest text-xl text-white">{t('mesa.title')}</h2>
             <p className="text-[10px] font-display font-bold text-industrial-silver/40 uppercase tracking-[0.2em] mt-1">
               {current.blurb}
             </p>
@@ -61,21 +65,31 @@ export default function MesaPanel({
       </div>
 
       <div className="flex flex-wrap border-b border-primary/10 bg-black/20">
-        {SUBS.map((sub) => (
-          <button
-            key={sub.id}
-            type="button"
-            onClick={() => onSubChange(sub.id)}
-            className={`flex items-center gap-2 px-5 py-3 text-[10px] font-display font-bold tracking-[0.2em] uppercase transition-all border-r border-primary/10 ${
-              activeSub === sub.id
-                ? 'bg-primary/10 text-primary border-b-2 border-b-primary'
-                : 'text-industrial-silver/45 hover:bg-primary/5 hover:text-primary'
-            }`}
-          >
-            <span className="material-symbols-outlined text-base">{sub.icon}</span>
-            {sub.label}
-          </button>
-        ))}
+        {SUBS.map((sub) => {
+          const isActive = activeSub === sub.id;
+          return (
+            <button
+              key={sub.id}
+              type="button"
+              onClick={() => onSubChange(sub.id)}
+              className={`relative flex items-center gap-2 px-5 py-3 text-[10px] font-display font-bold tracking-[0.2em] uppercase transition-colors border-r border-primary/10 ${
+                isActive
+                  ? 'text-primary'
+                  : 'text-industrial-silver/45 hover:bg-primary/5 hover:text-primary'
+              }`}
+            >
+              {isActive && (
+                <motion.span
+                  layoutId="admin-mesa-sub"
+                  className="absolute inset-0 bg-primary/10 border-b-2 border-b-primary"
+                  transition={ADMIN_SPRING_INDICATOR}
+                />
+              )}
+              <span className="material-symbols-outlined text-base relative z-10">{sub.icon}</span>
+              <span className="relative z-10">{sub.label}</span>
+            </button>
+          );
+        })}
       </div>
 
       <AnimatePresence mode="wait">
@@ -84,7 +98,7 @@ export default function MesaPanel({
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -6 }}
-          transition={{ duration: 0.22 }}
+          transition={ADMIN_FADE}
         >
           {activeSub === 'esquadroes' && (
             <GroupManager

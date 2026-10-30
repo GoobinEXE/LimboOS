@@ -12,7 +12,7 @@ import {
   limit,
   where,
 } from "firebase/firestore";
-import { ALL_ACHIEVEMENTS } from "../data/achievements";
+import { getAllAchievements } from "../data/achievements";
 
 export interface PlayEvent {
   uid: string;
@@ -324,7 +324,7 @@ export class AdminAnalyticsService {
       achCountMap.set(a.achievementId, (achCountMap.get(a.achievementId) ?? 0) + 1);
     });
 
-    const rarityList = ALL_ACHIEVEMENTS.map(a => ({
+    const rarityList = getAllAchievements().map(a => ({
       ...a,
       count: achCountMap.get(a.id) ?? 0,
       percentage: users.length > 0 ? ((achCountMap.get(a.id) ?? 0) / users.length) * 100 : 0

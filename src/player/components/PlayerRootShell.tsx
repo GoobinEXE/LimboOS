@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { AnimatePresence } from 'motion/react';
 import { useSwipeable } from 'react-swipeable';
+import { useTranslation } from 'react-i18next';
 import ToastNotification from '../../components/ToastNotification';
 import RetroLoading from '../../components/player/RetroLoading';
 
@@ -15,6 +16,7 @@ import {
 } from '../hooks/useDesktopPlayerShortcuts';
 
 export default function PlayerRootShell() {
+  const { t } = useTranslation('player');
   const session = usePlayerSession();
   const playback = usePlayerPlayback();
   const isDesktop = useIsDesktopViewport(1024);
@@ -48,7 +50,11 @@ export default function PlayerRootShell() {
 
   if (masterAccount === null) {
     return (
-      <RetroLoading fullScreen message="AUTENTICANDO..." subMessage="Validando credenciais de acesso" />
+      <RetroLoading
+        fullScreen
+        message={t('app.loading.authenticating')}
+        subMessage={t('app.loading.authenticatingSub')}
+      />
     );
   }
 

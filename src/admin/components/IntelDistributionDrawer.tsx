@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { motion } from 'motion/react';
+import { useTranslation } from 'react-i18next';
+import { motion, AnimatePresence } from 'motion/react';
 import { intelService, type IntelGrantTarget } from '../../services/IntelService';
 import { activityLogger } from '../../services/ActivityLogger';
 import { CharacterData } from '../../types/player';
 import type { IntelItem } from '../../types/intel';
 import Screw from '../../components/player/Screw';
 import OverlayPortal from './OverlayPortal';
+import { ADMIN_SPRING, overlayFade } from '../lib/motion';
 import {
   INTEL_FILTER_TAB_LABELS,
   intelTypeFromFilterTab,
@@ -43,6 +45,7 @@ export default function IntelDistributionDrawer({
   broadcastMode = false,
   onExecuteGrant,
 }: IntelDistributionDrawerProps) {
+  const { t } = useTranslation('admin');
   const [addTab, setAddTab] = useState<IntelFilterTab>('all');
   const [addSearch, setAddSearch] = useState('');
   const [selectedToAdd, setSelectedToAdd] = useState<Set<string>>(new Set());
@@ -50,6 +53,12 @@ export default function IntelDistributionDrawer({
   const [feedback, setFeedback] = useState<string | null>(null);
   const [allIntelItems, setAllIntelItems] = useState<IntelItem[]>([]);
   const [grantIntelOnBroadcast, setGrantIntelOnBroadcast] = useState(true);
+  const [visible, setVisible] = useState(true);
+
+  const requestClose = () => {
+    if (loading) return;
+    setVisible(false);
+  };
 
   const targets = useMemo<IntelGrantTarget[]>(() => {
     if (targetsProp?.length) return targetsProp;
@@ -124,7 +133,7 @@ export default function IntelDistributionDrawer({
         onClose();
       }, 1000);
     } catch {
-      setFeedback('ERRO: Falha na operação.');
+      setFeedback(t('intel.dist.error'));
     } finally {
       setLoading(false);
     }
@@ -150,27 +159,34 @@ export default function IntelDistributionDrawer({
   const actionLabel = broadcastMode
     ? loading
       ? 'TRANSMITINDO...'
-      : 'TRANSMITIR_VÍDEO'
+      : t('intel.dist.transmitVideo')
     : loading
       ? 'SINCRONIZANDO...'
-      : 'CONCEDER_INTEL';
+      : 'CONCEDER INTEL';
 
   return (
-    <OverlayPortal open onClose={loading ? undefined : onClose}>
-      <div
-        className="fixed inset-0 z-[300] flex justify-end bg-black/80 backdrop-blur-sm"
-        onClick={() => {
-          if (!loading) onClose();
-        }}
-      >
-        <motion.div
-          initial={{ x: '100%' }}
-          animate={{ x: 0 }}
-          exit={{ x: '100%' }}
-          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-          className="bg-[#222] border-l-8 border-[#1a1a1a] w-full max-w-2xl shadow-2xl flex flex-col h-full relative overflow-hidden font-chakra"
-          onClick={(e) => e.stopPropagation()}
-        >
+    <OverlayPortal open onClose={loading ? undefined : requestClose}>
+      <AnimatePresence onExitComplete={() => { if (!visible) onClose(); }}>
+        {visible && (
+          <motion.div
+            key="intel-dist-backdrop"
+            variants={overlayFade}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="fixed inset-0 z-[300] flex justify-end bg-black/80 backdrop-blur-sm"
+            onClick={() => {
+              if (!loading) requestClose();
+            }}
+          >
+            <motion.div
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={ADMIN_SPRING}
+              className="bg-[#222] border-l-8 border-[#1a1a1a] w-full max-w-2xl shadow-2xl flex flex-col h-full relative overflow-hidden font-chakra"
+              onClick={(e) => e.stopPropagation()}
+            >
           <Screw className="top-4 left-4" />
           <Screw className="top-4 right-4 -rotate-90" />
           <Screw className="bottom-4 left-4 -rotate-90" />
@@ -181,7 +197,7 @@ export default function IntelDistributionDrawer({
           <div className="p-8 border-b-4 border-[#1a1a1a] bg-black/40 relative z-10 flex justify-between items-center">
             <div>
               <h3 className="font-black text-xl text-white uppercase tracking-widest">
-                {title || (broadcastMode ? 'Transmissão_de_Vídeo' : 'Distribuir_Intel')}
+                {title || (broadcastMode ? t('intel.dist.videoTitle') : 'Distribuir Intel')}
               </h3>
               {character && (
                 <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-1">
@@ -195,7 +211,7 @@ export default function IntelDistributionDrawer({
               )}
             </div>
             <button
-              onClick={onClose}
+              onClick={requestClose}
               className="p-2 text-zinc-600 hover:text-white transition-all material-symbols-outlined rounded-sm"
             >
               close
@@ -227,7 +243,7 @@ export default function IntelDistributionDrawer({
               </span>
               <input
                 type="text"
-                placeholder="LOCALIZAR NA BIBLIOTECA..."
+                placeholder={t('intel.dist.search')}
                 value={addSearch}
                 onChange={(e) => setAddSearch(e.target.value)}
                 className="w-full bg-black/60 border-2 border-[#1a1a1a] text-[11px] font-bold uppercase px-12 py-4 text-white outline-none focus:ring-1 focus:ring-primary transition-all rounded-sm placeholder:text-zinc-800 tracking-widest"
@@ -320,19 +336,19 @@ export default function IntelDistributionDrawer({
             <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">
               {broadcastMode
                 ? selectedToAdd.size === 1
-                  ? '1 VÍDEO SELECIONADO'
-                  : 'SELECIONE UM VÍDEO'
+                  ? t('intel.dist.videoSelected')
+                  : t('intel.dist.selectVideo')
                 : `${selectedToAdd.size} SELECIONADO(S)`}
             </span>
             <div className="flex gap-4 w-full sm:w-auto">
               <button
-                onClick={onClose}
+                onClick={requestClose}
                 disabled={loading}
                 className="flex-1 sm:flex-none px-6 py-4 text-[10px] font-black text-zinc-600 hover:text-white transition-colors uppercase tracking-widest disabled:opacity-50"
               >
                 CANCELAR
               </button>
-              <button
+              <motion.button
                 onClick={executeGrant}
                 disabled={
                   selectedToAdd.size === 0 ||
@@ -340,10 +356,13 @@ export default function IntelDistributionDrawer({
                   targets.length === 0 ||
                   (broadcastMode && selectedToAdd.size !== 1)
                 }
-                className="flex-2 sm:flex-none bg-primary text-black px-10 py-4 rounded-sm font-black text-[11px] uppercase tracking-widest hover:bg-primary-container transition-all active:scale-95 disabled:opacity-20 glow-orange shadow-lg"
+                whileTap={{ scale: 0.97 }}
+                animate={loading ? { scale: [1, 0.98, 1] } : { scale: 1 }}
+                transition={loading ? { repeat: Infinity, duration: 0.8 } : ADMIN_SPRING}
+                className="flex-2 sm:flex-none bg-primary text-black px-10 py-4 rounded-sm font-black text-[11px] uppercase tracking-widest hover:bg-primary-container transition-all disabled:opacity-20 glow-orange shadow-lg"
               >
                 {actionLabel}
-              </button>
+              </motion.button>
             </div>
           </div>
 
@@ -353,8 +372,10 @@ export default function IntelDistributionDrawer({
               {feedback}
             </div>
           )}
-        </motion.div>
-      </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </OverlayPortal>
   );
 }

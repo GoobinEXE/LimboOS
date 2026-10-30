@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
+import { useTranslation } from 'react-i18next';
 import { useLandscapeLayout } from '../hooks/useLandscapeLayout';
 import type { AppScreen, WalkmanStatus } from '../../types/player';
 
@@ -61,6 +62,7 @@ export default function NokiaDeviceWrapper({
   onTerminalOpen,
   hasTerminalAccess,
 }: NokiaDeviceWrapperProps) {
+  const { t } = useTranslation('player');
   const { isLandscape } = useLandscapeLayout();
   const [systemTime, setSystemTime] = useState('12:00');
 
@@ -82,10 +84,10 @@ export default function NokiaDeviceWrapper({
   const navButtons = (
     <>
       {backVisible !== false ? (
-        <NavButton onClick={onBack} icon="&lt;-" label="Voltar" vertical={isLandscape} />
+        <NavButton onClick={onBack} icon="&lt;-" label={t('nokia.nav.back')} vertical={isLandscape} />
       ) : (
         <div className={`opacity-0 pointer-events-none ${isLandscape ? 'py-2' : 'px-4 py-1.5'}`}>
-          <NavButton icon="&lt;-" label="Voltar" vertical={isLandscape} />
+          <NavButton icon="&lt;-" label={t('nokia.nav.back')} vertical={isLandscape} />
         </div>
       )}
 
@@ -93,23 +95,23 @@ export default function NokiaDeviceWrapper({
         onClick={() => setScreen('player')}
         disabled={screen === 'player'}
         icon="[*]"
-        label="Inicio"
+        label={t('nokia.nav.home')}
         vertical={isLandscape}
       />
 
       <NavButton
         onClick={onToggleMute}
         icon={isMuted ? '[X]' : '[~]'}
-        label={isMuted ? 'Mudo' : 'Som'}
+        label={isMuted ? t('nokia.nav.mute') : t('nokia.nav.sound')}
         vertical={isLandscape}
       />
 
       {hasTerminalAccess && onTerminalOpen && (
-        <NavButton onClick={onTerminalOpen} icon="[>]" label="DOS" vertical={isLandscape} />
+        <NavButton onClick={onTerminalOpen} icon="[>]" label={t('nokia.nav.dos')} vertical={isLandscape} />
       )}
 
       {onProfileOpen && (
-        <NavButton onClick={onProfileOpen} icon="[#]" label="Perfil" vertical={isLandscape} />
+        <NavButton onClick={onProfileOpen} icon="[#]" label={t('nokia.nav.profile')} vertical={isLandscape} />
       )}
     </>
   );

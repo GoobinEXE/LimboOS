@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion } from 'motion/react';
 import { IntelBase, VisualIntel, TextIntel, AudioIntel, MetaIntel, VideoIntel } from '../services/IntelEngine';
 import { analyticsTracker } from '../services/AnalyticsTracker';
@@ -22,6 +23,7 @@ function isCorruptedText(text: string): boolean {
  * glitch effects: chromatic aberration, flickering, scan distortion.
  */
 function CorruptedTextRenderer({ text }: { text: string }) {
+  const { t } = useTranslation('player');
   const containerRef = useRef<HTMLDivElement>(null);
   const [glitchOffset, setGlitchOffset] = useState(0);
   const [flickerOpacity, setFlickerOpacity] = useState(1);
@@ -154,7 +156,7 @@ function CorruptedTextRenderer({ text }: { text: string }) {
       {/* Bottom warning bar */}
       <div className="mt-4 flex items-center gap-2 text-red-500/60 text-[9px] font-mono uppercase tracking-[0.3em] animate-pulse">
         <span>⚠</span>
-        <span>ERRO CRC — CHECKSUM INVÁLIDO — SETORES DANIFICADOS</span>
+        <span>{t('evidence.crcError')}</span>
         <span>⚠</span>
       </div>
     </div>
@@ -172,6 +174,7 @@ function CorruptedTextRenderer({ text }: { text: string }) {
  * - META   → Exibe ícone e descrição de conquista/flag
  */
 export default function EvidenceReader({ evidence, onClose }: EvidenceReaderProps) {
+  const { t } = useTranslation('player');
   const isVisual = evidence instanceof VisualIntel;
   const isText = evidence instanceof TextIntel;
   const isAudio = evidence instanceof AudioIntel;
@@ -222,10 +225,10 @@ export default function EvidenceReader({ evidence, onClose }: EvidenceReaderProp
       <div className="flex items-center justify-between gap-3 mb-3 shrink-0 text-[8px] uppercase tracking-[0.3em] opacity-40 select-none">
         <span className="flex items-center gap-2 whitespace-nowrap">
           <span aria-hidden className="inline-block w-1.5 h-1.5 bg-current animate-pulse" />
-          REGISTRO DE EVIDÊNCIA
+          {t('evidence.registry')}
         </span>
         <span aria-hidden className="flex-1 border-t border-dashed border-current/40" />
-        <span className="whitespace-nowrap">ARQ//{evidence.id}</span>
+        <span className="whitespace-nowrap">{t('evidence.archive', { id: evidence.id })}</span>
       </div>
       {/* Header */}
       <div className={`flex items-center justify-between border-b ${scheme.border}/30 pb-4 mb-4 shrink-0`}>
@@ -235,14 +238,17 @@ export default function EvidenceReader({ evidence, onClose }: EvidenceReaderProp
             <h2 className="text-sm font-bold uppercase tracking-widest">{evidence.title}</h2>
             <p className="text-[10px] opacity-70 italic">
               {isVisual 
-                ? `Categoria: ${details.category || 'Intel'}` 
+                ? t('evidence.category', { cat: details.category || t('evidence.categoryFallback') })
                 : isVideo
-                  ? `Formato: ${(details as { format?: string }).format || 'Vídeo'} // ${(details as { isYoutube?: boolean }).isYoutube ? 'YouTube' : 'Upload'}`
+                  ? t('evidence.format', {
+                      format: (details as { format?: string }).format || t('evidence.formatVideo'),
+                      source: (details as { isYoutube?: boolean }).isYoutube ? t('evidence.sourceYoutube') : t('evidence.sourceUpload'),
+                    })
                 : isAudio
-                  ? `Artista: ${details.artist || 'Desconhecido'}`
+                  ? t('evidence.artist', { artist: details.artist || t('unknown', { ns: 'common' }) })
                   : isMeta
-                    ? `Conquista: ${details.condition || 'Sistema'}`
-                    : `Recuperado por: ${details.npc || 'Desconhecido'}`
+                    ? t('evidence.achievement', { condition: details.condition || t('evidence.achievementFallback') })
+                    : t('evidence.recoveredBy', { npc: details.npc || t('unknown', { ns: 'common' }) })
               }
             </p>
           </div>
@@ -257,10 +263,10 @@ export default function EvidenceReader({ evidence, onClose }: EvidenceReaderProp
           </span>
           <button 
             onClick={onClose}
-            aria-label="Fechar evidência"
+            aria-label={t('evidence.closeAria')}
             className={`px-3 py-1 border ${scheme.border} bg-transparent hover:bg-current/15 active:bg-current/25 focus-visible:outline-1 focus-visible:outline-current text-[10px] transition-colors duration-150 uppercase font-bold cursor-pointer`}
           >
-            [ FECHAR_ ]
+            {t('evidence.close')}
           </button>
         </div>
       </div>
@@ -334,7 +340,9 @@ export default function EvidenceReader({ evidence, onClose }: EvidenceReaderProp
             </div>
             {details.duration && (
               <p className="text-[10px] opacity-50 uppercase">
-                Duração: {Math.floor(details.duration / 60)}:{String(details.duration % 60).padStart(2, '0')}
+                {t('evidence.duration', {
+                  time: `${Math.floor(details.duration / 60)}:${String(details.duration % 60).padStart(2, '0')}`,
+                })}
               </p>
             )}
             {evidence.description && (
@@ -355,7 +363,7 @@ export default function EvidenceReader({ evidence, onClose }: EvidenceReaderProp
             </p>
             {details.hint && (
               <div className="mt-4 p-3 border border-purple-400/30 rounded-lg text-[11px] opacity-60">
-                <span className="font-bold uppercase">Dica: </span>{details.hint}
+                <span className="font-bold uppercase">{t('evidence.hint')} </span>{details.hint}
               </div>
             )}
           </div>
@@ -372,9 +380,9 @@ export default function EvidenceReader({ evidence, onClose }: EvidenceReaderProp
       </div>
       {/* Footer with enriched metadata */}
       <div className={`mt-4 pt-3 border-t ${scheme.border}/30 text-[9px] opacity-50 flex justify-between gap-3 uppercase tracking-[0.15em] shrink-0`}>
-        <span className="truncate">Setor: {evidence.metadata.chapter || 'Desconhecido'}</span>
-        <span className="whitespace-nowrap">Nível: {levelLabel}</span>
-        <span className="truncate text-right">{details.npc ? `NPC: ${details.npc}` : 'Checksum: OK'}</span>
+        <span className="truncate">{t('evidence.sector', { chapter: evidence.metadata.chapter || t('unknown', { ns: 'common' }) })}</span>
+        <span className="whitespace-nowrap">{t('evidence.level', { level: levelLabel })}</span>
+        <span className="truncate text-right">{details.npc ? t('evidence.npc', { npc: details.npc }) : t('evidence.checksumOk')}</span>
       </div>
     </motion.div>
   );

@@ -12,6 +12,7 @@ import {
 import { db } from '../lib/firebase';
 import { MediaFolder } from '../types/media';
 import { mediaService } from './MediaService';
+import { getIntlLocale } from '../i18n/dateLocale';
 
 type CampaignLike = { id: string; name: string };
 
@@ -26,7 +27,7 @@ class MediaFolderService {
           id: d.id,
           ...d.data(),
         })) as MediaFolder[];
-        folders.sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
+        folders.sort((a, b) => a.name.localeCompare(b.name, getIntlLocale()));
         callback(folders);
       },
       (err) => console.warn('[MediaFolderService] subscribeFolders error:', err),

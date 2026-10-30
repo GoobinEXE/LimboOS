@@ -28,7 +28,7 @@ export default function MediaUploadZone({
   disabled = false,
   hideDropZone = false,
   hideUploadButton = false,
-  uploadButtonLabel = 'NOVO_UPLOAD',
+  uploadButtonLabel = 'NOVO UPLOAD',
   dropHint = 'ARRASTAR E SOLTAR PARA CRIAR INTEL',
   dropSubhint = 'O editor abre automaticamente com o arquivo vinculado',
 }: MediaUploadZoneProps) {
@@ -49,7 +49,7 @@ export default function MediaUploadZone({
             <RetroSpinner />
             <div className="space-y-2 text-center">
               <div className="text-primary font-display font-bold uppercase tracking-[0.4em] animate-pulse text-lg">
-                Transferindo_Dados...
+                Transferindo Dados...
               </div>
               <div className="w-64 h-1 bg-white/5 rounded-full overflow-hidden border border-primary/10">
                 <motion.div

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Campaign } from '../../../data/campaigns';
 import { Group, MasterAccount, CharacterData } from '../../../types/player';
 import { campaignAdminService } from '../../../services/CampaignAdminService';
@@ -20,6 +21,7 @@ export default function MissionAccessTab({
   onCharacterUnassigned,
   showAlert,
 }: MissionAccessTabProps) {
+  const { t } = useTranslation('admin');
   const handleUnlockForGroup = async (groupId: string, unlock: boolean) => {
     try {
       await campaignAdminService.unlockForGroup(groupId, campaign.id, unlock);
@@ -43,10 +45,10 @@ export default function MissionAccessTab({
   const handleAssignGroup = async (groupId: string) => {
     try {
       await campaignAdminService.assignToGroup(groupId, campaign.id);
-      showAlert('Sucesso', 'Esquadrão enviado para a missão (Ativa).');
+      showAlert('Sucesso', t('groupMissions.toast.assigned'));
     } catch (err) {
       console.error(err);
-      showAlert('Erro', 'Falha na atribuição.');
+      showAlert('Erro', t('groupMissions.toast.assignFail'));
     }
   };
 
@@ -57,17 +59,17 @@ export default function MissionAccessTab({
       showAlert('Sucesso', 'Agente enviado para a missão (Ativa).');
     } catch (err) {
       console.error(err);
-      showAlert('Erro', 'Falha na atribuição.');
+      showAlert('Erro', t('groupMissions.toast.assignFail'));
     }
   };
 
   const handleUnassignGroup = async (groupId: string) => {
     try {
       await campaignAdminService.unassignFromGroup(groupId);
-      showAlert('Sucesso', 'Esquadrão removido do campo.');
+      showAlert('Sucesso', t('groupMissions.toast.removedField'));
     } catch (err) {
       console.error(err);
-      showAlert('Erro', 'Falha ao remover designação.');
+      showAlert('Erro', t('groupMissions.toast.removeFail'));
     }
   };
 
@@ -78,7 +80,7 @@ export default function MissionAccessTab({
       showAlert('Sucesso', 'Agente removido do campo.');
     } catch (err) {
       console.error(err);
-      showAlert('Erro', 'Falha ao remover designação.');
+      showAlert('Erro', t('groupMissions.toast.removeFail'));
     }
   };
 

@@ -7,6 +7,7 @@ import { usePlayerServicesSync, usePlayerScreenAnalytics } from '../hooks/usePla
 import { useToasts } from '../hooks/useToasts';
 import { useWalkmanPlayback } from '../hooks/useWalkmanPlayback';
 import { useAppScreenHistory } from '../hooks/useAppScreenHistory';
+import { achievementCatalogService } from '../../services/AchievementCatalogService';
 import type { PlayerSessionValue, PlayerPlaybackValue } from '../types';
 
 const PlayerSessionContext = createContext<PlayerSessionValue | null>(null);
@@ -14,6 +15,10 @@ const PlayerPlaybackContext = createContext<PlayerPlaybackValue | null>(null);
 
 function PlayerProvidersInner({ children }: { children: React.ReactNode }) {
   const { toasts: toastList, addToast, dismissToast } = useToasts();
+
+  useEffect(() => {
+    return achievementCatalogService.start();
+  }, []);
 
   const playbackRef = React.useRef<{ resetPlayback: () => void } | null>(null);
 

@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { AnimatePresence, motion } from 'motion/react';
 import { Group, MasterAccount, CharacterData, GroupCharacterSlot } from '../../types/player';
 import { Campaign } from '../../data/campaigns';
 import { groupService } from '../../services/GroupService';
@@ -11,6 +13,7 @@ import IntelDistributionDrawer from './IntelDistributionDrawer';
 import NpcSmsDistributionModal from './NpcSmsDistributionModal';
 import GroupMissionsModal from './GroupMissionsModal';
 import { campaignLabel, masterAccountLabel, masterAccountLabelByUid } from '../lib/entityLabels';
+import { ADMIN_FADE, listItem, staggerDelay } from '../lib/motion';
 
 interface GroupManagerProps {
   isAdmin: boolean;
@@ -27,6 +30,7 @@ export default function GroupManager({
   deepLinkGroupId,
   onDeepLinkConsumed,
 }: GroupManagerProps) {
+  const { t } = useTranslation('admin');
   const [groups, setGroups] = useState<Group[]>([]);
   const [users, setUsers] = useState<MasterAccount[]>([]);
   const [allCharacters, setAllCharacters] = useState<{uid: string, char: CharacterData}[]>([]);
@@ -174,7 +178,7 @@ export default function GroupManager({
   };
 
   const handleDeleteGroup = async (id: string) => {
-    const ok = await showConfirm('Excluir Grupo', "Tem certeza que deseja excluir este esquadrão PERMANENTEMENTE?", 'Excluir');
+    const ok = await showConfirm(t('squads.confirm.deleteTitle'), t('squads.confirm.deleteBody'), t('squads.confirm.deleteAction'));
     if (!ok) return;
     try {
       await groupService.deleteGroup(id);
@@ -201,7 +205,7 @@ export default function GroupManager({
   };
 
   const handleQuickRemoveMember = async (groupId: string, characterId: string, charName: string) => {
-    const ok = await showConfirm('Remover Agente', `Deseja remover ${charName} do esquadrão?`, 'Remover');
+    const ok = await showConfirm(t('squads.confirm.removeTitle'), t('squads.confirm.removeBody', { name: charName }), t('squads.confirm.removeAction'));
     if (!ok) return;
     try {
       await groupService.removeCharacterFromGroup(groupId, characterId);
@@ -277,7 +281,7 @@ export default function GroupManager({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
            <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-           <h3 className="text-zinc-600 font-black text-[10px] uppercase tracking-[0.3em]">Gerenciamento_de_Esquadrões_RPG</h3>
+           <h3 className="text-zinc-600 font-black text-[10px] uppercase tracking-[0.3em]">{t('squads.title')}</h3>
         </div>
         {!isCreating && (
           <button 
@@ -285,7 +289,7 @@ export default function GroupManager({
             className="flex items-center gap-2 bg-primary/10 text-primary px-6 py-2 rounded-sm font-black text-[10px] tracking-widest border border-primary/20 hover:bg-primary/20 transition-all active:scale-95 glow-orange uppercase"
           >
             <span className="material-symbols-outlined text-sm">group_add</span>
-            NOVO_ESQUADRÃO
+            NOVO ESQUADRÃO
           </button>
         )}
       </div>
@@ -297,7 +301,7 @@ export default function GroupManager({
             className="flex items-center gap-2 bg-primary/10 text-primary px-6 py-2 rounded-sm font-black text-[10px] tracking-widest border border-primary/20 hover:bg-primary/20 transition-all active:scale-95 glow-orange uppercase"
           >
             <span className="material-symbols-outlined text-sm">group_add</span>
-            NOVO_ESQUADRÃO
+            NOVO ESQUADRÃO
           </button>
         </div>
       )}
@@ -310,12 +314,12 @@ export default function GroupManager({
               {/* Coluna 1: Info Básica */}
               <div className="space-y-6">
                 <div>
-                  <label className="block font-black text-[10px] text-zinc-500 mb-3 uppercase tracking-widest">Identificador_do_Esquadrão (Mesa)</label>
+                  <label className="block font-black text-[10px] text-zinc-500 mb-3 uppercase tracking-widest">{t('squads.idLabel')}</label>
                   <input 
                     type="text" 
                     value={groupName}
                     onChange={(e) => setGroupName(e.target.value)}
-                    placeholder="EX: NÉVOA_DE_RAVENLOFT"
+                    placeholder={t('squads.idPlaceholder')}
                     className="w-full bg-black/60 border-2 border-[#1a1a1a] text-white px-4 py-3 text-[11px] font-bold focus:border-primary outline-none rounded-sm uppercase transition-all"
                     required
                   />
@@ -328,7 +332,7 @@ export default function GroupManager({
                 </div>
 
                 <div className="pt-4 border-t border-white/5">
-                  <label className="block font-black text-[10px] text-zinc-500 mb-3 uppercase tracking-widest">Registros_de_Sessão</label>
+                  <label className="block font-black text-[10px] text-zinc-500 mb-3 uppercase tracking-widest">{t('squads.sessions')}</label>
                   <div className="flex gap-2 mb-4">
                     <input 
                       type="date" 
@@ -341,7 +345,7 @@ export default function GroupManager({
                       onClick={addSession}
                       className="bg-[#333] hover:bg-[#444] text-white px-6 py-2 text-[10px] font-black uppercase tracking-widest transition-all rounded-sm"
                     >
-                      ADD_DATA
+                      ADD DATA
                     </button>
                   </div>
                   <div className="flex flex-wrap gap-2 min-h-10 bg-black/40 p-3 rounded-sm border border-[#1a1a1a]">
@@ -351,7 +355,7 @@ export default function GroupManager({
                         <button type="button" onClick={() => removeSession(date)} className="text-zinc-600 hover:text-red-500 transition-colors">×</button>
                       </span>
                     ))}
-                    {sessions.length === 0 && <p className="text-zinc-800 text-[9px] font-black uppercase tracking-widest italic pt-1">Nenhum Registro Temporal</p>}
+                    {sessions.length === 0 && <p className="text-zinc-800 text-[9px] font-black uppercase tracking-widest italic pt-1">{t('squads.noSessions')}</p>}
                   </div>
                 </div>
               </div>
@@ -388,7 +392,7 @@ export default function GroupManager({
                             type="button"
                             onClick={() => toggleCharacter(item.uid, item.char.id)}
                             className="w-5 h-5 flex items-center justify-center text-zinc-600 hover:text-red-500 transition-all rounded-xs hover:bg-red-500/10 cursor-pointer"
-                            title="Remover do Esquadrão"
+                            title={t('squads.removeTitle')}
                           >
                             <span className="material-symbols-outlined text-sm font-black">close</span>
                           </button>
@@ -398,7 +402,7 @@ export default function GroupManager({
                     {selectedCharacters.length === 0 && (
                       <div className="h-full flex flex-col items-center justify-center text-zinc-700 py-8 opacity-40">
                         <span className="material-symbols-outlined text-2xl mb-1">group_off</span>
-                        <p className="text-[8px] font-black uppercase tracking-widest">Nenhum Agente Selecionado</p>
+                        <p className="text-[8px] font-black uppercase tracking-widest">{t('squads.noSelected')}</p>
                       </div>
                     )}
                   </div>
@@ -407,10 +411,10 @@ export default function GroupManager({
                 {/* Agentes Disponíveis para Seleção */}
                 <div>
                   <div className="flex justify-between items-center mb-3">
-                     <label className="block font-black text-[10px] text-zinc-500 uppercase tracking-widest">Agentes Disponíveis</label>
+                     <label className="block font-black text-[10px] text-zinc-500 uppercase tracking-widest">{t('squads.available')}</label>
                      <label className="flex items-center gap-2 cursor-pointer group">
                        <input type="checkbox" checked={showArchived} onChange={(e) => setShowArchived(e.target.checked)} className="hidden" />
-                       <span className={`text-[8px] font-black uppercase tracking-widest transition-colors ${showArchived ? 'text-primary' : 'text-zinc-600 group-hover:text-zinc-400'}`}>Incluir_Arquivados</span>
+                       <span className={`text-[8px] font-black uppercase tracking-widest transition-colors ${showArchived ? 'text-primary' : 'text-zinc-600 group-hover:text-zinc-400'}`}>{t('squads.includeArchived')}</span>
                      </label>
                   </div>
 
@@ -418,7 +422,7 @@ export default function GroupManager({
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-industrial-silver/20 text-sm group-focus-within:text-primary transition-all">search</span>
                     <input 
                       type="text" 
-                      placeholder="BUSCAR AGENTE POR CODINOME..."
+                      placeholder={t('squads.searchAgent')}
                       value={agentSearchQuery}
                       onChange={(e) => setAgentSearchQuery(e.target.value)}
                       onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAgentSearch())}
@@ -454,7 +458,7 @@ export default function GroupManager({
                       );
                     })}
                     {availableAgents.length === 0 && (
-                      <p className="text-zinc-600 text-[9px] font-black uppercase tracking-widest text-center py-8">Nenhum Agente Disponível</p>
+                      <p className="text-zinc-600 text-[9px] font-black uppercase tracking-widest text-center py-8">{t('squads.noneAvailable')}</p>
                     )}
                   </div>
                 </div>
@@ -462,19 +466,20 @@ export default function GroupManager({
             </div>
 
             <div className="flex justify-end gap-6 pt-8 border-t-4 border-[#1a1a1a]">
-              <button type="button" onClick={resetForm} className="px-8 py-3 text-[10px] font-black text-zinc-600 hover:text-white uppercase tracking-widest transition-colors">ABORTAR</button>
+              <button type="button" onClick={resetForm} className="px-8 py-3 text-[10px] font-black text-zinc-600 hover:text-white uppercase tracking-widest transition-colors">{t('squads.abort')}</button>
               <button 
                 type="submit" 
                 className="bg-primary hover:bg-primary-container text-black px-12 py-3 rounded-sm font-black text-[10px] tracking-widest uppercase transition-all active:scale-95 glow-orange shadow-lg"
               >
-                {editingGroup ? 'SINCRONIZAR_ALTERAÇÕES' : 'CONFIRMAR_REGISTRO'}
+                {editingGroup ? t('squads.sync') : 'CONFIRMAR REGISTRO'}
               </button>
             </div>
           </form>
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {groups.map(group => {
+          <AnimatePresence mode="popLayout">
+          {groups.map((group, index) => {
             const slots = group.characterSlots || [];
             const statuses = slots.map(slot => {
               const item = allCharacters.find(c => c.uid === slot.uid && c.char.id === slot.characterId);
@@ -485,7 +490,17 @@ export default function GroupManager({
             const missingCount = statuses.filter(s => s === 'desaparecido').length;
 
             return (
-              <div id={`group-${group.id}`} key={group.id} className="bg-[#1a1a1a] border-4 border-[#1a1a1a] p-6 group hover:border-primary/20 transition-all rounded-xl shadow-xl relative overflow-hidden active:scale-[0.99]">
+              <motion.div
+                id={`group-${group.id}`}
+                key={group.id}
+                layout
+                variants={listItem}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                transition={{ ...ADMIN_FADE, delay: staggerDelay(index) }}
+                className="bg-[#1a1a1a] border-4 border-[#1a1a1a] p-6 group hover:border-primary/20 transition-all rounded-xl shadow-xl relative overflow-hidden active:scale-[0.99]"
+              >
                 <div className="absolute top-0 right-0 w-12 h-12 bg-primary/5 rotate-45 translate-x-6 -translate-y-6 border-b border-primary/10" />
                 <div className="flex justify-between items-start mb-6">
                   <div>
@@ -524,14 +539,14 @@ export default function GroupManager({
                     <button
                       onClick={() => setShowMissionsModal(group.id)}
                       className="w-8 h-8 flex items-center justify-center bg-black/60 border border-white/10 rounded-sm text-emerald-500 hover:bg-emerald-500 hover:text-black transition-all active:scale-90"
-                      title="Gerenciar Missões"
+                      title={t('squads.manageMissions')}
                     >
                       <span className="material-symbols-outlined text-sm">rocket_launch</span>
                     </button>
-                    <button onClick={() => setShowSmsModal(group.id)} className="w-8 h-8 flex items-center justify-center bg-black/60 border border-white/10 rounded-sm text-primary hover:bg-primary hover:text-black transition-all active:scale-90" title="Distribuir Torpedos SMS de NPCs">
+                    <button onClick={() => setShowSmsModal(group.id)} className="w-8 h-8 flex items-center justify-center bg-black/60 border border-white/10 rounded-sm text-primary hover:bg-primary hover:text-black transition-all active:scale-90" title={t('squads.smsTitle')}>
                       <span className="material-symbols-outlined text-sm">sms</span>
                     </button>
-                    <button onClick={() => setShowGrantModal(group.id)} className="w-8 h-8 flex items-center justify-center bg-black/60 border border-white/10 rounded-sm text-primary hover:bg-primary hover:text-black transition-all active:scale-90" title="Transferência de Evidências em Lote">
+                    <button onClick={() => setShowGrantModal(group.id)} className="w-8 h-8 flex items-center justify-center bg-black/60 border border-white/10 rounded-sm text-primary hover:bg-primary hover:text-black transition-all active:scale-90" title={t('squads.bulkIntelTitle')}>
                       <span className="material-symbols-outlined text-sm">wifi_tethering</span>
                     </button>
                     <button onClick={() => startEdit(group)} className="w-8 h-8 flex items-center justify-center bg-black/60 border border-white/10 rounded-sm text-zinc-600 hover:text-emerald-400 transition-all active:scale-90">
@@ -579,7 +594,7 @@ export default function GroupManager({
                     <div className="mt-4 p-4 bg-black/60 border border-primary/30 rounded-sm shadow-xl">
                       <input 
                         type="text" 
-                        placeholder="BUSCAR AGENTE PARA ADICIONAR..."
+                        placeholder={t('squads.searchAdd')}
                         value={quickAddSearch}
                         onChange={(e) => setQuickAddSearch(e.target.value)}
                         className="w-full bg-black border-2 border-[#1a1a1a] text-white px-3 py-2 text-[10px] font-bold focus:border-primary outline-none rounded-sm uppercase transition-all mb-2"
@@ -590,7 +605,7 @@ export default function GroupManager({
                           (!quickAddSearch || c.char.codinome?.toLowerCase().includes(quickAddSearch.toLowerCase())) &&
                           !group.characterSlots?.some(s => s.characterId === c.char.id)
                         ).length === 0 ? (
-                          <p className="text-[9px] text-zinc-500 uppercase font-black py-2 text-center">NENHUM AGENTE ENCONTRADO</p>
+                          <p className="text-[9px] text-zinc-500 uppercase font-black py-2 text-center">{t('squads.noneFound')}</p>
                         ) : (
                           allCharacters.filter(c => 
                             (!quickAddSearch || c.char.codinome?.toLowerCase().includes(quickAddSearch.toLowerCase())) &&
@@ -604,7 +619,7 @@ export default function GroupManager({
                                    <span className="text-[8px] font-mono text-zinc-600 uppercase">{masterAccountLabelByUid(c.uid, users, '???')}</span>
                                  </div>
                                </div>
-                               <button onClick={() => handleQuickAddMember(group.id, c.uid, c.char.id, c.char.codinome)} className="text-[9px] font-black bg-primary/10 text-primary px-3 py-1.5 rounded-sm uppercase hover:bg-primary hover:text-black transition-all opacity-0 group-hover/add:opacity-100">Adicionar</button>
+                               <button onClick={() => handleQuickAddMember(group.id, c.uid, c.char.id, c.char.codinome)} className="text-[9px] font-black bg-primary/10 text-primary px-3 py-1.5 rounded-sm uppercase hover:bg-primary hover:text-black transition-all opacity-0 group-hover/add:opacity-100">{t('squads.add')}</button>
                             </div>
                           ))
                         )}
@@ -612,13 +627,14 @@ export default function GroupManager({
                     </div>
                   )}
                 </div>
-              </div>
+              </motion.div>
             );
           })}
+          </AnimatePresence>
           {groups.length === 0 && (
             <div className="col-span-full py-24 text-center border-4 border-dashed border-[#1a1a1a] rounded-2xl opacity-20 flex flex-col items-center justify-center">
               <span className="material-symbols-outlined text-6xl text-zinc-800 mb-4">groups_2</span>
-              <p className="text-zinc-700 font-black text-sm uppercase tracking-[0.4em]">Nenhum_Esquadrão_Sincronizado</p>
+              <p className="text-zinc-700 font-black text-sm uppercase tracking-[0.4em]">{t('squads.empty')}</p>
             </div>
           )}
         </div>
@@ -630,10 +646,10 @@ export default function GroupManager({
            onClose={() => setShowGrantModal(null)}
            onSuccess={() => {}}
            onExecuteGrant={async (selectedIds) => {
-             const aliveOnly = await showConfirm('Condição de Distribuição', 'Distribuir apenas para agentes VIVOS no esquadrão? (Clique em confirmar para Apenas Vivos)', 'Apenas Vivos');
+             const aliveOnly = await showConfirm(t('squads.confirm.aliveOnlyTitle'), t('squads.confirm.aliveOnlyBody'), t('squads.confirm.aliveOnlyAction'));
              await handleGrantIntelToGroup(showGrantModal, selectedIds, aliveOnly);
            }}
-           title="Distribuir Intel — Esquadrão"
+           title={t('squads.distTitle')}
         />
       )}
 

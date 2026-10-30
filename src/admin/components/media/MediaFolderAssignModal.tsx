@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'motion/react';
 import { MediaFolder } from '../../../types/media';
 import OverlayPortal from '../OverlayPortal';
@@ -21,6 +22,7 @@ export default function MediaFolderAssignModal({
   onClose,
   onSave,
 }: MediaFolderAssignModalProps) {
+  const { t } = useTranslation('admin');
   const [draft, setDraft] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
   const wasOpenRef = useRef(false);
@@ -119,7 +121,7 @@ export default function MediaFolderAssignModal({
                   onClick={onClose}
                   className="px-4 py-2 text-[10px] font-display font-bold text-industrial-silver/40 hover:text-white uppercase tracking-widest"
                 >
-                  Cancelar
+                  {t('accounts.cancel')}
                 </button>
                 <button
                   type="button"

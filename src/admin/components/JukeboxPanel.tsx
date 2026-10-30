@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { db, storage } from '../../lib/firebase';
 import {
   collection, onSnapshot, doc, deleteDoc, addDoc, updateDoc,
@@ -39,6 +40,7 @@ function isYoutubeUrl(url: string): boolean {
 
 /* ── Component ─────────────────────────────────────────── */
 export default function JukeboxPanel({ embedded = false }: { embedded?: boolean }) {
+  const { t } = useTranslation('admin');
   const [tracks, setTracks] = useState<JukeboxTrack[]>([]);
   const [currentIndex, setCurrentIndex] = useState<number>(-1);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -173,7 +175,7 @@ export default function JukeboxPanel({ embedded = false }: { embedded?: boolean 
     const url = linkInput.trim();
     if (!url) return;
     if (!isYoutubeUrl(url)) {
-      await showAlert('URL Inválida', 'Insira uma URL válida do YouTube.');
+      await showAlert(t('jukebox.invalidUrl'), t('jukebox.invalidUrlBody'));
       return;
     }
     const title = titleInput.trim() || `YouTube — ${extractYoutubeId(url)}`;
@@ -204,13 +206,13 @@ export default function JukeboxPanel({ embedded = false }: { embedded?: boolean 
       setTitleInput('');
     } catch (err) {
       console.error(err);
-      await showAlert('Erro', 'Falha ao adicionar áudio à jukebox.');
+      await showAlert('Erro', t('jukebox.addFail'));
     }
   };
 
   /* ── Delete track ────────────────────────────────────── */
   const handleDelete = async (track: JukeboxTrack) => {
-    const ok = await showConfirm('Atenção', `Remover "${track.title}" da jukebox?`, 'Remover');
+    const ok = await showConfirm(t('jukebox.removeTitle'), t('jukebox.removeBody', { title: track.title }), t('jukebox.removeAction'));
     if (!ok) return;
     if (track.storagePath) {
       try { await deleteObject(ref(storage, track.storagePath)); } catch {}
@@ -253,7 +255,7 @@ export default function JukeboxPanel({ embedded = false }: { embedded?: boolean 
     setIsPlaying(!isPlaying);
   };
 
-  const statusLabel = !currentTrack ? 'PARADO' : isLooping ? 'LOOP_ATIVO' : isPlaying ? 'TOCANDO' : 'PAUSADO';
+  const statusLabel = !currentTrack ? 'PARADO' : isLooping ? 'LOOP ATIVO' : isPlaying ? 'TOCANDO' : 'PAUSADO';
 
   /* ── Render ──────────────────────────────────────────── */
   return (
@@ -265,7 +267,7 @@ export default function JukeboxPanel({ embedded = false }: { embedded?: boolean 
         isOpen={isMediaSelectorOpen}
         onClose={() => setIsMediaSelectorOpen(false)}
         onSelect={handleMediaSelect}
-        title="Selecionar Áudio para Jukebox"
+        title={t('jukebox.selectAudio')}
         allowedTypes={['audio']}
       />
 
@@ -274,7 +276,7 @@ export default function JukeboxPanel({ embedded = false }: { embedded?: boolean 
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <div className="w-2 h-8 bg-primary rounded-full animate-pulse shadow-[0_0_10px_rgba(255,140,0,0.4)]" />
-          <h2 className="font-black uppercase tracking-widest text-lg text-white">Interface_de_Broadcast_Jukebox</h2>
+          <h2 className="font-black uppercase tracking-widest text-lg text-white">{t('jukebox.title')}</h2>
           <span className="text-[10px] font-bold text-zinc-600 tracking-widest uppercase">{tracks.length} FAIXAS NO BUFFER</span>
         </div>
         <div className={`flex items-center gap-3 px-4 py-1.5 border-2 text-[10px] font-black uppercase tracking-widest rounded-sm ${
@@ -309,10 +311,10 @@ export default function JukeboxPanel({ embedded = false }: { embedded?: boolean 
             </div>
             <div>
               <p className="font-black text-sm tracking-tight text-white uppercase group-hover:text-primary transition-colors">
-                {currentTrack ? currentTrack.title : 'BUFFER_AGUARDANDO_SINAL'}
+                {currentTrack ? currentTrack.title : t('jukebox.waiting')}
               </p>
               <p className="text-[9px] font-black uppercase text-zinc-600 tracking-widest mt-1">
-                {currentTrack ? (currentTrack.type === 'youtube' ? 'TRANSMISSÃO_YOUTUBE' : 'STREAM_ÁUDIO_LOCAL') : '---'}
+                {currentTrack ? (currentTrack.type === 'youtube' ? 'TRANSMISSÃO YOUTUBE' : 'STREAM ÁUDIO LOCAL') : '---'}
               </p>
             </div>
           </div>
@@ -331,7 +333,7 @@ export default function JukeboxPanel({ embedded = false }: { embedded?: boolean 
             <button onClick={() => setIsLooping(!isLooping)}
               className={`w-12 h-12 rounded-sm border-2 flex items-center justify-center transition-all active:scale-90 ${
                 isLooping ? 'border-amber-500 text-amber-400 bg-amber-500/10 shadow-[0_0_10px_rgba(245,158,11,0.3)]' : 'border-[#1a1a1a] text-zinc-700 hover:text-amber-400 hover:border-amber-500/40'
-              }`} title="Loop de Frequência">
+              }`} title={t('jukebox.loopTitle')}>
               <span className="material-symbols-outlined text-2xl">repeat_one</span>
             </button>
           </div>
@@ -351,7 +353,7 @@ export default function JukeboxPanel({ embedded = false }: { embedded?: boolean 
             </div>
           ) : (
             <div className="flex items-center justify-center h-32 text-zinc-800 text-[11px] font-black uppercase tracking-[0.4em] relative z-10">
-              SELECIONE_FAIXA_PARA_INICIAR_TRANSMISSÃO
+              SELECIONE FAIXA PARA INICIAR TRANSMISSÃO
             </div>
           )}
         </div>
@@ -361,15 +363,15 @@ export default function JukeboxPanel({ embedded = false }: { embedded?: boolean 
       <div className="bg-[#1a1a1a] border-4 border-[#1a1a1a] p-6 rounded-xl shadow-xl space-y-4">
         <div className="flex items-center gap-3 mb-2">
           <span className="material-symbols-outlined text-zinc-700 text-lg">add_circle</span>
-          <p className="font-black text-[10px] uppercase tracking-widest text-zinc-500">Injetar_Novo_Sinal_na_Playlist</p>
+          <p className="font-black text-[10px] uppercase tracking-widest text-zinc-500">{t('jukebox.inject')}</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-           <input type="text" placeholder="IDENTIFICADOR_DA_FAIXA (OPCIONAL)" value={titleInput}
+           <input type="text" placeholder={t('jukebox.titlePlaceholder')} value={titleInput}
              onChange={(e) => setTitleInput(e.target.value)}
              className="w-full bg-black/60 border-2 border-[#1a1a1a] text-[10px] font-black uppercase tracking-widest text-white px-4 py-3 focus:border-primary outline-none rounded-sm placeholder:text-zinc-800 transition-all" />
            <div className="flex gap-2">
-             <input type="text" placeholder="URL_DO_YOUTUBE..." value={linkInput}
+             <input type="text" placeholder={t('jukebox.urlPlaceholder')} value={linkInput}
                onChange={(e) => setLinkInput(e.target.value)}
                onKeyDown={(e) => e.key === 'Enter' && handleAddLink()}
                className="flex-1 bg-black/60 border-2 border-[#1a1a1a] text-[10px] font-black uppercase tracking-widest text-white px-4 py-3 focus:border-red-500 outline-none rounded-sm placeholder:text-zinc-800 transition-all" />
@@ -390,7 +392,7 @@ export default function JukeboxPanel({ embedded = false }: { embedded?: boolean 
           <button onClick={() => setIsMediaSelectorOpen(true)}
             className="flex items-center gap-3 px-10 py-3.5 bg-primary/10 text-primary border-2 border-primary/20 text-[10px] font-black tracking-widest hover:bg-primary/20 transition-all rounded-sm active:scale-95 glow-orange">
             <span className="material-symbols-outlined text-sm">perm_media</span>
-            ADICIONAR_DA_BIBLIOTECA_DE_MÍDIA
+            ADICIONAR DA BIBLIOTECA DE MÍDIA
           </button>
         </div>
       </div>
@@ -399,12 +401,12 @@ export default function JukeboxPanel({ embedded = false }: { embedded?: boolean 
       <div className="space-y-4">
         <div className="flex items-center gap-3 mb-2 px-2">
           <span className="material-symbols-outlined text-zinc-700 text-lg">playlist_play</span>
-          <p className="font-black text-[10px] uppercase tracking-widest text-zinc-500">Sequência_de_Frequências_Ativas</p>
+          <p className="font-black text-[10px] uppercase tracking-widest text-zinc-500">{t('jukebox.playlist')}</p>
         </div>
 
         {tracks.length === 0 ? (
           <div className="bg-black/20 p-24 text-center border-4 border-dashed border-[#1a1a1a] rounded-2xl opacity-20">
-            <p className="text-zinc-700 font-black text-[12px] uppercase tracking-[0.4em]">LISTA_DE_REPRODUÇÃO_VAZIA</p>
+            <p className="text-zinc-700 font-black text-[12px] uppercase tracking-[0.4em]">{t('jukebox.empty')}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-3">
@@ -434,7 +436,7 @@ export default function JukeboxPanel({ embedded = false }: { embedded?: boolean 
                          <span className={`text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-sm border ${
                            track.type === 'youtube' ? 'border-red-500/20 text-red-500/60' : 'border-emerald-500/20 text-emerald-500/60'
                          }`}>
-                           {track.type === 'youtube' ? 'YOUTUBE' : 'ÁUDIO_LOCAL'}
+                           {track.type === 'youtube' ? 'YOUTUBE' : 'ÁUDIO LOCAL'}
                          </span>
                          {isActive && isPlaying && (
                            <div className="flex gap-0.5">
@@ -473,14 +475,14 @@ export default function JukeboxPanel({ embedded = false }: { embedded?: boolean 
         <div className="flex items-center gap-4">
            <div className="w-1.5 h-1.5 rounded-full bg-zinc-800" />
            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-700">
-             FAIXA_ATUAL: {currentIndex >= 0 ? `${currentIndex + 1} / ${tracks.length}` : 'TRANSMISSÃO_INATIVA'}
+             FAIXA ATUAL: {currentIndex >= 0 ? `${currentIndex + 1} / ${tracks.length}` : 'TRANSMISSÃO INATIVA'}
            </span>
         </div>
         <div className="flex items-center gap-6">
           {isLooping && (
             <div className="flex items-center gap-2 text-amber-500/60">
                <span className="material-symbols-outlined text-sm animate-spin-slow">sync</span>
-               <span className="text-[9px] font-black uppercase tracking-widest">REDUNDÂNCIA_ATIVA</span>
+               <span className="text-[9px] font-black uppercase tracking-widest">{t('jukebox.redundancy')}</span>
             </div>
           )}
           <span className={`text-[10px] font-black uppercase tracking-[0.2em] ${isPlaying ? 'text-primary' : 'text-zinc-800'}`}>

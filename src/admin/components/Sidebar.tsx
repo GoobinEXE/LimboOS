@@ -1,6 +1,9 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { clsx } from 'clsx';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { motion } from 'motion/react';
+import { ADMIN_SPRING_INDICATOR } from '../lib/motion';
 
 interface SidebarProps {
   activeTab: string;
@@ -10,25 +13,27 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ activeTab, setActiveTab, isCollapsed, onToggleCollapse }: SidebarProps) {
+  const { t } = useTranslation('admin');
+
   const groups = [
     {
-      title: 'Sessão',
+      title: t('sidebar.group.session'),
       items: [
-        { id: 'live', label: 'Ao Vivo', icon: 'sensors' },
-        { id: 'mesa', label: 'Mesa', icon: 'groups' },
-        { id: 'missions', label: 'Missões', icon: 'map' },
+        { id: 'live', label: t('sidebar.live'), icon: 'sensors' },
+        { id: 'mesa', label: t('sidebar.mesa'), icon: 'groups' },
+        { id: 'missions', label: t('sidebar.missions'), icon: 'map' },
       ],
     },
     {
-      title: 'Arsenal',
+      title: t('sidebar.group.arsenal'),
       items: [
-        { id: 'media', label: 'Conteúdo', icon: 'folder_open' },
+        { id: 'media', label: t('sidebar.media'), icon: 'folder_open' },
       ],
     },
     {
-      title: 'Núcleo',
+      title: t('sidebar.group.core'),
       items: [
-        { id: 'systems', label: 'Sistema', icon: 'tune' },
+        { id: 'systems', label: t('sidebar.systems'), icon: 'tune' },
       ],
     },
   ];
@@ -49,11 +54,13 @@ export default function Sidebar({ activeTab, setActiveTab, isCollapsed, onToggle
         {isCollapsed ? (
           <div className="flex flex-col items-center gap-0.5">
             <span className="text-primary font-display font-bold text-lg leading-none tracking-tighter">S</span>
-            <span className="text-white font-display font-bold text-[7px] tracking-[0.2em] uppercase leading-none">ADM</span>
+            <span className="text-white font-display font-bold text-[7px] tracking-[0.2em] uppercase leading-none">
+              {t('sidebar.brandCollapsed')}
+            </span>
           </div>
         ) : (
           <h1 className="text-2xl font-bold tracking-tighter text-white font-display leading-none whitespace-nowrap">
-            SYS<span className="text-primary">_ADMIN</span>
+            SYS<span className="text-primary"> ADMIN</span>
           </h1>
         )}
       </div>
@@ -73,38 +80,48 @@ export default function Sidebar({ activeTab, setActiveTab, isCollapsed, onToggle
             )}
             {isCollapsed && <div className="h-px bg-primary/10 mx-2 mb-2" />}
             <div className="space-y-1">
-              {group.items.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => setActiveTab(item.id)}
-                  title={isCollapsed ? item.label : undefined}
-                  className={clsx(
-                    'w-full flex items-center transition-all duration-200 text-left relative group rounded-sm',
-                    isCollapsed ? 'justify-center px-0 py-3' : 'px-4 py-3 gap-3',
-                    activeTab === item.id
-                      ? 'bg-primary/10 text-primary border-l-2 border-primary'
-                      : 'text-industrial-silver/40 hover:bg-white/5 hover:text-industrial-silver/80'
-                  )}
-                >
-                  <span
+              {group.items.map((item) => {
+                const isActive = activeTab === item.id;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => setActiveTab(item.id)}
+                    title={isCollapsed ? item.label : undefined}
                     className={clsx(
-                      'material-symbols-outlined transition-transform group-hover:scale-110',
-                      isCollapsed ? 'text-xl' : 'text-lg',
-                      activeTab === item.id ? 'text-primary' : 'text-industrial-silver/20'
+                      'w-full flex items-center transition-colors duration-200 text-left relative group rounded-sm',
+                      isCollapsed ? 'justify-center px-0 py-3' : 'px-4 py-3 gap-3',
+                      isActive
+                        ? 'text-primary'
+                        : 'text-industrial-silver/40 hover:bg-white/5 hover:text-industrial-silver/80'
                     )}
                   >
-                    {item.icon}
-                  </span>
-                  {!isCollapsed && (
-                    <span className="font-display uppercase font-bold tracking-[0.2em] text-[10px] whitespace-nowrap overflow-hidden">
-                      {item.label}
+                    {isActive && (
+                      <motion.span
+                        layoutId="admin-sidebar-indicator"
+                        className="absolute inset-0 rounded-sm bg-primary/10 border-l-2 border-primary"
+                        transition={ADMIN_SPRING_INDICATOR}
+                      />
+                    )}
+                    <span
+                      className={clsx(
+                        'material-symbols-outlined transition-transform group-hover:scale-110 relative z-10',
+                        isCollapsed ? 'text-xl' : 'text-lg',
+                        isActive ? 'text-primary' : 'text-industrial-silver/20'
+                      )}
+                    >
+                      {item.icon}
                     </span>
-                  )}
-                  {activeTab === item.id && !isCollapsed && (
-                    <div className="absolute right-4 w-1.5 h-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_8px_rgba(255,140,0,0.4)]" />
-                  )}
-                </button>
-              ))}
+                    {!isCollapsed && (
+                      <span className="relative z-10 font-display uppercase font-bold tracking-[0.2em] text-[10px] whitespace-nowrap overflow-hidden">
+                        {item.label}
+                      </span>
+                    )}
+                    {isActive && !isCollapsed && (
+                      <div className="absolute right-4 z-10 w-1.5 h-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_8px_rgba(255,140,0,0.4)]" />
+                    )}
+                  </button>
+                );
+              })}
             </div>
           </div>
         ))}
@@ -117,7 +134,7 @@ export default function Sidebar({ activeTab, setActiveTab, isCollapsed, onToggle
             'w-full flex items-center gap-3 py-4 text-industrial-silver/30 hover:text-primary transition-all hover:bg-white/5 group',
             isCollapsed ? 'justify-center px-0' : 'px-6'
           )}
-          title={isCollapsed ? 'Expandir Menu' : 'Compactar Menu'}
+          title={isCollapsed ? t('sidebar.expandTitle') : t('sidebar.collapseTitle')}
         >
           {isCollapsed ? (
             <ChevronRight size={18} className="group-hover:translate-x-0.5 transition-transform" />
@@ -125,7 +142,7 @@ export default function Sidebar({ activeTab, setActiveTab, isCollapsed, onToggle
             <>
               <ChevronLeft size={18} className="group-hover:-translate-x-0.5 transition-transform" />
               <span className="font-display uppercase font-bold tracking-[0.2em] text-[9px] whitespace-nowrap">
-                Compactar
+                {t('sidebar.collapse')}
               </span>
             </>
           )}
@@ -138,10 +155,10 @@ export default function Sidebar({ activeTab, setActiveTab, isCollapsed, onToggle
             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse glow-green shrink-0" />
             <div>
               <p className="text-[8px] text-industrial-silver/60 font-display font-bold tracking-[0.2em] uppercase leading-none">
-                Status do Sistema
+                {t('sidebar.statusLabel')}
               </p>
               <p className="text-[9px] text-green-500 font-display font-bold tracking-widest uppercase mt-1">
-                Grid_Online
+                {t('sidebar.statusOnline')}
               </p>
             </div>
           </div>
@@ -149,7 +166,10 @@ export default function Sidebar({ activeTab, setActiveTab, isCollapsed, onToggle
       )}
       {isCollapsed && (
         <div className="p-3 border-t border-primary/10 bg-black/10 flex justify-center shrink-0">
-          <div className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse glow-green" title="Grid Online" />
+          <div
+            className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse glow-green"
+            title={t('sidebar.statusOnlineTitle')}
+          />
         </div>
       )}
     </aside>

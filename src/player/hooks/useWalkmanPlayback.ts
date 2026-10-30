@@ -18,7 +18,8 @@ import { clearPendingVideoPlay } from '../../store/firestore';
 import type { PlayerData, PlayerStats, WalkmanStatus, DisplayMode, AppScreen } from '../../types/player';
 import type { Toast } from '../../components/ToastNotification';
 import type { DeviceCapabilities } from './useActiveCampaign';
-
+import i18n from '../../i18n';
+import { normalizeQrPayload } from '../../lib/qrCode';
 export interface UseWalkmanPlaybackOptions {
   playerData: PlayerData | null;
   localStats: PlayerStats | null;
@@ -121,7 +122,7 @@ export function useWalkmanPlayback(options: UseWalkmanPlaybackOptions) {
           if (cancelled) return;
           // Autoplay bloqueado ou mídia indisponível: não deixa a UI presa em PLAYING
           setWalkmanStatus('LOADED');
-          addToast({ type: 'error', title: 'Falha na Reprodução', subtitle: 'Toque em play novamente', icon: '[!]' });
+          addToast({ type: 'error', title: i18n.t('toast.playbackFail', { ns: 'player' }), subtitle: i18n.t('toast.playbackFailSub', { ns: 'player' }), icon: '[!]' });
         });
       return () => {
         cancelled = true;
@@ -150,22 +151,29 @@ export function useWalkmanPlayback(options: UseWalkmanPlaybackOptions) {
   }, [clearPendingTimer]);
 
   const handleQrDetected = useCallback(
-    async (code: string) => {
+    async (rawCode: string) => {
       const currentPD = playerDataRef.current;
       if (!currentPD || !localStats) {
-        return addToast({ type: 'error', title: 'Aguarde', subtitle: 'Perfil carregando...', icon: '[..]' });
+        return addToast({ type: 'error', title: i18n.t('toast.wait', { ns: 'player' }), subtitle: i18n.t('toast.waitSub', { ns: 'player' }), icon: '[..]' });
       }
       setWalkmanStatus('IDLE');
+
+      const code = normalizeQrPayload(rawCode);
 
       try {
         const rawIntel = await intelService.resolve(code);
         if (!rawIntel) {
           firebaseAnalytics.logQrScan('fail');
-          return addToast({ type: 'error', title: 'Código Desconhecido', subtitle: code, icon: '[X]' });
+          return addToast({
+            type: 'error',
+            title: i18n.t('toast.unknownCode', { ns: 'player' }),
+            subtitle: i18n.t('toast.unknownCodeSub', { ns: 'player', code }),
+            icon: '[X]',
+          });
         }
 
         const intel = IntelFactory.getInstance().create(rawIntel);
-        const { alreadyOwned, updatedIds } = await intelService.unlock(currentPD, intel.id);
+        const { alreadyOwned, updatedIds } = await intelService.unlock(currentPD, intel.id, code);
 
         firebaseAnalytics.logQrScan(alreadyOwned ? 'duplicate' : 'success');
 
@@ -183,7 +191,7 @@ export function useWalkmanPlayback(options: UseWalkmanPlaybackOptions) {
           setActiveEvidence(intel);
           addToast({
             type: 'tape',
-            title: alreadyOwned ? 'Transmissão Aberta' : 'Intel Desbloqueada!',
+            title: alreadyOwned ? i18n.t('toast.transmissionOpen', { ns: 'player' }) : i18n.t('toast.intelUnlocked', { ns: 'player' }),
             subtitle: intel.title,
             icon: '[▶]',
           });
@@ -202,7 +210,7 @@ export function useWalkmanPlayback(options: UseWalkmanPlaybackOptions) {
           setWalkmanStatus('LOADED');
           addToast({
             type: 'tape',
-            title: alreadyOwned ? 'Intel Inserida' : 'Intel Desbloqueada!',
+            title: alreadyOwned ? i18n.t('toast.intelInserted', { ns: 'player' }) : i18n.t('toast.intelUnlocked', { ns: 'player' }),
             subtitle: intel.title,
             icon: '[=]',
           });
@@ -213,7 +221,7 @@ export function useWalkmanPlayback(options: UseWalkmanPlaybackOptions) {
           { tapeId: intel.id }
         );
       } catch {
-        addToast({ type: 'error', title: 'Erro QR', subtitle: 'Tente dnv', icon: '[!]' });
+        addToast({ type: 'error', title: i18n.t('toast.qrError', { ns: 'player' }), subtitle: i18n.t('toast.qrErrorSub', { ns: 'player' }), icon: '[!]' });
       }
     },
     [localStats, scanTimes, addToast, playerDataRef, setPlayerData, scheduleTimer]
@@ -352,7 +360,7 @@ export function useWalkmanPlayback(options: UseWalkmanPlaybackOptions) {
           setActiveEvidence(intel);
           addToast({
             type: 'tape',
-            title: 'Transmissão Recebida',
+            title: i18n.t('toast.transmissionReceived', { ns: 'player' }),
             subtitle: intel.title,
             icon: '[▶]',
           });
@@ -367,7 +375,7 @@ export function useWalkmanPlayback(options: UseWalkmanPlaybackOptions) {
           setWalkmanStatus('PLAYING');
           addToast({
             type: 'tape',
-            title: 'Transmissão Recebida',
+            title: i18n.t('toast.transmissionReceived', { ns: 'player' }),
             subtitle: intel.title,
             icon: '[▶]',
           });

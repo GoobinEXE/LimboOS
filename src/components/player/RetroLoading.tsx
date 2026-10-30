@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
+import { useTranslation } from 'react-i18next';
 import RetroSpinner from './RetroSpinner';
 
 interface RetroLoadingProps {
@@ -9,10 +10,14 @@ interface RetroLoadingProps {
 }
 
 export default function RetroLoading({
-  message = "SINTONIZANDO...",
-  subMessage = "Buscando sinal na frequência 87.5 MHz",
+  message,
+  subMessage,
   fullScreen = false
 }: RetroLoadingProps) {
+  const { t } = useTranslation('common');
+  const resolvedMessage = message ?? t('loading');
+  const resolvedSubMessage = subMessage ?? t('loadingSub');
+
   return (
     <div className={`flex flex-col items-center justify-center relative ${fullScreen ? 'fixed inset-0 z-100 bg-surface-sunken' : 'w-full h-full p-8'}`}>
       <div className="noise-overlay" />
@@ -29,12 +34,12 @@ export default function RetroLoading({
 
         <div className="mt-6 flex flex-col items-center gap-2">
           <div className="text-protocol text-accent text-shadow-orange text-center animate-[pulse_2s_ease-in-out_infinite]">
-            {message}
+            {resolvedMessage}
           </div>
 
-          {subMessage && (
+          {resolvedSubMessage && (
             <div className="text-mono-ui text-industrial-silver/40 text-center">
-              {subMessage}
+              {resolvedSubMessage}
             </div>
           )}
         </div>

@@ -11,6 +11,7 @@ import {
 } from 'firebase/auth';
 import { doc, getDoc, Timestamp } from 'firebase/firestore';
 import { auth, db } from '../lib/firebase';
+import i18n from '../i18n';
 import { updateLastLogin, waitForUserDoc } from './firestore';
 import type { MasterAccount } from '../types/player';
 
@@ -23,11 +24,13 @@ export type LoginResult =
   | { ok: true;  account: MasterAccount }
   | { ok: false; error: 'wrong_password' | 'network' | 'unknown'; message: string };
 
-const PROFILE_NOT_FOUND_MESSAGE = 'Perfil não encontrado. Contate o administrador.';
-const PROFILE_TIMEOUT_MESSAGE = 'Perfil não provisionado a tempo. Tente novamente em instantes.';
+const PROFILE_NOT_FOUND_CODE = 'PROFILE_NOT_FOUND';
+const PROFILE_TIMEOUT_CODE = 'PROFILE_TIMEOUT';
 
 function isProfileProvisioningError(message: string): boolean {
-  return message.includes('Timeout aguardando criação do perfil')
+  return message === PROFILE_NOT_FOUND_CODE
+    || message === PROFILE_TIMEOUT_CODE
+    || message.includes('Timeout aguardando criação do perfil')
     || message.includes('Perfil não encontrado')
     || message === 'Account not found';
 }
@@ -90,7 +93,7 @@ async function ensureUserProfileOnce(user: User): Promise<MasterAccount> {
 
   snap = await getDoc(userRef);
   if (!snap.exists()) {
-    throw new Error(PROFILE_NOT_FOUND_MESSAGE);
+    throw new Error(PROFILE_NOT_FOUND_CODE);
   }
 
   void updateLastLogin(user.uid);
@@ -124,11 +127,15 @@ async function rollbackAuthOnProfileFailure(user: User | null): Promise<void> {
 
 function profileErrorMessage(err: unknown): string | null {
   const message = (err as Error).message ?? '';
-  if (message.includes('Timeout aguardando criação do perfil')) {
-    return PROFILE_TIMEOUT_MESSAGE;
+  if (message === PROFILE_TIMEOUT_CODE || message.includes('Timeout aguardando criação do perfil')) {
+    return i18n.t('auth.error.profileTimeout', { ns: 'common' });
   }
-  if (isProfileProvisioningError(message)) {
-    return PROFILE_NOT_FOUND_MESSAGE;
+  if (
+    message === PROFILE_NOT_FOUND_CODE
+    || message.includes('Perfil não encontrado')
+    || message === 'Account not found'
+  ) {
+    return i18n.t('auth.error.profileNotFound', { ns: 'common' });
   }
   return null;
 }
@@ -144,7 +151,7 @@ export async function loginOrCreate(
     const account = await ensureUserProfile(user);
     if (account.suspended && account.role !== 'admin') {
       await firebaseSignOut(auth);
-      return { ok: false, error: 'unknown' as const, message: 'CONTA SUSPENSA: Contate o administrador.' };
+      return { ok: false, error: 'unknown' as const, message: i18n.t('auth.error.suspended', { ns: 'common' }) };
     }
     return { ok: true, account };
   } catch (signInErr: unknown) {
@@ -161,30 +168,30 @@ export async function loginOrCreate(
         const createCode = (createErr as { code?: string }).code ?? '';
         const createMessage = (createErr as Error).message ?? '';
         if (createCode === 'auth/weak-password') {
-          return { ok: false, error: 'wrong_password', message: 'Senha muito fraca (mínimo 6 caracteres).' };
+          return { ok: false, error: 'wrong_password', message: i18n.t('auth.error.weakPassword', { ns: 'common' }) };
         }
         if (createCode === 'auth/email-already-in-use') {
-          return { ok: false, error: 'wrong_password', message: 'FALHA NA AUTENTICAÇÃO: SENHA INCORRETA' };
+          return { ok: false, error: 'wrong_password', message: i18n.t('auth.error.wrongPassword', { ns: 'common' }) };
         }
         const profileMsg = profileErrorMessage(createErr);
         if (profileMsg) {
           return { ok: false, error: 'unknown', message: profileMsg };
         }
-        return { ok: false, error: 'unknown', message: 'Erro ao criar perfil.' };
+        return { ok: false, error: 'unknown', message: i18n.t('auth.error.createProfile', { ns: 'common' }) };
       }
     }
     if (code === 'auth/wrong-password') {
-      return { ok: false, error: 'wrong_password', message: 'FALHA NA AUTENTICAÇÃO: CREDENCIAIS INVÁLIDAS' };
+      return { ok: false, error: 'wrong_password', message: i18n.t('auth.error.invalidCredentials', { ns: 'common' }) };
     }
     if (code.startsWith('auth/network')) {
-      return { ok: false, error: 'network', message: 'SEM CONEXÃO: verifique a rede.' };
+      return { ok: false, error: 'network', message: i18n.t('auth.error.noConnection', { ns: 'common' }) };
     }
     const profileMsg = profileErrorMessage(signInErr);
     if (profileMsg) {
       await rollbackAuthOnProfileFailure(auth.currentUser);
       return { ok: false, error: 'unknown', message: profileMsg };
     }
-    return { ok: false, error: 'unknown', message: `Erro inesperado (${code})` };
+    return { ok: false, error: 'unknown', message: i18n.t('auth.error.unexpected', { ns: 'common', code }) };
   }
 }
 
@@ -202,7 +209,7 @@ export async function loginWithProvider(providerName: 'google' | 'apple'): Promi
 
     if (account.suspended && account.role !== 'admin') {
       await firebaseSignOut(auth);
-      return { ok: false, error: 'unknown' as const, message: 'CONTA SUSPENSA: Contate o administrador.' };
+      return { ok: false, error: 'unknown' as const, message: i18n.t('auth.error.suspended', { ns: 'common' }) };
     }
 
     return { ok: true, account };
@@ -212,20 +219,20 @@ export async function loginWithProvider(providerName: 'google' | 'apple'): Promi
     const message = (err as Error).message ?? '';
     
     if (code === 'auth/popup-closed-by-user') {
-      return { ok: false, error: 'unknown', message: 'OPERAÇÃO CANCELADA PELO USUÁRIO' };
+      return { ok: false, error: 'unknown', message: i18n.t('auth.error.cancelled', { ns: 'common' }) };
     }
     if (code.startsWith('auth/network')) {
-      return { ok: false, error: 'network', message: 'SEM CONEXÃO: verifique a rede.' };
+      return { ok: false, error: 'network', message: i18n.t('auth.error.noConnection', { ns: 'common' }) };
     }
     if (code === 'auth/account-exists-with-different-credential') {
-      return { ok: false, error: 'unknown', message: 'E-mail já cadastrado através de outro método de login.' };
+      return { ok: false, error: 'unknown', message: i18n.t('auth.error.emailInUse', { ns: 'common' }) };
     }
     const profileMsg = profileErrorMessage(err);
     if (profileMsg) {
       return { ok: false, error: 'unknown', message: profileMsg };
     }
     
-    return { ok: false, error: 'unknown', message: `Erro no login via provedor (${code})` };
+    return { ok: false, error: 'unknown', message: i18n.t('auth.error.provider', { ns: 'common', code }) };
   }
 }
 

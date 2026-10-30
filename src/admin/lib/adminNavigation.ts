@@ -1,14 +1,14 @@
 import React from 'react';
 import type { MasterAccount, CharacterData } from '../../types/player';
 
-export type OperationsSubId = 'relatorios' | 'acesso' | 'qr' | 'conquistas';
+export type OperationsSubId = 'relatorios' | 'acesso' | 'qr' | 'conquistas' | 'sms';
 export type MesaSubId = 'esquadroes' | 'contas';
 export type MissionTabId = 'dados' | 'vinculos' | 'inventario' | 'transmissao';
 
 export const ADMIN_TAB_IDS = ['live', 'mesa', 'missions', 'media', 'systems'] as const;
 export type AdminTabId = (typeof ADMIN_TAB_IDS)[number];
 
-export const OPERATIONS_SUB_IDS: OperationsSubId[] = ['relatorios', 'acesso', 'qr', 'conquistas'];
+export const OPERATIONS_SUB_IDS: OperationsSubId[] = ['relatorios', 'acesso', 'qr', 'conquistas', 'sms'];
 export const MESA_SUB_IDS: MesaSubId[] = ['esquadroes', 'contas'];
 
 export interface MetricNavigationOptions {

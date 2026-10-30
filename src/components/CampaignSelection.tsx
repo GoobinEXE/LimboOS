@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AnimatePresence, motion, useMotionValue, useSpring, animate } from 'motion/react';
 import { Menu, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Campaign } from '../data/campaigns';
@@ -33,6 +34,7 @@ export default function CampaignSelection({
   onBack,
   playerData 
 }: CampaignSelectionProps) {
+  const { t } = useTranslation('player');
   const canGoBack = Boolean(onBack && playerData?.character.campaignId);
   const webkitLite = useWebkitLite();
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
@@ -138,7 +140,7 @@ export default function CampaignSelection({
     return () => window.removeEventListener('keydown', handleKey);
   }, [currentIndex, campaigns, overlays, snapTo, onSelect, canGoBack, onBack]);
 
-  if (loading) return <RetroLoading message="Sincronizando Banco de Dados..." subMessage="Acessando registros de operações do Terminal RM-84" />;
+  if (loading) return <RetroLoading message={t('campaign.loading')} subMessage={t('campaign.loadingSub')} />;
 
   const iconButtonClass =
     'w-10 h-10 sm:w-11 sm:h-11 rounded-control border border-border bg-surface-panel text-primary flex items-center justify-center hover:border-border-accent hover:bg-accent-10 active:scale-95 transition-all duration-200 shrink-0';
@@ -151,7 +153,7 @@ export default function CampaignSelection({
       <header className="flex justify-between items-center min-h-16 sm:min-h-20 pt-[max(0.5rem,env(safe-area-inset-top))] pb-2 sm:py-0 px-4 sm:px-8 relative z-30 border-b border-border bg-surface-raised/70 backdrop-blur-md">
         <div className="flex items-center gap-3 sm:gap-5 min-w-0">
           {canGoBack ? (
-            <button type="button" onClick={onBack} className={iconButtonClass} aria-label="Voltar ao dispositivo">
+            <button type="button" onClick={onBack} className={iconButtonClass} aria-label={t('campaign.backAria')}>
               <ChevronLeft size={22} />
             </button>
           ) : (
@@ -159,17 +161,17 @@ export default function CampaignSelection({
               type="button"
               onClick={() => setOverlays(v => ({ ...v, menu: true }))}
               className={iconButtonClass}
-              aria-label="Menu de segurança"
+              aria-label={t('campaign.menuAria')}
             >
               <Menu size={22} />
             </button>
           )}
           <div className="min-w-0">
             <p className="text-protocol text-[8px] sm:text-[9px] text-primary/60 truncate">
-              {canGoBack ? 'Troca de missão // Voltar ao dispositivo' : 'Registro de Operações // Terminal RM-84'}
+              {canGoBack ? t('campaign.eyebrow.back') : t('campaign.eyebrow.default')}
             </p>
             <h1 className="text-display text-lg sm:text-2xl text-white uppercase truncate mt-0.5">
-              Campanhas <span className="text-primary">Ativas</span>
+              {t('campaign.title')} <span className="text-primary">{t('campaign.titleAccent')}</span>
             </h1>
           </div>
           {canGoBack && (
@@ -177,7 +179,7 @@ export default function CampaignSelection({
               type="button"
               onClick={() => setOverlays(v => ({ ...v, menu: true }))}
               className={iconButtonClass}
-              aria-label="Menu de segurança"
+              aria-label={t('campaign.menuAria')}
             >
               <Menu size={20} />
             </button>
@@ -185,9 +187,9 @@ export default function CampaignSelection({
         </div>
         <div className="flex items-center gap-4 shrink-0 ml-2">
           <div className="hidden sm:flex flex-col items-end text-mono-ui text-[10px] text-industrial-silver/40 leading-tight">
-            <span>Nó_Central</span>
+            <span>{t('campaign.node')}</span>
             <span className="text-primary/70 flex items-center gap-1.5">
-              <span className="w-1 h-1 rounded-full bg-primary animate-pulse" /> Link ativo
+              <span className="w-1 h-1 rounded-full bg-primary animate-pulse" /> {t('campaign.linkActive')}
             </span>
           </div>
           <Barcode onClick={() => setOverlays(v => ({ ...v, metadata: true }))} className="text-primary opacity-50 hover:opacity-100 transition-opacity cursor-pointer shrink-0" />
@@ -233,7 +235,7 @@ export default function CampaignSelection({
             <button
               type="button"
               onClick={() => snapTo(currentIndex - 1)}
-              aria-label="Fita anterior"
+              aria-label={t('campaign.prevTape')}
               className="absolute left-3 sm:left-5 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-surface-panel/80 border border-border text-primary hover:border-border-accent hover:bg-accent-10 active:scale-95 transition-all duration-200 flex items-center justify-center backdrop-blur-md shadow-panel"
             >
               <ChevronLeft size={22} />
@@ -243,7 +245,7 @@ export default function CampaignSelection({
             <button
               type="button"
               onClick={() => snapTo(currentIndex + 1)}
-              aria-label="Próxima fita"
+              aria-label={t('campaign.nextTape')}
               className="absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-surface-panel/80 border border-border text-primary hover:border-border-accent hover:bg-accent-10 active:scale-95 transition-all duration-200 flex items-center justify-center backdrop-blur-md shadow-panel"
             >
               <ChevronRight size={22} />
@@ -255,7 +257,7 @@ export default function CampaignSelection({
           {campaigns.length > 0 ? (
             <TapeProgress total={campaigns.length} current={currentIndex} onChange={snapTo} />
           ) : (
-            <span className="text-protocol text-industrial-silver/30">Nenhuma fita autorizada</span>
+            <span className="text-protocol text-industrial-silver/30">{t('campaign.noTapes')}</span>
           )}
         </div>
       </main>
@@ -263,10 +265,10 @@ export default function CampaignSelection({
       <footer className="px-4 sm:px-8 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] flex justify-between items-center bg-surface-raised/80 border-t border-border-subtle relative z-30">
         <div className="flex items-center gap-2 sm:gap-3 text-protocol text-[8px] sm:text-[10px] text-industrial-silver/50 truncate">
           <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-primary rounded-full animate-pulse glow-orange-subtle shrink-0" />
-          Sinal de Rede: Estabilizado
+          {t('campaign.signal')}
         </div>
         <div className="text-mono-ui text-[8px] sm:text-[10px] text-industrial-silver/25 shrink-0 ml-2">
-          RM-SYS-093 // GRID_PROTECTED
+          {t('campaign.footerSys')}
         </div>
       </footer>
 

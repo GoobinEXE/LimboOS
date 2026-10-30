@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'motion/react';
 import { diskRepairService } from '../services/DiskRepairService';
 import { intelRegistry } from '../data/intel_registry';
@@ -15,6 +16,8 @@ interface DiskRepairAppProps {
 }
 
 export default function DiskRepairApp({ uid, characterId = '', onClose, onBackToTerminal, isWindowed }: DiskRepairAppProps) {
+  const { t } = useTranslation('player');
+  const { t: tc } = useTranslation('common');
   const { isLandscape } = useLandscapeLayout();
   const compact = isWindowed && isLandscape;
   const [phase, setPhase] = useState<'intro' | 'loading' | 'viewer' | 'repairing' | 'result'>('intro');
@@ -54,11 +57,11 @@ export default function DiskRepairApp({ uid, characterId = '', onClose, onBackTo
           <motion.div key="intro" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className={`flex flex-col items-center border border-[#808080] shadow-[inset_1px_1px_#0a0a0a,inset_-1px_-1px_#fff] bg-white ${compact ? 'gap-3 py-3 p-3' : 'gap-6 py-6 p-6'}`}>
             <div className={compact ? 'text-4xl' : 'text-6xl'}>💾</div>
             <div className="text-center">
-              <h2 className="font-bold mb-2">Nenhum disco detectado no Drive A:</h2>
-              <p className="text-xs text-[#808080]">Por favor, insira o disquete magnético corrompido fisicamente no leitor para iniciar a análise.</p>
+              <h2 className="font-bold mb-2">{t('diskRepair.noDiskTitle')}</h2>
+              <p className="text-xs text-[#808080]">{t('diskRepair.noDiskBody')}</p>
             </div>
             <button onClick={handleInsertDisk} className="px-6 py-2 bg-[#c0c0c0] border-2 border-transparent shadow-[inset_1px_1px_#fff,inset_-1px_-1px_#0a0a0a,inset_-2px_-2px_#808080] active:shadow-[inset_1px_1px_#0a0a0a,inset_2px_2px_#808080,inset_-1px_-1px_#fff] font-bold outline-hidden focus:outline-black focus:outline-offset-2">
-              Inserir Disquete
+              {t('diskRepair.insert')}
             </button>
           </motion.div>
         )}
@@ -66,8 +69,8 @@ export default function DiskRepairApp({ uid, characterId = '', onClose, onBackTo
         {(phase === 'loading' || phase === 'repairing') && (
           <div className={compact ? 'min-h-[120px]' : 'min-h-[200px]'}>
             <RetroLoading 
-              message={phase === 'loading' ? 'Lendo setores do disco...' : 'Desmagnetizando MFT...'} 
-              subMessage={`Progresso: ${Math.round(progress)}% - Analisando trilhas magnéticas`}
+              message={phase === 'loading' ? t('diskRepair.reading') : t('diskRepair.demagnetizing')} 
+              subMessage={t('diskRepair.progressSub', { pct: Math.round(progress) })}
             />
           </div>
         )}
@@ -77,8 +80,8 @@ export default function DiskRepairApp({ uid, characterId = '', onClose, onBackTo
             <div className="flex items-start gap-4 mb-2">
               <div className="text-4xl">⚠️</div>
               <div>
-                <h2 className="font-bold text-red-600">Erro de Leitura (CRC)</h2>
-                <p className="text-xs mt-1">O formato do volume é irreconhecível. Os cabeçários magnéticos estão desativados por exposição severa a ímãs.</p>
+                <h2 className="font-bold text-red-600">{t('diskRepair.crcTitle')}</h2>
+                <p className="text-xs mt-1">{t('diskRepair.crcBody')}</p>
               </div>
             </div>
             <div className={`bg-black font-mono text-[10px] p-2 overflow-hidden break-all border-2 border-red-800/60 shadow-[inset_0_0_30px_rgba(255,0,0,0.1),0_0_15px_rgba(255,0,0,0.2)] relative ${compact ? 'h-24' : 'h-40'}`}>
@@ -105,10 +108,10 @@ export default function DiskRepairApp({ uid, characterId = '', onClose, onBackTo
             </div>
             <div className="flex justify-end gap-2 mt-2">
               <button onClick={handleRetry} className="px-4 py-1 bg-[#c0c0c0] shadow-[inset_1px_1px_#fff,inset_-1px_-1px_#0a0a0a,inset_-2px_-2px_#808080] active:shadow-[inset_1px_1px_#0a0a0a,inset_2px_2px_#808080,inset_-1px_-1px_#fff] outline-none">
-                Cancelar
+                {tc('cancel')}
               </button>
               <button onClick={handleRepair} className="px-4 py-1 bg-[#c0c0c0] font-bold shadow-[inset_1px_1px_#fff,inset_-1px_-1px_#0a0a0a,inset_-2px_-2px_#808080] border-2 border-black active:border-transparent active:shadow-[inset_1px_1px_#0a0a0a,inset_2px_2px_#808080,inset_-1px_-1px_#fff] outline-hidden focus:outline-black focus:outline-offset-2">
-                Arrumar Disquete
+                {t('diskRepair.fix')}
               </button>
             </div>
           </motion.div>
@@ -118,12 +121,12 @@ export default function DiskRepairApp({ uid, characterId = '', onClose, onBackTo
          <motion.div key="fail" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex flex-col items-center gap-4 py-6 border border-[#808080] shadow-[inset_1px_1px_#0a0a0a,inset_-1px_-1px_#fff] bg-white p-6">
             <div className="text-5xl">🛑</div>
             <div className="text-center">
-              <h2 className="font-bold text-red-600 text-lg mb-2">Não é possível ler o disquete.</h2>
-              <p className="text-sm">Os danos magnéticos foram extensos e o hardware ejetou o disco para previnir travamentos na agulha.</p>
-              <p className="text-xs text-[#808080] mt-2">Certifique-se que o processo DiskRepair.exe está autorizado no Sistema Central.</p>
+              <h2 className="font-bold text-red-600 text-lg mb-2">{t('diskRepair.failTitle')}</h2>
+              <p className="text-sm">{t('diskRepair.failBody')}</p>
+              <p className="text-xs text-[#808080] mt-2">{t('diskRepair.failHint')}</p>
             </div>
             <button onClick={handleRetry} className="mt-4 px-6 py-2 bg-[#c0c0c0] shadow-[inset_1px_1px_#fff,inset_-1px_-1px_#0a0a0a,inset_-2px_-2px_#808080] active:shadow-[inset_1px_1px_#0a0a0a,inset_2px_2px_#808080,inset_-1px_-1px_#fff] font-bold outline-none">
-              Tentar Novamente
+              {tc('retry')}
             </button>
           </motion.div>
         )}
@@ -133,20 +136,20 @@ export default function DiskRepairApp({ uid, characterId = '', onClose, onBackTo
             <div className="flex items-center gap-4 mb-2 p-2 bg-[#000080] text-white">
               <div className="text-3xl">✅</div>
               <div>
-                <h2 className="font-bold">Disquete Descorrompido!</h2>
-                <p className="text-xs">O Master File Table foi reconstruído.</p>
+                <h2 className="font-bold">{t('diskRepair.successTitle')}</h2>
+                <p className="text-xs">{t('diskRepair.successSub')}</p>
               </div>
             </div>
             <div className="h-40 bg-white text-black font-mono text-xs p-3 overflow-y-auto border border-[#808080] shadow-[inset_1px_1px_#0a0a0a,inset_-1px_-1px_#fff] whitespace-pre-wrap">
-               {intelRegistry.get('evidence-disk-01')?.textContent || 'RECUPERADO'}
+               {intelRegistry.get('evidence-disk-01')?.textContent || t('diskRepair.recoveredFallback')}
             </div>
             <div className="text-xs text-center border-t border-[#808080] pt-2 mt-2">
-              <p>O conteúdo do disquete agora pode ser copiado com segurança para a unidade central.</p>
+              <p>{t('diskRepair.successHint')}</p>
             </div>
             {onBackToTerminal && (
               <div className="flex justify-end gap-2">
                 <button onClick={onBackToTerminal} className="mt-2 px-4 py-1 bg-[#c0c0c0] shadow-[inset_1px_1px_#fff,inset_-1px_-1px_#0a0a0a,inset_-2px_-2px_#808080] active:shadow-[inset_1px_1px_#0a0a0a,inset_2px_2px_#808080,inset_-1px_-1px_#fff] outline-none">
-                  Fechar
+                  {t('diskRepair.close')}
                 </button>
               </div>
             )}
@@ -170,7 +173,7 @@ export default function DiskRepairApp({ uid, characterId = '', onClose, onBackTo
         <div className="bg-linear-to-r from-[#000080] to-[#1084d0] p-1 flex items-center justify-between shadow-[inset_1px_1px_#dfdfdf,inset_-1px_-1px_#808080]">
           <div className="flex items-center gap-2 px-1">
             <span className="w-4 h-4 bg-white shadow-[inset_1px_1px_#808080,inset_-1px_-1px_#fff] border border-[#0a0a0a] flex items-center justify-center text-[10px]">💾</span>
-            <span className="text-white font-bold text-sm tracking-wide">Desmagnetizador de Disco v1.4</span>
+            <span className="text-white font-bold text-sm tracking-wide">{t('diskRepair.windowTitle')}</span>
           </div>
           <div className="flex gap-1">
              {onBackToTerminal && (

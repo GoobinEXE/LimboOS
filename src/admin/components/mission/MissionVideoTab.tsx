@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Campaign } from '../../../data/campaigns';
 import { Group, CharacterData, MasterAccount } from '../../../types/player';
 import IntelDistributionDrawer from '../IntelDistributionDrawer';
@@ -14,6 +15,7 @@ export default function MissionVideoTab({
   groups,
   allCharacters,
 }: MissionVideoTabProps) {
+  const { t } = useTranslation('admin');
   const [showBroadcastDrawer, setShowBroadcastDrawer] = useState(false);
 
   const campaignCharacters = useMemo(() => {
@@ -76,7 +78,7 @@ export default function MissionVideoTab({
           broadcastMode
           campaignId={campaign.id}
           targets={broadcastTargets}
-          title="Transmissão de Vídeo — Missão"
+          title={t('missions.video.title')}
           onClose={() => setShowBroadcastDrawer(false)}
           onSuccess={() => setShowBroadcastDrawer(false)}
         />

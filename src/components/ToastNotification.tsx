@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useTranslation } from 'react-i18next';
 import type { AchievementTier, PlayerPlatform } from '../services/AchievementManager';
 
 export interface Toast {
@@ -56,6 +57,7 @@ interface ToastItemProps {
 }
 
 function ToastItem({ toast, onDismiss }: ToastItemProps) {
+  const { t } = useTranslation('common');
   const isAchievement = toast.type === 'achievement';
   const duration = isAchievement ? ACHIEVEMENT_DURATION_MS : DEFAULT_DURATION_MS;
 
@@ -81,8 +83,8 @@ function ToastItem({ toast, onDismiss }: ToastItemProps) {
     error: 'text-red-400',
   };
   const protocolLabels = {
-    tape: 'SINAL // INTEL',
-    error: 'FALHA // SISTEMA',
+    tape: t('toast.protocol.intel'),
+    error: t('toast.protocol.error'),
   };
 
   return (
@@ -128,6 +130,7 @@ function AchievementToast({
   onDismiss: (id: string) => void;
   duration: number;
 }) {
+  const { t } = useTranslation('common');
   const tier = toast.tier || 'common';
   const platform = toast.platform || 'global';
   const tierBorder =
@@ -145,7 +148,11 @@ function AchievementToast({
         ? 'shadow-[0_0_32px_rgba(251,191,36,0.45)]'
         : 'shadow-[0_0_22px_rgba(255,140,0,0.3)]';
   const tierLabel =
-    tier === 'legendary' ? 'LENDÁRIA' : tier === 'rare' ? 'RARA' : 'COMUM';
+    tier === 'legendary'
+      ? t('achievement.tier.legendaryUpper')
+      : tier === 'rare'
+        ? t('achievement.tier.rareUpper')
+        : t('achievement.tier.commonUpper');
   const accentText = platform === 'nokia' ? 'text-emerald-300' : 'text-amber-300';
   const accentMuted = platform === 'nokia' ? 'text-emerald-400/80' : 'text-amber-400/80';
 
@@ -177,7 +184,7 @@ function AchievementToast({
       </motion.div>
       <div className="relative min-w-0 flex-1">
         <p className={`text-[8px] uppercase tracking-[0.28em] font-bold ${accentMuted}`}>
-          REGISTRO // MEDALHA DESBLOQUEADA
+          {t('toast.achievement.header')}
         </p>
         <p className={`text-sm font-black uppercase tracking-wide mt-1 leading-tight wrap-break-word ${accentText}`}>
           {toast.title}
@@ -188,7 +195,7 @@ function AchievementToast({
           </p>
         )}
         <p className={`text-[8px] uppercase tracking-[0.2em] mt-2 font-mono opacity-50 ${accentText}`}>
-          CLASSE // {tierLabel}
+          {t('toast.achievement.class', { tier: tierLabel })}
         </p>
       </div>
       <motion.div

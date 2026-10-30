@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import type { IntelBase } from '../../services/IntelEngine';
 import type { DisplayMode } from '../../types/player';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 export default React.memo(function TapeLibrary({
   intelItems,
@@ -18,6 +19,7 @@ export default React.memo(function TapeLibrary({
   onIntelSelect: (intel: IntelBase) => void;
   landscape?: boolean;
 }) {
+  const { t } = useTranslation('player');
   const sorted = React.useMemo(() => {
     if (displayMode === 'title') return [...intelItems].sort((a, b) => a.title.localeCompare(b.title));
     if (displayMode === 'chapter')
@@ -45,17 +47,17 @@ export default React.memo(function TapeLibrary({
             <span className="text-white font-black text-sm italic">R.</span>
           </div>
           <h2 className={`text-accent font-bold tracking-tight ${landscape ? 'text-xs' : 'text-sm'}`}>
-            Lista de Provas
+            {t('walkman.library.title')}
           </h2>
         </div>
         <span className="text-[9px] text-industrial-silver/50 font-bold uppercase tracking-widest">
           {displayMode === 'default'
-            ? 'Original'
+            ? t('walkman.library.sort.original')
             : displayMode === 'title'
-              ? 'A-Z'
+              ? t('walkman.library.sort.az')
               : displayMode === 'chapter'
-                ? 'Cap.'
-                : 'Tipo'}
+                ? t('walkman.library.sort.chapter')
+                : t('walkman.library.sort.type')}
         </span>
       </div>
       <div className="flex-1 overflow-y-auto">
@@ -64,9 +66,9 @@ export default React.memo(function TapeLibrary({
           {intelItems.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full p-4 text-center">
               <span className="text-3xl mb-2">📼</span>
-              <p className="text-industrial-silver/40 text-xs uppercase tracking-widest">Nenhuma prova</p>
+              <p className="text-industrial-silver/40 text-xs uppercase tracking-widest">{t('walkman.library.empty')}</p>
               <p className="text-industrial-silver/30 text-[10px] mt-1">
-                Escaneie um QR code para começar
+                {t('walkman.library.emptyHint')}
               </p>
             </div>
           ) : (

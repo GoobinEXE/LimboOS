@@ -1,4 +1,5 @@
 import React, { RefObject } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { VideoFormat } from '../../../types/intel';
 import type { Campaign } from '../../../data/campaigns';
 import OverlayPortal from '../OverlayPortal';
@@ -54,6 +55,7 @@ export default function IntelEditorModal({
   onMediaUpload,
   onOpenLibrary,
 }: IntelEditorModalProps) {
+  const { t } = useTranslation('admin');
   const isNew = !editingItem;
   const activeCampaigns = campaigns.filter((c) => c.status !== 'Arquivada');
   const needsMedia = formData.type === 'AUDIO' || formData.type === 'VISUAL' || formData.type === 'VIDEO';
@@ -71,7 +73,7 @@ export default function IntelEditorModal({
               <div className="mt-2">
                 <h3 className="font-display font-bold text-2xl text-white uppercase tracking-tighter">
                   {editingItem ? 'Ajustar' : 'Injetar'}{' '}
-                  <span className="text-primary">Propriedades Intel</span>
+                  <span className="text-primary">{t('intel.editor.properties')}</span>
                 </h3>
                 <p className="text-[10px] font-display font-bold text-industrial-silver/40 uppercase tracking-widest mt-1">
                   {editingItem
@@ -90,18 +92,18 @@ export default function IntelEditorModal({
 
             <div className="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar">
               {/* 1. Essenciais */}
-              <Field label="Título Operacional">
+              <Field label={t('intel.editor.title')}>
                 <input
                   value={formData.title}
                   onChange={(e) => onUpdateField('title', e.target.value)}
                   className={`${INPUT_CLASS} font-display font-bold text-sm tracking-widest uppercase`}
-                  placeholder="NOME_DA_ENTRADA"
+                  placeholder="NOME DA ENTRADA"
                   autoFocus={isNew && !formData.mediaUrl}
                 />
               </Field>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Field label="Vínculo com Campanha">
+                <Field label={t('intel.editor.campaign')}>
                   <div className="relative">
                     <select
                       value={formData.campaignId || ''}
@@ -141,7 +143,7 @@ export default function IntelEditorModal({
                     {isNew && (
                       <button
                         type="button"
-                        title="Gerar ID a partir do título"
+                        title={t('intel.editor.generateId')}
                         disabled={!formData.title.trim()}
                         onClick={() => onUpdateField('id', slugifyIntelId(formData.title))}
                         className="shrink-0 px-3 border border-white/10 bg-black/30 text-industrial-silver/50 hover:text-primary hover:border-primary/30 transition-all rounded-sm disabled:opacity-30"
@@ -200,13 +202,13 @@ export default function IntelEditorModal({
                 </div>
               </div>
 
-              <Field label="Resumo Executivo (Descrição)">
+              <Field label={t('intel.editor.summary')}>
                 <textarea
                   value={formData.description}
                   onChange={(e) => onUpdateField('description', e.target.value)}
                   rows={2}
                   className={`${INPUT_CLASS} font-sans text-sm resize-none`}
-                  placeholder="Descrição breve para fins de identificação..."
+                  placeholder={t('intel.editor.summaryPlaceholder')}
                 />
               </Field>
 
@@ -217,7 +219,7 @@ export default function IntelEditorModal({
                     onChange={(e) => onUpdateField('textContent', e.target.value)}
                     rows={8}
                     className={`${INPUT_CLASS} text-primary font-mono text-sm resize-none`}
-                    placeholder="Insira o conteúdo textual sigiloso..."
+                    placeholder={t('intel.editor.textPlaceholder')}
                   />
                 </Field>
               )}
@@ -229,9 +231,9 @@ export default function IntelEditorModal({
                     <p className="text-[9px] font-display font-bold text-primary/80 uppercase tracking-[0.2em]">
                       Mídia —{' '}
                       {formData.type === 'AUDIO'
-                        ? 'Áudio'
+                        ? t('intel.type.audio')
                         : formData.type === 'VIDEO'
-                          ? 'Vídeo'
+                          ? t('intel.type.video')
                           : 'Imagem'}
                     </p>
                     {formData.mediaUrl && (
@@ -281,7 +283,7 @@ export default function IntelEditorModal({
                       className="py-4 border border-white/10 bg-black/30 text-industrial-silver/60 hover:text-white transition-all rounded-sm flex items-center justify-center gap-2 font-display font-bold text-[9px] uppercase tracking-widest"
                     >
                       <span className="material-symbols-outlined text-base">perm_media</span>
-                      Biblioteca
+                      {t('media.title')}
                     </button>
                   </div>
 
@@ -352,7 +354,7 @@ export default function IntelEditorModal({
                   Metadados Sistêmicos
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <MetaField label="NPC RESPONSÁVEL">
+                  <MetaField label={t('intel.editor.npc')}>
                     <input
                       value={formData.metadata?.npc || ''}
                       onChange={(e) => onUpdateMeta('npc', e.target.value)}
@@ -368,7 +370,7 @@ export default function IntelEditorModal({
                       placeholder="Fonte ou artista"
                     />
                   </MetaField>
-                  <MetaField label="CAPÍTULO / SETOR">
+                  <MetaField label={t('intel.editor.chapter')}>
                     <input
                       value={formData.metadata?.chapter || ''}
                       onChange={(e) => onUpdateMeta('chapter', e.target.value)}
@@ -379,7 +381,7 @@ export default function IntelEditorModal({
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
                   {formData.type === 'AUDIO' && (
-                    <MetaField label="DURAÇÃO (SEG)">
+                    <MetaField label={t('intel.editor.duration')}>
                       <input
                         type="number"
                         value={formData.metadata?.duration || ''}
@@ -391,7 +393,7 @@ export default function IntelEditorModal({
                   )}
                   {formData.type === 'VIDEO' && (
                     <>
-                      <MetaField label="FORMATO FÍSICO">
+                      <MetaField label={t('intel.editor.format')}>
                         <select
                           value={formData.metadata?.videoFormat || 'VHS'}
                           onChange={(e) =>
@@ -403,7 +405,7 @@ export default function IntelEditorModal({
                           <option value="DVD">DVD (Disco)</option>
                         </select>
                       </MetaField>
-                      <MetaField label="DURAÇÃO (SEG)">
+                      <MetaField label={t('intel.editor.duration')}>
                         <input
                           type="number"
                           value={formData.metadata?.duration || ''}

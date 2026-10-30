@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, useMotionValue, useTransform, animate } from 'motion/react';
+import { SPRING_MECHANICAL } from '../../lib/motion';
 import { User } from 'lucide-react';
 import { analyticsTracker } from '../../services/AnalyticsTracker';
 import { activityLogger } from '../../services/ActivityLogger';
@@ -105,19 +106,19 @@ export default React.memo(function SideControls({ volume, setVolume, onModeChang
                 activityLogger.logAction('player', 'Alterado modo de exibição (Cima)');
                 analyticsTracker.incrementStat('fidgetClicks');
                 firedRef.current = true;
-                animate(dragY, 0, { type: 'spring', stiffness: 400, damping: 25 });
+                animate(dragY, 0, SPRING_MECHANICAL);
               } else if (delta >= 18) {
                 onModeChange('down');
                 activityLogger.logAction('player', 'Alterado modo de exibição (Baixo)');
                 analyticsTracker.incrementStat('fidgetClicks');
                 firedRef.current = true;
-                animate(dragY, 0, { type: 'spring', stiffness: 400, damping: 25 });
+                animate(dragY, 0, SPRING_MECHANICAL);
               } else {
                 dragY.set(delta);
               }
             };
             const onUp = () => {
-              animate(dragY, 0, { type: 'spring', stiffness: 400, damping: 25 });
+              animate(dragY, 0, SPRING_MECHANICAL);
               firedRef.current = false;
               el.removeEventListener('pointermove', onMove);
               el.removeEventListener('pointerup', onUp);
@@ -135,7 +136,7 @@ export default React.memo(function SideControls({ volume, setVolume, onModeChang
         className={`w-7 flex-1 ${landscape ? 'min-h-18 max-h-none' : 'max-h-40'} bg-surface-sunken rounded-full border-2 border-surface-container-highest shadow-[inset_0_2px_6px_rgba(0,0,0,0.7)] relative flex flex-col items-center py-1.5 shrink min-h-0`}
         style={{ touchAction: 'none' }}
       >
-        <span className="text-[10px] text-industrial-silver/50 font-bold mb-1">+</span>
+        <span className="text-[10px] text-ash-400 font-bold mb-1">+</span>
         <div className="flex-1 w-1 bg-surface-container rounded-full relative overflow-visible cursor-pointer"
           onClick={(e) => {
             analyticsTracker.incrementStat('fidgetClicks');
@@ -159,7 +160,7 @@ export default React.memo(function SideControls({ volume, setVolume, onModeChang
             {[0,1,2].map(i => <div key={i} className="w-3 h-0.5 bg-ash-500 rounded-full" />)}
           </div>
         </div>
-        <span className="text-[10px] text-industrial-silver/50 font-bold mt-1">-</span>
+        <span className="text-[10px] text-ash-400 font-bold mt-1">-</span>
       </div>
     </div>
   );

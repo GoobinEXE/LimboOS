@@ -292,7 +292,7 @@ export default function QrScanner({ onDetected, onCancel }: QrScannerProps) {
         type="button"
         onClick={onCancel}
         aria-label={t('qr.cancelAria')}
-        className="absolute bottom-5 right-5 w-10 h-10 z-30 flex items-center justify-center rounded-full cursor-pointer bg-black/60 border border-border-strong backdrop-blur-md text-white transition-colors duration-150 hover:border-border-accent hover:text-accent active:bg-black/80"
+        className="absolute bottom-5 right-5 w-10 h-10 z-30 flex items-center justify-center rounded-full cursor-pointer bg-black/80 border border-border-strong text-bone transition-colors duration-150 hover:border-border-accent hover:text-accent active:bg-black/80"
       >
         <X size={24} />
       </button>

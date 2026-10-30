@@ -77,7 +77,7 @@ export default React.memo(function BottomControls({
             className={`absolute ${compact ? 'bottom-11' : 'bottom-14'} right-1 w-40 bg-surface-panel border border-border-strong shadow-panel rounded-card overflow-hidden z-50 py-1`}
           >
             <div className="px-3 py-1.5 border-b border-border mb-1">
-              <span className="text-[9px] font-black uppercase tracking-[0.2em] text-industrial-silver/40">{t('walkman.systems')}</span>
+              <span className="text-[9px] font-black uppercase tracking-[0.2em] text-ash-500">{t('walkman.systems')}</span>
             </div>
             {terminalAccess && (
               <button 

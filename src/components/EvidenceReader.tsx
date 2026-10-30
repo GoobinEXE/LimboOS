@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'motion/react';
+import { EASE_ENTER, EASE_EXIT } from '../lib/motion';
 import { IntelBase, VisualIntel, TextIntel, AudioIntel, MetaIntel, VideoIntel } from '../services/IntelEngine';
 import { analyticsTracker } from '../services/AnalyticsTracker';
 
@@ -194,23 +195,27 @@ export default function EvidenceReader({ evidence, onClose }: EvidenceReaderProp
   const isCorrupted = isText && (evidence as TextIntel).isCorrupted();
   
   const scheme = isVisual
-    ? { bg: 'bg-[#0a0a0f]', text: 'text-tube-400', border: 'border-tube-400', accent: 'cyan', selBg: 'selection:bg-tube-400', selText: 'selection:text-[#0a0a0f]', scrollThumb: '#22d3ee' }
+    ? { bg: 'bg-[#0a0a0f]', text: 'text-tube-400', border: 'border-tube-400', accent: 'cyan', selBg: 'selection:bg-tube-400', selText: 'selection:text-[#0a0a0f]', scrollThumb: '#86a5b4' }
     : isVideo
       ? { bg: 'bg-[#0a0a0a]', text: 'text-orange-400', border: 'border-orange-400', accent: 'orange', selBg: 'selection:bg-orange-400', selText: 'selection:text-[#0a0a0a]', scrollThumb: '#fb923c' }
       : isMeta
-      ? { bg: 'bg-[#0f0a15]', text: 'text-purple-400', border: 'border-purple-400', accent: 'purple', selBg: 'selection:bg-purple-400', selText: 'selection:text-[#0f0a15]', scrollThumb: '#a855f7' }
+      // Fósforo branco (P4) para registros de sistema/conquista
+      ? { bg: 'bg-[#0c0b0a]', text: 'text-bone', border: 'border-bone', accent: 'bone', selBg: 'selection:bg-bone', selText: 'selection:text-[#0c0b0a]', scrollThumb: '#e8e0d0' }
       : isAudio
         ? { bg: 'bg-[#0d0a00]', text: 'text-amber-400', border: 'border-amber-400', accent: 'amber', selBg: 'selection:bg-amber-400', selText: 'selection:text-[#0d0a00]', scrollThumb: '#f59e0b' }
         : isCorrupted
           ? { bg: 'bg-[#0a0000]', text: 'text-red-500', border: 'border-red-500', accent: 'red', selBg: 'selection:bg-red-500', selText: 'selection:text-black', scrollThumb: '#ef4444' }
-          : { bg: 'bg-[#0a0a0a]', text: 'text-[#00ff00]', border: 'border-[#00ff00]', accent: 'green', selBg: 'selection:bg-[#00ff00]', selText: 'selection:text-[#0a0a0a]', scrollThumb: '#00ff00' };
+          : { bg: 'bg-[#07110a]', text: 'text-crt', border: 'border-crt', accent: 'green', selBg: 'selection:bg-crt', selText: 'selection:text-[#07110a]', scrollThumb: '#33ff33' };
 
   return (
     <motion.div 
       initial={{ opacity: 0, y: 24, scale: 0.985 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: 24, scale: 0.985 }}
-      transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
+      exit={{ opacity: 0, y: 16, scale: 0.99, transition: { duration: 0.18, ease: EASE_EXIT } }}
+      transition={{ duration: 0.32, ease: EASE_ENTER }}
+      role="dialog"
+      aria-modal="true"
+      aria-label={evidence.title}
       className={`absolute inset-0 z-50 flex flex-col ${scheme.bg} ${scheme.text} font-mono p-4 sm:p-6 sm:rounded-4xl overflow-hidden border border-current/15 shadow-[0_24px_64px_-24px_rgba(0,0,0,0.9)]`}
     >
       {/* Scanline overlay */}
@@ -256,7 +261,7 @@ export default function EvidenceReader({ evidence, onClose }: EvidenceReaderProp
         <div className="flex items-center gap-3">
           <span className={`text-[8px] font-bold uppercase tracking-[0.2em] px-2 py-0.5 border rounded ${
             evidence.level >= 3 
-              ? 'border-current/50 bg-current/10 shadow-[0_0_10px_-2px_currentColor]' 
+              ? 'border-current/50 bg-current/10 shadow-[0_0_8px_-3px_currentColor]' 
               : 'border-current/30 opacity-50'
           }`}>
             {levelLabel}
@@ -362,7 +367,7 @@ export default function EvidenceReader({ evidence, onClose }: EvidenceReaderProp
               {evidence.description}
             </p>
             {details.hint && (
-              <div className="mt-4 p-3 border border-purple-400/30 rounded-lg text-[11px] opacity-60">
+              <div className="mt-4 p-3 border border-current/30 rounded-card text-[11px] opacity-60">
                 <span className="font-bold uppercase">{t('evidence.hint')} </span>{details.hint}
               </div>
             )}

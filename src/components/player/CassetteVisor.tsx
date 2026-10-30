@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { AnimatePresence, motion } from 'motion/react';
+import { EXIT_FAST, SPRING_MECHANICAL } from '../../lib/motion';
 import { Camera } from 'lucide-react';
 const QrScanner = React.lazy(() => import('../QrScanner'));
 import { IntelBase, AudioIntel } from '../../services/IntelEngine';
@@ -59,8 +60,17 @@ export default React.memo(function CassetteVisor({
 
       <AnimatePresence mode="wait">
         {hasTape && currentIntel ? (
-          <motion.div key="cassette" initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 20, opacity: 0 }}
-            onClick={onEject} className="w-full h-full flex flex-col items-center cursor-pointer group">
+          // Fita entra descendo no compartimento e sai subindo na ejeção (mesmo eixo)
+          <motion.div key="cassette"
+            initial={{ y: -28, opacity: 0 }}
+            animate={{ y: 0, opacity: 1, transition: SPRING_MECHANICAL }}
+            exit={{ y: -18, opacity: 0, transition: EXIT_FAST }}
+            onClick={onEject}
+            role="button"
+            tabIndex={0}
+            aria-label={t('walkman.visor.eject')}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onEject(); } }}
+            className="w-full h-full flex flex-col items-center cursor-pointer group rounded-card">
       
             <div className={`mt-4 w-full max-w-70 bg-[#f4f1ea] rounded-md shadow-[0_2px_6px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.6)] relative flex flex-col p-3 border-t-12 border-accent transition-transform duration-300 ease-limbo group-hover:scale-[1.01] ${
               fluid ? 'h-[min(130px,55%)] min-h-24' : 'h-32.5'
@@ -74,21 +84,26 @@ export default React.memo(function CassetteVisor({
                 <div className="text-[10px] font-bold text-ash-600 truncate mt-0.5">{currentIntel instanceof AudioIntel ? currentIntel.metadata.artist : currentIntel.metadata?.npc}</div>
               </div>
               <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-45 h-12.5 bg-surface-container rounded-t-lg border-t-2 border-l-2 border-r-2 border-surface-sunken" />
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/60 text-white text-[10px] font-bold px-3 py-1 rounded-full backdrop-blur-sm">{t('walkman.visor.eject')}</div>
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity bg-black/80 text-bone text-[10px] font-bold tracking-widest px-3 py-1 rounded-inset">{t('walkman.visor.eject')}</div>
             </div>
       
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-42.5 h-11.5 bg-black/40 rounded-md flex items-center justify-between px-4 border border-border-subtle shadow-[inset_0_2px_4px_rgba(0,0,0,0.5)]">
               {[true, false].map((_, si) => (
-                <motion.div key={si} 
-                  animate={{ rotate: isRewinding ? -360 : (isPlaying ? 360 : 0) }} 
-                  transition={{ repeat: (isPlaying || isRewinding) ? Infinity : 0, duration: isRewinding ? 0.3 : (isPlaying ? 3 : 0), ease: 'linear' }}
+                // Carretel em CSS: pausa onde parou (sem voltar a 0°) e roda fora da main thread
+                <div key={si}
+                  style={{
+                    animation: 'spin 3s linear infinite',
+                    animationDuration: isRewinding ? '0.3s' : '3s',
+                    animationDirection: isRewinding ? 'reverse' : 'normal',
+                    animationPlayState: isPlaying || isRewinding ? 'running' : 'paused',
+                  }}
                   className="w-10 h-10 rounded-full bg-industrial-silver flex items-center justify-center relative shadow-md">
                   <div className="absolute inset-0 rounded-full border-[6px] border-surface-sunken opacity-90" />
                   <div className="w-4 h-4 rounded-full bg-surface-container flex items-center justify-center z-10">
                     <div className="w-full h-0.5 bg-industrial-silver absolute" /><div className="w-0.5 h-full bg-industrial-silver absolute" />
                     <div className="w-full h-0.5 bg-industrial-silver absolute rotate-45" /><div className="w-0.5 h-full bg-industrial-silver absolute rotate-45" />
                   </div>
-                </motion.div>
+                </div>
               ))}
               <div className="absolute bottom-1 left-8 right-8 h-0.75 bg-surface-sunken" />
             </div>
@@ -109,8 +124,8 @@ export default React.memo(function CassetteVisor({
                 />
               </React.Suspense>
             ) : (
-              <div onClick={!isLoading ? onScanClick : undefined}
-                className={`w-full max-w-70 h-32.5 border-2 border-dashed rounded-lg flex flex-col items-center justify-center gap-3 transition duration-200 ease-limbo ${isLoading ? 'border-border-accent cursor-default' : 'border-border-strong hover:bg-accent-05 hover:border-border-accent cursor-pointer group'}`}>
+              <button type="button" onClick={!isLoading ? onScanClick : undefined} disabled={isLoading} aria-busy={isLoading}
+                className={`w-full max-w-70 h-32.5 border-2 border-dashed rounded-card flex flex-col items-center justify-center gap-3 transition duration-200 ease-limbo active:scale-[0.98] ${isLoading ? 'border-border-accent cursor-default' : 'border-border-strong hover:bg-accent-05 hover:border-border-accent cursor-pointer group'}`}>
                 {isLoading ? (
                   <div className="flex flex-col items-center gap-2">
                     <RetroSpinner size="sm" />
@@ -118,16 +133,16 @@ export default React.memo(function CassetteVisor({
                   </div>
                 ) : (
                   <>
-                    <div className="w-12 h-12 rounded-full bg-surface-container-highest shadow-hairline flex items-center justify-center group-hover:scale-110 transition-transform duration-200 ease-limbo">
-                      <Camera className="text-industrial-silver/50 group-hover:text-accent transition-colors" size={24} />
+                    <div className="w-12 h-12 rounded-full bg-surface-container-highest shadow-hairline flex items-center justify-center group-hover:bg-accent-10 transition-colors duration-200 ease-limbo">
+                      <Camera className="text-ash-400 group-hover:text-accent transition-colors" size={24} />
                     </div>
                     <div className="text-center">
-                      <p className="text-industrial-silver/70 text-[11px] font-bold uppercase tracking-widest">{t('walkman.visor.emptyBay')}</p>
+                      <p className="text-ash-300 text-[11px] font-bold uppercase tracking-widest">{t('walkman.visor.emptyBay')}</p>
                       <p className="text-accent text-[9px] font-bold uppercase tracking-tighter mt-1">{t('walkman.visor.scanHint')}</p>
                     </div>
                   </>
                 )}
-              </div>
+              </button>
             )}
           </motion.div>
         )}

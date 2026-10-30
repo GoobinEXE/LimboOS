@@ -39,7 +39,7 @@ function AchievementIcon({
 }) {
   const dim = size === 'sm' ? 'w-7 h-7' : 'w-9 h-9';
   if (!earned) {
-    return <Lock size={size === 'sm' ? 14 : 16} className="text-industrial-silver/40" />;
+    return <Lock size={size === 'sm' ? 14 : 16} className="text-ash-500" />;
   }
   return (
     <img
@@ -85,16 +85,16 @@ function AchievementCard({
       </div>
       <p
         className={`text-[11px] font-semibold leading-tight wrap-break-word min-w-0 ${
-          earned ? 'text-primary' : 'text-industrial-silver/50'
+          earned ? 'text-primary' : 'text-ash-400'
         }`}
       >
         {title}
       </p>
-      <p className="text-[9px] text-industrial-silver/40 leading-snug wrap-break-word min-w-0 font-sans">
+      <p className="text-[9px] text-ash-500 leading-snug wrap-break-word min-w-0 font-sans">
         {description}
       </p>
       {earned && (
-        <p className="text-[7px] uppercase tracking-widest text-industrial-silver/35 font-mono">
+        <p className="text-[7px] uppercase tracking-widest text-ash-500 font-mono">
           {t(`achievement.platform.${ach.primaryPlatform}`)}
           {campaignLabel ? ` · ${campaignLabel}` : ''}
         </p>
@@ -206,7 +206,7 @@ export function AchievementCatalog({
               className={`text-[8px] uppercase tracking-widest px-2 py-1 border rounded-sm transition-colors ${
                 activeCampaignId === c.id
                   ? 'border-accent text-accent bg-accent-05'
-                  : 'border-border-subtle text-industrial-silver/50 hover:text-industrial-silver'
+                  : 'border-border-subtle text-ash-400 hover:text-industrial-silver'
               }`}
             >
               {c.name}
@@ -220,7 +220,7 @@ export function AchievementCatalog({
           {t(`achievement.platform.${platform === 'nokia' ? 'nokia' : platform === 'walkman' ? 'walkman' : 'global'}`)}
           {campaign ? ` · ${campaign.year}` : ''}
         </span>
-        <span className="text-mono-ui text-[9px] text-industrial-silver/35">
+        <span className="text-mono-ui text-[9px] text-ash-500">
           {earnedCount}/{scoped.length}
           {variant === 'deck' ? ` · ${t('achievement.raresCount', { count: rareEarned })}` : ''}
         </span>
@@ -249,11 +249,11 @@ export function AchievementCatalog({
           {groups.map((group) => (
             <div key={group.category} className="space-y-2">
               <div className="flex items-center gap-2 px-0.5">
-                <span className="text-protocol text-[8px] text-industrial-silver/45 uppercase tracking-[0.2em]">
+                <span className="text-protocol text-[8px] text-ash-500 uppercase tracking-[0.2em]">
                   {t(`achievement.category.${group.category}`)}
                 </span>
                 <span aria-hidden className="flex-1 h-px bg-border-subtle" />
-                <span className="text-mono-ui text-[9px] text-industrial-silver/30">
+                <span className="text-mono-ui text-[9px] text-ash-600">
                   {group.items.filter((a) => isAchievementEarned(grantDocIds, a.id, activeCampaignId)).length}/
                   {group.items.length}
                 </span>

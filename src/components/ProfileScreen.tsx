@@ -71,7 +71,7 @@ const SectionHeader = ({
   action?: React.ReactNode;
 }) => (
   <div className="flex items-center gap-3 mb-3">
-    <span className="text-mono-ui text-[10px] text-industrial-silver/30">{index}</span>
+    <span className="text-mono-ui text-[10px] text-ash-600">{index}</span>
     <h2 className={`text-protocol flex items-center gap-2 ${tone}`}>
       <Icon size={12} />
       {title}
@@ -84,7 +84,7 @@ const SectionHeader = ({
 const Stat = ({ value, label }: { value: React.ReactNode; label: string }) => (
   <div className="flex-1 flex flex-col items-center py-3 border-r border-border-subtle last:border-r-0">
     <span className="text-mono-ui text-xl font-semibold text-primary leading-none">{value}</span>
-    <span className="text-protocol text-[8px] text-industrial-silver/40 mt-1.5">{label}</span>
+    <span className="text-protocol text-[8px] text-ash-500 mt-1.5">{label}</span>
   </div>
 );
 
@@ -109,7 +109,7 @@ const ActionRow = ({
     </div>
     <div className="flex-1 min-w-0">
       <div className="text-protocol text-white text-[10px]">{title}</div>
-      <div className="text-mono-ui text-[10px] text-industrial-silver/40 mt-0.5 truncate">{sub}</div>
+      <div className="text-mono-ui text-[10px] text-ash-500 mt-0.5 truncate">{sub}</div>
     </div>
     <ChevronRight size={16} className="text-primary/40 group-hover:text-primary group-hover:translate-x-0.5 transition shrink-0" />
   </button>
@@ -382,7 +382,7 @@ export default function ProfileScreen({
         <div aria-hidden className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_80%_40%_at_50%_0%,var(--color-accent-05),transparent_70%)]" />
 
         {/* Header */}
-        <header className="relative z-10 flex items-center justify-between px-4 pt-4 pb-3 shrink-0 border-b border-border-subtle bg-surface-raised/70 backdrop-blur-sm">
+        <header className="relative z-10 flex items-center justify-between px-4 pt-4 pb-3 shrink-0 border-b border-border-subtle bg-surface-raised/95">
           <button
             type="button"
             onClick={onBack}
@@ -392,7 +392,7 @@ export default function ProfileScreen({
             <ArrowLeft size={16} />
           </button>
           <div className="flex flex-col items-center gap-0.5 min-w-0">
-            <span className="text-protocol text-[8px] text-industrial-silver/40">{t('profile.header.agentFile')}</span>
+            <span className="text-protocol text-[8px] text-ash-500">{t('profile.header.agentFile')}</span>
             <span className="text-mono-ui text-[10px] text-primary/70">{agentCode}</span>
           </div>
           <button
@@ -424,7 +424,7 @@ export default function ProfileScreen({
                   <span className={`w-1.5 h-1.5 rounded-full ${statusCfg.dot} animate-pulse`} />
                   {statusCfg.label}
                 </span>
-                <span className="text-mono-ui text-[10px] text-industrial-silver/40">
+                <span className="text-mono-ui text-[10px] text-ash-500">
                   {tCommon('nivel')} <span className={dangerLevel >= 4 ? 'text-red-400' : dangerLevel >= 2 ? 'text-primary' : ''}>{dangerLabel}</span>
                 </span>
               </div>
@@ -460,7 +460,7 @@ export default function ProfileScreen({
 
           <section className="px-4 pt-4 pb-2">
             <div className="rounded-card border border-border bg-surface-raised/60 p-3">
-              <div className="text-protocol text-[8px] text-industrial-silver/40 mb-2">{t('profile.languageSection')}</div>
+              <div className="text-protocol text-[8px] text-ash-500 mb-2">{t('profile.languageSection')}</div>
               <LanguageSelector variant="deck" />
             </div>
           </section>
@@ -477,7 +477,7 @@ export default function ProfileScreen({
                   <button
                     type="button"
                     onClick={startEditingSpotify}
-                    className="flex items-center gap-1 text-protocol text-[8px] text-industrial-silver/40 hover:text-[#1DB954] transition-colors"
+                    className="flex items-center gap-1 text-protocol text-[8px] text-ash-500 hover:text-[#1DB954] transition-colors"
                   >
                     <Pencil size={9} />
                     {embedUrl ? t('profile.deck.edit') : t('profile.deck.connect')}
@@ -495,7 +495,7 @@ export default function ProfileScreen({
                   className="space-y-2"
                 >
                   <div className="rounded-card border border-border bg-surface-raised p-3">
-                    <label className="text-protocol text-[8px] text-industrial-silver/40 block mb-2">
+                    <label className="text-protocol text-[8px] text-ash-500 block mb-2">
                       {t('profile.deck.label')}
                     </label>
                     <input
@@ -503,11 +503,11 @@ export default function ProfileScreen({
                       value={spotifyInput}
                       onChange={(e) => { setSpotifyInput(e.target.value); setSpotifyError(''); }}
                       placeholder={t('profile.deck.placeholder')}
-                      className="w-full bg-surface-sunken border border-border rounded-control px-3 py-2 text-base text-white placeholder:text-industrial-silver/20 focus:border-[#1DB954]/60 focus:outline-none transition-colors font-mono"
+                      className="w-full bg-surface-sunken border border-border rounded-control px-3 py-2 text-base text-white placeholder:text-ash-600 focus:border-[#1DB954]/60 focus:outline-none transition-colors font-mono"
                       autoFocus
                     />
                     {spotifyError && <p className="text-red-400 text-[10px] mt-1.5 font-sans">{spotifyError}</p>}
-                    <p className="text-[9px] text-industrial-silver/30 mt-2 leading-relaxed font-sans">
+                    <p className="text-[9px] text-ash-600 mt-2 leading-relaxed font-sans">
                       {t('profile.deck.hint')}
                     </p>
                   </div>
@@ -515,7 +515,7 @@ export default function ProfileScreen({
                     <button
                       type="button"
                       onClick={handleCancelEdit}
-                      className="flex items-center gap-1 px-3 py-1.5 rounded-control border border-border bg-surface-raised text-industrial-silver/60 text-protocol text-[8px] hover:text-white transition-colors"
+                      className="flex items-center gap-1 px-3 py-1.5 rounded-control border border-border bg-surface-raised text-ash-400 text-protocol text-[8px] hover:text-white transition-colors"
                     >
                       <X size={10} /> {tCommon('cancel')}
                     </button>
@@ -558,8 +558,8 @@ export default function ProfileScreen({
                   <div className="w-12 h-12 rounded-control bg-surface-sunken border border-border flex items-center justify-center mx-auto mb-3 text-[#1DB954]/60">
                     <Music size={20} />
                   </div>
-                  <p className="text-protocol text-industrial-silver/50 mb-1">{t('profile.deck.emptyTitle')}</p>
-                  <p className="text-[10px] text-industrial-silver/30 font-sans">{t('profile.deck.emptyHint')}</p>
+                  <p className="text-protocol text-ash-400 mb-1">{t('profile.deck.emptyTitle')}</p>
+                  <p className="text-[10px] text-ash-600 font-sans">{t('profile.deck.emptyHint')}</p>
                   {onUpdateSpotify && (
                     <button
                       type="button"
@@ -588,7 +588,7 @@ export default function ProfileScreen({
                 </div>
               ) : (
                 <div className="flex flex-col gap-3">
-                  <p className="text-[10px] text-industrial-silver/50 leading-relaxed font-sans">
+                  <p className="text-[10px] text-ash-400 leading-relaxed font-sans">
                     {t('profile.contact.needUs')}
                   </p>
                   <button
@@ -615,7 +615,7 @@ export default function ProfileScreen({
               index="04"
               title={t('profile.achievements.title')}
               Icon={Trophy}
-              action={<span className="text-mono-ui text-[10px] text-industrial-silver/40">{profile.achievementIds.length}/{achievements.length}</span>}
+              action={<span className="text-mono-ui text-[10px] text-ash-500">{profile.achievementIds.length}/{achievements.length}</span>}
             />
             <AchievementCatalog
               grantDocIds={profile.achievementIds}

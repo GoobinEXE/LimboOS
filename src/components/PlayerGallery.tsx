@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'motion/react';
+import { EXIT_FAST, SPRING_INDICATOR, SPRING_SNAP } from '../lib/motion';
 import { X, MapPin, Search, User, Package, Image as ImageIcon } from 'lucide-react';
 import type { GalleryImage, GalleryCategory } from '../store/firestore';
 
@@ -134,8 +135,8 @@ export default function PlayerGallery({ images, variant = 'default' }: PlayerGal
         <div className="w-12 h-12 rounded-control bg-surface-sunken border border-border flex items-center justify-center mx-auto mb-3 text-primary/40">
           <ImageIcon size={20} />
         </div>
-        <p className="text-protocol text-industrial-silver/50 mb-1">{t('gallery.emptyTitle')}</p>
-        <p className="text-[10px] text-industrial-silver/30 font-sans">{t('gallery.emptyHint')}</p>
+        <p className="text-protocol text-ash-400 mb-1">{t('gallery.emptyTitle')}</p>
+        <p className="text-[10px] text-ash-600 font-sans">{t('gallery.emptyHint')}</p>
       </div>
     );
   }
@@ -152,21 +153,21 @@ export default function PlayerGallery({ images, variant = 'default' }: PlayerGal
               type="button"
               onClick={() => setActiveTab(tab.id)}
               className={`relative flex-1 flex items-center justify-center gap-1.5 py-2 rounded-control text-protocol text-[9px] transition-colors duration-200 ${
-                isActive ? 'text-primary' : 'text-industrial-silver/40 hover:text-industrial-silver/70'
+                isActive ? 'text-primary' : 'text-ash-500 hover:text-ash-300'
               }`}
             >
               {isActive && (
                 <motion.span
                   layoutId="gallery-tab"
                   className="absolute inset-0 rounded-control bg-accent-10 border border-border-accent"
-                  transition={{ type: 'spring', stiffness: 400, damping: 32 }}
+                  transition={SPRING_INDICATOR}
                 />
               )}
               <span className="relative z-10 flex items-center gap-1.5">
                 <tab.Icon size={10} />
                 <span className="hidden min-[360px]:inline">{tabLabel(tab.id)}</span>
                 {count > 0 && (
-                  <span className={`text-mono-ui text-[9px] ${isActive ? 'text-primary/80' : 'text-industrial-silver/40'}`}>{count}</span>
+                  <span className={`text-mono-ui text-[9px] ${isActive ? 'text-primary/80' : 'text-ash-500'}`}>{count}</span>
                 )}
               </span>
             </button>
@@ -184,7 +185,7 @@ export default function PlayerGallery({ images, variant = 'default' }: PlayerGal
         >
           {filtered.length === 0 ? (
             <div className="rounded-card border border-dashed border-border p-6 text-center">
-              <p className="text-protocol text-[9px] text-industrial-silver/40">{t('gallery.emptyCategory')}</p>
+              <p className="text-protocol text-[9px] text-ash-500">{t('gallery.emptyCategory')}</p>
             </div>
           ) : (
             <div className="grid grid-cols-2 gap-2">
@@ -202,19 +203,19 @@ export default function PlayerGallery({ images, variant = 'default' }: PlayerGal
                     <img
                       src={img.imageUrl}
                       alt={img.title}
-                      className="w-full h-full object-cover saturate-[0.8] group-hover:saturate-100 group-hover:scale-105 transition duration-500 ease-limbo"
+                      className="w-full h-full object-cover saturate-[0.8] sepia-[0.15] group-hover:saturate-100 group-hover:sepia-0 transition-[filter] duration-300 ease-limbo"
                       loading="lazy"
                       onError={(e) => { e.currentTarget.src = FALLBACK_IMAGE; }}
                     />
                     <div aria-hidden className="absolute inset-0 bg-linear-to-t from-black/50 via-transparent to-transparent" />
-                    <span className="absolute top-1.5 left-1.5 text-mono-ui text-[8px] text-white/70 bg-black/55 backdrop-blur-sm px-1.5 py-0.5 rounded-inset">
+                    <span className="absolute top-1.5 left-1.5 text-mono-ui text-[8px] text-white/70 bg-black/75 px-1.5 py-0.5 rounded-inset">
                       {t('gallery.imgIndex', { n: pad(idx + 1) })}
                     </span>
                   </div>
                   <div className="px-2 py-1.5 border-t border-border-subtle">
                     <p className="text-[10px] font-semibold text-white truncate leading-tight">{img.title}</p>
                     {img.description && (
-                      <p className="text-[9px] text-industrial-silver/40 truncate mt-0.5 font-sans">{img.description}</p>
+                      <p className="text-[9px] text-ash-500 truncate mt-0.5 font-sans">{img.description}</p>
                     )}
                   </div>
                 </motion.button>
@@ -230,14 +231,14 @@ export default function PlayerGallery({ images, variant = 'default' }: PlayerGal
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-100 bg-surface-overlay backdrop-blur-md flex flex-col items-center justify-center p-4"
+            className="fixed inset-0 z-100 bg-surface-overlay flex flex-col items-center justify-center p-4"
             onClick={() => setSelectedImage(null)}
           >
             <motion.div
-              initial={{ scale: 0.9, opacity: 0, y: 12 }}
+              initial={{ scale: 0.94, opacity: 0, y: 10 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.92, opacity: 0 }}
-              transition={{ type: 'spring', damping: 26, stiffness: 300 }}
+              exit={{ scale: 0.97, opacity: 0, transition: EXIT_FAST }}
+              transition={SPRING_SNAP}
               className="relative max-w-sm w-full"
               onClick={e => e.stopPropagation()}
             >
@@ -262,11 +263,11 @@ export default function PlayerGallery({ images, variant = 'default' }: PlayerGal
                         {tabLabel(selectedTab.id)}
                       </span>
                     )}
-                    <span className="text-mono-ui text-[9px] text-industrial-silver/30">{t('gallery.evidenceVisual')}</span>
+                    <span className="text-mono-ui text-[9px] text-ash-600">{t('gallery.evidenceVisual')}</span>
                   </div>
                   <p className="text-display text-base text-white uppercase">{selectedImage.title}</p>
                   {selectedImage.description && (
-                    <p className="text-industrial-silver/60 text-xs mt-1.5 leading-relaxed font-sans">{selectedImage.description}</p>
+                    <p className="text-ash-400 text-xs mt-1.5 leading-relaxed font-sans">{selectedImage.description}</p>
                   )}
                 </div>
               </div>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'motion/react';
+import { EASE_OUT } from '../../lib/motion';
 import { IntelBase, AudioIntel, VideoIntel } from '../../services/IntelEngine';
 import NokiaVideoSurface, { NokiaVideoSurfaceHandle } from './NokiaVideoSurface';
 import { audioEngine } from '../../services/AudioEngine';
@@ -678,7 +679,7 @@ export default function NokiaPlayer({
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+                        transition={{ duration: 0.28, ease: EASE_OUT }}
                         className="border-2 border-lcd-ink p-1.5 bg-lcd-paper shadow-[2px_2px_0px_#111e14] h-full flex flex-col min-h-0 nokia-scroll-area"
                       >
                         <div className="text-center mb-1 shrink-0">
@@ -782,7 +783,7 @@ export default function NokiaPlayer({
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+                        transition={{ duration: 0.28, ease: EASE_OUT }}
                         onClick={onScanClick}
                         className="border-2 border-dashed border-lcd-ink p-3 h-full flex flex-col justify-center items-center cursor-pointer gap-2 active:bg-lcd-ink/10"
                       >

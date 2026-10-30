@@ -50,7 +50,7 @@ export default React.memo(function TapeLibrary({
             {t('walkman.library.title')}
           </h2>
         </div>
-        <span className="text-[9px] text-industrial-silver/50 font-bold uppercase tracking-widest">
+        <span className="text-[9px] text-ash-400 font-bold uppercase tracking-widest">
           {displayMode === 'default'
             ? t('walkman.library.sort.original')
             : displayMode === 'title'
@@ -66,8 +66,8 @@ export default React.memo(function TapeLibrary({
           {intelItems.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full p-4 text-center">
               <span className="text-3xl mb-2">📼</span>
-              <p className="text-industrial-silver/40 text-xs uppercase tracking-widest">{t('walkman.library.empty')}</p>
-              <p className="text-industrial-silver/30 text-[10px] mt-1">
+              <p className="text-ash-500 text-xs uppercase tracking-widest">{t('walkman.library.empty')}</p>
+              <p className="text-ash-600 text-[10px] mt-1">
                 {t('walkman.library.emptyHint')}
               </p>
             </div>
@@ -115,9 +115,9 @@ export default React.memo(function TapeLibrary({
                             item.type === 'TEXT'
                               ? 'bg-accent-20 border-border-accent glow-orange-subtle'
                               : item.type === 'VISUAL'
-                                ? 'bg-tube-600/30 border-tube-500 shadow-[0_0_10px_rgba(106,139,155,0.3)]'
+                                ? 'bg-tube-600/30 border-tube-500 shadow-[0_0_0_1px_rgba(106,139,155,0.25),0_0_8px_-2px_rgba(106,139,155,0.5)]'
                                 : item.type === 'META'
-                                  ? 'bg-yellow-600/30 border-yellow-500 shadow-[0_0_10px_rgba(234,179,8,0.3)]'
+                                  ? 'bg-yellow-600/30 border-yellow-500 shadow-[0_0_0_1px_rgba(234,179,8,0.25),0_0_8px_-2px_rgba(234,179,8,0.5)]'
                                   : 'bg-surface-container border-border-strong shadow-hairline'
                           }`}
                         >

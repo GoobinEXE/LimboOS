@@ -259,7 +259,7 @@ export default function JukeboxPanel({ embedded = false }: { embedded?: boolean 
 
   /* ── Render ──────────────────────────────────────────── */
   return (
-    <section className="space-y-6 font-chakra">
+    <section className="space-y-6">
       {modal}
       <audio ref={audioRef} preload="auto" className="hidden" />
 
@@ -290,11 +290,11 @@ export default function JukeboxPanel({ embedded = false }: { embedded?: boolean 
       </div>
       ) : (
       <div className="flex items-center justify-between">
-        <span className="text-[10px] font-display font-bold text-industrial-silver/40 tracking-widest uppercase">{tracks.length} FAIXAS NO BUFFER</span>
+        <span className="text-[10px] font-display font-bold text-ash-500 tracking-widest uppercase">{tracks.length} FAIXAS NO BUFFER</span>
         <div className={`flex items-center gap-3 px-4 py-1.5 border text-[10px] font-display font-bold uppercase tracking-widest rounded-sm ${
           isPlaying ? 'border-primary/40 text-primary bg-primary/5' :
           isLooping ? 'border-amber-500/40 text-amber-400 bg-amber-500/5' :
-          'border-primary/10 text-industrial-silver/40'
+          'border-primary/10 text-ash-500'
         }`}>
           <div className={`w-1.5 h-1.5 rounded-full ${isPlaying ? 'bg-primary animate-pulse' : 'bg-ash-800'}`} />
           {statusLabel}
@@ -303,7 +303,7 @@ export default function JukeboxPanel({ embedded = false }: { embedded?: boolean 
       )}
 
       {/* Player Area */}
-      <div className="bg-seam border-4 border-seam rounded-xl overflow-hidden shadow-2xl relative">
+      <div className="bg-seam border-4 border-seam rounded-card overflow-hidden shadow-2xl relative">
         <div className="p-6 border-b-4 border-seam bg-black/40 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="p-2 bg-primary/10 rounded-sm border border-primary/20">
@@ -360,7 +360,7 @@ export default function JukeboxPanel({ embedded = false }: { embedded?: boolean 
       </div>
 
       {/* Add Track Form */}
-      <div className="bg-seam border-4 border-seam p-6 rounded-xl shadow-xl space-y-4">
+      <div className="bg-seam border-4 border-seam p-6 rounded-card shadow-xl space-y-4">
         <div className="flex items-center gap-3 mb-2">
           <span className="material-symbols-outlined text-ash-700 text-lg">add_circle</span>
           <p className="font-black text-[10px] uppercase tracking-widest text-ash-500">{t('jukebox.inject')}</p>
@@ -405,7 +405,7 @@ export default function JukeboxPanel({ embedded = false }: { embedded?: boolean 
         </div>
 
         {tracks.length === 0 ? (
-          <div className="bg-black/20 p-24 text-center border-4 border-dashed border-seam rounded-2xl opacity-20">
+          <div className="bg-black/20 p-24 text-center border-4 border-dashed border-seam rounded-panel opacity-20">
             <p className="text-ash-700 font-black text-[12px] uppercase tracking-[0.4em]">{t('jukebox.empty')}</p>
           </div>
         ) : (
@@ -413,8 +413,8 @@ export default function JukeboxPanel({ embedded = false }: { embedded?: boolean 
             {tracks.map((track, idx) => {
               const isActive = currentTrack?.id === track.id;
               return (
-                <div key={track.id} className={`bg-seam border-4 p-4 flex items-center justify-between rounded-xl shadow-lg transition group ${
-                  isActive ? 'border-primary bg-primary/5 shadow-[0_0_20px_rgba(255,140,0,0.1)]' : 'border-seam hover:border-white/5'
+                <div key={track.id} className={`bg-seam border-4 p-4 flex items-center justify-between rounded-card shadow-lg transition group ${
+                  isActive ? 'border-primary bg-primary/5 shadow-[0_0_20px_rgba(255,140,0,0.1)]' : 'border-seam hover:border-border-subtle'
                 }`}>
                   <div className="flex items-center gap-5 min-w-0 flex-1">
                     <span className={`font-black text-[11px] w-8 text-right font-mono ${isActive ? 'text-primary' : 'text-ash-800'}`}>
@@ -459,7 +459,7 @@ export default function JukeboxPanel({ embedded = false }: { embedded?: boolean 
                        </button>
                     </div>
                     <button onClick={() => handleDelete(track)}
-                      className="w-10 h-10 bg-black/40 border border-white/5 flex items-center justify-center text-ash-800 hover:text-red-500 hover:border-red-500/30 transition rounded-sm group/del ml-2">
+                      className="w-10 h-10 bg-black/40 border border-border-subtle flex items-center justify-center text-ash-800 hover:text-red-500 hover:border-red-500/30 transition rounded-sm group/del ml-2">
                       <span className="material-symbols-outlined text-lg">delete</span>
                     </button>
                   </div>
@@ -471,7 +471,7 @@ export default function JukeboxPanel({ embedded = false }: { embedded?: boolean 
       </div>
 
       {/* Footer / Status Bar */}
-      <div className="flex items-center justify-between bg-black/40 border-4 border-seam rounded-xl px-8 py-4 shadow-inner">
+      <div className="flex items-center justify-between bg-black/40 border-4 border-seam rounded-card px-8 py-4 shadow-inner">
         <div className="flex items-center gap-4">
            <div className="w-1.5 h-1.5 rounded-full bg-ash-800" />
            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-ash-700">

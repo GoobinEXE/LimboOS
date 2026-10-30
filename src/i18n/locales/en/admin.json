@@ -199,7 +199,11 @@
       "mesa": "Table",
       "media": "Content"
     },
-    "controls": "Session Controls"
+    "controls": "Session Controls",
+    "jukebox": "Table Jukebox",
+    "recentLog": "Recent Log",
+    "fullLog": "View full log →",
+    "allTargets": "all*"
   },
   "deliver": {
     "kind": {

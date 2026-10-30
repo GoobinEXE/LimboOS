@@ -191,7 +191,7 @@ export default function NpcSmsDistributionModal({
   return (
     <OverlayPortal open onClose={loading ? undefined : onClose}>
       <div
-        className="fixed inset-0 z-[120] flex justify-end bg-black/80 backdrop-blur-sm animate-fade-in"
+        className="fixed inset-0 z-[120] flex justify-end bg-surface-scrim animate-fade-in"
         onClick={() => {
           if (!loading) onClose();
         }}
@@ -201,7 +201,7 @@ export default function NpcSmsDistributionModal({
           animate={{ x: 0 }}
           exit={{ x: '100%' }}
           transition={ADMIN_SPRING}
-          className="bg-[#222] border-l-8 border-seam w-full max-w-2xl shadow-2xl flex flex-col h-full relative overflow-hidden font-chakra"
+          className="bg-surface-container-low border-l border-seam w-full max-w-2xl shadow-2xl flex flex-col h-full relative overflow-hidden"
           onClick={(e) => e.stopPropagation()}
         >
           <Screw className="top-4 left-4" />
@@ -262,7 +262,7 @@ export default function NpcSmsDistributionModal({
               className={`text-[9px] font-black uppercase tracking-widest px-3 py-1.5 border rounded-sm ${
                 mode === 'shuffle'
                   ? 'border-secondary text-secondary bg-secondary/10'
-                  : 'border-white/10 text-ash-500'
+                  : 'border-border text-ash-500'
               }`}
             >
               {t('npcSms.shuffleMode')}
@@ -273,7 +273,7 @@ export default function NpcSmsDistributionModal({
               className={`text-[9px] font-black uppercase tracking-widest px-3 py-1.5 border rounded-sm ${
                 mode === 'pick'
                   ? 'border-secondary text-secondary bg-secondary/10'
-                  : 'border-white/10 text-ash-500'
+                  : 'border-border text-ash-500'
               }`}
             >
               {t('npcSms.pickMode')}
@@ -401,7 +401,7 @@ export default function NpcSmsDistributionModal({
 
           {feedback && (
             <div
-              className={`absolute top-6 left-1/2 -translate-x-1/2 bg-black/90 backdrop-blur-sm border px-6 py-3 rounded-full text-[10px] font-black uppercase z-50 flex items-center gap-2 shadow-lg ${
+              className={`absolute top-6 left-1/2 -translate-x-1/2 bg-black/90 border px-6 py-3 rounded-full text-[10px] font-black uppercase z-50 flex items-center gap-2 shadow-lg ${
                 feedback.startsWith('ERRO')
                   ? 'border-red-500/50 text-red-400'
                   : 'border-phosphor-500/50 text-phosphor-400'

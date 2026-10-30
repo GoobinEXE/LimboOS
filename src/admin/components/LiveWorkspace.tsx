@@ -289,10 +289,10 @@ export default function LiveWorkspace({
           <div className="flex items-center gap-3 min-w-0">
             <span className="material-symbols-outlined text-phosphor-400 text-xl">event_available</span>
             <div className="min-w-0">
-              <h2 className="font-display font-bold uppercase tracking-widest text-sm text-white">
+              <h2 className="font-display font-bold uppercase tracking-widest text-sm text-bone">
                 {t('live.session.title')}
               </h2>
-              <p className="text-[9px] font-display uppercase tracking-[0.25em] text-industrial-silver/40 truncate">
+              <p className="text-[9px] font-display uppercase tracking-[0.25em] text-ash-500 truncate">
                 {t('live.session.subtitle')}
               </p>
             </div>
@@ -320,7 +320,7 @@ export default function LiveWorkspace({
               <button
                 type="button"
                 onClick={() => onSessionChange(null)}
-                className="text-[9px] font-display font-bold uppercase tracking-widest px-3 py-1.5 border border-white/10 text-ash-500 hover:text-red-400 hover:border-red-500/30"
+                className="text-[9px] font-display font-bold uppercase tracking-widest px-3 py-1.5 border border-border text-ash-500 hover:text-red-400 hover:border-red-500/30"
               >
                 {t('live.session.clear')}
               </button>
@@ -335,7 +335,7 @@ export default function LiveWorkspace({
             <select
               value={activeSession?.groupId || ''}
               onChange={(e) => handleGroupSelect(e.target.value)}
-              className="w-full bg-black/50 border border-white/10 px-3 py-2.5 text-[10px] font-display font-bold uppercase tracking-widest text-white outline-none focus:border-phosphor-500/40"
+              className="w-full bg-black/50 border border-border px-3 py-2.5 text-[10px] font-display font-bold uppercase tracking-widest text-white outline-none focus:border-phosphor-500/40"
             >
               <option value="">{t('live.session.noneSquad')}</option>
               {groups.map((g) => (
@@ -353,7 +353,7 @@ export default function LiveWorkspace({
               value={activeSession?.campaignId || ''}
               onChange={(e) => handleCampaignSelect(e.target.value)}
               disabled={!activeSession?.groupId}
-              className="w-full bg-black/50 border border-white/10 px-3 py-2.5 text-[10px] font-display font-bold uppercase tracking-widest text-white outline-none focus:border-phosphor-500/40 disabled:opacity-30"
+              className="w-full bg-black/50 border border-border px-3 py-2.5 text-[10px] font-display font-bold uppercase tracking-widest text-white outline-none focus:border-phosphor-500/40 disabled:opacity-30"
             >
               <option value="">{t('live.session.noneMission')}</option>
               {campaigns.map((c) => (
@@ -372,7 +372,7 @@ export default function LiveWorkspace({
               onChange={(e) => setSessionOnly(e.target.checked)}
               className="accent-phosphor-500"
             />
-            <span className="text-[9px] font-display font-bold uppercase tracking-widest text-industrial-silver/50 group-hover:text-phosphor-400">
+            <span className="text-[9px] font-display font-bold uppercase tracking-widest text-ash-400 group-hover:text-phosphor-400">
               {t('live.session.onlySession')}
             </span>
           </label>
@@ -391,7 +391,7 @@ export default function LiveWorkspace({
         />
         <MiniStat
           label={t('live.stat.selected')}
-          value={String(selectedUids.size || (rows.length > 0 ? 'todos*' : '0'))}
+          value={String(selectedUids.size || (rows.length > 0 ? t('live.allTargets') : '0'))}
           icon="checklist"
           accent="primary"
         />
@@ -402,12 +402,12 @@ export default function LiveWorkspace({
         <div className="flex flex-col gap-3 px-4 sm:px-6 py-4 border-b border-primary/10 bg-black/20">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center gap-3 min-w-0">
-              <div className="w-2 h-2 rounded-full bg-phosphor-400 animate-pulse shrink-0" />
+              <span className="lmb-led text-phosphor-400 animate-led" aria-hidden />
               <div className="min-w-0">
-                <h2 className="font-display font-bold uppercase tracking-widest text-sm text-white truncate">
+                <h2 className="font-display font-bold uppercase tracking-widest text-sm text-bone truncate">
                   {t('live.presence.title')}
                 </h2>
-                <p className="text-[9px] font-display uppercase tracking-[0.25em] text-industrial-silver/40 truncate">
+                <p className="text-[9px] font-display uppercase tracking-[0.25em] text-ash-500 truncate">
                   {filteringBySession
                     ? t('live.presence.subtitleSession', {
                         n: rows.length,
@@ -425,7 +425,7 @@ export default function LiveWorkspace({
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-[9px] font-display font-bold uppercase tracking-widest text-industrial-silver/40 mr-1">
+            <span className="text-[9px] font-display font-bold uppercase tracking-widest text-ash-500 mr-1">
               {t('live.confirm.deliverAction')}
             </span>
             <DeliverBtn label={t('live.deliver.intel')} icon="inventory_2" onClick={() => openDeliver('intel')} disabled={rows.length === 0} />
@@ -472,7 +472,7 @@ export default function LiveWorkspace({
 
         {rows.length === 0 ? (
           <div className="px-6 py-10 text-center">
-            <p className="text-[10px] font-display font-bold uppercase tracking-[0.3em] text-industrial-silver/25">
+            <p className="text-[10px] font-display font-bold uppercase tracking-[0.3em] text-ash-600">
               {filteringBySession
                 ? t('live.presence.emptySession')
                 : t('live.presence.empty')}
@@ -497,7 +497,7 @@ export default function LiveWorkspace({
           </div>
         ) : (
           <>
-            <div className="px-4 sm:px-6 py-2 border-b border-white/5 bg-black/15 flex items-center justify-between">
+            <div className="px-4 sm:px-6 py-2 border-b border-border-subtle bg-black/15 flex items-center justify-between">
               <button
                 type="button"
                 onClick={selectAll}
@@ -555,7 +555,7 @@ export default function LiveWorkspace({
                             <span className="text-primary/80 font-normal"> // {row.agentName}</span>
                           ) : null}
                         </p>
-                        <p className="text-[9px] font-mono text-industrial-silver/35 truncate mt-0.5">
+                        <p className="text-[9px] font-mono text-ash-500 truncate mt-0.5">
                           {formatDistanceToNow(row.lastLoginMs, { addSuffix: true, locale: dateLocale })}
                           {row.email ? ` · ${row.email}` : ''}
                         </p>
@@ -581,7 +581,7 @@ export default function LiveWorkspace({
                           Push Mac
                         </span>
                       ) : row.hasMacAccess ? (
-                        <span className="text-[8px] font-display font-bold uppercase tracking-wider px-2 py-0.5 border border-white/20 text-industrial-silver/60">
+                        <span className="text-[8px] font-display font-bold uppercase tracking-wider px-2 py-0.5 border border-border-strong text-ash-400">
                           {t('hardware.filter.mac')}
                         </span>
                       ) : null}
@@ -678,28 +678,33 @@ export default function LiveWorkspace({
         )}
       </section>
 
-      <section className="space-y-3">
-        <SectionLabel title={t('live.controls')} />
-        <SessionGlobalsPanel />
-      </section>
+      {/* Desktop largo: controles e log lado a lado; jukebox ocupa a largura toda */}
+      <div className="grid gap-8 xl:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] xl:items-start">
+        <section className="space-y-3">
+          <SectionLabel title={t('live.controls')} />
+          <SessionGlobalsPanel />
+        </section>
 
-      <section id="admin-jukebox" className="space-y-3">
-        <SectionLabel title="Jukebox da Mesa" />
+        <section className="space-y-3">
+          <SectionLabel
+            title={t('live.recentLog')}
+            action={
+              <button
+                type="button"
+                onClick={onOpenFullLog}
+                className="text-[9px] font-display font-bold uppercase tracking-widest text-primary/70 hover:text-primary shrink-0 transition-colors"
+              >
+                {t('live.fullLog')}
+              </button>
+            }
+          />
+          <SystemLogPanel compact filterUids={filteringBySession ? sessionMemberUids : undefined} />
+        </section>
+      </div>
+
+      <section id="admin-jukebox" className="space-y-3 scroll-mt-6">
+        <SectionLabel title={t('live.jukebox')} />
         <JukeboxPanel embedded />
-      </section>
-
-      <section className="space-y-3 border-t border-primary/10 pt-8">
-        <div className="flex items-center justify-between gap-3">
-          <SectionLabel title="Log Recente" />
-          <button
-            type="button"
-            onClick={onOpenFullLog}
-            className="text-[9px] font-display font-bold uppercase tracking-widest text-primary/60 hover:text-primary shrink-0"
-          >
-            Ver log completo →
-          </button>
-        </div>
-        <SystemLogPanel compact filterUids={filteringBySession ? sessionMemberUids : undefined} />
       </section>
 
       <AnimatePresence>
@@ -731,7 +736,7 @@ export default function LiveWorkspace({
 /**
  * Menu de ações da linha de presença.
  * Renderiza via portal com position:fixed para não ser cortado por overflow
- * dos painéis (section / main com scroll / backdrop-blur).
+ * dos painéis (section / main com scroll /).
  */
 function PresenceRowMenu({
   open,
@@ -796,7 +801,7 @@ function PresenceRowMenu({
         onClick={onToggle}
         aria-expanded={open}
         aria-haspopup="menu"
-        className="text-[8px] font-display font-bold uppercase tracking-wider px-2 py-1 border border-white/10 text-industrial-silver/50 hover:text-white"
+        className="text-[8px] font-display font-bold uppercase tracking-wider px-2 py-1 border border-border text-ash-400 hover:text-white"
       >
         ⋯
       </button>
@@ -811,7 +816,7 @@ function PresenceRowMenu({
                 ? { position: 'fixed', top: coords.top, left: coords.left }
                 : { position: 'fixed', top: -9999, left: -9999, visibility: 'hidden' }
             }
-            className="z-[200] min-w-44 bg-seam border border-white/10 shadow-2xl py-1"
+            className="z-[200] min-w-44 bg-seam border border-border shadow-2xl py-1"
           >
             {children}
           </div>,
@@ -821,14 +826,11 @@ function PresenceRowMenu({
   );
 }
 
-function SectionLabel({ title }: { title: string }) {
+function SectionLabel({ title, action }: { title: string; action?: React.ReactNode }) {
   return (
-    <div className="flex items-center gap-3">
-      <div className="h-px flex-1 bg-linear-to-r from-transparent to-primary/20" />
-      <h3 className="text-industrial-silver/40 font-display text-[10px] uppercase font-bold tracking-[0.3em]">
-        {title}
-      </h3>
-      <div className="h-px flex-1 bg-linear-to-l from-transparent to-primary/20" />
+    <div className="flex items-center gap-4">
+      <h3 className="lmb-eyebrow flex-1 text-ash-400">{title}</h3>
+      {action}
     </div>
   );
 }
@@ -851,12 +853,12 @@ function MiniStat({
         ? 'text-red-400 border-red-500/30'
         : 'text-primary border-primary/20';
   return (
-    <div className={`bg-surface-container-low border p-4 relative overflow-hidden ${color}`}>
-      <p className="font-display text-[9px] uppercase font-bold tracking-[0.2em] text-industrial-silver/40 mb-1">
+    <div className={`bg-surface-container-low border-l-2 border-y border-r border-y-seam border-r-seam px-4 py-3 ${color}`}>
+      <p className="flex items-center gap-1.5 font-display text-[9px] uppercase font-bold tracking-[0.2em] text-ash-500 mb-1.5">
+        <span className="material-symbols-outlined text-[14px] opacity-70" aria-hidden>{icon}</span>
         {label}
       </p>
-      <p className="text-2xl font-display font-bold tracking-tight">{value}</p>
-      <span className="material-symbols-outlined absolute -right-1 -bottom-1 text-4xl opacity-10">{icon}</span>
+      <p className="text-2xl font-display font-bold tracking-tight tabular-nums leading-none">{value}</p>
     </div>
   );
 }

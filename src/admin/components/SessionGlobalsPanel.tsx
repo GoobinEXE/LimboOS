@@ -56,7 +56,7 @@ export default function SessionGlobalsPanel() {
         }`}
       >
         <div className="flex items-center justify-between">
-          <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-industrial-silver/40">
+          <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-500">
             {t('sessionGlobals.limboTitle')}
           </h3>
           {limboState.seized && <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />}
@@ -94,7 +94,7 @@ export default function SessionGlobalsPanel() {
           className={`px-5 py-2 border-2 font-display font-black uppercase text-[10px] tracking-widest transition rounded-sm self-start ${
             limboState.seized
               ? 'bg-red-600 border-red-400 text-white'
-              : 'bg-[#333] border-white/5 text-ash-400 hover:bg-[#444]'
+              : 'bg-[#333] border-border-subtle text-ash-400 hover:bg-[#444]'
           } active:scale-[0.97]`}
         >
           {limboState.seized ? t('sessionGlobals.normalize') : t('sessionGlobals.forceUsarmy')}
@@ -102,10 +102,10 @@ export default function SessionGlobalsPanel() {
       </div>
 
       <div className="bg-surface-container-low border border-primary/10 p-5 rounded-sm flex flex-col gap-4">
-        <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-industrial-silver/40">
+        <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-500">
           {t('sessionGlobals.protocols')}
         </h3>
-        <div className="flex items-center justify-between p-4 bg-black/40 border border-white/5 rounded-sm">
+        <div className="flex items-center justify-between p-4 bg-black/40 border border-border-subtle rounded-sm">
           <div>
             <p className="font-display font-black text-sm text-white uppercase">{t('sessionGlobals.diskRepair')}</p>
             <p className="text-[9px] text-ash-600 font-bold uppercase mt-1">{t('sessionGlobals.diskRepairDesc')}</p>

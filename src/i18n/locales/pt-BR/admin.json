@@ -199,7 +199,11 @@
       "mesa": "Mesa",
       "media": "Conteúdo"
     },
-    "controls": "Controles de Sessão"
+    "controls": "Controles de Sessão",
+    "jukebox": "Jukebox da Mesa",
+    "recentLog": "Log Recente",
+    "fullLog": "Ver log completo →",
+    "allTargets": "todos*"
   },
   "deliver": {
     "kind": {

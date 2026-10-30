@@ -144,13 +144,13 @@ function AchievementDeliverPane({
 
   return (
     <DeliverShell title={t('deliver.kind.achievements')} targets={targets} onClose={loading ? undefined : onClose}>
-      <div className="px-6 py-3 border-b border-white/5">
+      <div className="px-6 py-3 border-b border-border-subtle">
         <input
           type="search"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder={t('deliver.searchAchievement')}
-          className="w-full bg-black/50 border border-white/10 px-4 py-2.5 text-[10px] font-display font-bold uppercase tracking-widest text-white placeholder:text-ash-700 outline-none focus:border-primary/40"
+          className="w-full bg-black/50 border border-border px-4 py-2.5 text-[10px] font-display font-bold uppercase tracking-widest text-white placeholder:text-ash-700 outline-none focus:border-primary/40"
         />
       </div>
       <div className="flex-1 overflow-y-auto custom-scrollbar divide-y divide-white/5">
@@ -163,7 +163,7 @@ function AchievementDeliverPane({
               selectedId === a.id ? 'bg-primary/10' : 'hover:bg-white/5'
             }`}
           >
-            <img src={a.icon} alt="" className="w-10 h-10 object-cover rounded-sm border border-white/10 shrink-0" />
+            <img src={a.icon} alt="" className="w-10 h-10 object-cover rounded-sm border border-border shrink-0" />
             <div className="min-w-0 flex-1">
               <p className="text-[11px] font-display font-bold uppercase tracking-widest text-white truncate">
                 {a.title}
@@ -181,7 +181,7 @@ function AchievementDeliverPane({
           </p>
         )}
       </div>
-      <div className="p-4 border-t border-white/5 bg-black/30 flex justify-end gap-3">
+      <div className="p-4 border-t border-border-subtle bg-black/30 flex justify-end gap-3">
         <button
           type="button"
           disabled={loading}
@@ -299,7 +299,7 @@ function SmsDeliverPane({
           <select
             value={selectedNpc}
             onChange={(e) => setSelectedNpc(e.target.value)}
-            className="w-full bg-black/50 border border-white/10 px-4 py-3 text-[10px] font-display font-bold uppercase tracking-widest text-primary outline-none"
+            className="w-full bg-black/50 border border-border px-4 py-3 text-[10px] font-display font-bold uppercase tracking-widest text-primary outline-none"
           >
             <option value="all">{t('deliver.npcAll')}</option>
             {enabledContacts.map((n) => (
@@ -328,7 +328,7 @@ function SmsDeliverPane({
           {ready.map((t) => (
             <div
               key={`${t.uid}_${t.characterId}`}
-              className="flex justify-between px-3 py-2 bg-black/40 border border-white/5 text-[10px] font-display font-bold uppercase tracking-widest"
+              className="flex justify-between px-3 py-2 bg-black/40 border border-border-subtle text-[10px] font-display font-bold uppercase tracking-widest"
             >
               <span className="text-white">{t.label}</span>
               <span className="text-primary/60">{t.group?.name}</span>
@@ -341,7 +341,7 @@ function SmsDeliverPane({
           )}
         </div>
       </div>
-      <div className="p-4 border-t border-white/5 bg-black/30 flex justify-end gap-3">
+      <div className="p-4 border-t border-border-subtle bg-black/30 flex justify-end gap-3">
         <button
           type="button"
           disabled={loading}
@@ -401,7 +401,7 @@ function DeliverShell({
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="fixed inset-0 z-[120] flex justify-end bg-black/80 backdrop-blur-sm"
+            className="fixed inset-0 z-[120] flex justify-end bg-surface-scrim"
             onClick={() => requestClose()}
           >
             <motion.div
@@ -409,7 +409,7 @@ function DeliverShell({
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={ADMIN_SPRING}
-              className="bg-[#222] border-l-8 border-seam w-full max-w-xl shadow-2xl flex flex-col h-full relative overflow-hidden font-display"
+              className="bg-surface-container-low border-l border-seam w-full max-w-xl shadow-2xl flex flex-col h-full relative overflow-hidden font-display"
               onClick={(e) => e.stopPropagation()}
             >
               <Screw className="top-4 left-4" />

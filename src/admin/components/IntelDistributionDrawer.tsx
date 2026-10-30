@@ -174,7 +174,7 @@ export default function IntelDistributionDrawer({
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="fixed inset-0 z-[300] flex justify-end bg-black/80 backdrop-blur-sm"
+            className="fixed inset-0 z-[300] flex justify-end bg-surface-scrim"
             onClick={() => {
               if (!loading) requestClose();
             }}
@@ -184,7 +184,7 @@ export default function IntelDistributionDrawer({
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={ADMIN_SPRING}
-              className="bg-[#222] border-l-8 border-seam w-full max-w-2xl shadow-2xl flex flex-col h-full relative overflow-hidden font-chakra"
+              className="bg-surface-container-low border-l border-seam w-full max-w-2xl shadow-2xl flex flex-col h-full relative overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
           <Screw className="top-4 left-4" />
@@ -317,7 +317,7 @@ export default function IntelDistributionDrawer({
                       </p>
                     </div>
                     {alreadyHas && (
-                      <span className="text-[8px] font-black uppercase bg-black/60 text-ash-500 px-3 py-1 border border-white/5 rounded-sm">
+                      <span className="text-[8px] font-black uppercase bg-black/60 text-ash-500 px-3 py-1 border border-border-subtle rounded-sm">
                         PRESENTE
                       </span>
                     )}
@@ -367,7 +367,7 @@ export default function IntelDistributionDrawer({
           </div>
 
           {feedback && (
-            <div className="absolute top-6 left-1/2 -translate-x-1/2 bg-black/90 backdrop-blur-sm border border-phosphor-500/50 px-6 py-3 rounded-full text-[10px] font-black text-phosphor-400 uppercase z-50 flex items-center gap-2 shadow-[0_0_15px_rgba(86,185,75,0.3)]">
+            <div className="absolute top-6 left-1/2 -translate-x-1/2 bg-black/90 border border-phosphor-500/50 px-6 py-3 rounded-full text-[10px] font-black text-phosphor-400 uppercase z-50 flex items-center gap-2 shadow-[0_0_15px_rgba(86,185,75,0.3)]">
               <span className="material-symbols-outlined text-sm">check_circle</span>
               {feedback}
             </div>

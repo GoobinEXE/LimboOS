@@ -162,14 +162,14 @@ export default function MissionInventoryTab({
       {modal}
       <div className="space-y-8">
         {campaignCharacters.length === 0 && (
-          <div className="py-24 text-center border-2 border-dashed border-white/5 rounded-sm opacity-30 flex flex-col items-center">
-            <span className="material-symbols-outlined text-5xl text-industrial-silver/40 mb-4">
+          <div className="py-24 text-center border-2 border-dashed border-border-subtle rounded-sm opacity-30 flex flex-col items-center">
+            <span className="material-symbols-outlined text-5xl text-ash-500 mb-4">
               person_off
             </span>
-            <p className="text-[11px] font-display font-bold uppercase tracking-widest text-industrial-silver/40">
+            <p className="text-[11px] font-display font-bold uppercase tracking-widest text-ash-500">
               Nenhum Agente Vinculado a Esta Missão
             </p>
-            <p className="text-[9px] text-industrial-silver/30 mt-2 uppercase tracking-widest">
+            <p className="text-[9px] text-ash-600 mt-2 uppercase tracking-widest">
               Designe agentes ou esquadrões na aba Vínculos
             </p>
           </div>
@@ -181,9 +181,9 @@ export default function MissionInventoryTab({
           return (
             <div
               key={compositeKey}
-              className="bg-black/40 border border-white/5 rounded-sm p-6 group hover:border-primary/20 transition shadow-inner"
+              className="bg-black/40 border border-border-subtle rounded-sm p-6 group hover:border-primary/20 transition shadow-inner"
             >
-              <div className="flex justify-between items-center mb-6 border-b border-white/5 pb-4">
+              <div className="flex justify-between items-center mb-6 border-b border-border-subtle pb-4">
                 <div className="flex items-center gap-4">
                   <div
                     className={`w-10 h-10 rounded-sm bg-black border border-seam flex items-center justify-center font-black text-sm ${
@@ -196,7 +196,7 @@ export default function MissionInventoryTab({
                     <h4 className="font-display font-bold text-sm text-bone uppercase tracking-wider">
                       {character.codinome}
                     </h4>
-                    <p className="text-[9px] font-mono font-bold text-industrial-silver/40 uppercase tracking-widest mt-0.5">
+                    <p className="text-[9px] font-mono font-bold text-ash-500 uppercase tracking-widest mt-0.5">
                       Mestre: {account.masterName || account.email}
                     </p>
                   </div>
@@ -220,11 +220,11 @@ export default function MissionInventoryTab({
                   return (
                     <div
                       key={t.id}
-                      className="bg-surface-container-lowest border border-white/5 p-4 rounded-sm relative group/item hover:border-primary/30 transition shadow-md"
+                      className="bg-surface-container-lowest border border-border-subtle p-4 rounded-sm relative group/item hover:border-primary/30 transition shadow-md"
                     >
                       <div className="flex items-start justify-between mb-2">
                         <div
-                          className={`p-1.5 rounded-sm bg-black/40 border border-white/5 text-[10px] transition group-hover/item:border-primary/20 ${
+                          className={`p-1.5 rounded-sm bg-black/40 border border-border-subtle text-[10px] transition group-hover/item:border-primary/20 ${
                             intel?.type === 'AUDIO'
                               ? 'text-amber-500'
                               : intel?.type === 'VISUAL'
@@ -246,7 +246,7 @@ export default function MissionInventoryTab({
                         </div>
                         <button
                           onClick={() => handleRevokeIntel(account.uid, character.id, t.id)}
-                          className="text-industrial-silver/20 hover:text-red-500 transition-colors bg-black/40 p-1 rounded-sm border border-white/5 hover:border-red-500/30"
+                          className="text-ash-600 hover:text-red-500 transition-colors bg-black/40 p-1 rounded-sm border border-border-subtle hover:border-red-500/30"
                         >
                           <span className="material-symbols-outlined text-xs">close</span>
                         </button>
@@ -254,15 +254,15 @@ export default function MissionInventoryTab({
                       <p className="font-display font-bold text-[10px] text-bone uppercase tracking-widest truncate group-hover/item:text-primary transition-colors">
                         {intelTitleLabel(t.id, Object.entries(remoteIntelTitles).map(([id, title]) => ({ id, title })))}
                       </p>
-                      <p className="text-[8px] font-mono text-industrial-silver/40 uppercase mt-1 truncate">
+                      <p className="text-[8px] font-mono text-ash-500 uppercase mt-1 truncate">
                         {intel?.metadata?.npc || 'SISTEMA'}
                       </p>
                     </div>
                   );
                 })}
                 {items.length === 0 && (
-                  <div className="col-span-full py-6 text-center border border-dashed border-white/5 rounded-sm opacity-20">
-                    <span className="text-[9px] font-display font-bold uppercase tracking-widest text-industrial-silver/40">
+                  <div className="col-span-full py-6 text-center border border-dashed border-border-subtle rounded-sm opacity-20">
+                    <span className="text-[9px] font-display font-bold uppercase tracking-widest text-ash-500">
                       Inventário Vazio
                     </span>
                   </div>

@@ -24,7 +24,7 @@ export default function IntelExportDrawer({
       <AnimatePresence>
         {open && (
           <div
-            className="fixed inset-0 z-[120] flex justify-end bg-black/80 backdrop-blur-sm"
+            className="fixed inset-0 z-[120] flex justify-end bg-surface-scrim"
             onClick={onClose}
           >
             <motion.div
@@ -45,14 +45,14 @@ export default function IntelExportDrawer({
                   <h3 className="font-display font-bold text-2xl text-bone uppercase tracking-tighter">
                     Exportar <span className="text-primary">Registro Mestre</span>
                   </h3>
-                  <p className="text-[10px] font-display font-bold text-industrial-silver/40 uppercase tracking-widest mt-1">
+                  <p className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-widest mt-1">
                     Cópia do IntelRegistry ({itemCount} entradas)
                   </p>
                 </div>
                 <button
                   type="button"
                   onClick={onClose}
-                  className="p-3 text-industrial-silver/40 hover:text-bone material-symbols-outlined rounded-sm"
+                  className="p-3 text-ash-500 hover:text-bone material-symbols-outlined rounded-sm"
                 >
                   close
                 </button>

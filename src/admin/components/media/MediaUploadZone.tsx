@@ -45,7 +45,7 @@ export default function MediaUploadZone({
     <>
       {uploading && (
         <OverlayPortal open={uploading}>
-          <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[200] flex flex-col items-center justify-center gap-6">
+          <div className="fixed inset-0 bg-surface-scrim z-[200] flex flex-col items-center justify-center gap-6 animate-fade-in" role="status" aria-live="polite">
             <RetroSpinner />
             <div className="space-y-2 text-center">
               <div className="text-primary font-display font-bold uppercase tracking-[0.4em] animate-pulse text-lg">
@@ -58,7 +58,7 @@ export default function MediaUploadZone({
                   animate={{ width: `${uploadProgress}%` }}
                 />
               </div>
-              <div className="text-[10px] font-display font-bold text-industrial-silver/40 tracking-widest uppercase">
+              <div className="text-[10px] font-display font-bold text-ash-500 tracking-widest uppercase">
                 {Math.round(uploadProgress)}% COMPLETO
               </div>
             </div>
@@ -128,16 +128,16 @@ export default function MediaUploadZone({
           <div className="relative inline-block mb-3">
             <span
               className={`material-symbols-outlined text-4xl transition duration-300 ${
-                isDragOver ? 'text-primary scale-110' : 'text-industrial-silver/20 group-hover:text-primary/40'
+                isDragOver ? 'text-primary scale-110' : 'text-ash-600 group-hover:text-primary/40'
               }`}
             >
               {isDragOver ? 'downloading' : 'cloud_upload'}
             </span>
           </div>
-          <p className="text-industrial-silver/60 text-[10px] font-display font-bold uppercase tracking-[0.3em] group-hover:text-industrial-silver/80">
+          <p className="text-ash-400 text-[10px] font-display font-bold uppercase tracking-[0.3em] group-hover:text-ash-300">
             {isDragOver ? 'SOLTAR AGORA' : dropHint}
           </p>
-          <p className="text-industrial-silver/30 text-[9px] font-display uppercase tracking-widest mt-2">
+          <p className="text-ash-600 text-[9px] font-display uppercase tracking-widest mt-2">
             {dropSubhint}
           </p>
         </div>

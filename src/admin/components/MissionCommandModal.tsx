@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { motion } from 'motion/react';
+import { dialogPop } from '../lib/motion';
 import { Campaign } from '../../data/campaigns';
 import { Group, MasterAccount, CharacterData } from '../../types/player';
 import { campaignAdminService } from '../../services/CampaignAdminService';
@@ -85,47 +87,59 @@ export default function MissionCommandModal({
 
   return (
     <OverlayPortal open={open} onClose={onClose}>
-      <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/90 p-4 backdrop-blur-md">
-        <div className="bg-surface-container-low border border-primary/30 w-full max-w-5xl rounded-sm shadow-2xl flex flex-col h-[90vh] relative overflow-hidden">
+      <div className="fixed inset-0 z-[150] flex items-center justify-center bg-surface-scrim p-4 animate-fade-in">
+        <motion.div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="mission-command-title"
+          variants={dialogPop}
+          initial="hidden"
+          animate="visible"
+          className="bg-surface-container-low border border-seam w-full max-w-5xl rounded-panel shadow-2xl machined-edge flex flex-col h-[90vh] relative overflow-hidden"
+        >
           <div className="absolute -top-3 left-6 bg-primary px-2 py-0.5 text-[10px] font-display font-bold text-black tracking-widest uppercase">
-            {isNew && !isPersisted ? t('missions.modal.install') : 'CENTRO-DE-COMANDO'}
+            {isNew && !isPersisted ? t('missions.modal.install') : t('missions.modal.commandBadge')}
           </div>
 
-          <div className="p-6 border-b border-white/5 flex justify-between items-center bg-black/40 shrink-0">
+          <div className="p-6 border-b border-border-subtle flex justify-between items-center bg-black/40 shrink-0">
             <div className="flex items-center gap-4 mt-2">
               <div className="w-1 h-9 bg-accent shrink-0" />
               <div>
-                <h3 className="font-display font-bold text-xl text-bone uppercase tracking-tighter">
+                <h3 id="mission-command-title" className="font-display font-bold text-xl text-bone uppercase tracking-tight">
                   {editingCampaign.name || t('missions.modal.newTitle')}
                 </h3>
-                <p className="text-[10px] font-display font-bold text-industrial-silver/40 uppercase tracking-widest mt-0.5">
-                  Gestão unificada de instância operacional
+                <p className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-widest mt-0.5">
+                  {t('missions.modal.commandSubtitle')}
                 </p>
               </div>
             </div>
             <button
+              type="button"
               onClick={onClose}
-              className="p-3 text-industrial-silver/20 hover:text-bone transition material-symbols-outlined rounded-sm"
+              aria-label={t('close', { ns: 'common' })}
+              className="lmb-btn lmb-btn-ghost lmb-btn-icon material-symbols-outlined text-[20px] tracking-normal normal-case"
             >
               close
             </button>
           </div>
 
-          <div className="flex border-b border-white/5 bg-black/20 shrink-0">
+          <div role="tablist" className="flex border-b border-seam bg-surface-container-lowest shrink-0">
             {TAB_ORDER.map((tab) => {
               const locked = tab !== 'dados' && tabsLocked;
               return (
                 <button
                   key={tab}
                   type="button"
+                  role="tab"
+                  aria-selected={activeTab === tab}
                   disabled={locked}
                   onClick={() => !locked && setActiveTab(tab)}
                   className={`flex-1 py-4 text-[10px] font-display font-bold uppercase tracking-[0.15em] transition ${
                     activeTab === tab
-                      ? 'text-primary bg-primary/10 border-b-2 border-primary'
+                      ? 'text-primary bg-accent-05 shadow-[inset_0_-2px_0_var(--color-accent)]'
                       : locked
-                        ? 'text-industrial-silver/15 cursor-not-allowed'
-                        : 'text-industrial-silver/40 hover:text-bone hover:bg-white/5'
+                        ? 'text-ash-700 cursor-not-allowed'
+                        : 'text-ash-500 hover:text-bone hover:bg-white/5'
                   }`}
                   title={locked ? t('missions.modal.saveFirst') : undefined}
                 >
@@ -188,7 +202,7 @@ export default function MissionCommandModal({
               />
             )}
           </div>
-        </div>
+        </motion.div>
       </div>
     </OverlayPortal>
   );

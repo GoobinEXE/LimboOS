@@ -13,7 +13,7 @@ import {
 import type { IntelItem } from '../../../types/intel';
 
 const SELECT_CLASS =
-  'w-full bg-surface-container-lowest border border-white/5 py-4 px-4 text-bone font-display font-bold text-sm tracking-widest outline-none uppercase cursor-pointer appearance-none focus:border-primary/40 transition rounded-sm';
+  'w-full bg-surface-container-lowest border border-border-subtle py-4 px-4 text-bone font-display font-bold text-sm tracking-widest outline-none uppercase cursor-pointer appearance-none focus:border-primary/40 transition rounded-sm';
 
 const INPUT_CLASS =
   'w-full bg-surface-container-lowest border border-transparent focus:border-primary/30 py-4 px-4 text-bone outline-none transition rounded-sm';
@@ -63,19 +63,19 @@ export default function IntelEditorModal({
   return (
     <OverlayPortal open={open} onClose={onClose}>
       {open && (
-        <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/90 p-4 backdrop-blur-md">
+        <div className="fixed inset-0 z-100 flex items-center justify-center bg-surface-scrim p-4 animate-fade-in" role="dialog" aria-modal="true">
           <div className="bg-surface-container-low border border-primary/30 w-full max-w-2xl rounded-sm shadow-2xl flex flex-col max-h-[90vh] relative">
             <div className="absolute -top-3 left-6 bg-primary px-2 py-0.5 text-[10px] font-display font-bold text-black tracking-widest uppercase">
               {editingItem ? 'ATUALIZAÇÃO-DE-REGISTRO' : 'NOVA-ENTRADA-DE-INTEL'}
             </div>
 
-            <div className="p-8 border-b border-white/5 flex justify-between items-center bg-black/40">
+            <div className="p-8 border-b border-border-subtle flex justify-between items-center bg-black/40">
               <div className="mt-2">
                 <h3 className="font-display font-bold text-2xl text-bone uppercase tracking-tighter">
                   {editingItem ? 'Ajustar' : 'Injetar'}{' '}
                   <span className="text-primary">{t('intel.editor.properties')}</span>
                 </h3>
-                <p className="text-[10px] font-display font-bold text-industrial-silver/40 uppercase tracking-widest mt-1">
+                <p className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-widest mt-1">
                   {editingItem
                     ? `Ponto de Acesso: ${editingItem.id}`
                     : 'Upload e metadados no mesmo fluxo'}
@@ -84,7 +84,7 @@ export default function IntelEditorModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="p-3 text-industrial-silver/20 hover:text-bone transition rounded-sm material-symbols-outlined"
+                className="p-3 text-ash-600 hover:text-bone transition rounded-sm material-symbols-outlined"
               >
                 close
               </button>
@@ -120,12 +120,12 @@ export default function IntelEditorModal({
                         </option>
                       ))}
                     </select>
-                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-industrial-silver/30 text-base">
+                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-ash-600 text-base">
                       expand_more
                     </span>
                   </div>
                   {formData.campaignId && (
-                    <p className="mt-1.5 text-[8px] font-mono text-industrial-silver/30 truncate">
+                    <p className="mt-1.5 text-[8px] font-mono text-ash-600 truncate">
                       id: {formData.campaignId}
                     </p>
                   )}
@@ -146,7 +146,7 @@ export default function IntelEditorModal({
                         title={t('intel.editor.generateId')}
                         disabled={!formData.title.trim()}
                         onClick={() => onUpdateField('id', slugifyIntelId(formData.title))}
-                        className="shrink-0 px-3 border border-white/10 bg-black/30 text-industrial-silver/50 hover:text-primary hover:border-primary/30 transition rounded-sm disabled:opacity-30"
+                        className="shrink-0 px-3 border border-border bg-black/30 text-ash-400 hover:text-primary hover:border-primary/30 transition rounded-sm disabled:opacity-30"
                       >
                         <span className="material-symbols-outlined text-base">auto_fix</span>
                       </button>
@@ -157,7 +157,7 @@ export default function IntelEditorModal({
 
               {/* 2. Tipo e nível */}
               <div className="space-y-3">
-                <label className="text-[9px] font-display font-bold text-industrial-silver/40 uppercase tracking-[0.2em] block">
+                <label className="text-[9px] font-display font-bold text-ash-500 uppercase tracking-[0.2em] block">
                   Classificação de Tipo
                 </label>
                 <div className="flex flex-wrap gap-2">
@@ -169,7 +169,7 @@ export default function IntelEditorModal({
                       className={`flex-1 min-w-[4.5rem] py-3.5 text-[10px] font-display font-bold uppercase tracking-widest border transition flex items-center justify-center gap-2 rounded-sm ${
                         formData.type === t.value
                           ? 'border-primary bg-primary/10 text-primary'
-                          : 'border-white/5 bg-black/20 text-industrial-silver/30 hover:border-white/10'
+                          : 'border-border-subtle bg-black/20 text-ash-600 hover:border-border'
                       }`}
                     >
                       <span className="material-symbols-outlined text-base">{t.icon}</span>
@@ -180,7 +180,7 @@ export default function IntelEditorModal({
               </div>
 
               <div className="space-y-3">
-                <label className="text-[9px] font-display font-bold text-industrial-silver/40 uppercase tracking-[0.2em] block">
+                <label className="text-[9px] font-display font-bold text-ash-500 uppercase tracking-[0.2em] block">
                   Nível de Autorização
                 </label>
                 <div className="flex flex-wrap gap-2">
@@ -192,7 +192,7 @@ export default function IntelEditorModal({
                       className={`flex-1 py-3.5 text-[10px] font-display font-bold uppercase tracking-widest border transition rounded-sm ${
                         formData.level === l.value
                           ? 'border-primary bg-primary/10 text-primary'
-                          : 'border-white/5 bg-black/20 text-industrial-silver/30 hover:border-white/10'
+                          : 'border-border-subtle bg-black/20 text-ash-600 hover:border-border'
                       }`}
                     >
                       <span className="block text-[8px] opacity-50 mb-0.5">N{l.value}</span>
@@ -280,7 +280,7 @@ export default function IntelEditorModal({
                     <button
                       type="button"
                       onClick={onOpenLibrary}
-                      className="py-4 border border-white/10 bg-black/30 text-industrial-silver/60 hover:text-bone transition rounded-sm flex items-center justify-center gap-2 font-display font-bold text-[9px] uppercase tracking-widest"
+                      className="py-4 border border-border bg-black/30 text-ash-400 hover:text-bone transition rounded-sm flex items-center justify-center gap-2 font-display font-bold text-[9px] uppercase tracking-widest"
                     >
                       <span className="material-symbols-outlined text-base">perm_media</span>
                       {t('media.title')}
@@ -314,7 +314,7 @@ export default function IntelEditorModal({
 
                   {formData.mediaUrl && formData.type === 'VIDEO' && (
                     <>
-                      <div className="text-[9px] font-mono text-industrial-silver/40 truncate pt-1 border-t border-white/5">
+                      <div className="text-[9px] font-mono text-ash-500 truncate pt-1 border-t border-border-subtle">
                         {formData.metadata?.videoSource === 'youtube' ? (
                           <span className="text-red-400/80">[YOUTUBE]</span>
                         ) : (
@@ -323,7 +323,7 @@ export default function IntelEditorModal({
                         {formData.mediaUrl}
                       </div>
                       {formData.metadata?.videoSource !== 'youtube' && (
-                        <div className="aspect-video bg-black border border-white/10 overflow-hidden max-h-48">
+                        <div className="aspect-video bg-black border border-border overflow-hidden max-h-48">
                           <video
                             src={formData.mediaUrl}
                             controls
@@ -349,8 +349,8 @@ export default function IntelEditorModal({
               )}
 
               {/* 4. Metadados */}
-              <div className="border-t border-white/5 pt-8">
-                <p className="text-[10px] font-display font-bold text-industrial-silver/60 uppercase tracking-[0.3em] mb-6">
+              <div className="border-t border-border-subtle pt-8">
+                <p className="text-[10px] font-display font-bold text-ash-400 uppercase tracking-[0.3em] mb-6">
                   Metadados Sistêmicos
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -445,13 +445,13 @@ export default function IntelEditorModal({
                           onChange={(e) => onUpdateMeta('isSecret', e.target.checked)}
                           className="peer hidden"
                         />
-                        <div className="w-6 h-6 border border-white/10 bg-black/20 rounded-sm peer-checked:bg-primary peer-checked:border-primary transition flex items-center justify-center">
+                        <div className="w-6 h-6 border border-border bg-black/20 rounded-sm peer-checked:bg-primary peer-checked:border-primary transition flex items-center justify-center">
                           <span className="material-symbols-outlined text-black text-sm font-black opacity-0 peer-checked:opacity-100">
                             check
                           </span>
                         </div>
                       </div>
-                      <span className="text-[10px] font-display font-bold text-industrial-silver/40 uppercase tracking-widest group-hover:text-primary">
+                      <span className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-widest group-hover:text-primary">
                         Sinal Sigiloso
                       </span>
                     </label>
@@ -460,11 +460,11 @@ export default function IntelEditorModal({
               </div>
             </div>
 
-            <div className="p-8 border-t border-white/5 flex flex-col sm:flex-row justify-end gap-4 bg-black/40">
+            <div className="p-8 border-t border-border-subtle flex flex-col sm:flex-row justify-end gap-4 bg-black/40">
               <button
                 type="button"
                 onClick={onClose}
-                className="px-8 py-4 text-[10px] font-display font-bold text-industrial-silver/30 hover:text-bone uppercase tracking-[0.3em]"
+                className="px-8 py-4 text-[10px] font-display font-bold text-ash-600 hover:text-bone uppercase tracking-[0.3em]"
               >
                 Abortar Missão
               </button>
@@ -489,11 +489,11 @@ export default function IntelEditorModal({
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="group">
-      <label className="text-[9px] font-display font-bold text-industrial-silver/40 uppercase tracking-[0.2em] mb-2 block group-focus-within:text-primary transition-colors">
+      <label className="text-[9px] font-display font-bold text-ash-500 uppercase tracking-[0.2em] mb-2 block group-focus-within:text-primary transition-colors">
         {label}
       </label>
       {children}
-      <div className="h-0.5 w-0 bg-primary transition-[width,color,background-color,border-color,opacity,transform,box-shadow] duration-300 group-focus-within:w-full" />
+      <div className="h-0.5 w-full bg-primary scale-x-0 origin-left transition-transform duration-(--duration-base) ease-limbo group-focus-within:scale-x-100" />
     </div>
   );
 }
@@ -501,11 +501,11 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 function MetaField({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="group">
-      <label className="text-[8px] font-display font-bold text-industrial-silver/30 uppercase block mb-2 tracking-widest group-focus-within:text-primary">
+      <label className="text-[8px] font-display font-bold text-ash-600 uppercase block mb-2 tracking-widest group-focus-within:text-primary">
         {label}
       </label>
       {children}
-      <div className="h-0.5 w-0 bg-primary transition-[width,color,background-color,border-color,opacity,transform,box-shadow] duration-300 group-focus-within:w-full" />
+      <div className="h-0.5 w-full bg-primary scale-x-0 origin-left transition-transform duration-(--duration-base) ease-limbo group-focus-within:scale-x-100" />
     </div>
   );
 }

@@ -671,7 +671,7 @@ export default function UserRegistry({
                   required 
                   autoFocus
                 />
-                <div className="h-0.5 w-0 bg-primary transition-[width,color,background-color,border-color,opacity,transform,box-shadow] duration-300 group-focus-within:w-full" />
+                <div className="h-0.5 w-full bg-primary scale-x-0 origin-left transition-transform duration-(--duration-base) ease-limbo group-focus-within:scale-x-100" />
               </div>
 
               <div className="flex justify-end gap-4">
@@ -820,12 +820,12 @@ export default function UserRegistry({
               <div className="group">
                 <label className="block text-[9px] font-display font-bold text-ash-500 uppercase tracking-widest mb-2 group-focus-within:text-phosphor-500 transition-colors">Identificador Único (ID)</label>
                 <input type="text" value={newUserCodinome} onChange={(e) => setNewUserCodinome(e.target.value)} placeholder="ex: agt_silva" className="w-full bg-surface-container-lowest border-none text-bone px-5 py-4 text-[11px] font-mono outline-none uppercase rounded-sm shadow-inner transition-[width,color,background-color,border-color,opacity,transform,box-shadow]" required />
-                <div className="h-0.5 w-0 bg-phosphor-500 transition-[width,color,background-color,border-color,opacity,transform,box-shadow] duration-300 group-focus-within:w-full" />
+                <div className="h-0.5 w-full bg-phosphor-500 scale-x-0 origin-left transition-transform duration-(--duration-base) ease-limbo group-focus-within:scale-x-100" />
               </div>
               <div className="group">
                 <label className="block text-[9px] font-display font-bold text-ash-500 uppercase tracking-widest mb-2 group-focus-within:text-phosphor-500 transition-colors">{t('accounts.createPassword')}</label>
                 <input type="password" value={newUserPassword} onChange={(e) => setNewUserPassword(e.target.value)} placeholder="••••••" className="w-full bg-surface-container-lowest border-none text-bone px-5 py-4 text-[11px] font-mono outline-none uppercase rounded-sm shadow-inner transition-[width,color,background-color,border-color,opacity,transform,box-shadow]" required minLength={6} />
-                <div className="h-0.5 w-0 bg-phosphor-500 transition-[width,color,background-color,border-color,opacity,transform,box-shadow] duration-300 group-focus-within:w-full" />
+                <div className="h-0.5 w-full bg-phosphor-500 scale-x-0 origin-left transition-transform duration-(--duration-base) ease-limbo group-focus-within:scale-x-100" />
               </div>
 
               <div className="pt-10 flex justify-end gap-6 items-center">

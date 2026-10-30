@@ -60,7 +60,7 @@ export default function MediaFolderAssignModal({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-black/90 backdrop-blur-sm"
+              className="absolute inset-0 bg-black/90"
               onClick={onClose}
             />
             <motion.div
@@ -73,7 +73,7 @@ export default function MediaFolderAssignModal({
               <div className="absolute top-2 right-2"><Screw size="xs" /></div>
 
               <div className="px-6 py-4 border-b border-primary/10 bg-black/20">
-                <p className="text-[9px] font-display font-bold text-industrial-silver/40 uppercase tracking-[0.25em]">
+                <p className="text-[9px] font-display font-bold text-ash-500 uppercase tracking-[0.25em]">
                   Atribuir pastas
                 </p>
                 <h3 className="font-display font-bold text-bone uppercase tracking-widest text-sm truncate mt-1">
@@ -83,7 +83,7 @@ export default function MediaFolderAssignModal({
 
               <div className="max-h-72 overflow-y-auto custom-scrollbar p-2">
                 {folders.length === 0 ? (
-                  <p className="px-4 py-8 text-center text-[10px] font-display font-bold text-industrial-silver/30 uppercase tracking-widest">
+                  <p className="px-4 py-8 text-center text-[10px] font-display font-bold text-ash-600 uppercase tracking-widest">
                     Nenhuma pasta disponível
                   </p>
                 ) : (
@@ -97,7 +97,7 @@ export default function MediaFolderAssignModal({
                         className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors ${
                           checked
                             ? 'bg-primary/10 text-primary'
-                            : 'text-industrial-silver/60 hover:bg-primary/5 hover:text-primary'
+                            : 'text-ash-400 hover:bg-primary/5 hover:text-primary'
                         }`}
                       >
                         <span className="material-symbols-outlined text-lg">
@@ -119,7 +119,7 @@ export default function MediaFolderAssignModal({
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-4 py-2 text-[10px] font-display font-bold text-industrial-silver/40 hover:text-bone uppercase tracking-widest"
+                  className="px-4 py-2 text-[10px] font-display font-bold text-ash-500 hover:text-bone uppercase tracking-widest"
                 >
                   {t('accounts.cancel')}
                 </button>

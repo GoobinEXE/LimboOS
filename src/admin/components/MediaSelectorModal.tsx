@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'motion/react';
+import { SPRING_SNAP } from '../../lib/motion';
 import MediaLibraryPanel from './MediaLibraryPanel';
 import { MediaAsset, MediaType } from '../../types/media';
 import Screw from '../../components/player/Screw';
@@ -32,7 +33,7 @@ export default function MediaSelectorModal({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-black/90 backdrop-blur-sm"
+              className="absolute inset-0 bg-black/90"
               onClick={onClose}
             />
 
@@ -40,7 +41,7 @@ export default function MediaSelectorModal({
               initial={{ opacity: 0, scale: 0.96, y: 16 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.96, y: 16 }}
-              transition={{ type: 'spring', stiffness: 320, damping: 28 }}
+              transition={SPRING_SNAP}
               className="relative w-full max-w-4xl max-h-[85vh] bg-surface-container-low border border-primary/20 shadow-2xl flex flex-col overflow-hidden"
             >
               <div className="absolute top-2 left-2 opacity-40">
@@ -60,7 +61,7 @@ export default function MediaSelectorModal({
                 <button
                   type="button"
                   onClick={onClose}
-                  className="w-8 h-8 flex items-center justify-center text-industrial-silver/40 hover:text-primary transition-colors"
+                  className="w-8 h-8 flex items-center justify-center text-ash-500 hover:text-primary transition-colors"
                 >
                   <span className="material-symbols-outlined">close</span>
                 </button>
@@ -82,7 +83,7 @@ export default function MediaSelectorModal({
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-5 py-2 text-[10px] font-display font-bold text-industrial-silver/40 hover:text-bone uppercase tracking-widest transition-colors"
+                  className="px-5 py-2 text-[10px] font-display font-bold text-ash-500 hover:text-bone uppercase tracking-widest transition-colors"
                 >
                   {t('accounts.cancel')}
                 </button>

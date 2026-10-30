@@ -273,7 +273,9 @@
     "modal": {
       "install": "MISSION-INSTALL",
       "newTitle": "New Mission",
-      "saveFirst": "Save the mission in the Data tab first"
+      "saveFirst": "Save the mission in the Data tab first",
+      "commandBadge": "COMMAND-CENTER",
+      "commandSubtitle": "Unified operational instance management"
     },
     "toast": {
       "saved": "Mission saved successfully.",

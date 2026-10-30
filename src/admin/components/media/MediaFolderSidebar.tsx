@@ -71,14 +71,14 @@ export default function MediaFolderSidebar({
   return (
     <aside className="w-full md:w-56 shrink-0 border border-primary/10 bg-black/20 flex flex-col max-h-[70vh] md:max-h-none">
       <div className="px-3 py-2.5 border-b border-primary/10 flex items-center justify-between gap-2">
-        <p className="text-[9px] font-display font-bold text-industrial-silver/40 uppercase tracking-[0.25em]">
+        <p className="text-[9px] font-display font-bold text-ash-500 uppercase tracking-[0.25em]">
           {t('media.foldersTitle')}
         </p>
         {!selectionMode && (
           <button
             type="button"
             onClick={() => setCreating((v) => !v)}
-            className="p-1 text-industrial-silver/40 hover:text-primary transition-colors"
+            className="p-1 text-ash-500 hover:text-primary transition-colors"
             title="Nova pasta extra"
           >
             <span className="material-symbols-outlined text-base">create_new_folder</span>
@@ -103,7 +103,7 @@ export default function MediaFolderSidebar({
         />
 
         {campaignFolders.length > 0 && (
-          <p className="px-3 pt-3 pb-1 text-[8px] font-display font-bold text-industrial-silver/25 uppercase tracking-[0.3em]">
+          <p className="px-3 pt-3 pb-1 text-[8px] font-display font-bold text-ash-600 uppercase tracking-[0.3em]">
             {t('reports.group.campaigns')}
           </p>
         )}
@@ -119,7 +119,7 @@ export default function MediaFolderSidebar({
         ))}
 
         {(extraFolders.length > 0 || creating) && (
-          <p className="px-3 pt-3 pb-1 text-[8px] font-display font-bold text-industrial-silver/25 uppercase tracking-[0.3em]">
+          <p className="px-3 pt-3 pb-1 text-[8px] font-display font-bold text-ash-600 uppercase tracking-[0.3em]">
             Extras
           </p>
         )}
@@ -189,7 +189,7 @@ export default function MediaFolderSidebar({
                           setRenamingId(folder.id);
                           setRenameValue(folder.name);
                         }}
-                        className="p-0.5 text-industrial-silver/30 hover:text-primary"
+                        className="p-0.5 text-ash-600 hover:text-primary"
                       >
                         <span className="material-symbols-outlined text-sm">edit</span>
                       </button>
@@ -200,7 +200,7 @@ export default function MediaFolderSidebar({
                           e.stopPropagation();
                           void onDelete(folder);
                         }}
-                        className="p-0.5 text-industrial-silver/30 hover:text-red-400"
+                        className="p-0.5 text-ash-600 hover:text-red-400"
                       >
                         <span className="material-symbols-outlined text-sm">delete</span>
                       </button>
@@ -238,14 +238,14 @@ function FolderRow({
       className={`group w-full flex items-center gap-2 px-3 py-2 text-left transition-colors ${
         active
           ? 'bg-primary/10 text-primary border-l-2 border-l-primary'
-          : 'text-industrial-silver/50 hover:bg-primary/5 hover:text-primary border-l-2 border-l-transparent'
+          : 'text-ash-400 hover:bg-primary/5 hover:text-primary border-l-2 border-l-transparent'
       }`}
     >
       <span className="material-symbols-outlined text-base shrink-0">{icon}</span>
       <span className="flex-1 min-w-0 text-[9px] font-display font-bold uppercase tracking-widest truncate">
         {label}
       </span>
-      <span className="text-[8px] font-display font-bold text-industrial-silver/30 tabular-nums">
+      <span className="text-[8px] font-display font-bold text-ash-600 tabular-nums">
         {count}
       </span>
       {actions && (

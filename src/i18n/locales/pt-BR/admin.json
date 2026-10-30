@@ -273,7 +273,9 @@
     "modal": {
       "install": "INSTALAÇÃO-DE-MISSÃO",
       "newTitle": "Nova Missão",
-      "saveFirst": "Salve a missão na aba Dados primeiro"
+      "saveFirst": "Salve a missão na aba Dados primeiro",
+      "commandBadge": "CENTRO-DE-COMANDO",
+      "commandSubtitle": "Gestão unificada de instância operacional"
     },
     "toast": {
       "saved": "Missão salva com sucesso.",

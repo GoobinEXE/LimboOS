@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'motion/react';
+import { SPRING_SNAP } from '../../../lib/motion';
 import type { IntelItem, IntelType } from '../../../types/intel';
 import { MediaAsset } from '../../../types/media';
 import {
@@ -64,7 +65,7 @@ export default function IntelCatalogPane({
     <motion.aside
       initial={{ opacity: 0, x: 24 }}
       animate={{ opacity: 1, x: 0 }}
-      transition={{ type: 'spring', stiffness: 280, damping: 28 }}
+      transition={SPRING_SNAP}
       className="flex flex-col min-h-0 h-full bg-surface-container-low border border-primary/15 overflow-hidden"
     >
       <div className="px-4 py-3 border-b border-primary/10 bg-black/30 flex items-center justify-between gap-2 shrink-0">
@@ -74,7 +75,7 @@ export default function IntelCatalogPane({
             <p className="font-display font-bold text-[11px] text-bone uppercase tracking-widest truncate">
               Catálogo Intel
             </p>
-            <p className="text-[8px] font-display font-bold text-industrial-silver/40 uppercase tracking-[0.2em]">
+            <p className="text-[8px] font-display font-bold text-ash-500 uppercase tracking-[0.2em]">
               {items.length} visíveis
               {isLoading ? ' · sync…' : ''}
             </p>
@@ -92,7 +93,7 @@ export default function IntelCatalogPane({
               className={`px-2.5 py-1 text-[8px] font-display font-bold uppercase tracking-widest border transition rounded-sm ${
                 statusFilter === key
                   ? 'border-amber-500/50 text-amber-400 bg-amber-500/10'
-                  : 'border-white/5 text-industrial-silver/30 hover:text-industrial-silver/60'
+                  : 'border-border-subtle text-ash-600 hover:text-ash-400'
               }`}
             >
               {INTEL_STATUS_FILTER_LABELS[key]}
@@ -100,7 +101,7 @@ export default function IntelCatalogPane({
           ))}
         </div>
         <div className="relative group">
-          <span className="absolute left-2.5 top-1/2 -translate-y-1/2 material-symbols-outlined text-industrial-silver/20 text-sm group-focus-within:text-primary">
+          <span className="absolute left-2.5 top-1/2 -translate-y-1/2 material-symbols-outlined text-ash-600 text-sm group-focus-within:text-primary">
             search
           </span>
           <input
@@ -108,7 +109,7 @@ export default function IntelCatalogPane({
             value={search}
             onChange={(e) => onSearch(e.target.value)}
             placeholder="BUSCAR INTEL…"
-            className="w-full bg-surface-container-lowest border border-white/5 text-[10px] font-display font-bold uppercase tracking-[0.15em] pl-8 pr-3 py-2 text-bone outline-none focus:border-primary/40 rounded-sm"
+            className="w-full bg-surface-container-lowest border border-border-subtle text-[10px] font-display font-bold uppercase tracking-[0.15em] pl-8 pr-3 py-2 text-bone outline-none focus:border-primary/40 rounded-sm"
           />
         </div>
         <div className="flex flex-wrap gap-1">
@@ -118,7 +119,7 @@ export default function IntelCatalogPane({
             className={`px-2 py-1 text-[8px] font-display font-bold uppercase tracking-widest border rounded-sm ${
               filterType === 'ALL'
                 ? 'border-primary text-primary bg-primary/10'
-                : 'border-white/5 text-industrial-silver/30'
+                : 'border-border-subtle text-ash-600'
             }`}
           >
             {t('hardware.filter.all')}
@@ -132,7 +133,7 @@ export default function IntelCatalogPane({
               className={`px-2 py-1 text-[8px] font-display font-bold uppercase tracking-widest border rounded-sm flex items-center gap-1 ${
                 filterType === t.value
                   ? 'border-primary text-primary bg-primary/10'
-                  : 'border-white/5 text-industrial-silver/30'
+                  : 'border-border-subtle text-ash-600'
               }`}
             >
               <span className="material-symbols-outlined text-xs">{t.icon}</span>
@@ -149,7 +150,7 @@ export default function IntelCatalogPane({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="p-10 text-center text-industrial-silver/20 text-[10px] font-display font-bold uppercase tracking-[0.3em]"
+              className="p-10 text-center text-ash-600 text-[10px] font-display font-bold uppercase tracking-[0.3em]"
             >
               Nenhum sinal de intel
             </motion.div>
@@ -170,21 +171,21 @@ export default function IntelCatalogPane({
                   ref={(el) => {
                     rowRefs.current[item.id] = el;
                   }}
-                  className={`px-3 py-3 border-b border-white/5 group transition-colors ${
+                  className={`px-3 py-3 border-b border-border-subtle group transition-colors ${
                     focused
                       ? 'bg-primary/10 border-l-2 border-l-primary'
                       : 'hover:bg-white/5 border-l-2 border-l-transparent'
                   }`}
                 >
                   <div className="flex items-start gap-2">
-                    <span className="material-symbols-outlined text-base text-industrial-silver/25 group-hover:text-primary mt-0.5">
+                    <span className="material-symbols-outlined text-base text-ash-600 group-hover:text-primary mt-0.5">
                       {INTEL_TYPE_OPTIONS.find((t) => t.value === item.type)?.icon || 'description'}
                     </span>
                     <div className="min-w-0 flex-1">
                       <p className="text-[11px] font-display font-bold text-bone uppercase tracking-wide truncate">
                         {item.title}
                       </p>
-                      <p className="text-[8px] font-mono text-industrial-silver/25 truncate uppercase">
+                      <p className="text-[8px] font-mono text-ash-600 truncate uppercase">
                         {item.id}
                       </p>
                       <div className="flex flex-wrap gap-1 mt-1.5">
@@ -199,7 +200,7 @@ export default function IntelCatalogPane({
                           {accessLevelLabel(item.level)}
                         </span>
                         {asset?.size ? (
-                          <span className="text-[7px] font-mono text-industrial-silver/35 uppercase px-1">
+                          <span className="text-[7px] font-mono text-ash-500 uppercase px-1">
                             {formatFileSize(asset.size)}
                           </span>
                         ) : null}
@@ -258,7 +259,7 @@ function IconBtn({
       type="button"
       title={title}
       onClick={onClick}
-      className={`p-1.5 text-industrial-silver/30 rounded-sm transition material-symbols-outlined text-base ${toneClass}`}
+      className={`p-1.5 text-ash-600 rounded-sm transition material-symbols-outlined text-base ${toneClass}`}
     >
       {icon}
     </button>

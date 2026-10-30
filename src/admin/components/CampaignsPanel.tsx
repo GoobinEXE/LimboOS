@@ -185,7 +185,7 @@ export default function CampaignsPanel({
             <h2 className="font-display font-bold uppercase tracking-widest text-lg text-bone">
               {t('missions.title')}
             </h2>
-            <p className="text-[10px] font-display font-bold text-industrial-silver/40 uppercase tracking-widest mt-1">
+            <p className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-widest mt-1">
               {t('missions.subtitle')}
             </p>
           </div>
@@ -193,7 +193,7 @@ export default function CampaignsPanel({
         <div className="flex gap-4">
           <button
             onClick={() => setShowItemsModal(true)}
-            className="flex items-center gap-3 bg-surface-container-high text-industrial-silver/60 px-6 py-3 rounded-sm font-display font-bold text-[11px] tracking-widest hover:bg-white/5 transition border border-white/5 active:scale-[0.97] uppercase"
+            className="flex items-center gap-3 bg-surface-container-high text-ash-400 px-6 py-3 rounded-sm font-display font-bold text-[11px] tracking-widest hover:bg-white/5 transition border border-border-subtle active:scale-[0.97] uppercase"
           >
             <span className="material-symbols-outlined text-base">inventory_2</span>
             {t('missions.persistentItems')}
@@ -235,7 +235,7 @@ export default function CampaignsPanel({
                     }}
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-industrial-silver/5 bg-surface-container-high">
+                  <div className="w-full h-full flex items-center justify-center text-ash-700 bg-surface-container-high">
                     <span className="material-symbols-outlined text-7xl">map</span>
                   </div>
                 )}
@@ -255,19 +255,19 @@ export default function CampaignsPanel({
               </div>
 
               <div className="p-6 space-y-5">
-                <p className="text-[12px] text-industrial-silver/50 italic line-clamp-2 leading-relaxed font-sans">
+                <p className="text-[12px] text-ash-400 italic line-clamp-2 leading-relaxed font-sans">
                   {campaign.description}
                 </p>
 
-                <div className="flex items-center justify-between text-[10px] font-display font-bold text-industrial-silver/30 uppercase border-y border-white/5 py-3 tracking-widest gap-2 flex-wrap">
+                <div className="flex items-center justify-between text-[10px] font-display font-bold text-ash-600 uppercase border-y border-border-subtle py-3 tracking-widest gap-2 flex-wrap">
                   <div className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-base text-industrial-silver/20">
+                    <span className="material-symbols-outlined text-base text-ash-600">
                       location_on
                     </span>{' '}
                     {campaign.location}
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-base text-industrial-silver/20">
+                    <span className="material-symbols-outlined text-base text-ash-600">
                       devices
                     </span>
                     {campaign.playerType === 'nokia' ? t('missions.playerType.handset') : t('missions.playerType.deck')}
@@ -278,7 +278,7 @@ export default function CampaignsPanel({
                         ? 'border-phosphor-500/20 text-phosphor-500 bg-phosphor-500/5'
                         : campaign.status === 'Bloqueada'
                           ? 'border-red-500/20 text-red-500 bg-red-500/5'
-                          : 'border-white/5 text-industrial-silver/30'
+                          : 'border-border-subtle text-ash-600'
                     }`}
                   >
                     {campaign.status.toUpperCase()}
@@ -308,7 +308,7 @@ export default function CampaignsPanel({
                   </button>
                   <button
                     onClick={() => handleDeleteCampaign(campaign.id, campaign.name)}
-                    className="w-12 flex items-center justify-center bg-black/40 border border-white/10 rounded-sm text-industrial-silver/40 hover:text-red-500 hover:border-red-500/30 transition active:scale-95"
+                    className="w-12 flex items-center justify-center bg-black/40 border border-border rounded-sm text-ash-500 hover:text-red-500 hover:border-red-500/30 transition active:scale-95"
                     title={t('missions.deleteTitle')}
                   >
                     <span className="material-symbols-outlined text-xl">delete</span>
@@ -336,7 +336,7 @@ export default function CampaignsPanel({
         <AnimatePresence>
           {showItemsModal && (
             <div
-              className="fixed inset-0 z-[120] flex justify-end bg-black/80 backdrop-blur-sm"
+              className="fixed inset-0 z-[120] flex justify-end bg-surface-scrim"
               onClick={() => setShowItemsModal(false)}
             >
               <motion.div
@@ -344,7 +344,7 @@ export default function CampaignsPanel({
                 animate={{ x: 0 }}
                 exit={{ x: '100%' }}
                 transition={ADMIN_SPRING}
-                className="bg-[#222] border-l-8 border-seam w-full max-w-2xl shadow-2xl flex flex-col h-full relative overflow-hidden font-chakra"
+                className="bg-surface-container-low border-l border-seam w-full max-w-2xl shadow-2xl flex flex-col h-full relative overflow-hidden"
                 onClick={(e) => e.stopPropagation()}
               >
                 <Screw className="top-4 left-4" />
@@ -359,13 +359,13 @@ export default function CampaignsPanel({
                     <h3 className="font-black text-xl text-bone uppercase tracking-widest">
                       Retenção de <span className="text-primary">Recursos</span>
                     </h3>
-                    <p className="text-[10px] font-bold text-industrial-silver/40 uppercase tracking-widest mt-1">
+                    <p className="text-[10px] font-bold text-ash-500 uppercase tracking-widest mt-1">
                       {t('missions.persistent.subtitle')}
                     </p>
                   </div>
                   <button
                     onClick={() => setShowItemsModal(false)}
-                    className="p-3 text-industrial-silver/20 hover:text-bone transition material-symbols-outlined rounded-sm"
+                    className="p-3 text-ash-600 hover:text-bone transition material-symbols-outlined rounded-sm"
                   >
                     close
                   </button>
@@ -373,7 +373,7 @@ export default function CampaignsPanel({
 
                 <div className="p-6 bg-black/20 border-b-2 border-seam relative z-10">
                   <div className="relative group">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-industrial-silver/20 text-base group-focus-within:text-primary transition-colors">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-ash-600 text-base group-focus-within:text-primary transition-colors">
                       search
                     </span>
                     <input
@@ -401,7 +401,7 @@ export default function CampaignsPanel({
                           className={`flex items-center justify-between p-4 text-left transition border-2 rounded-sm group ${
                             persistentItems.includes(item.id)
                               ? 'bg-primary/10 border-primary/30 text-primary shadow-inner'
-                              : 'bg-seam border-seam text-ash-500 hover:bg-white/5 hover:text-bone hover:border-white/10'
+                              : 'bg-seam border-seam text-ash-500 hover:bg-white/5 hover:text-bone hover:border-border'
                           }`}
                         >
                           <div className="flex items-center gap-4">

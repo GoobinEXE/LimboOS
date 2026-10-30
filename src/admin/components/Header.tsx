@@ -38,7 +38,7 @@ export default function Header({
 
   return (
     <header className="w-full z-50 flex justify-between items-center gap-6 px-4 sm:px-6 h-14 bg-surface-container-low border-b border-seam shrink-0">
-      <div className="flex items-center gap-3 min-w-0">
+      <div className="flex flex-1 items-center gap-3 min-w-0">
         <div className="flex items-center gap-2 pr-3 border-r border-border-subtle shrink-0">
           <span className="lmb-led text-accent animate-led" aria-hidden />
           <span className="font-display uppercase font-bold tracking-[0.2em] text-[9px] text-primary hidden sm:inline">
@@ -46,7 +46,8 @@ export default function Header({
           </span>
         </div>
 
-        <span className="relative hidden lg:block min-w-[10rem] h-4">
+        {/* Rótulo absoluto (crossfade) não dá largura ao pai: flex-1 + teto evita cortar o contexto */}
+        <span className="relative hidden lg:block flex-1 min-w-[10rem] max-w-[20rem] h-4">
           <AnimatePresence mode="wait" initial={false}>
             <motion.span
               key={label}
@@ -74,7 +75,7 @@ export default function Header({
             </span>
           </button>
         ) : (
-          <span className="text-[9px] font-display uppercase font-bold tracking-[0.24em] text-ash-600 hidden xl:inline truncate">
+          <span className="text-[9px] font-display uppercase font-bold tracking-[0.24em] text-ash-600 hidden 2xl:inline truncate">
             {t('header.noSession')}
           </span>
         )}
@@ -85,7 +86,7 @@ export default function Header({
           <button
             type="button"
             onClick={onSpotlight}
-            className="group flex items-center gap-2.5 h-8 pl-2.5 pr-1.5 md:w-64 bg-surface-sunken border border-border rounded-inset shadow-pressed hover:border-border-strong transition-colors"
+            className="group flex items-center gap-2.5 h-8 pl-2.5 pr-1.5 md:w-56 bg-surface-sunken border border-border rounded-inset shadow-pressed hover:border-border-strong transition-colors"
             title={t('header.searchTitle')}
           >
             <Search size={14} className="text-ash-500 group-hover:text-primary transition-colors shrink-0" />
@@ -102,7 +103,7 @@ export default function Header({
 
         <div className="flex items-center gap-3 pl-3 border-l border-border-subtle">
           <div className="text-right hidden md:block">
-            <p className="text-[8px] font-display font-bold uppercase tracking-[0.2em] text-ash-500 leading-none">
+            <p className="text-[9px] font-display font-bold uppercase tracking-[0.2em] text-ash-500 leading-none">
               {t('header.operator')}
             </p>
             <p className="text-xs font-display font-bold text-bone tracking-widest uppercase mt-1 leading-none">

@@ -75,7 +75,7 @@ export default function IntelCatalogPane({
             <p className="font-display font-bold text-[11px] text-bone uppercase tracking-widest truncate">
               Catálogo Intel
             </p>
-            <p className="text-[8px] font-display font-bold text-ash-500 uppercase tracking-[0.2em]">
+            <p className="text-[9px] font-display font-bold text-ash-500 uppercase tracking-[0.2em]">
               {items.length} visíveis
               {isLoading ? ' · sync…' : ''}
             </p>
@@ -90,7 +90,7 @@ export default function IntelCatalogPane({
               key={key}
               type="button"
               onClick={() => onStatusFilter(key)}
-              className={`px-2.5 py-1 text-[8px] font-display font-bold uppercase tracking-widest border transition rounded-sm ${
+              className={`px-2.5 py-1 text-[9px] font-display font-bold uppercase tracking-widest border transition rounded-sm ${
                 statusFilter === key
                   ? 'border-amber-500/50 text-amber-400 bg-amber-500/10'
                   : 'border-border-subtle text-ash-600 hover:text-ash-400'
@@ -116,7 +116,7 @@ export default function IntelCatalogPane({
           <button
             type="button"
             onClick={() => onFilterType('ALL')}
-            className={`px-2 py-1 text-[8px] font-display font-bold uppercase tracking-widest border rounded-sm ${
+            className={`px-2 py-1 text-[9px] font-display font-bold uppercase tracking-widest border rounded-sm ${
               filterType === 'ALL'
                 ? 'border-primary text-primary bg-primary/10'
                 : 'border-border-subtle text-ash-600'
@@ -130,7 +130,7 @@ export default function IntelCatalogPane({
               type="button"
               onClick={() => onFilterType(t.value)}
               title={t.label}
-              className={`px-2 py-1 text-[8px] font-display font-bold uppercase tracking-widest border rounded-sm flex items-center gap-1 ${
+              className={`px-2 py-1 text-[9px] font-display font-bold uppercase tracking-widest border rounded-sm flex items-center gap-1 ${
                 filterType === t.value
                   ? 'border-primary text-primary bg-primary/10'
                   : 'border-border-subtle text-ash-600'
@@ -185,7 +185,7 @@ export default function IntelCatalogPane({
                       <p className="text-[11px] font-display font-bold text-bone uppercase tracking-wide truncate">
                         {item.title}
                       </p>
-                      <p className="text-[8px] font-mono text-ash-600 truncate uppercase">
+                      <p className="text-[9px] font-mono text-ash-600 truncate uppercase">
                         {item.id}
                       </p>
                       <div className="flex flex-wrap gap-1 mt-1.5">
@@ -209,7 +209,7 @@ export default function IntelCatalogPane({
                         <button
                           type="button"
                           onClick={() => onEdit(item)}
-                          className="mt-1.5 text-[8px] font-display font-bold uppercase tracking-widest text-primary hover:text-primary-container"
+                          className="mt-1.5 text-[9px] font-display font-bold uppercase tracking-widest text-primary hover:text-primary-container"
                         >
                           Completar metadados →
                         </button>

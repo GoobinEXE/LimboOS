@@ -563,25 +563,25 @@ export default function LiveWorkspace({
                     </div>
                     <div className="flex flex-wrap items-center gap-2 shrink-0 sm:pl-8">
                       {row.pendingVideo && (
-                        <span className="text-[8px] font-display font-bold uppercase tracking-wider px-2 py-0.5 border border-orange-400/40 text-orange-400/80">
+                        <span className="text-[9px] font-display font-bold uppercase tracking-wider px-2 py-0.5 border border-orange-400/40 text-orange-400/80">
                           {t('intel.type.video')}
                         </span>
                       )}
                       {row.forceTerminal ? (
-                        <span className="text-[8px] font-display font-bold uppercase tracking-wider px-2 py-0.5 border border-primary/40 text-primary animate-pulse">
+                        <span className="text-[9px] font-display font-bold uppercase tracking-wider px-2 py-0.5 border border-primary/40 text-primary animate-pulse">
                           Push pendente
                         </span>
                       ) : row.hasTerminalAccess ? (
-                        <span className="text-[8px] font-display font-bold uppercase tracking-wider px-2 py-0.5 border border-phosphor-500/30 text-phosphor-500/80">
+                        <span className="text-[9px] font-display font-bold uppercase tracking-wider px-2 py-0.5 border border-phosphor-500/30 text-phosphor-500/80">
                           {t('hardware.filter.dos')}
                         </span>
                       ) : null}
                       {row.forceMac ? (
-                        <span className="text-[8px] font-display font-bold uppercase tracking-wider px-2 py-0.5 border border-tube-400/40 text-tube-400 animate-pulse">
+                        <span className="text-[9px] font-display font-bold uppercase tracking-wider px-2 py-0.5 border border-tube-400/40 text-tube-400 animate-pulse">
                           Push Mac
                         </span>
                       ) : row.hasMacAccess ? (
-                        <span className="text-[8px] font-display font-bold uppercase tracking-wider px-2 py-0.5 border border-border-strong text-ash-400">
+                        <span className="text-[9px] font-display font-bold uppercase tracking-wider px-2 py-0.5 border border-border-strong text-ash-400">
                           {t('hardware.filter.mac')}
                         </span>
                       ) : null}
@@ -589,7 +589,7 @@ export default function LiveWorkspace({
                       <button
                         type="button"
                         onClick={() => openDeliver('intel', [row.uid])}
-                        className="text-[8px] font-display font-bold uppercase tracking-wider px-2 py-1 border border-primary/30 text-primary/80 hover:bg-primary/10"
+                        className="text-[9px] font-display font-bold uppercase tracking-wider px-2 py-1 border border-primary/30 text-primary/80 hover:bg-primary/10"
                         title="Entregar a este agente"
                       >
                         {t('live.confirm.deliverAction')}
@@ -598,7 +598,7 @@ export default function LiveWorkspace({
                         type="button"
                         disabled={dosBusy}
                         onClick={() => handlePushDos(row)}
-                        className="text-[8px] font-display font-bold uppercase tracking-wider px-2.5 py-1 bg-primary text-black hover:bg-primary-container disabled:opacity-30"
+                        className="text-[9px] font-display font-bold uppercase tracking-wider px-2.5 py-1 bg-primary text-black hover:bg-primary-container disabled:opacity-30"
                       >
                         DOS
                       </button>
@@ -606,7 +606,7 @@ export default function LiveWorkspace({
                         type="button"
                         disabled={macBusy}
                         onClick={() => handlePushMac(row)}
-                        className="text-[8px] font-display font-bold uppercase tracking-wider px-2.5 py-1 bg-ash-200 text-black hover:bg-white disabled:opacity-30"
+                        className="text-[9px] font-display font-bold uppercase tracking-wider px-2.5 py-1 bg-ash-200 text-black hover:bg-white disabled:opacity-30"
                       >
                         Mac
                       </button>
@@ -801,7 +801,7 @@ function PresenceRowMenu({
         onClick={onToggle}
         aria-expanded={open}
         aria-haspopup="menu"
-        className="text-[8px] font-display font-bold uppercase tracking-wider px-2 py-1 border border-border text-ash-400 hover:text-bone"
+        className="text-[9px] font-display font-bold uppercase tracking-wider px-2 py-1 border border-border text-ash-400 hover:text-bone"
       >
         ⋯
       </button>

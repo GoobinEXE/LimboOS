@@ -385,9 +385,9 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
                       setSpotifyError('');
                     }}
                     placeholder={t('dossier.spotifyPlaceholder')}
-                    className="w-full bg-black/60 border-2 border-seam text-[10px] font-mono text-ash-300 px-3 py-2.5 outline-none rounded-sm focus:border-primary placeholder:text-ash-700"
+                    className="w-full bg-black/60 border-2 border-seam text-[10px] font-mono text-ash-300 px-3 py-2.5 outline-none rounded-sm focus:border-primary placeholder:text-ash-600"
                   />
-                  <p className="text-[8px] font-bold text-ash-600 uppercase tracking-wider leading-relaxed">
+                  <p className="text-[9px] font-bold text-ash-600 uppercase tracking-wider leading-relaxed">
                     {t('dossier.spotifyHint')}
                   </p>
                   {spotifyError && (
@@ -458,7 +458,7 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
                               </div>
                               <div className="min-w-0">
                                 <span className="text-[10px] font-bold text-ash-400 uppercase tracking-widest group-hover:text-primary transition-colors block truncate">{achievementLabel(achievementId)}</span>
-                                <span className="text-[8px] font-mono text-ash-600 uppercase">{grantCamp}</span>
+                                <span className="text-[9px] font-mono text-ash-600 uppercase">{grantCamp}</span>
                               </div>
                             </div>
                             <button onClick={() => handleRevokeAchievement(achId)} className="p-1.5 text-ash-800 hover:text-red-500 hover:bg-red-500/10 rounded-sm transition opacity-0 group-hover:opacity-100">
@@ -468,7 +468,7 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
                        );
                      })
                    ) : (
-                     <div className="p-8 text-center border-2 border-dashed border-border-subtle rounded-sm opacity-20">
+                     <div className="p-8 text-center border-2 border-dashed border-border-subtle rounded-sm text-ash-500">
                         <p className="text-[9px] font-black uppercase tracking-widest">Nenhuma Medalha</p>
                      </div>
                    )}
@@ -520,7 +520,7 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
                             {plays > 0 && (
                                <div className="bg-black/60 px-2 py-1 rounded-sm border border-border-subtle flex items-center gap-1.5">
                                  <div className="w-1 h-1 bg-amber-500 rounded-full animate-pulse" />
-                                 <span className="text-[8px] font-black text-amber-500 uppercase tracking-tighter">Plays: {plays}</span>
+                                 <span className="text-[9px] font-black text-amber-500 uppercase tracking-tighter">Plays: {plays}</span>
                                </div>
                             )}
                             <button 
@@ -542,8 +542,8 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
                 })}
 
                 {details?.intel.length === 0 && (
-                  <div className="col-span-full p-32 text-center border-4 border-dashed border-seam rounded-panel opacity-20 flex flex-col items-center justify-center">
-                    <span className="material-symbols-outlined text-6xl mb-4">folder_off</span>
+                  <div className="col-span-full p-32 text-center border-4 border-dashed border-seam/60 rounded-panel text-ash-500 flex flex-col items-center justify-center">
+                    <span className="material-symbols-outlined text-6xl mb-4 text-ash-700" aria-hidden>folder_off</span>
                     <p className="text-[12px] font-black uppercase tracking-[0.4em]">Inventário Inativo</p>
                   </div>
                 )}
@@ -604,7 +604,7 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
 function StatBox({ label, value }: { label: string; value: string | number }) {
   return (
     <div className="bg-black/60 border border-border-subtle p-4 flex flex-col justify-center rounded-sm shadow-inner group hover:border-primary/20 transition">
-      <span className="text-[8px] uppercase tracking-widest text-ash-600 mb-2 font-black">{label}</span>
+      <span className="text-[9px] uppercase tracking-widest text-ash-600 mb-2 font-black">{label}</span>
       <span className="font-black text-sm text-ash-300 group-hover:text-primary transition-colors">{value}</span>
     </div>
   );

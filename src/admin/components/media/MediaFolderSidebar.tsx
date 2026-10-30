@@ -103,7 +103,7 @@ export default function MediaFolderSidebar({
         />
 
         {campaignFolders.length > 0 && (
-          <p className="px-3 pt-3 pb-1 text-[8px] font-display font-bold text-ash-600 uppercase tracking-[0.3em]">
+          <p className="px-3 pt-3 pb-1 text-[9px] font-display font-bold text-ash-600 uppercase tracking-[0.3em]">
             {t('reports.group.campaigns')}
           </p>
         )}
@@ -119,7 +119,7 @@ export default function MediaFolderSidebar({
         ))}
 
         {(extraFolders.length > 0 || creating) && (
-          <p className="px-3 pt-3 pb-1 text-[8px] font-display font-bold text-ash-600 uppercase tracking-[0.3em]">
+          <p className="px-3 pt-3 pb-1 text-[9px] font-display font-bold text-ash-600 uppercase tracking-[0.3em]">
             Extras
           </p>
         )}
@@ -245,7 +245,7 @@ function FolderRow({
       <span className="flex-1 min-w-0 text-[9px] font-display font-bold uppercase tracking-widest truncate">
         {label}
       </span>
-      <span className="text-[8px] font-display font-bold text-ash-600 tabular-nums">
+      <span className="text-[9px] font-display font-bold text-ash-600 tabular-nums">
         {count}
       </span>
       {actions && (

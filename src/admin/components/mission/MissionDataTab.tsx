@@ -178,7 +178,7 @@ export default function MissionDataTab({
                   >
                     <span className="material-symbols-outlined text-sm">close</span>
                   </button>
-                  <p className="absolute bottom-2 left-3 text-[8px] font-display font-bold text-bone/50 uppercase tracking-widest">
+                  <p className="absolute bottom-2 left-3 text-[9px] font-display font-bold text-bone/50 uppercase tracking-widest">
                     PREVIEW ATIVA
                   </p>
                 </div>
@@ -199,7 +199,7 @@ export default function MissionDataTab({
 
               <div className="flex items-center gap-3 mt-3">
                 <div className="h-px flex-1 bg-white/5" />
-                <span className="text-[8px] font-display font-bold text-ash-700 uppercase tracking-widest">
+                <span className="text-[9px] font-display font-bold text-ash-700 uppercase tracking-widest">
                   ou cole URL
                 </span>
                 <div className="h-px flex-1 bg-white/5" />

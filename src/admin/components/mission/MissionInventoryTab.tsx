@@ -162,8 +162,8 @@ export default function MissionInventoryTab({
       {modal}
       <div className="space-y-8">
         {campaignCharacters.length === 0 && (
-          <div className="py-24 text-center border-2 border-dashed border-border-subtle rounded-sm opacity-30 flex flex-col items-center">
-            <span className="material-symbols-outlined text-5xl text-ash-500 mb-4">
+          <div className="py-24 text-center border-2 border-dashed border-border-subtle rounded-sm flex flex-col items-center">
+            <span className="material-symbols-outlined text-5xl text-ash-700 mb-4" aria-hidden>
               person_off
             </span>
             <p className="text-[11px] font-display font-bold uppercase tracking-widest text-ash-500">
@@ -254,14 +254,14 @@ export default function MissionInventoryTab({
                       <p className="font-display font-bold text-[10px] text-bone uppercase tracking-widest truncate group-hover/item:text-primary transition-colors">
                         {intelTitleLabel(t.id, Object.entries(remoteIntelTitles).map(([id, title]) => ({ id, title })))}
                       </p>
-                      <p className="text-[8px] font-mono text-ash-500 uppercase mt-1 truncate">
+                      <p className="text-[9px] font-mono text-ash-500 uppercase mt-1 truncate">
                         {intel?.metadata?.npc || 'SISTEMA'}
                       </p>
                     </div>
                   );
                 })}
                 {items.length === 0 && (
-                  <div className="col-span-full py-6 text-center border border-dashed border-border-subtle rounded-sm opacity-20">
+                  <div className="col-span-full py-6 text-center border border-dashed border-border-subtle rounded-sm">
                     <span className="text-[9px] font-display font-bold uppercase tracking-widest text-ash-500">
                       Inventário Vazio
                     </span>

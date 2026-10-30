@@ -134,7 +134,7 @@ export default function RedirectsPanel({ embedded = false }: { embedded?: boolea
               <button
                 type="submit"
                 disabled={isSaving}
-                className="w-full bg-phosphor-600 hover:bg-phosphor-500 text-bone py-4 font-black text-[10px] uppercase tracking-[0.3em] transition rounded-sm active:scale-[0.97] shadow-[0_0_15px_rgba(86,185,75,0.2)] disabled:opacity-20"
+                className="w-full bg-phosphor-600 hover:bg-phosphor-500 text-bone py-4 font-black text-[10px] uppercase tracking-[0.3em] transition rounded-sm active:scale-[0.97] disabled:opacity-40"
               >
                 {isSaving ? 'SINC DADOS...' : t('redirects.linkAction')}
               </button>
@@ -172,8 +172,8 @@ export default function RedirectsPanel({ embedded = false }: { embedded?: boolea
                   <p className="font-black text-xs text-ash-700 tracking-[0.4em]">{t('redirects.loading')}</p>
                 </div>
               ) : filteredRedirects.length === 0 ? (
-                <div className="p-24 text-center opacity-10">
-                  <span className="material-symbols-outlined text-6xl block mb-4">link_off</span>
+                <div className="p-24 text-center text-ash-500">
+                  <span className="material-symbols-outlined text-6xl block mb-4 text-ash-700" aria-hidden>link_off</span>
                   <p className="font-black text-sm uppercase tracking-[0.4em]">{t('redirects.empty')}</p>
                 </div>
               ) : (
@@ -183,7 +183,7 @@ export default function RedirectsPanel({ embedded = false }: { embedded?: boolea
                       <div className="flex items-center justify-between gap-6">
                         <div className="flex items-center gap-8 flex-1">
                           <div className="flex flex-col gap-2">
-                            <p className="text-[8px] font-black text-ash-700 uppercase tracking-widest">{t('redirects.origin')}</p>
+                            <p className="text-[9px] font-black text-ash-700 uppercase tracking-widest">{t('redirects.origin')}</p>
                             <code className="text-[11px] font-mono bg-black px-4 py-2 border-2 border-seam text-phosphor-400 group-hover:border-phosphor-500/30 transition rounded-sm font-black">
                               {r.sourceId}
                             </code>
@@ -192,7 +192,7 @@ export default function RedirectsPanel({ embedded = false }: { embedded?: boolea
                              <span className="material-symbols-outlined text-ash-800 text-2xl group-hover:text-primary transition-colors">double_arrow</span>
                           </div>
                           <div className="flex flex-col gap-2">
-                            <p className="text-[8px] font-black text-ash-700 uppercase tracking-widest">{t('redirects.destination')}</p>
+                            <p className="text-[9px] font-black text-ash-700 uppercase tracking-widest">{t('redirects.destination')}</p>
                             <code className="text-[11px] font-mono bg-black px-4 py-2 border-2 border-seam text-primary group-hover:border-primary/30 transition rounded-sm font-black">
                               {r.targetId}
                             </code>
@@ -201,7 +201,7 @@ export default function RedirectsPanel({ embedded = false }: { embedded?: boolea
                             {r.reason && (
                               <p className="text-[10px] text-ash-500 font-bold uppercase tracking-tight truncate group-hover:text-ash-300" title={r.reason}>"{r.reason}"</p>
                             )}
-                            <p className="text-[8px] font-black text-ash-800 mt-2 uppercase tracking-widest">
+                            <p className="text-[9px] font-black text-ash-800 mt-2 uppercase tracking-widest">
                               SINC: {r.updatedAt?.toDate ? format(r.updatedAt.toDate(), 'dd/MM/yy HH:mm') : '---'}
                             </p>
                           </div>

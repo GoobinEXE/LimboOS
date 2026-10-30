@@ -61,6 +61,7 @@ const LogRow = React.memo(({
   users,
   characterMap,
   index = 0,
+  compact = false,
 }: {
   entry: LogEntry;
   isExpanded: boolean;
@@ -68,6 +69,8 @@ const LogRow = React.memo(({
   users: MasterAccount[];
   characterMap: Map<string, string>;
   index?: number;
+  /** Ao Vivo: some tipo e categoria para a mensagem caber na coluna estreita */
+  compact?: boolean;
 }) => {
   const { t } = useTranslation('admin');
   const severity = SEVERITY[entry.type] || SEVERITY.action;
@@ -94,7 +97,7 @@ const LogRow = React.memo(({
     >
       <button
         onClick={() => onToggle(entry.id)}
-        className={`w-full flex items-center gap-4 px-6 py-3 text-left hover:bg-white/5 transition-colors ${
+        className={`w-full flex items-center text-left hover:bg-white/5 transition-colors ${compact ? 'gap-3 px-4 py-2.5' : 'gap-4 px-6 py-3'} ${
           entry.type === 'error' ? 'bg-red-500/5' : ''
         }`}
       >
@@ -102,7 +105,7 @@ const LogRow = React.memo(({
           chevron_right
         </span>
         
-        <span className={`text-[8px] font-display font-bold tracking-widest w-16 ${severity.color}`}>
+        <span className={`text-[9px] font-display font-bold tracking-widest w-16 ${severity.color}`}>
           {severity.label}
         </span>
 
@@ -110,10 +113,12 @@ const LogRow = React.memo(({
           {formatTimestamp(entry.timestamp)}
         </span>
 
-        <span className={`text-[8px] font-display font-bold px-2 py-0.5 border rounded-sm shrink-0 flex items-center gap-1.5 ${typeColor}`}>
-          <span className="material-symbols-outlined text-[10px]">{typeIcon}</span>
-          {entry.type.toUpperCase()}
-        </span>
+        {!compact && (
+          <span className={`text-[9px] font-display font-bold px-2 py-0.5 border rounded-sm shrink-0 flex items-center gap-1.5 ${typeColor}`}>
+            <span className="material-symbols-outlined text-[10px]">{typeIcon}</span>
+            {entry.type.toUpperCase()}
+          </span>
+        )}
 
         <span className="text-[11px] font-display font-bold text-bone shrink-0 truncate max-w-30 tracking-wide">
           {entry.username?.trim() || masterAccountLabelByUid(entry.uid, users, 'SISTEMA')}
@@ -128,22 +133,24 @@ const LogRow = React.memo(({
           {entry.message}
         </span>
 
-        <span className="text-[8px] font-display font-bold text-ash-600 tracking-widest shrink-0 uppercase border border-border-subtle px-2 py-0.5 rounded-sm">
-          {entry.category}
-        </span>
+        {!compact && (
+          <span className="text-[9px] font-display font-bold text-ash-600 tracking-widest shrink-0 uppercase border border-border-subtle px-2 py-0.5 rounded-sm">
+            {entry.category}
+          </span>
+        )}
       </button>
 
       {isExpanded && (
-        <div className="px-16 py-6 bg-black/40 border-t border-border-subtle animate-fade-in">
+        <div className={`${compact ? 'px-10 py-4' : 'px-16 py-6'} bg-black/40 border-t border-border-subtle animate-fade-in`}>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-[11px] font-mono mb-6">
             <div className="space-y-1">
-              <p className="text-[8px] font-display font-bold text-ash-600 uppercase tracking-widest">{t('logs.sessionId')}</p>
+              <p className="text-[9px] font-display font-bold text-ash-600 uppercase tracking-widest">{t('logs.sessionId')}</p>
               <p className="text-ash-400 break-all">
                 {masterAccountLabelByUid(entry.uid, users, entry.uid || 'SISTEMA')}
               </p>
             </div>
             <div className="space-y-1">
-              <p className="text-[8px] font-display font-bold text-ash-600 uppercase tracking-widest">{t('logs.agentVector')}</p>
+              <p className="text-[9px] font-display font-bold text-ash-600 uppercase tracking-widest">{t('logs.agentVector')}</p>
               <p className="text-primary/60">
                 {entry.characterId
                   ? characterLabelByKey(entry.uid, entry.characterId, characterMap, t('logs.unidentified'))
@@ -151,13 +158,13 @@ const LogRow = React.memo(({
               </p>
             </div>
             <div className="space-y-1">
-              <p className="text-[8px] font-display font-bold text-ash-600 uppercase tracking-widest">{t('logs.source')}</p>
+              <p className="text-[9px] font-display font-bold text-ash-600 uppercase tracking-widest">{t('logs.source')}</p>
               <p className="text-ash-400 uppercase">{entry.source} // {entry.category}</p>
             </div>
           </div>
           {entry.metadata && Object.keys(entry.metadata).length > 0 && (
             <div className="space-y-2">
-              <p className="text-[8px] font-display font-bold text-ash-600 uppercase tracking-widest">{t('logs.telemetry')}</p>
+              <p className="text-[9px] font-display font-bold text-ash-600 uppercase tracking-widest">{t('logs.telemetry')}</p>
               <pre className="text-[10px] font-mono text-primary/40 bg-surface-container-lowest border border-border-subtle p-4 rounded-sm overflow-x-auto max-h-60 shadow-inner">
                 {JSON.stringify(entry.metadata, null, 2)}
               </pre>
@@ -333,18 +340,21 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
 
   return (
     <div
-      className="bg-surface-container-low border border-primary/10 flex flex-col font-sans overflow-hidden shadow-2xl"
-      style={{ minHeight: compact ? '280px' : '500px', maxHeight: compact ? '40vh' : '65vh' }}
+      className={`bg-surface-container-low border border-primary/10 flex flex-col font-sans overflow-hidden ${compact ? 'h-[28rem] rounded-card' : 'shadow-2xl'}`}
+      style={compact ? undefined : { minHeight: '500px', maxHeight: '65vh' }}
     >
       {modal}
       
       <div className={`flex items-center justify-between ${compact ? 'px-4 py-3' : 'px-8 py-5'} bg-black/40 border-b border-primary/10 shrink-0`}>
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-3">
-            <div className="w-2 h-2 bg-primary rounded-full animate-pulse glow-orange" />
-            <h2 className="font-display font-bold uppercase tracking-[0.3em] text-xs text-primary">
-              {compact ? 'Log Recente' : 'Fluxo de Telemetria em Tempo Real'}
-            </h2>
+            <span className="lmb-led text-accent animate-led" aria-hidden />
+            {/* No Ao Vivo o título já está no rótulo da seção */}
+            {!compact && (
+              <h2 className="font-display font-bold uppercase tracking-[0.3em] text-xs text-primary">
+                Fluxo de Telemetria em Tempo Real
+              </h2>
+            )}
           </div>
           <span className="text-[10px] font-display font-bold text-ash-600 tracking-[0.2em] uppercase">
             {filtered.length} de {entries.length} Sinais Captados
@@ -397,10 +407,10 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
         </div>
       </div>
 
-      <div className="flex items-center gap-4 px-8 py-4 bg-black/20 border-b border-border-subtle shrink-0 flex-wrap">
-        <div className="flex items-center gap-3 mr-4">
-          <span className="material-symbols-outlined text-ash-600 text-base">filter_list</span>
-          <span className="text-[9px] font-display font-bold text-ash-600 tracking-widest uppercase">{t('logs.filters')}</span>
+      <div className={`flex items-center bg-black/20 border-b border-border-subtle shrink-0 flex-wrap ${compact ? 'gap-2 px-4 py-2.5' : 'gap-4 px-8 py-4'}`}>
+        <div className={`flex items-center gap-3 ${compact ? '' : 'mr-4'}`}>
+          <span className="material-symbols-outlined text-ash-600 text-base" aria-hidden>filter_list</span>
+          <span className={`text-[9px] font-display font-bold text-ash-600 tracking-widest uppercase ${compact ? 'sr-only' : ''}`}>{t('logs.filters')}</span>
         </div>
         
         <select
@@ -428,16 +438,16 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
           <option value="trace">{t('logs.type.trace')}</option>
         </select>
 
-        <div className="flex-1" />
+        {!compact && <div className="flex-1" />}
         
-        <div className="relative group w-72">
+        <div className={`relative group ${compact ? 'flex-1 min-w-40' : 'w-72'}`}>
           <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-ash-600 text-base group-focus-within:text-primary transition-colors pointer-events-none">search</span>
           <input
             type="text"
             placeholder={t('logs.search')}
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
-            className="bg-surface-container-lowest border border-border-subtle text-[10px] font-display font-bold uppercase tracking-widest text-bone placeholder:text-ash-700 pl-10 pr-4 py-2.5 w-full focus:border-primary/40 outline-none rounded-sm transition shadow-inner"
+            className="bg-surface-container-lowest border border-border-subtle text-[10px] font-display font-bold uppercase tracking-widest text-bone placeholder:text-ash-600 pl-10 pr-4 py-2.5 w-full focus:border-primary/40 outline-none rounded-sm transition shadow-inner"
           />
         </div>
       </div>
@@ -459,12 +469,14 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
                 users={users}
                 characterMap={characterMap}
                 index={index}
+                compact={compact}
               />
             ))}
           </AnimatePresence>
         )}
       </div>
 
+      {!compact && (
       <div className="flex items-center justify-between px-8 py-4 bg-black/40 border-t border-border-subtle shrink-0">
         <div className="flex items-center gap-3">
            <div className="h-1 w-12 bg-white/5 rounded-full overflow-hidden">
@@ -494,6 +506,7 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
           </div>
         </div>
       </div>
+      )}
     </div>
   );
 }

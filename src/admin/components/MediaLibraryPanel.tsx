@@ -465,7 +465,7 @@ export default function MediaLibraryPanel({
                   exit={{ opacity: 0 }}
                   className={`grid gap-3 ${
                     showCatalog
-                      ? 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4'
+                      ? 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 2xl:grid-cols-4'
                       : 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5'
                   }`}
                 >
@@ -546,7 +546,7 @@ export default function MediaLibraryPanel({
                             <p className="text-[9px] font-display font-bold text-bone uppercase truncate tracking-widest">
                               {asset.metadata.title || asset.filename}
                             </p>
-                            <p className="text-[8px] font-display text-ash-400 uppercase tracking-widest">
+                            <p className="text-[9px] font-display text-ash-400 uppercase tracking-widest">
                               {formatFileSize(asset.size)}
                             </p>
                           </div>
@@ -766,7 +766,7 @@ function UnifiedIntelCreateButton({
                 <span className="text-[10px] font-display font-bold uppercase tracking-widest text-bone">
                   Entrada em branco
                 </span>
-                <span className="text-[8px] font-display text-ash-500 uppercase tracking-wider">
+                <span className="text-[9px] font-display text-ash-500 uppercase tracking-wider">
                   Texto, meta ou preencher depois
                 </span>
               </span>
@@ -782,7 +782,7 @@ function UnifiedIntelCreateButton({
                 <span className="text-[10px] font-display font-bold uppercase tracking-widest text-bone">
                   {t('media.uploadFile')}
                 </span>
-                <span className="text-[8px] font-display text-ash-500 uppercase tracking-wider">
+                <span className="text-[9px] font-display text-ash-500 uppercase tracking-wider">
                   Áudio, imagem ou vídeo → editor
                 </span>
               </span>
@@ -809,7 +809,8 @@ function FilterTab({
     <button
       type="button"
       onClick={onClick}
-      className={`flex items-center gap-2 px-6 py-3 text-[10px] font-display font-bold tracking-[0.2em] transition border-r border-primary/10 uppercase shrink-0 ${
+      aria-pressed={active}
+      className={`flex flex-1 items-center justify-center gap-2 px-3 2xl:px-6 py-3 text-[10px] font-display font-bold tracking-[0.16em] transition border-r last:border-r-0 border-primary/10 uppercase whitespace-nowrap ${
         active
           ? 'bg-primary/10 text-primary border-b-2 border-b-primary'
           : 'text-ash-400 hover:bg-primary/5 hover:text-primary'

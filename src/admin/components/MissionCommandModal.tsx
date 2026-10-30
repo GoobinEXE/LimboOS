@@ -97,14 +97,14 @@ export default function MissionCommandModal({
           animate="visible"
           className="bg-surface-container-low border border-seam w-full max-w-5xl rounded-panel shadow-2xl machined-edge flex flex-col h-[90vh] relative overflow-hidden"
         >
-          <div className="absolute -top-3 left-6 bg-primary px-2 py-0.5 text-[10px] font-display font-bold text-black tracking-widest uppercase">
-            {isNew && !isPersisted ? t('missions.modal.install') : t('missions.modal.commandBadge')}
-          </div>
-
           <div className="p-6 border-b border-border-subtle flex justify-between items-center bg-black/40 shrink-0">
-            <div className="flex items-center gap-4 mt-2">
-              <div className="w-1 h-9 bg-accent shrink-0" />
+            <div className="flex items-center gap-4">
+              <div className="w-1 self-stretch bg-accent shrink-0" />
               <div>
+                {/* Selo dentro do cabeçalho: fora dele seria cortado pelo overflow do painel */}
+                <span className="inline-block mb-1.5 bg-primary px-1.5 py-px text-[9px] font-display font-bold text-black tracking-widest uppercase">
+                  {isNew && !isPersisted ? t('missions.modal.install') : t('missions.modal.commandBadge')}
+                </span>
                 <h3 id="mission-command-title" className="font-display font-bold text-xl text-bone uppercase tracking-tight">
                   {editingCampaign.name || t('missions.modal.newTitle')}
                 </h3>

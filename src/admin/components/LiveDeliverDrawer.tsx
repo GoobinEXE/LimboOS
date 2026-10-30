@@ -150,7 +150,7 @@ function AchievementDeliverPane({
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder={t('deliver.searchAchievement')}
-          className="w-full bg-black/50 border border-border px-4 py-2.5 text-[10px] font-display font-bold uppercase tracking-widest text-bone placeholder:text-ash-700 outline-none focus:border-primary/40"
+          className="w-full bg-black/50 border border-border px-4 py-2.5 text-[10px] font-display font-bold uppercase tracking-widest text-bone placeholder:text-ash-600 outline-none focus:border-primary/40"
         />
       </div>
       <div className="flex-1 overflow-y-auto custom-scrollbar divide-y divide-white/5">

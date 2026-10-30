@@ -198,7 +198,7 @@ export default function TerminalPanel({ embedded = false }: TerminalPanelProps) 
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={t('hardware.search')}
-              className="flex-1 bg-black/50 border border-border px-4 py-2.5 text-xs font-bold uppercase tracking-wide text-bone placeholder:text-ash-700 focus:outline-none focus:border-primary/40"
+              className="flex-1 bg-black/50 border border-border px-4 py-2.5 text-xs font-bold uppercase tracking-wide text-bone placeholder:text-ash-600 focus:outline-none focus:border-primary/40"
             />
             <div className="flex flex-wrap gap-1.5">
               {(
@@ -282,17 +282,17 @@ export default function TerminalPanel({ embedded = false }: TerminalPanelProps) 
                       <div className="flex flex-wrap items-center gap-2">
                         <p className="text-xs font-black uppercase text-ash-100 tracking-wide">{row.label}</p>
                         {row.isOnline && (
-                          <span className="text-[8px] font-black uppercase tracking-widest text-phosphor-500 border border-phosphor-500/30 px-1.5 py-0.5">
+                          <span className="text-[9px] font-black uppercase tracking-widest text-phosphor-500 border border-phosphor-500/30 px-1.5 py-0.5">
                             {t('hardware.filter.online')}
                           </span>
                         )}
                         {row.forceTerminalOpen && (
-                          <span className="text-[8px] font-black uppercase tracking-widest text-primary animate-pulse">
+                          <span className="text-[9px] font-black uppercase tracking-widest text-primary animate-pulse">
                             Push DOS pendente
                           </span>
                         )}
                         {row.forceMacOpen && (
-                          <span className="text-[8px] font-black uppercase tracking-widest text-tube-400 animate-pulse">
+                          <span className="text-[9px] font-black uppercase tracking-widest text-tube-400 animate-pulse">
                             Push Mac pendente
                           </span>
                         )}

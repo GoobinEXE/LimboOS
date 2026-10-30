@@ -317,7 +317,7 @@ export default function IntelDistributionDrawer({
                       </p>
                     </div>
                     {alreadyHas && (
-                      <span className="text-[8px] font-black uppercase bg-black/60 text-ash-500 px-3 py-1 border border-border-subtle rounded-sm">
+                      <span className="text-[9px] font-black uppercase bg-black/60 text-ash-500 px-3 py-1 border border-border-subtle rounded-sm">
                         PRESENTE
                       </span>
                     )}

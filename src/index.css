@@ -112,9 +112,10 @@
   --color-ash-200: #ddd7cf;
   --color-ash-300: #c4bdb3;
   --color-ash-400: #9d958b;
-  --color-ash-500: #756e65;
-  --color-ash-600: #58524b;
-  --color-ash-700: #433e38;
+  /* 500 ≈ 4.6:1 e 600 ≈ 3.2:1 sobre --color-surface: texto secundário e terciário legíveis */
+  --color-ash-500: #847d74;
+  --color-ash-600: #6a645c;
+  --color-ash-700: #514b44;
   --color-ash-800: #2a2622;
   --color-ash-900: #1a1815;
   --color-ash-950: #0c0b09;
@@ -189,10 +190,15 @@
   --animate-blink: caret-blink 1.06s steps(1, end) infinite;
   --animate-flicker: tube-flicker 4s linear infinite;
   --animate-fade-in: fade-in 160ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-loading-bar: loading-bar 1.6s linear infinite;
 
   @keyframes fade-in {
     from { opacity: 0; }
     to { opacity: 1; }
+  }
+  @keyframes loading-bar {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(200%); }
   }
   @keyframes led-breathe {
     0%, 100% { opacity: 1; }

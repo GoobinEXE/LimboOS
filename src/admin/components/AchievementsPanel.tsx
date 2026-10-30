@@ -179,7 +179,7 @@ export default function AchievementsPanel({ embedded = false }: { embedded?: boo
           ? 'text-yellow-300 border-yellow-500/30 bg-yellow-500/10'
           : 'text-ash-400 border-border bg-white/5';
     return (
-      <span className={`text-[8px] font-black uppercase tracking-widest px-2 py-0.5 border rounded-sm ${tone}`}>
+      <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 border rounded-sm ${tone}`}>
         {ACHIEVEMENT_TIER_LABELS[tier]}
       </span>
     );
@@ -267,8 +267,8 @@ export default function AchievementsPanel({ embedded = false }: { embedded?: boo
 
         <div className="flex-1 overflow-y-auto p-8 bg-black/20 custom-scrollbar relative z-10 space-y-8">
           {filteredDefs.length === 0 && (
-            <div className="p-24 text-center opacity-20 flex flex-col items-center">
-              <span className="material-symbols-outlined text-6xl mb-4">search_off</span>
+            <div className="p-24 text-center text-ash-500 flex flex-col items-center">
+              <span className="material-symbols-outlined text-6xl mb-4 text-ash-700" aria-hidden>search_off</span>
               <p className="text-[10px] font-black uppercase tracking-[0.4em]">{t('achievements.empty')}</p>
             </div>
           )}
@@ -297,7 +297,7 @@ export default function AchievementsPanel({ embedded = false }: { embedded?: boo
                             {ach.title}
                           </h4>
                           {tierBadge(ach.tier)}
-                          <span className="text-[8px] font-black uppercase tracking-widest px-2 py-0.5 border rounded-sm text-ash-400 border-border">
+                          <span className="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 border rounded-sm text-ash-400 border-border">
                             {PLATFORM_LABELS[
                               ach.platforms.includes('walkman')
                                 ? 'walkman'
@@ -307,12 +307,12 @@ export default function AchievementsPanel({ embedded = false }: { embedded?: boo
                             ]}
                           </span>
                           {ach.source === 'suggestion' && (
-                            <span className="text-[8px] font-black uppercase tracking-widest px-2 py-0.5 border rounded-sm text-amber-400/80 border-amber-400/30">
+                            <span className="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 border rounded-sm text-amber-400/80 border-amber-400/30">
                               {t('achievements.badgeSuggestion')}
                             </span>
                           )}
                           {ach.enabled === false && (
-                            <span className="text-[8px] font-black uppercase tracking-widest px-2 py-0.5 border rounded-sm text-red-400/80 border-red-400/30">
+                            <span className="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 border rounded-sm text-red-400/80 border-red-400/30">
                               {t('achievements.badgeDisabled')}
                             </span>
                           )}
@@ -331,7 +331,7 @@ export default function AchievementsPanel({ embedded = false }: { embedded?: boo
                         <p className="text-[9px] text-ash-600 mt-2 leading-relaxed">
                           {ach.unlockCondition}
                         </p>
-                        <p className="text-[8px] text-ash-700 mt-1 font-mono uppercase">
+                        <p className="text-[9px] text-ash-700 mt-1 font-mono uppercase">
                           rule: {ach.rule.type}
                         </p>
                       </div>
@@ -341,7 +341,7 @@ export default function AchievementsPanel({ embedded = false }: { embedded?: boo
                         type="button"
                         onClick={() => openEdit(ach)}
                         disabled={!isRemote}
-                        className="flex-1 text-[8px] font-black uppercase tracking-widest py-2 border border-border text-ash-400 hover:text-bone hover:border-secondary/40 rounded-sm disabled:opacity-30"
+                        className="flex-1 text-[9px] font-black uppercase tracking-widest py-2 border border-border text-ash-400 hover:text-bone hover:border-secondary/40 rounded-sm disabled:opacity-30"
                       >
                         {t('achievements.edit')}
                       </button>
@@ -349,7 +349,7 @@ export default function AchievementsPanel({ embedded = false }: { embedded?: boo
                         type="button"
                         onClick={() => handleToggleEnabled(ach)}
                         disabled={!isRemote}
-                        className="flex-1 text-[8px] font-black uppercase tracking-widest py-2 border border-border text-ash-400 hover:text-amber-300 rounded-sm disabled:opacity-30"
+                        className="flex-1 text-[9px] font-black uppercase tracking-widest py-2 border border-border text-ash-400 hover:text-amber-300 rounded-sm disabled:opacity-30"
                       >
                         {ach.enabled === false
                           ? t('achievements.enable')
@@ -359,7 +359,7 @@ export default function AchievementsPanel({ embedded = false }: { embedded?: boo
                         type="button"
                         onClick={() => handleDelete(ach)}
                         disabled={!isRemote}
-                        className="text-[8px] font-black uppercase tracking-widest px-3 py-2 border border-red-900/40 text-red-400/70 hover:text-red-300 rounded-sm disabled:opacity-30"
+                        className="text-[9px] font-black uppercase tracking-widest px-3 py-2 border border-red-900/40 text-red-400/70 hover:text-red-300 rounded-sm disabled:opacity-30"
                       >
                         {t('achievements.delete')}
                       </button>

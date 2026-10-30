@@ -182,7 +182,7 @@ export default function Sidebar({ activeTab, setActiveTab, isCollapsed, onToggle
         <span className="lmb-led text-phosphor-400 animate-led" aria-hidden />
         {!isCollapsed && (
           <div className="min-w-0">
-            <p className="text-[8px] text-ash-500 font-display font-bold tracking-[0.2em] uppercase leading-none">
+            <p className="text-[9px] text-ash-500 font-display font-bold tracking-[0.2em] uppercase leading-none">
               {t('sidebar.statusLabel')}
             </p>
             <p className="text-[9px] text-phosphor-400 font-display font-bold tracking-widest uppercase mt-1 leading-none">

@@ -410,12 +410,12 @@ export default function UserRegistry({
                 type="checkbox" 
                 checked={showArchived}
                 onChange={(e) => setShowArchived(e.target.checked)}
-                className="hidden"
+                className="peer sr-only"
               />
-              <div className={`w-8 h-4 rounded-full transition relative ${showArchived ? 'bg-primary/30 border border-primary' : 'bg-surface-container-lowest border border-border'}`}>
+              <div className={`w-8 h-4 rounded-full transition relative peer-focus-visible:outline peer-focus-visible:outline-1 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-[var(--focus-ring)] ${showArchived ? 'bg-primary/30 border border-primary' : 'bg-surface-container-lowest border border-border'}`}>
                 <div className={`absolute top-0.5 w-2.5 h-2.5 rounded-full bg-white transition ${showArchived ? 'left-4.5 bg-primary' : 'left-1 bg-industrial-silver/40'}`} />
               </div>
-              <span className="text-[9px] font-display font-bold text-ash-600 group-hover:text-primary transition-colors uppercase tracking-widest">{t('accounts.includeArchived')}</span>
+              <span className="text-[9px] font-display font-bold text-ash-500 group-hover:text-primary transition-colors uppercase tracking-widest">{t('accounts.includeArchived')}</span>
             </label>
           </div>
           <div className="flex flex-1 max-w-2xl gap-3">
@@ -446,7 +446,7 @@ export default function UserRegistry({
                     </div>
                   )}
                 </div>
-                <button onClick={() => setShowCreateUser(true)} className="flex items-center gap-3 bg-primary hover:bg-primary-container text-black px-6 py-3 rounded-sm font-display font-bold text-[11px] tracking-widest transition active:scale-[0.97] glow-orange shadow-lg">
+                <button onClick={() => setShowCreateUser(true)} className="flex items-center gap-3 bg-primary hover:bg-primary-container text-black px-6 py-3 rounded-sm font-display font-bold text-[11px] tracking-widest transition active:scale-[0.97]">
                   <span className="material-symbols-outlined text-base">person_add</span> {t('accounts.create')}
                 </button>
               </div>
@@ -460,7 +460,7 @@ export default function UserRegistry({
         <div className="overflow-x-auto bg-surface-container-lowest border border-border-subtle shadow-inner">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-black/40 border-b border-border-subtle text-[10px] font-display font-bold uppercase tracking-widest text-ash-600">
+              <tr className="bg-black/40 border-b border-border-subtle text-[10px] font-display font-bold uppercase tracking-widest text-ash-500 whitespace-nowrap">
                 <SortHeader label={t('accounts.edit.masterName')} field="masterName" current={sortField} dir={sortDir} onSort={toggleSort} />
                 <th className="px-4 py-3">{t('accounts.col.networkId')}</th>
                 <SortHeader label={t('accounts.col.authority')} field="role" current={sortField} dir={sortDir} onSort={toggleSort} />
@@ -729,13 +729,13 @@ export default function UserRegistry({
                   <label className="block text-[9px] font-black text-ash-500 uppercase tracking-[0.3em] mb-2">{t('accounts.edit.masterName')}</label>
                   <div className="relative">
                     <input type="text" value={editMasterName} onChange={(e) => setEditMasterName(e.target.value)} placeholder={t('accounts.edit.masterPlaceholder')}
-                      className="w-full bg-black/60 border-2 border-seam text-bone px-4 py-4 text-[11px] font-black outline-none uppercase rounded-sm transition focus:border-primary placeholder:text-ash-700" />
+                      className="w-full bg-black/60 border-2 border-seam text-bone px-4 py-4 text-[11px] font-black outline-none uppercase rounded-sm transition focus:border-primary placeholder:text-ash-600" />
                   </div>
                 </div>
                 <div>
                   <label className="block text-[9px] font-black text-ash-500 uppercase tracking-[0.3em] mb-2">{t('accounts.edit.notes')}</label>
                   <textarea value={editNotes} onChange={(e) => setEditNotes(e.target.value)} placeholder="Notas sobre este jogador..." rows={3}
-                    className="w-full bg-black/60 border-2 border-seam text-bone px-4 py-3 text-[11px] font-sans outline-none rounded-sm transition focus:border-primary placeholder:text-ash-700 resize-none custom-scrollbar" />
+                    className="w-full bg-black/60 border-2 border-seam text-bone px-4 py-3 text-[11px] font-sans outline-none rounded-sm transition focus:border-primary placeholder:text-ash-600 resize-none custom-scrollbar" />
                 </div>
               </div>
               <div className="flex justify-end">
@@ -780,7 +780,7 @@ export default function UserRegistry({
                 <label className="block text-[9px] font-black text-ash-500 uppercase tracking-[0.3em] mb-4">{t('accounts.edit.resetCreds')}</label>
                 <div className="flex gap-4">
                   <input type="password" value={resetPasswordValue} onChange={(e) => setResetPasswordValue(e.target.value)} placeholder="NOVA SENHA SIGILOSA..."
-                    className="flex-1 bg-black/60 border-2 border-seam text-bone px-4 py-4 text-[11px] font-mono outline-none uppercase rounded-sm transition focus:border-primary placeholder:text-ash-700" />
+                    className="flex-1 bg-black/60 border-2 border-seam text-bone px-4 py-4 text-[11px] font-mono outline-none uppercase rounded-sm transition focus:border-primary placeholder:text-ash-600" />
                   <button onClick={() => handleResetPassword(editingAccount.uid)} disabled={resetPasswordLoading || !resetPasswordValue}
                     className="bg-seam text-primary hover:bg-primary hover:text-black disabled:opacity-20 disabled:hover:bg-seam disabled:hover:text-primary px-8 py-4 text-[11px] font-black uppercase tracking-widest transition rounded-sm active:scale-[0.97] shadow-lg border-2 border-primary/20 hover:border-primary">{t('accounts.edit.reset')}</button>
                 </div>

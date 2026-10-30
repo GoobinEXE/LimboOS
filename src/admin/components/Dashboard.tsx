@@ -661,7 +661,7 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
         <footer className="h-8 border-t border-seam bg-surface-container-lowest flex items-center justify-between gap-6 px-4 sm:px-6 shrink-0">
           <div className="flex items-center gap-2.5 min-w-0">
             <span className="lmb-led text-accent animate-led" aria-hidden />
-            <span className="text-[8px] font-display font-bold uppercase tracking-[0.3em] text-ash-500 truncate">
+            <span className="text-[9px] font-display font-bold uppercase tracking-[0.3em] text-ash-500 truncate">
               {t('footer.realtimeSync')}
             </span>
           </div>
@@ -679,7 +679,7 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
               {t('footer.shortcutMenu')}
             </span>
           </div>
-          <span className="text-[8px] font-display font-bold uppercase tracking-[0.3em] text-ash-600 hidden md:inline truncate">
+          <span className="text-[9px] font-display font-bold uppercase tracking-[0.3em] text-ash-600 hidden md:inline truncate">
             {t('footer.systemId')}
           </span>
         </footer>

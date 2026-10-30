@@ -384,7 +384,7 @@ export default function JukeboxPanel({ embedded = false }: { embedded?: boolean 
 
         <div className="flex items-center gap-4 pt-2">
           <div className="h-px flex-1 bg-white/5" />
-          <span className="text-[8px] font-black text-ash-700 uppercase tracking-widest">OU</span>
+          <span className="text-[9px] font-black text-ash-700 uppercase tracking-widest">OU</span>
           <div className="h-px flex-1 bg-white/5" />
         </div>
 
@@ -405,8 +405,8 @@ export default function JukeboxPanel({ embedded = false }: { embedded?: boolean 
         </div>
 
         {tracks.length === 0 ? (
-          <div className="bg-black/20 p-24 text-center border-4 border-dashed border-seam rounded-panel opacity-20">
-            <p className="text-ash-700 font-black text-[12px] uppercase tracking-[0.4em]">{t('jukebox.empty')}</p>
+          <div className="bg-black/20 p-24 text-center border-4 border-dashed border-seam/60 rounded-panel">
+            <p className="text-ash-500 font-black text-[12px] uppercase tracking-[0.4em]">{t('jukebox.empty')}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-3">
@@ -433,7 +433,7 @@ export default function JukeboxPanel({ embedded = false }: { embedded?: boolean 
                         {track.title}
                       </p>
                       <div className="flex items-center gap-3 mt-1">
-                         <span className={`text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-sm border ${
+                         <span className={`text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-sm border ${
                            track.type === 'youtube' ? 'border-red-500/20 text-red-500/60' : 'border-phosphor-500/20 text-phosphor-500/60'
                          }`}>
                            {track.type === 'youtube' ? 'YOUTUBE' : 'ÁUDIO LOCAL'}

@@ -282,7 +282,7 @@ export default function AchievementEditorModal({
                   </div>
                 )}
               </div>
-              <label className="block cursor-pointer text-[8px] font-black uppercase tracking-widest text-secondary border border-secondary/30 px-2 py-1.5 text-center rounded-sm hover:bg-secondary/10">
+              <label className="block cursor-pointer text-[9px] font-black uppercase tracking-widest text-secondary border border-secondary/30 px-2 py-1.5 text-center rounded-sm hover:bg-secondary/10">
                 Foto
                 <input
                   type="file"
@@ -292,7 +292,7 @@ export default function AchievementEditorModal({
                 />
               </label>
               {uploadProgress != null && (
-                <p className="text-[8px] text-ash-500 font-mono">{Math.round(uploadProgress)}%</p>
+                <p className="text-[9px] text-ash-500 font-mono">{Math.round(uploadProgress)}%</p>
               )}
             </div>
 
@@ -455,7 +455,7 @@ export default function AchievementEditorModal({
                     key={c.id}
                     type="button"
                     onClick={() => toggleCampaign(c.id)}
-                    className={`text-[8px] font-black uppercase tracking-widest px-2.5 py-1 border rounded-sm ${
+                    className={`text-[9px] font-black uppercase tracking-widest px-2.5 py-1 border rounded-sm ${
                       form.campaignIds.includes(c.id)
                         ? 'border-primary text-primary bg-primary/10'
                         : 'border-border text-ash-500'
@@ -571,7 +571,7 @@ export default function AchievementEditorModal({
                     key={k}
                     type="button"
                     onClick={() => toggleFlagKey(k)}
-                    className={`text-[8px] font-mono px-2 py-1 border rounded-sm ${
+                    className={`text-[9px] font-mono px-2 py-1 border rounded-sm ${
                       form.ruleFlagKeys.includes(k)
                         ? 'border-secondary text-secondary'
                         : 'border-border text-ash-600'

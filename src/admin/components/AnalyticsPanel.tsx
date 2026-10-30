@@ -194,7 +194,7 @@ export default function AnalyticsPanel({ onNavigate }: AnalyticsPanelProps = {})
                   {hour}h: {count} eventos
                 </div>
                 <div className="w-full aspect-square rounded-sm border border-border-subtle transition-colors group-hover:border-primary/40 shadow-inner" style={{ backgroundColor: count === 0 ? 'rgba(255,255,255,0.02)' : `rgba(255, 183, 125, ${0.1 + (count / analytics.maxHourCount) * 0.9})`, boxShadow: count > 0 ? `0 0 15px rgba(255, 183, 125, ${(count / analytics.maxHourCount) * 0.3})` : 'none' }} />
-                <span className="text-[8px] text-ash-600 mt-2 font-display font-bold">{hour}h</span>
+                <span className="text-[9px] text-ash-600 mt-2 font-display font-bold">{hour}h</span>
               </div>
             ))}
           </div>

@@ -125,7 +125,7 @@ export default function IntelEditorModal({
                     </span>
                   </div>
                   {formData.campaignId && (
-                    <p className="mt-1.5 text-[8px] font-mono text-ash-600 truncate">
+                    <p className="mt-1.5 text-[9px] font-mono text-ash-600 truncate">
                       id: {formData.campaignId}
                     </p>
                   )}
@@ -195,7 +195,7 @@ export default function IntelEditorModal({
                           : 'border-border-subtle bg-black/20 text-ash-600 hover:border-border'
                       }`}
                     >
-                      <span className="block text-[8px] opacity-50 mb-0.5">N{l.value}</span>
+                      <span className="block text-[9px] opacity-50 mb-0.5">N{l.value}</span>
                       {l.label}
                     </button>
                   ))}
@@ -237,7 +237,7 @@ export default function IntelEditorModal({
                           : 'Imagem'}
                     </p>
                     {formData.mediaUrl && (
-                      <span className="text-[8px] font-mono text-phosphor-400/80 uppercase tracking-wider">
+                      <span className="text-[9px] font-mono text-phosphor-400/80 uppercase tracking-wider">
                         Arquivo vinculado
                       </span>
                     )}
@@ -501,7 +501,7 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 function MetaField({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="group">
-      <label className="text-[8px] font-display font-bold text-ash-600 uppercase block mb-2 tracking-widest group-focus-within:text-primary">
+      <label className="text-[9px] font-display font-bold text-ash-600 uppercase block mb-2 tracking-widest group-focus-within:text-primary">
         {label}
       </label>
       {children}

@@ -128,7 +128,7 @@ export default function GroupMissionsModal({
             </p>
 
             <div className="space-y-2">
-              <p className="text-[8px] text-ash-600 font-display font-bold uppercase tracking-widest">
+              <p className="text-[9px] text-ash-600 font-display font-bold uppercase tracking-widest">
                 Autorizar Missão
               </p>
               <select
@@ -155,7 +155,7 @@ export default function GroupMissionsModal({
             </div>
 
             <div className="space-y-4">
-              <p className="text-[8px] text-ash-600 font-display font-bold uppercase tracking-widest border-b border-border-subtle pb-2">
+              <p className="text-[9px] text-ash-600 font-display font-bold uppercase tracking-widest border-b border-border-subtle pb-2">
                 Missões Autorizadas
               </p>
               <div className="flex flex-wrap gap-2">
@@ -186,7 +186,7 @@ export default function GroupMissionsModal({
             </div>
 
             <div className="space-y-4">
-              <p className="text-[8px] text-phosphor-500/50 font-display font-bold uppercase tracking-widest border-b border-phosphor-500/10 pb-2">
+              <p className="text-[9px] text-phosphor-500/50 font-display font-bold uppercase tracking-widest border-b border-phosphor-500/10 pb-2">
                 Missão Ativa (Em Campo)
               </p>
               <select

@@ -100,7 +100,7 @@ export default function MissionAccessTab({
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <p className="text-[8px] text-ash-600 font-display font-bold uppercase tracking-widest">
+          <p className="text-[9px] text-ash-600 font-display font-bold uppercase tracking-widest">
             Autorizar Missão para Esquadrão
           </p>
           <select
@@ -119,7 +119,7 @@ export default function MissionAccessTab({
           </select>
         </div>
         <div className="space-y-2">
-          <p className="text-[8px] text-ash-600 font-display font-bold uppercase tracking-widest">
+          <p className="text-[9px] text-ash-600 font-display font-bold uppercase tracking-widest">
             Autorizar Missão para Agente
           </p>
           <select
@@ -147,7 +147,7 @@ export default function MissionAccessTab({
       </div>
 
       <div className="space-y-4">
-        <p className="text-[8px] text-ash-600 font-display font-bold uppercase tracking-widest border-b border-border-subtle pb-2">
+        <p className="text-[9px] text-ash-600 font-display font-bold uppercase tracking-widest border-b border-border-subtle pb-2">
           Acessos Autorizados (Quem tem acesso)
         </p>
         <div className="flex flex-wrap gap-2">
@@ -201,7 +201,7 @@ export default function MissionAccessTab({
       </div>
 
       <div className="space-y-4">
-        <p className="text-[8px] text-phosphor-500/50 font-display font-bold uppercase tracking-widest border-b border-phosphor-500/10 pb-2">
+        <p className="text-[9px] text-phosphor-500/50 font-display font-bold uppercase tracking-widest border-b border-phosphor-500/10 pb-2">
           Missão Ativa (Em Campo)
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

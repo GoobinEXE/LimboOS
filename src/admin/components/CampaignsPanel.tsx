@@ -200,7 +200,7 @@ export default function CampaignsPanel({
           </button>
           <button
             onClick={openNewMission}
-            className="flex items-center gap-3 bg-primary text-black px-6 py-3 rounded-sm font-display font-bold text-[11px] tracking-widest hover:bg-primary-container transition active:scale-[0.97] glow-orange shadow-lg uppercase"
+            className="flex items-center gap-3 bg-primary text-black px-6 py-3 rounded-sm font-display font-bold text-[11px] tracking-widest hover:bg-primary-container transition active:scale-[0.97] uppercase"
           >
             <span className="material-symbols-outlined text-base">add_circle</span>
             {t('missions.modal.newTitle')}
@@ -208,7 +208,7 @@ export default function CampaignsPanel({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6">
         {campaigns.map((campaign) => {
           const authorizedGroups = groups.filter((g) =>
             (g.unlockedCampaigns || []).includes(campaign.id)
@@ -243,7 +243,7 @@ export default function CampaignsPanel({
 
                 <div className="absolute bottom-6 left-6 right-6">
                   <div className="flex items-center gap-3 mb-2">
-                    <div className="w-2 h-2 rounded-full bg-primary animate-pulse glow-orange" />
+                    <span className="lmb-led text-accent animate-led" aria-hidden />
                     <p className="text-[10px] font-display font-bold text-primary/70 uppercase tracking-[0.2em]">
                       {campaign.rpgSystem}
                     </p>
@@ -285,14 +285,14 @@ export default function CampaignsPanel({
                   </span>
                 </div>
 
-                <div className="flex flex-wrap gap-2 text-[8px] font-display font-bold uppercase tracking-widest">
+                <div className="flex flex-wrap gap-2 text-[9px] font-display font-bold uppercase tracking-widest">
                   {authorizedGroups > 0 && (
                     <span className="bg-primary/5 text-primary/70 border border-primary/20 px-2 py-1 rounded-sm">
                       {t('missions.badge.authorized', { n: authorizedGroups })}
                     </span>
                   )}
                   {(operatingGroups > 0 || operatingAgents > 0) && (
-                    <span className="bg-phosphor-500/10 text-phosphor-500 border border-phosphor-500/30 px-2 py-1 rounded-sm animate-pulse">
+                    <span className="bg-phosphor-500/10 text-phosphor-500 border border-phosphor-500/30 px-2 py-1 rounded-sm">
                       {t('missions.badge.inField', { n: operatingGroups + operatingAgents })}
                     </span>
                   )}
@@ -301,15 +301,16 @@ export default function CampaignsPanel({
                 <div className="flex gap-3 pt-1">
                   <button
                     onClick={() => openManage(campaign)}
-                    className="flex-1 flex items-center justify-center gap-2 bg-primary text-black px-4 py-3 rounded-sm font-display font-bold text-[10px] uppercase tracking-widest hover:bg-primary-container transition active:scale-[0.97] glow-orange"
+                    className="lmb-btn flex-1 h-11 hover:border-primary/50 hover:text-primary"
                   >
                     <span className="material-symbols-outlined text-sm">tune</span>
                     {t('missions.manage')}
                   </button>
                   <button
                     onClick={() => handleDeleteCampaign(campaign.id, campaign.name)}
-                    className="w-12 flex items-center justify-center bg-black/40 border border-border rounded-sm text-ash-500 hover:text-red-500 hover:border-red-500/30 transition active:scale-95"
+                    className="w-11 flex items-center justify-center bg-black/40 border border-border rounded-inset text-ash-500 hover:text-red-500 hover:border-red-500/30 transition active:scale-[0.97]"
                     title={t('missions.deleteTitle')}
+                    aria-label={t('missions.deleteTitle')}
                   >
                     <span className="material-symbols-outlined text-xl">delete</span>
                   </button>
@@ -381,7 +382,7 @@ export default function CampaignsPanel({
                       placeholder={t('missions.persistent.search')}
                       value={itemSearch}
                       onChange={(e) => setItemSearch(e.target.value)}
-                      className="w-full bg-black/60 border-2 border-seam text-[11px] font-bold px-12 py-4 text-bone outline-none rounded-sm uppercase tracking-widest transition shadow-inner focus:ring-1 focus:ring-primary placeholder:text-ash-700"
+                      className="w-full bg-black/60 border-2 border-seam text-[11px] font-bold px-12 py-4 text-bone outline-none rounded-sm uppercase tracking-widest transition shadow-inner focus:ring-1 focus:ring-primary placeholder:text-ash-600"
                     />
                   </div>
                 </div>

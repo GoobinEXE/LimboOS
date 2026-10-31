@@ -6,6 +6,7 @@ import { MediaAsset } from '../../types/media';
 import { mediaService } from '../../services/MediaService';
 import { extractYoutubeId, isYoutubeUrl, youtubeWatchUrl } from '../../lib/youtube';
 import { useModal } from '../components/ConfirmModal';
+import { matchesIntelScope, type CampaignScope } from '../lib/campaignResources';
 import {
   matchesIntelStatusFilter,
   type IntelStatusFilter,
@@ -23,6 +24,10 @@ export function useIntelCatalog() {
   const [search, setSearch] = useState('');
   const [filterType, setFilterType] = useState<IntelType | 'ALL'>('ALL');
   const [statusFilter, setStatusFilter] = useState<IntelStatusFilter>('all');
+  const [campaignScope, setCampaignScope] = useState<CampaignScope>('all');
+  /** Missão do filtro ativo: intel nova (em branco ou via upload) nasce vinculada a ela. */
+  const scopedCampaignId =
+    campaignScope !== 'all' && campaignScope !== 'global' ? campaignScope : undefined;
   const [mediaAssetMap, setMediaAssetMap] = useState<Record<string, MediaAsset>>({});
   const [showEditor, setShowEditor] = useState(false);
   const [editingItem, setEditingItem] = useState<IntelItem | null>(null);
@@ -67,6 +72,7 @@ export function useIntelCatalog() {
       const asset = mediaAssetMap[item.id];
       const matchesType = filterType === 'ALL' || item.type === filterType;
       const matchesStatus = matchesIntelStatusFilter(item, statusFilter, asset);
+      if (!matchesIntelScope(item, campaignScope)) return false;
       const matchesSearch =
         search === '' ||
         (item.title || '').toLowerCase().includes(search.toLowerCase()) ||
@@ -74,7 +80,7 @@ export function useIntelCatalog() {
         (item.description || '').toLowerCase().includes(search.toLowerCase());
       return matchesType && matchesStatus && matchesSearch;
     });
-  }, [allItems, search, filterType, statusFilter, mediaAssetMap]);
+  }, [allItems, search, filterType, statusFilter, mediaAssetMap, campaignScope]);
 
   const typeStats = useMemo(() => {
     const stats: Record<string, number> = { AUDIO: 0, TEXT: 0, VISUAL: 0, META: 0, VIDEO: 0, total: 0 };
@@ -85,13 +91,17 @@ export function useIntelCatalog() {
     return stats;
   }, [allItems]);
 
-  const handleNewItem = useCallback(() => {
+  const handleNewItem = useCallback((campaignId?: string) => {
     setEditingItem(null);
-    setFormData({ id: `item-${Date.now()}`, ...EMPTY_ITEM });
+    setFormData({
+      id: `item-${Date.now()}`,
+      ...EMPTY_ITEM,
+      campaignId: campaignId ?? scopedCampaignId,
+    });
     setYoutubeInput('');
     setShowEditor(true);
     setFeedback(null);
-  }, []);
+  }, [scopedCampaignId]);
 
   /** Abre o editor já vinculado a um MediaAsset (fluxo unificado upload → intel). */
   const openEditorFromAsset = useCallback((asset: MediaAsset, existing?: IntelItem | null) => {
@@ -108,7 +118,7 @@ export function useIntelCatalog() {
       description: existing?.description || '',
       textContent: existing?.textContent || '',
       mediaUrl: asset.url,
-      campaignId: existing?.campaignId,
+      campaignId: existing ? existing.campaignId : scopedCampaignId,
       metadata: {
         ...EMPTY_ITEM.metadata,
         ...existing?.metadata,
@@ -122,7 +132,7 @@ export function useIntelCatalog() {
     setFocusedIntelId(asset.id);
     setShowEditor(true);
     setFeedback(null);
-  }, []);
+  }, [scopedCampaignId]);
 
   const handleMediaSelect = useCallback((asset: MediaAsset) => {
     const keepVideo = formData.type === 'VIDEO' || asset.type === 'video';
@@ -389,6 +399,8 @@ export function useIntelCatalog() {
     setFilterType,
     statusFilter,
     setStatusFilter,
+    campaignScope,
+    setCampaignScope,
     showEditor,
     setShowEditor,
     editingItem,

@@ -26,6 +26,8 @@ import {
   type MissionTabId,
   type MetricNavigationOptions,
   type AdminTabId,
+  type CampaignScopeRequest,
+  type CampaignScopedArea,
   readAdminTabFromUrl,
   readOperationsSubFromUrl,
   readMesaSubFromUrl,
@@ -155,6 +157,7 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
     agent?: { uid: string; charId: string };
     groupId?: string;
   } | null>(null);
+  const [scopeRequest, setScopeRequest] = useState<CampaignScopeRequest | null>(null);
   const { session: activeSession, setSession: setActiveSession } = useAdminActiveSession();
   const [spotlightGroups, setSpotlightGroups] = useState<Group[]>([]);
   const [spotlightCampaigns, setSpotlightCampaigns] = useState<Campaign[]>([]);
@@ -472,6 +475,21 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
   }, [activeSession, spotlightGroups, spotlightCampaigns, t]);
 
   const clearMesaDeepLink = useCallback(() => setMesaDeepLink(null), []);
+  const clearScopeRequest = useCallback(() => setScopeRequest(null), []);
+
+  /** Atalhos da missão: abre o catálogo do recurso já filtrado pela campanha. */
+  const openCampaignScope = useCallback(
+    (area: CampaignScopedArea, campaignId: string, create = false) => {
+      if (area === 'intel') {
+        setActiveTab('media');
+      } else {
+        setOpsTab(area === 'achievements' ? 'conquistas' : 'sms');
+        setActiveTab('systems');
+      }
+      setScopeRequest({ area, campaignId, create });
+    },
+    []
+  );
 
   const spotlightItems = useMemo(() => {
     return buildSearchItems(
@@ -631,13 +649,17 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
                   <CampaignsPanel
                     missionDeepLink={missionDeepLink}
                     onDeepLinkConsumed={() => setMissionDeepLink(null)}
+                    onOpenScoped={openCampaignScope}
                   />
                 </AdminTabPanel>
               )}
 
               {mountedTabs.has('media') && (
                 <AdminTabPanel active={activeTab === 'media'}>
-                  <MediaLibraryPanel />
+                  <MediaLibraryPanel
+                    scopeRequest={scopeRequest?.area === 'intel' ? scopeRequest : null}
+                    onScopeConsumed={clearScopeRequest}
+                  />
                 </AdminTabPanel>
               )}
 
@@ -651,6 +673,8 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
                     health={healthMetrics}
                     engagement={engagementMetrics}
                     onNavigate={navigateToMetric}
+                    scopeRequest={scopeRequest?.area === 'intel' ? null : scopeRequest}
+                    onScopeConsumed={clearScopeRequest}
                   />
                 </AdminTabPanel>
               )}

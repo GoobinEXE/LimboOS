@@ -268,7 +268,8 @@
       "dados": "Dados",
       "vinculos": "Vínculos",
       "inventario": "Inventário",
-      "transmissao": "Transmissão"
+      "transmissao": "Transmissão",
+      "recursos": "Recursos"
     },
     "modal": {
       "install": "INSTALAÇÃO-DE-MISSÃO",
@@ -291,6 +292,85 @@
     },
     "video": {
       "title": "Transmissão de Vídeo — Missão"
+    },
+    "card": {
+      "readiness": "Prontidão {{done}}/{{total}}",
+      "openResources": "Ver recursos da missão"
+    },
+    "resources": {
+      "readinessTitle": "Prontidão",
+      "readinessLead": "O que esta missão já tem para ser jogada.",
+      "readinessScore": "{{done}} de {{total}} prontos",
+      "kitTitle": "Recursos desta missão",
+      "state": {
+        "ok": "Pronto",
+        "partial": "Parcial",
+        "missing": "Falta",
+        "na": "Não se aplica"
+      },
+      "check": {
+        "briefing": {
+          "label": "Briefing",
+          "ok": "Descrição preenchida",
+          "missing": "Sem descrição no dossiê"
+        },
+        "cover": {
+          "label": "Capa",
+          "ok": "Imagem definida",
+          "missing": "Sem imagem de capa"
+        },
+        "intel": {
+          "label": "Intel",
+          "ok": "{{count}} desta missão",
+          "partial": "Só intel global ({{count}})",
+          "missing": "Nenhuma intel"
+        },
+        "achievements": {
+          "label": "Conquistas",
+          "ok": "{{count}} desta missão",
+          "partial": "Só conquistas globais ({{count}})",
+          "missing": "Nenhuma conquista"
+        },
+        "npcs": {
+          "label": "NPCs / SMS",
+          "ok": "NPCs: {{npcs}} · diálogos: {{dialogues}}",
+          "noDialogues": "NPCs sem diálogo ({{count}})",
+          "partial": "Só NPCs globais ({{count}})",
+          "missing": "Nenhum NPC",
+          "na": "SMS só chegam no Nokia"
+        },
+        "squads": {
+          "label": "Esquadrões",
+          "ok": "{{count}} com acesso",
+          "missing": "Nenhum esquadrão com acesso"
+        }
+      },
+      "action": {
+        "editData": "Editar dados",
+        "openAccess": "Liberar acesso",
+        "createIntel": "Nova intel",
+        "createAchievement": "Nova conquista",
+        "createNpc": "Novo NPC",
+        "writeDialogue": "Escrever diálogo",
+        "viewCatalog": "Ver no catálogo"
+      },
+      "section": {
+        "intel": "Intel",
+        "achievements": "Conquistas",
+        "npcs": "NPCs e diálogos"
+      },
+      "empty": {
+        "intel": "Nenhuma intel vinculada. Crie uma aqui ou envie o arquivo em Conteúdo e escolha esta missão no editor.",
+        "achievements": "Nenhuma conquista própria. As globais continuam valendo.",
+        "npcs": "Nenhum NPC próprio. Crie um contato e escreva os diálogos que ele envia.",
+        "npcsWalkman": "Esta missão usa Walkman, que não recebe SMS. Troque o aparelho para Nokia em Dados se quiser torpedos."
+      },
+      "walkmanSmsNote": "Esta missão usa Walkman: os NPCs vinculados só enviam SMS em missões Nokia.",
+      "globalsNote": "+{{count}} globais também valem aqui",
+      "more": "e mais {{count}}",
+      "disabled": "Off",
+      "dialogueCount_one": "{{count}} diálogo",
+      "dialogueCount_other": "{{count}} diálogos"
     }
   },
   "media": {
@@ -651,7 +731,9 @@
     "empty": "Grid de Mapeamento Inativo",
     "origin": "Origem",
     "destination": "Destino",
-    "integrity": "Integridade de Mapeamento: Ótima"
+    "integrity": "Integridade de Mapeamento: Ótima",
+    "targetHint": "Digite o título ou o id: o campo sugere as intel do catálogo.",
+    "targetUnknown": "Intel não encontrada no catálogo"
   },
   "achievements": {
     "title": "Catálogo Global de Conquistas",
@@ -684,7 +766,11 @@
     "saveFail": "Falha ao salvar conquista",
     "validation": "ID e título são obrigatórios",
     "enabledOk": "Conquista ativada",
-    "disabledOk": "Conquista desativada"
+    "disabledOk": "Conquista desativada",
+    "createForMission": "Nova conquista para esta missão",
+    "firstCreateTitle": "Importar sugestões antes",
+    "firstCreateBody": "O catálogo ainda usa as sugestões locais. A primeira conquista salva no Firestore passa a ser o catálogo inteiro e as sugestões somem da lista. Importar as sugestões e criar a nova conquista em seguida?",
+    "firstCreateAction": "Importar e criar"
   },
   "npcSms": {
     "title": "Catálogo SMS / NPCs",
@@ -742,7 +828,18 @@
     "pickMode": "Seleção manual",
     "reshuffle": "Embaralhar novamente",
     "preview": "Preview de distribuição",
-    "noDialogues": "Nenhum diálogo disponível para este NPC"
+    "noDialogues": "Nenhum diálogo disponível para este NPC",
+    "createForMission": "Novo NPC para esta missão",
+    "campaigns": "Missões",
+    "campaignsGlobalHint": "Aparece na distribuição de SMS de qualquer esquadrão.",
+    "emptyDialoguesForMission": "Nenhum diálogo dos NPCs desta missão. Crie um NPC vinculado e escreva os diálogos na aba Diálogos.",
+    "distMission": "Missão",
+    "distShowingAll": "Mostrando todos os NPCs, inclusive de outras missões",
+    "distHidden_one": "{{count}} NPC de outra missão oculto. Mostrar todos",
+    "distHidden_other": "{{count}} NPCs de outras missões ocultos. Mostrar todos",
+    "firstCreateTitle": "Importar sugestões antes",
+    "firstCreateBody": "O catálogo ainda usa os NPCs e diálogos sugeridos. O primeiro registro salvo no Firestore substitui as sugestões, que somem da lista. Importar as sugestões e criar o novo registro em seguida?",
+    "firstCreateAction": "Importar e criar"
   },
   "jukebox": {
     "title": "Interface de Broadcast Jukebox",
@@ -761,5 +858,20 @@
     "removeTitle": "Atenção",
     "removeBody": "Remover \"{{title}}\" da jukebox?",
     "removeAction": "Remover"
+  },
+  "scope": {
+    "label": "Filtrar por missão",
+    "all": "Todas as missões",
+    "global": "Só globais",
+    "missions": "Missões",
+    "bindGlobal": "Global",
+    "bindSpecific": "Missões específicas",
+    "bindGlobalHint": "Vale em todas as missões, inclusive nas que forem criadas depois.",
+    "bindEmptyHint": "Nenhuma missão marcada: o recurso não vale em lugar nenhum até você escolher uma.",
+    "bindCount_one": "Vale em {{count}} missão.",
+    "bindCount_other": "Vale em {{count}} missões.",
+    "orphanTitle": "Missão apagada. Clique para remover o vínculo.",
+    "noneBound": "Sem missão",
+    "emptyForMission": "Nada vinculado a esta missão ainda."
   }
 }

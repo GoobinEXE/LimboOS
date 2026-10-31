@@ -1,9 +1,24 @@
-import React from 'react';
 import type { MasterAccount, CharacterData } from '../../types/player';
 
 export type OperationsSubId = 'relatorios' | 'acesso' | 'qr' | 'conquistas' | 'sms';
 export type MesaSubId = 'esquadroes' | 'contas';
-export type MissionTabId = 'dados' | 'vinculos' | 'inventario' | 'transmissao';
+import type { MissionTabId } from '../components/mission/types';
+
+export type { MissionTabId };
+
+/** Catálogos que aceitam abrir já filtrados por uma missão. */
+export type CampaignScopedArea = 'intel' | 'achievements' | 'sms';
+
+/**
+ * Pedido de navegação vindo da missão: abre o catálogo filtrado pela
+ * campanha e, com `create`, já com o editor de criação vinculado a ela.
+ * O painel de destino consome o pedido uma vez (ver `onScopeConsumed`).
+ */
+export interface CampaignScopeRequest {
+  area: CampaignScopedArea;
+  campaignId: string;
+  create?: boolean;
+}
 
 export const ADMIN_TAB_IDS = ['live', 'mesa', 'missions', 'media', 'systems'] as const;
 export type AdminTabId = (typeof ADMIN_TAB_IDS)[number];

@@ -11,7 +11,10 @@ import MissionDataTab from './mission/MissionDataTab';
 import MissionAccessTab from './mission/MissionAccessTab';
 import MissionInventoryTab from './mission/MissionInventoryTab';
 import MissionVideoTab from './mission/MissionVideoTab';
-import { MissionTabId, MISSION_TAB_LABELS } from './mission/types';
+import MissionResourcesTab from './mission/MissionResourcesTab';
+import { MissionTabId, MISSION_TAB_ORDER } from './mission/types';
+import type { CampaignResourceSummary } from '../lib/campaignResources';
+import type { CampaignScopedArea } from '../lib/adminNavigation';
 
 interface MissionCommandModalProps {
   open: boolean;
@@ -21,6 +24,10 @@ interface MissionCommandModalProps {
   allCharacters: { account: MasterAccount; character: CharacterData }[];
   onClose: () => void;
   onSaved?: (campaign: Campaign) => void;
+  /** Recursos modulares já vinculados a esta missão (aba Recursos). */
+  resourceSummary?: CampaignResourceSummary | null;
+  /** Leva ao catálogo do recurso filtrado pela missão; fecha o modal. */
+  onOpenScoped?: (area: CampaignScopedArea, campaignId: string, create?: boolean) => void;
   onCharacterUpdate?: (
     updater: (
       prev: { account: MasterAccount; character: CharacterData }[]
@@ -28,7 +35,6 @@ interface MissionCommandModalProps {
   ) => void;
 }
 
-const TAB_ORDER: MissionTabId[] = ['dados', 'vinculos', 'inventario', 'transmissao'];
 
 export default function MissionCommandModal({
   open,
@@ -39,6 +45,8 @@ export default function MissionCommandModal({
   onClose,
   onSaved,
   onCharacterUpdate,
+  resourceSummary,
+  onOpenScoped,
 }: MissionCommandModalProps) {
   const { t } = useTranslation('admin');
   const { showAlert, modal } = useModal();
@@ -70,7 +78,8 @@ export default function MissionCommandModal({
       onSaved?.(saved);
       showAlert('Sucesso', t('missions.toast.saved'));
       if (isNew) {
-        setActiveTab('vinculos');
+        // Missão recém-criada: a aba Recursos mostra o que falta para jogá-la
+        setActiveTab('recursos');
       }
     } catch (error) {
       console.error('Erro ao salvar campanha:', error);
@@ -124,7 +133,7 @@ export default function MissionCommandModal({
           </div>
 
           <div role="tablist" className="flex border-b border-seam bg-surface-container-lowest shrink-0">
-            {TAB_ORDER.map((tab) => {
+            {MISSION_TAB_ORDER.map((tab) => {
               const locked = tab !== 'dados' && tabsLocked;
               return (
                 <button
@@ -143,7 +152,7 @@ export default function MissionCommandModal({
                   }`}
                   title={locked ? t('missions.modal.saveFirst') : undefined}
                 >
-                  {MISSION_TAB_LABELS[tab]}
+                  {t(`missions.tab.${tab}`)}
                 </button>
               );
             })}
@@ -159,6 +168,14 @@ export default function MissionCommandModal({
                 onSave={handleSave}
                 onCancel={onClose}
                 saving={saving}
+              />
+            )}
+            {activeTab === 'recursos' && persistedCampaign && resourceSummary && (
+              <MissionResourcesTab
+                campaign={editingCampaign}
+                summary={resourceSummary}
+                onGoToTab={setActiveTab}
+                onOpenScoped={(area, create) => onOpenScoped?.(area, persistedCampaign.id, create)}
               />
             )}
             {activeTab === 'vinculos' && persistedCampaign && (

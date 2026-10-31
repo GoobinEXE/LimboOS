@@ -268,7 +268,8 @@
       "dados": "Data",
       "vinculos": "Links",
       "inventario": "Inventory",
-      "transmissao": "Broadcast"
+      "transmissao": "Broadcast",
+      "recursos": "Resources"
     },
     "modal": {
       "install": "MISSION-INSTALL",
@@ -291,6 +292,85 @@
     },
     "video": {
       "title": "Video Broadcast — Mission"
+    },
+    "card": {
+      "readiness": "Readiness {{done}}/{{total}}",
+      "openResources": "View mission resources"
+    },
+    "resources": {
+      "readinessTitle": "Readiness",
+      "readinessLead": "What this mission already has to be played.",
+      "readinessScore": "{{done}} of {{total}} ready",
+      "kitTitle": "This mission's resources",
+      "state": {
+        "ok": "Ready",
+        "partial": "Partial",
+        "missing": "Missing",
+        "na": "Not applicable"
+      },
+      "check": {
+        "briefing": {
+          "label": "Briefing",
+          "ok": "Description filled in",
+          "missing": "No dossier description"
+        },
+        "cover": {
+          "label": "Cover",
+          "ok": "Image set",
+          "missing": "No cover image"
+        },
+        "intel": {
+          "label": "Intel",
+          "ok": "{{count}} for this mission",
+          "partial": "Global intel only ({{count}})",
+          "missing": "No intel"
+        },
+        "achievements": {
+          "label": "Achievements",
+          "ok": "{{count}} for this mission",
+          "partial": "Global achievements only ({{count}})",
+          "missing": "No achievements"
+        },
+        "npcs": {
+          "label": "NPCs / SMS",
+          "ok": "NPCs: {{npcs}} · dialogues: {{dialogues}}",
+          "noDialogues": "NPCs without dialogue ({{count}})",
+          "partial": "Global NPCs only ({{count}})",
+          "missing": "No NPCs",
+          "na": "SMS only reach the Nokia"
+        },
+        "squads": {
+          "label": "Squads",
+          "ok": "{{count}} with access",
+          "missing": "No squad has access"
+        }
+      },
+      "action": {
+        "editData": "Edit data",
+        "openAccess": "Grant access",
+        "createIntel": "New intel",
+        "createAchievement": "New achievement",
+        "createNpc": "New NPC",
+        "writeDialogue": "Write dialogue",
+        "viewCatalog": "View in catalog"
+      },
+      "section": {
+        "intel": "Intel",
+        "achievements": "Achievements",
+        "npcs": "NPCs and dialogues"
+      },
+      "empty": {
+        "intel": "No intel linked. Create one here, or upload the file in Content and pick this mission in the editor.",
+        "achievements": "No achievements of its own. Global ones still apply.",
+        "npcs": "No NPCs of its own. Create a contact and write the dialogues it sends.",
+        "npcsWalkman": "This mission uses the Walkman, which receives no SMS. Switch the device to Nokia in Data to use texts."
+      },
+      "walkmanSmsNote": "This mission uses the Walkman: linked NPCs only send SMS in Nokia missions.",
+      "globalsNote": "+{{count}} global also apply here",
+      "more": "and {{count}} more",
+      "disabled": "Off",
+      "dialogueCount_one": "{{count}} dialogue",
+      "dialogueCount_other": "{{count}} dialogues"
     }
   },
   "media": {
@@ -651,7 +731,9 @@
     "empty": "Mapping Grid Inactive",
     "origin": "Origin",
     "destination": "Destination",
-    "integrity": "Mapping Integrity: Optimal"
+    "integrity": "Mapping Integrity: Optimal",
+    "targetHint": "Type the title or id: the field suggests intel from the catalog.",
+    "targetUnknown": "Intel not found in the catalog"
   },
   "achievements": {
     "title": "Global Achievements Catalog",
@@ -684,7 +766,11 @@
     "saveFail": "Failed to save achievement",
     "validation": "ID and title are required",
     "enabledOk": "Achievement enabled",
-    "disabledOk": "Achievement disabled"
+    "disabledOk": "Achievement disabled",
+    "createForMission": "New achievement for this mission",
+    "firstCreateTitle": "Import suggestions first",
+    "firstCreateBody": "The catalog still uses the local suggestions. The first achievement saved to Firestore becomes the whole catalog and the suggestions disappear from the list. Import the suggestions and then create the new achievement?",
+    "firstCreateAction": "Import and create"
   },
   "npcSms": {
     "title": "SMS / NPC Catalog",
@@ -742,7 +828,18 @@
     "pickMode": "Manual selection",
     "reshuffle": "Shuffle again",
     "preview": "Distribution preview",
-    "noDialogues": "No dialogues available for this NPC"
+    "noDialogues": "No dialogues available for this NPC",
+    "createForMission": "New NPC for this mission",
+    "campaigns": "Missions",
+    "campaignsGlobalHint": "Shows up in SMS distribution for any squad.",
+    "emptyDialoguesForMission": "No dialogues from this mission's NPCs. Create a linked NPC and write its dialogues in the Dialogues tab.",
+    "distMission": "Mission",
+    "distShowingAll": "Showing every NPC, including other missions'",
+    "distHidden_one": "{{count}} NPC from another mission hidden. Show all",
+    "distHidden_other": "{{count}} NPCs from other missions hidden. Show all",
+    "firstCreateTitle": "Import suggestions first",
+    "firstCreateBody": "The catalog still uses the suggested NPCs and dialogues. The first record saved to Firestore replaces the suggestions, which disappear from the list. Import the suggestions and then create the new record?",
+    "firstCreateAction": "Import and create"
   },
   "jukebox": {
     "title": "Jukebox Broadcast Interface",
@@ -761,5 +858,20 @@
     "removeTitle": "Warning",
     "removeBody": "Remove \"{{title}}\" from the jukebox?",
     "removeAction": "Remove"
+  },
+  "scope": {
+    "label": "Filter by mission",
+    "all": "All missions",
+    "global": "Global only",
+    "missions": "Missions",
+    "bindGlobal": "Global",
+    "bindSpecific": "Specific missions",
+    "bindGlobalHint": "Applies to every mission, including ones created later.",
+    "bindEmptyHint": "No mission selected: this resource applies nowhere until you pick one.",
+    "bindCount_one": "Applies to {{count}} mission.",
+    "bindCount_other": "Applies to {{count}} missions.",
+    "orphanTitle": "Deleted mission. Click to remove the link.",
+    "noneBound": "No mission",
+    "emptyForMission": "Nothing linked to this mission yet."
   }
 }

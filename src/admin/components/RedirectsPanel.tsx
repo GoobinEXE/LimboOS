@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { subscribeToQrRedirects, saveQrRedirect, deleteQrRedirect } from '../../store/firestore';
 import { activityLogger } from '../../services/ActivityLogger';
 import { useModal } from './ConfirmModal';
 import { format } from 'date-fns';
 import Screw from '../../components/player/Screw';
+import { intelService } from '../../services/IntelService';
+import { intelRegistry } from '../../data/intel_registry';
+import type { IntelItem } from '../../types/intel';
 
 interface QrRedirect {
   sourceId: string;
@@ -23,6 +26,17 @@ export default function RedirectsPanel({ embedded = false }: { embedded?: boolea
   const [newReason, setNewReason] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const { showAlert, modal } = useModal();
+  const [intelItems, setIntelItems] = useState<IntelItem[]>(() => intelRegistry.getAll());
+
+  useEffect(() => intelService.subscribeToIntelRegistry(setIntelItems), []);
+
+  /** Destino do QR resolvido para o título da intel (o mestre não precisa decorar ids). */
+  const intelById = useMemo(() => {
+    const map = new Map<string, IntelItem>();
+    intelItems.forEach((item) => map.set(item.id, item));
+    return map;
+  }, [intelItems]);
+  const targetMatch = newTargetId.trim() ? intelById.get(newTargetId.trim()) : undefined;
 
   useEffect(() => {
     setLoading(true);
@@ -66,6 +80,7 @@ export default function RedirectsPanel({ embedded = false }: { embedded?: boolea
   const filteredRedirects = redirects.filter(r => 
     (r.sourceId || '').toLowerCase().includes(search.toLowerCase()) || 
     (r.targetId || '').toLowerCase().includes(search.toLowerCase()) ||
+    (intelById.get(r.targetId)?.title || '').toLowerCase().includes(search.toLowerCase()) ||
     (r.reason || '').toLowerCase().includes(search.toLowerCase())
   );
 
@@ -118,8 +133,32 @@ export default function RedirectsPanel({ embedded = false }: { embedded?: boolea
                   value={newTargetId}
                   onChange={(e) => setNewTargetId(e.target.value)}
                   placeholder="EX: TAPE-ID-123..."
-                  className="w-full bg-black/40 border-2 border-seam text-[11px] font-mono font-bold uppercase tracking-widest focus:border-primary outline-none text-primary px-4 py-3 rounded-sm transition"
+                  list="qr-intel-targets"
+                  autoComplete="off"
+                  className="w-full bg-black/40 border-2 border-seam text-[11px] font-mono font-bold tracking-widest focus:border-primary outline-none text-primary px-4 py-3 rounded-sm transition"
                 />
+                <datalist id="qr-intel-targets">
+                  {intelItems.map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {item.title}
+                    </option>
+                  ))}
+                </datalist>
+                {newTargetId.trim() ? (
+                  <p
+                    className={`flex items-center gap-1.5 text-[11px] ${
+                      targetMatch ? 'text-phosphor-400' : 'text-amber-300/90'
+                    }`}
+                    role="status"
+                  >
+                    <span className="material-symbols-outlined text-sm" aria-hidden>
+                      {targetMatch ? 'check_circle' : 'help'}
+                    </span>
+                    {targetMatch ? targetMatch.title : t('redirects.targetUnknown')}
+                  </p>
+                ) : (
+                  <p className="text-[11px] text-ash-500">{t('redirects.targetHint')}</p>
+                )}
               </div>
               <div className="space-y-2">
                 <label className="block text-[9px] font-black uppercase tracking-[0.2em] text-ash-600">{t('redirects.notes')}</label>
@@ -196,6 +235,13 @@ export default function RedirectsPanel({ embedded = false }: { embedded?: boolea
                             <code className="text-[11px] font-mono bg-black px-4 py-2 border-2 border-seam text-primary group-hover:border-primary/30 transition rounded-sm font-black">
                               {r.targetId}
                             </code>
+                            <p
+                              className={`text-[11px] truncate max-w-[14rem] ${
+                                intelById.has(r.targetId) ? 'text-ash-300' : 'text-amber-300/90'
+                              }`}
+                            >
+                              {intelById.get(r.targetId)?.title || t('redirects.targetUnknown')}
+                            </p>
                           </div>
                           <div className="flex-1 min-w-0 ml-4 pt-4">
                             {r.reason && (

@@ -15,6 +15,9 @@ import {
   intelCatalogStatusLabel,
   type IntelStatusFilter,
 } from '../../lib/intelDisplay';
+import type { Campaign } from '../../../data/campaigns';
+import type { CampaignScope } from '../../lib/campaignResources';
+import CampaignScopeSelect from '../CampaignScopeSelect';
 
 interface IntelCatalogPaneProps {
   items: IntelItem[];
@@ -23,6 +26,9 @@ interface IntelCatalogPaneProps {
   search: string;
   filterType: IntelType | 'ALL';
   statusFilter: IntelStatusFilter;
+  campaignScope: CampaignScope;
+  campaigns: Campaign[];
+  onCampaignScope: (scope: CampaignScope) => void;
   isLoading?: boolean;
   onSearch: (v: string) => void;
   onFilterType: (v: IntelType | 'ALL') => void;
@@ -41,6 +47,9 @@ export default function IntelCatalogPane({
   search,
   filterType,
   statusFilter,
+  campaignScope,
+  campaigns,
+  onCampaignScope,
   isLoading,
   onSearch,
   onFilterType,
@@ -84,6 +93,7 @@ export default function IntelCatalogPane({
       </div>
 
       <div className="p-3 space-y-2 border-b border-primary/5 shrink-0">
+        <CampaignScopeSelect value={campaignScope} onChange={onCampaignScope} campaigns={campaigns} />
         <div className="flex flex-wrap gap-1">
           {(Object.keys(INTEL_STATUS_FILTER_LABELS) as IntelStatusFilter[]).map((key) => (
             <button
@@ -199,6 +209,11 @@ export default function IntelCatalogPane({
                         >
                           {accessLevelLabel(item.level)}
                         </span>
+                        {item.campaignId && campaignScope === 'all' && (
+                          <span className="text-[9px] font-display font-bold uppercase tracking-widest px-1.5 py-0.5 border rounded-sm border-accent-20 text-primary/80 truncate max-w-[10rem]">
+                            {campaigns.find((c) => c.id === item.campaignId)?.name || item.campaignId}
+                          </span>
+                        )}
                         {asset?.size ? (
                           <span className="text-[9px] font-mono text-ash-500 uppercase px-1">
                             {formatFileSize(asset.size)}

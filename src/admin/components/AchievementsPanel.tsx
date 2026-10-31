@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ACHIEVEMENT_CATEGORY_LABELS,
@@ -14,6 +14,14 @@ import { useAchievementCatalog } from '../../hooks/useAchievementCatalog';
 import { achievementCatalogService } from '../../services/AchievementCatalogService';
 import { useToast } from './ToastProvider';
 import { useModal } from './ConfirmModal';
+import CampaignScopeSelect from './CampaignScopeSelect';
+import { useAdminCampaigns } from '../hooks/useAdminCampaigns';
+import {
+  bindingLabels,
+  matchesBindingScope,
+  type CampaignScope,
+} from '../lib/campaignResources';
+import type { CampaignScopeRequest } from '../lib/adminNavigation';
 import AchievementEditorModal, {
   emptyAchievementForm,
   formFromDef,
@@ -21,13 +29,25 @@ import AchievementEditorModal, {
   type AchievementEditorForm,
 } from './AchievementEditorModal';
 
-export default function AchievementsPanel({ embedded = false }: { embedded?: boolean }) {
+interface AchievementsPanelProps {
+  embedded?: boolean;
+  scopeRequest?: CampaignScopeRequest | null;
+  onScopeConsumed?: () => void;
+}
+
+export default function AchievementsPanel({
+  embedded = false,
+  scopeRequest,
+  onScopeConsumed,
+}: AchievementsPanelProps) {
   const { t } = useTranslation('admin');
   const toast = useToast();
   const { showConfirm, showAlert, modal } = useModal();
   const { defs, isRemote } = useAchievementCatalog();
+  const { campaigns } = useAdminCampaigns();
 
   const [search, setSearch] = useState('');
+  const [campaignScope, setCampaignScope] = useState<CampaignScope>('all');
   const [categoryFilter, setCategoryFilter] = useState<AchievementCategory | 'all'>('all');
   const [editorOpen, setEditorOpen] = useState(false);
   const [editing, setEditing] = useState<AchievementDef | null>(null);
@@ -45,9 +65,9 @@ export default function AchievementsPanel({ embedded = false }: { embedded?: boo
         a.id.toLowerCase().includes(q) ||
         a.description.toLowerCase().includes(q);
       const matchesCategory = categoryFilter === 'all' || a.category === categoryFilter;
-      return matchesSearch && matchesCategory;
+      return matchesSearch && matchesCategory && matchesBindingScope(a.campaignIds, campaignScope);
     });
-  }, [defs, search, categoryFilter]);
+  }, [defs, search, categoryFilter, campaignScope]);
 
   const groups = useMemo(() => {
     const asAchievements = filteredDefs.map(achievementFromDef);
@@ -59,11 +79,23 @@ export default function AchievementsPanel({ embedded = false }: { embedded?: boo
     }));
   }, [filteredDefs]);
 
-  const openCreate = () => {
+  /** Com uma missão no filtro, a nova conquista já nasce vinculada a ela. */
+  const openCreate = (campaignId?: string) => {
+    const scoped =
+      campaignId ?? (campaignScope !== 'all' && campaignScope !== 'global' ? campaignScope : undefined);
     setEditing(null);
-    setEditorForm(emptyAchievementForm());
+    setEditorForm(emptyAchievementForm(scoped));
     setEditorOpen(true);
   };
+
+  useEffect(() => {
+    if (!scopeRequest) return;
+    setCampaignScope(scopeRequest.campaignId);
+    setCategoryFilter('all');
+    setSearch('');
+    if (scopeRequest.create) openCreate(scopeRequest.campaignId);
+    onScopeConsumed?.();
+  }, [scopeRequest]);
 
   const openEdit = (def: AchievementDef) => {
     setEditing(def);
@@ -141,7 +173,21 @@ export default function AchievementsPanel({ embedded = false }: { embedded?: boo
       return;
     }
     if (!isRemote && !isEdit) {
-      // criar exige Firestore; import primeiro ou criar após import
+      // A primeira conquista no Firestore substitui as sugestões em memória:
+      // importa antes para o catálogo não "perder" as sugestões.
+      const ok = await showConfirm(
+        t('achievements.firstCreateTitle'),
+        t('achievements.firstCreateBody'),
+        t('achievements.firstCreateAction'),
+      );
+      if (!ok) return;
+      try {
+        await achievementCatalogService.importSuggestions();
+      } catch (err) {
+        console.error(err);
+        toast.error(t('achievements.importFail'));
+        return;
+      }
     }
 
     setSaving(true);
@@ -212,7 +258,13 @@ export default function AchievementsPanel({ embedded = false }: { embedded?: boo
                 className="w-full bg-black/40 border-2 border-border-subtle text-[11px] font-black uppercase px-12 py-3 text-bone outline-none focus:border-secondary transition rounded-sm"
               />
             </div>
-            <div className="flex items-center gap-2 flex-wrap">
+            <CampaignScopeSelect
+              value={campaignScope}
+              onChange={setCampaignScope}
+              campaigns={campaigns}
+              className="w-full sm:w-60"
+            />
+            <div className="flex items-center gap-2 flex-wrap sm:ml-auto">
               <span className="text-[10px] font-black text-ash-600 uppercase tracking-widest shrink-0">
                 {filteredDefs.length} {t('achievements.countLabel')}
                 {!isRemote && (
@@ -229,7 +281,7 @@ export default function AchievementsPanel({ embedded = false }: { embedded?: boo
               </button>
               <button
                 type="button"
-                onClick={openCreate}
+                onClick={() => openCreate()}
                 className="text-[9px] font-black uppercase tracking-widest px-3 py-2 bg-primary text-black rounded-sm hover:bg-primary-container"
               >
                 {t('achievements.create')}
@@ -270,6 +322,17 @@ export default function AchievementsPanel({ embedded = false }: { embedded?: boo
             <div className="p-24 text-center text-ash-500 flex flex-col items-center">
               <span className="material-symbols-outlined text-6xl mb-4 text-ash-700" aria-hidden>search_off</span>
               <p className="text-[10px] font-black uppercase tracking-[0.4em]">{t('achievements.empty')}</p>
+              {campaignScope !== 'all' && campaignScope !== 'global' && (
+                <div className="mt-5 flex flex-col items-center gap-3">
+                  <p className="text-[12px] text-ash-400 max-w-sm leading-relaxed">
+                    {t('scope.emptyForMission')}
+                  </p>
+                  <button type="button" onClick={() => openCreate()} className="lmb-btn lmb-btn-primary">
+                    <span className="material-symbols-outlined text-base" aria-hidden>add</span>
+                    {t('achievements.createForMission')}
+                  </button>
+                </div>
+              )}
             </div>
           )}
           {groups.map((group) => (
@@ -317,11 +380,27 @@ export default function AchievementsPanel({ embedded = false }: { embedded?: boo
                             </span>
                           )}
                         </div>
-                        <p className="text-[9px] font-mono text-ash-600 font-bold uppercase mt-1 tracking-widest mb-2">
+                        <p className="text-[9px] font-mono text-ash-600 font-bold uppercase mt-1 tracking-widest">
                           ID: {ach.id}
-                          {ach.campaignIds === 'global'
-                            ? ' · CAMP: GLOBAL'
-                            : ` · CAMP: ${ach.campaignIds.join(',')}`}
+                        </p>
+                        <p className="flex flex-wrap items-center gap-1 mt-1.5 mb-2">
+                          <span className="material-symbols-outlined text-sm text-ash-600" aria-hidden>
+                            {ach.campaignIds === 'global' ? 'public' : 'map'}
+                          </span>
+                          {ach.campaignIds === 'global' ? (
+                            <span className="text-[10px] text-ash-400">{t('scope.bindGlobal')}</span>
+                          ) : ach.campaignIds.length === 0 ? (
+                            <span className="text-[10px] text-amber-300/90">{t('scope.noneBound')}</span>
+                          ) : (
+                            bindingLabels(ach.campaignIds, campaigns).map((name) => (
+                              <span
+                                key={name}
+                                className="text-[10px] text-primary/80 border border-accent-20 px-1.5 rounded-inset"
+                              >
+                                {name}
+                              </span>
+                            ))
+                          )}
                         </p>
                         {ach.description && (
                           <p className="text-[10px] text-ash-400 font-bold leading-relaxed">

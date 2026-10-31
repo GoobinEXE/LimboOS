@@ -9,7 +9,9 @@ import { mediaService } from '../../services/MediaService';
 import { mediaFolderService } from '../../services/MediaFolderService';
 import { MediaAsset, MediaFolder, MediaType } from '../../types/media';
 import type { IntelItem } from '../../types/intel';
-import { Campaign, campaigns as localCampaigns } from '../../data/campaigns';
+import { Campaign } from '../../data/campaigns';
+import { useAdminCampaigns } from '../hooks/useAdminCampaigns';
+import type { CampaignScopeRequest } from '../lib/adminNavigation';
 import { useModal } from './ConfirmModal';
 import {
   formatFileSize,
@@ -35,6 +37,9 @@ interface MediaLibraryPanelProps {
   allowedTypes?: MediaType[];
   /** Compact chrome for modal selector. */
   compact?: boolean;
+  /** Pedido vindo da missão: filtra o catálogo intel pela campanha (e abre o editor com `create`). */
+  scopeRequest?: CampaignScopeRequest | null;
+  onScopeConsumed?: () => void;
 }
 
 export default function MediaLibraryPanel({
@@ -42,6 +47,8 @@ export default function MediaLibraryPanel({
   selectionMode = false,
   allowedTypes,
   compact = false,
+  scopeRequest,
+  onScopeConsumed,
 }: MediaLibraryPanelProps) {
   const { t } = useTranslation('admin');
   const intlLocale = useIntlLocale();
@@ -63,6 +70,17 @@ export default function MediaLibraryPanel({
   const syncingRef = useRef(false);
 
   const intel = useIntelCatalog();
+  const { campaigns: campaignsForEditor } = useAdminCampaigns();
+
+  useEffect(() => {
+    if (!scopeRequest) return;
+    intel.setCampaignScope(scopeRequest.campaignId);
+    intel.setSearch('');
+    intel.setStatusFilter('all');
+    intel.setFilterType('ALL');
+    if (scopeRequest.create) intel.handleNewItem(scopeRequest.campaignId);
+    onScopeConsumed?.();
+  }, [scopeRequest]);
 
   useEffect(() => {
     const typeFilter =
@@ -125,14 +143,6 @@ export default function MediaLibraryPanel({
     () => new Set(campaigns.map((c) => c.id)),
     [campaigns],
   );
-
-  /** Campanhas remotas + seed local (sem duplicar), para o select do editor. */
-  const campaignsForEditor = useMemo(() => {
-    const byId = new Map<string, Campaign>();
-    localCampaigns.forEach((c) => byId.set(c.id, c));
-    campaigns.forEach((c) => byId.set(c.id, c));
-    return Array.from(byId.values()).sort((a, b) => a.name.localeCompare(b.name, intlLocale));
-  }, [campaigns]);
 
   const folderNameById = useMemo(() => {
     const map = new Map<string, string>();
@@ -610,6 +620,9 @@ export default function MediaLibraryPanel({
               search={intel.search}
               filterType={intel.filterType}
               statusFilter={intel.statusFilter}
+              campaignScope={intel.campaignScope}
+              campaigns={campaignsForEditor}
+              onCampaignScope={intel.setCampaignScope}
               isLoading={intel.isLoading}
               onSearch={intel.setSearch}
               onFilterType={intel.setFilterType}

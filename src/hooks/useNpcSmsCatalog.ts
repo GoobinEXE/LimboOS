@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { NpcContact, NpcDialogue } from '../types/npcSms';
 import {
   npcSmsCatalogService,
@@ -14,8 +14,15 @@ export function useNpcSmsCatalog() {
     return npcSmsCatalogService.subscribe(setSnap);
   }, []);
 
-  const enabledContacts = snap.contacts.filter((c) => c.enabled !== false);
-  const enabledDialogues = snap.dialogues.filter((d) => d.enabled !== false);
+  // Memoizado: consumidores usam estas listas como dependência de efeitos
+  const enabledContacts = useMemo(
+    () => snap.contacts.filter((c) => c.enabled !== false),
+    [snap.contacts],
+  );
+  const enabledDialogues = useMemo(
+    () => snap.dialogues.filter((d) => d.enabled !== false),
+    [snap.dialogues],
+  );
 
   return {
     contacts: snap.contacts,

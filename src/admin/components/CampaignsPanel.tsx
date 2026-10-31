@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'motion/react';
 import Screw from '../../components/player/Screw';
@@ -14,6 +14,16 @@ import MissionCommandModal from './MissionCommandModal';
 import OverlayPortal from './OverlayPortal';
 import { MissionTabId } from './mission/types';
 import { ADMIN_SPRING } from '../lib/motion';
+import { intelService } from '../../services/IntelService';
+import type { IntelItem } from '../../types/intel';
+import { useAchievementCatalog } from '../../hooks/useAchievementCatalog';
+import { useNpcSmsCatalog } from '../../hooks/useNpcSmsCatalog';
+import {
+  campaignReadiness,
+  readinessScore,
+  summarizeCampaignResources,
+} from '../lib/campaignResources';
+import type { CampaignScopedArea } from '../lib/adminNavigation';
 
 export interface MissionDeepLink {
   campaignId: string;
@@ -23,6 +33,8 @@ export interface MissionDeepLink {
 interface CampaignsPanelProps {
   missionDeepLink?: MissionDeepLink | null;
   onDeepLinkConsumed?: () => void;
+  /** Abre o catálogo de intel, conquistas ou SMS filtrado pela missão. */
+  onOpenScoped?: (area: CampaignScopedArea, campaignId: string, create?: boolean) => void;
 }
 
 function createNewCampaignDraft(): Partial<Campaign> {
@@ -41,6 +53,7 @@ function createNewCampaignDraft(): Partial<Campaign> {
 export default function CampaignsPanel({
   missionDeepLink,
   onDeepLinkConsumed,
+  onOpenScoped,
 }: CampaignsPanelProps) {
   const { t } = useTranslation('admin');
   const { showAlert, showConfirm, modal } = useModal();
@@ -57,6 +70,32 @@ export default function CampaignsPanel({
     campaign: Partial<Campaign>;
     tab: MissionTabId;
   } | null>(null);
+  const [intelItems, setIntelItems] = useState<IntelItem[]>(() => intelRegistry.getAll());
+  const { defs: achievementDefs } = useAchievementCatalog();
+  const { contacts: npcContacts, dialogues: npcDialogues } = useNpcSmsCatalog();
+
+  useEffect(() => intelService.subscribeToIntelRegistry(setIntelItems), []);
+
+  const resourceSources = useMemo(
+    () => ({
+      intel: intelItems,
+      achievements: achievementDefs,
+      npcs: npcContacts,
+      dialogues: npcDialogues,
+      groups,
+    }),
+    [intelItems, achievementDefs, npcContacts, npcDialogues, groups]
+  );
+
+  const modalSummary = useMemo(() => {
+    const id = commandModal?.campaign.id;
+    return id ? summarizeCampaignResources(id, resourceSources) : null;
+  }, [commandModal?.campaign.id, resourceSources]);
+
+  const handleOpenScoped = (area: CampaignScopedArea, campaignId: string, create?: boolean) => {
+    setCommandModal(null);
+    onOpenScoped?.(area, campaignId, create);
+  };
 
   useEffect(() => {
     const unsubCampaigns = onSnapshot(
@@ -210,9 +249,10 @@ export default function CampaignsPanel({
 
       <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6">
         {campaigns.map((campaign) => {
-          const authorizedGroups = groups.filter((g) =>
-            (g.unlockedCampaigns || []).includes(campaign.id)
-          ).length;
+          const summary = summarizeCampaignResources(campaign.id, resourceSources);
+          const readiness = readinessScore(campaignReadiness(campaign, summary));
+          const ready = readiness.done === readiness.total;
+          const authorizedGroups = summary.authorizedGroups.length;
           const operatingGroups = groups.filter((g) => g.campaignId === campaign.id).length;
           const operatingAgents = allCharacters.filter(
             (c) => c.character.campaignId === campaign.id
@@ -285,6 +325,35 @@ export default function CampaignsPanel({
                   </span>
                 </div>
 
+                <button
+                  type="button"
+                  onClick={() => openManage(campaign, 'recursos')}
+                  className="w-full flex items-center gap-3 text-left group/kit"
+                  title={t('missions.card.openResources')}
+                >
+                  <span
+                    className={`lmb-led ${ready ? 'text-phosphor-400' : 'text-amber-400'}`}
+                    aria-hidden
+                  />
+                  <span className="font-display font-bold uppercase tracking-[0.16em] text-[10px] text-ash-300 group-hover/kit:text-bone transition-colors">
+                    {t('missions.card.readiness', { done: readiness.done, total: readiness.total })}
+                  </span>
+                  <span className="ml-auto flex items-center gap-3 font-mono text-[11px] text-ash-400 tabular-nums">
+                    <span title={t('missions.resources.section.intel')} className="inline-flex items-center gap-1">
+                      <span className="material-symbols-outlined text-sm text-ash-600" aria-hidden>hub</span>
+                      {summary.intel.length}
+                    </span>
+                    <span title={t('missions.resources.section.achievements')} className="inline-flex items-center gap-1">
+                      <span className="material-symbols-outlined text-sm text-ash-600" aria-hidden>emoji_events</span>
+                      {summary.achievements.length}
+                    </span>
+                    <span title={t('missions.resources.section.npcs')} className="inline-flex items-center gap-1">
+                      <span className="material-symbols-outlined text-sm text-ash-600" aria-hidden>sms</span>
+                      {summary.npcs.length}
+                    </span>
+                  </span>
+                </button>
+
                 <div className="flex flex-wrap gap-2 text-[9px] font-display font-bold uppercase tracking-widest">
                   {authorizedGroups > 0 && (
                     <span className="bg-primary/5 text-primary/70 border border-primary/20 px-2 py-1 rounded-sm">
@@ -330,6 +399,8 @@ export default function CampaignsPanel({
           allCharacters={allCharacters}
           onClose={() => setCommandModal(null)}
           onCharacterUpdate={setAllCharacters}
+          resourceSummary={modalSummary}
+          onOpenScoped={handleOpenScoped}
         />
       )}
 

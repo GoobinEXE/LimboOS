@@ -11,7 +11,7 @@ import ReportsPanel, {
   type HealthMetrics,
   type EngagementMetrics,
 } from './ReportsPanel';
-import type { OperationsSubId } from '../lib/adminNavigation';
+import type { CampaignScopeRequest, OperationsSubId } from '../lib/adminNavigation';
 import { FADE_FAST } from '../../lib/motion';
 import AdminSubTabs from './AdminSubTabs';
 
@@ -23,6 +23,9 @@ interface OperationsPanelProps {
   health: HealthMetrics;
   engagement: EngagementMetrics;
   onNavigate: (tab: string, options?: { opsSubTab?: OperationsSubId; scrollTo?: string; mesaSubTab?: string }) => void;
+  /** Pedido vindo da missão para abrir Conquistas ou SMS filtrados pela campanha. */
+  scopeRequest?: CampaignScopeRequest | null;
+  onScopeConsumed?: () => void;
 }
 
 export default function OperationsPanel({
@@ -33,6 +36,8 @@ export default function OperationsPanel({
   health,
   engagement,
   onNavigate,
+  scopeRequest,
+  onScopeConsumed,
 }: OperationsPanelProps) {
   const { t } = useTranslation('admin');
 
@@ -112,8 +117,20 @@ export default function OperationsPanel({
           )}
           {activeSub === 'acesso' && <TerminalPanel embedded />}
           {activeSub === 'qr' && <RedirectsPanel embedded />}
-          {activeSub === 'conquistas' && <AchievementsPanel embedded />}
-          {activeSub === 'sms' && <NpcSmsPanel embedded />}
+          {activeSub === 'conquistas' && (
+            <AchievementsPanel
+              embedded
+              scopeRequest={scopeRequest?.area === 'achievements' ? scopeRequest : null}
+              onScopeConsumed={onScopeConsumed}
+            />
+          )}
+          {activeSub === 'sms' && (
+            <NpcSmsPanel
+              embedded
+              scopeRequest={scopeRequest?.area === 'sms' ? scopeRequest : null}
+              onScopeConsumed={onScopeConsumed}
+            />
+          )}
         </motion.div>
     </div>
   );

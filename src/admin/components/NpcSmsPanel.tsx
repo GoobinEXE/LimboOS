@@ -1,10 +1,19 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { NpcContact, NpcDialogue, NpcSmsTurn } from '../../types/npcSms';
 import { useNpcSmsCatalog } from '../../hooks/useNpcSmsCatalog';
 import { npcSmsCatalogService } from '../../services/NpcSmsCatalogService';
 import { useToast } from './ToastProvider';
 import { useModal } from './ConfirmModal';
+import CampaignScopeSelect from './CampaignScopeSelect';
+import CampaignBindingPicker from './CampaignBindingPicker';
+import { useAdminCampaigns } from '../hooks/useAdminCampaigns';
+import {
+  bindingLabels,
+  matchesBindingScope,
+  type CampaignScope,
+} from '../lib/campaignResources';
+import type { CampaignScopeRequest } from '../lib/adminNavigation';
 
 type TabId = 'contacts' | 'dialogues';
 
@@ -12,12 +21,12 @@ const fieldClass =
   'w-full bg-black/50 border border-border text-[11px] font-bold uppercase px-3 py-2.5 text-bone outline-none focus:border-secondary rounded-sm';
 const labelClass = 'text-[9px] font-black uppercase tracking-widest text-ash-500 mb-1.5 block';
 
-function emptyContact(): NpcContact {
+function emptyContact(campaignId?: string): NpcContact {
   return {
     id: '',
     name: '',
     number: '',
-    campaignIds: 'global',
+    campaignIds: campaignId ? [campaignId] : 'global',
     enabled: true,
     source: 'custom',
   };
@@ -34,15 +43,27 @@ function emptyDialogue(npcId = ''): NpcDialogue {
   };
 }
 
-export default function NpcSmsPanel({ embedded = false }: { embedded?: boolean }) {
+interface NpcSmsPanelProps {
+  embedded?: boolean;
+  scopeRequest?: CampaignScopeRequest | null;
+  onScopeConsumed?: () => void;
+}
+
+export default function NpcSmsPanel({
+  embedded = false,
+  scopeRequest,
+  onScopeConsumed,
+}: NpcSmsPanelProps) {
   const { t } = useTranslation('admin');
   const toast = useToast();
   const { showConfirm, showAlert, modal } = useModal();
   const { contacts, dialogues, isRemote, hasRemoteContacts, hasRemoteDialogues, getContact } =
     useNpcSmsCatalog();
+  const { campaigns } = useAdminCampaigns();
 
   const [tab, setTab] = useState<TabId>('contacts');
   const [search, setSearch] = useState('');
+  const [campaignScope, setCampaignScope] = useState<CampaignScope>('all');
   const [npcFilter, setNpcFilter] = useState<string>('all');
   const [importing, setImporting] = useState(false);
 
@@ -57,16 +78,27 @@ export default function NpcSmsPanel({ embedded = false }: { embedded?: boolean }
     const q = search.toLowerCase();
     return contacts.filter(
       (c) =>
-        !q ||
-        c.name.toLowerCase().includes(q) ||
-        c.id.toLowerCase().includes(q) ||
-        c.number.toLowerCase().includes(q),
+        matchesBindingScope(c.campaignIds, campaignScope) &&
+        (!q ||
+          c.name.toLowerCase().includes(q) ||
+          c.id.toLowerCase().includes(q) ||
+          c.number.toLowerCase().includes(q)),
     );
-  }, [contacts, search]);
+  }, [contacts, search, campaignScope]);
+
+  /** Diálogo herda a missão do NPC que o envia. */
+  const scopedNpcIds = useMemo(
+    () =>
+      new Set(
+        contacts.filter((c) => matchesBindingScope(c.campaignIds, campaignScope)).map((c) => c.id),
+      ),
+    [contacts, campaignScope],
+  );
 
   const filteredDialogues = useMemo(() => {
     const q = search.toLowerCase();
     return dialogues.filter((d) => {
+      if (campaignScope !== 'all' && !scopedNpcIds.has(d.npcId)) return false;
       const matchesNpc = npcFilter === 'all' || d.npcId === npcFilter;
       const matchesSearch =
         !q ||
@@ -75,7 +107,7 @@ export default function NpcSmsPanel({ embedded = false }: { embedded?: boolean }
         d.npcId.toLowerCase().includes(q);
       return matchesNpc && matchesSearch;
     });
-  }, [dialogues, search, npcFilter]);
+  }, [dialogues, search, npcFilter, campaignScope, scopedNpcIds]);
 
   const requireRemoteContacts = async () => {
     if (hasRemoteContacts) return true;
@@ -114,11 +146,25 @@ export default function NpcSmsPanel({ embedded = false }: { embedded?: boolean }
     }
   };
 
-  const openCreateContact = () => {
+  const scopedCampaignId =
+    campaignScope !== 'all' && campaignScope !== 'global' ? campaignScope : undefined;
+
+  /** Com uma missão no filtro, o novo NPC já nasce vinculado a ela. */
+  const openCreateContact = (campaignId?: string) => {
     setIsEdit(false);
-    setContactEditor(emptyContact());
+    setContactEditor(emptyContact(campaignId ?? scopedCampaignId));
     setAvatarFile(null);
   };
+
+  useEffect(() => {
+    if (!scopeRequest) return;
+    setCampaignScope(scopeRequest.campaignId);
+    setNpcFilter('all');
+    setSearch('');
+    setTab('contacts');
+    if (scopeRequest.create) openCreateContact(scopeRequest.campaignId);
+    onScopeConsumed?.();
+  }, [scopeRequest]);
 
   const openEditContact = (c: NpcContact) => {
     setIsEdit(true);
@@ -127,7 +173,11 @@ export default function NpcSmsPanel({ embedded = false }: { embedded?: boolean }
   };
 
   const openCreateDialogue = () => {
-    const defaultNpc = contacts[0]?.id || '';
+    const defaultNpc =
+      (npcFilter !== 'all' ? npcFilter : undefined) ||
+      contacts.find((c) => scopedNpcIds.has(c.id))?.id ||
+      contacts[0]?.id ||
+      '';
     setIsEdit(false);
     setDialogueEditor(emptyDialogue(defaultNpc));
   };
@@ -140,6 +190,28 @@ export default function NpcSmsPanel({ embedded = false }: { embedded?: boolean }
     });
   };
 
+  /**
+   * O primeiro registro remoto substitui as sugestões em memória (contatos e
+   * diálogos são trocados juntos pelo serviço): importa antes de criar.
+   */
+  const ensureImportedBeforeCreate = async (hasRemote: boolean) => {
+    if (hasRemote) return true;
+    const ok = await showConfirm(
+      t('npcSms.firstCreateTitle'),
+      t('npcSms.firstCreateBody'),
+      t('npcSms.firstCreateAction'),
+    );
+    if (!ok) return false;
+    try {
+      await npcSmsCatalogService.importSuggestions();
+      return true;
+    } catch (err) {
+      console.error(err);
+      toast.error(t('npcSms.importFail'));
+      return false;
+    }
+  };
+
   const saveContact = async () => {
     if (!contactEditor) return;
     const id = contactEditor.id.trim().toUpperCase().replace(/\s+/g, '_');
@@ -147,6 +219,7 @@ export default function NpcSmsPanel({ embedded = false }: { embedded?: boolean }
       toast.error(t('npcSms.validationContact'));
       return;
     }
+    if (!isEdit && !(await ensureImportedBeforeCreate(hasRemoteContacts))) return;
     setSaving(true);
     setUploadProgress(avatarFile ? 0 : null);
     try {
@@ -193,6 +266,7 @@ export default function NpcSmsPanel({ embedded = false }: { embedded?: boolean }
       toast.error(t('npcSms.validationTurns'));
       return;
     }
+    if (!isEdit && !(await ensureImportedBeforeCreate(hasRemoteDialogues))) return;
     setSaving(true);
     try {
       const payload = {
@@ -352,7 +426,7 @@ export default function NpcSmsPanel({ embedded = false }: { embedded?: boolean }
               </button>
               <button
                 type="button"
-                onClick={tab === 'contacts' ? openCreateContact : openCreateDialogue}
+                onClick={() => (tab === 'contacts' ? openCreateContact() : openCreateDialogue())}
                 className="text-[9px] font-black uppercase tracking-widest px-3 py-2 bg-primary text-black rounded-sm"
               >
                 {tab === 'contacts' ? t('npcSms.createContact') : t('npcSms.createDialogue')}
@@ -373,6 +447,12 @@ export default function NpcSmsPanel({ embedded = false }: { embedded?: boolean }
                 className="w-full bg-black/40 border-2 border-border-subtle text-[11px] font-black uppercase px-12 py-3 text-bone outline-none focus:border-secondary rounded-sm"
               />
             </div>
+            <CampaignScopeSelect
+              value={campaignScope}
+              onChange={setCampaignScope}
+              campaigns={campaigns}
+              className="w-full sm:w-60"
+            />
             {tab === 'dialogues' && (
               <select
                 className={`${fieldClass} max-w-[200px]`}
@@ -417,6 +497,25 @@ export default function NpcSmsPanel({ embedded = false }: { embedded?: boolean }
                     )}
                   </div>
                   <p className="text-[10px] text-ash-400 font-mono mt-1">{c.number}</p>
+                  <p className="flex flex-wrap items-center gap-1 mt-1.5">
+                    <span className="material-symbols-outlined text-sm text-ash-600" aria-hidden>
+                      {c.campaignIds === 'global' ? 'public' : 'map'}
+                    </span>
+                    {c.campaignIds === 'global' ? (
+                      <span className="text-[10px] text-ash-400">{t('scope.bindGlobal')}</span>
+                    ) : c.campaignIds.length === 0 ? (
+                      <span className="text-[10px] text-amber-300/90">{t('scope.noneBound')}</span>
+                    ) : (
+                      bindingLabels(c.campaignIds, campaigns).map((name) => (
+                        <span
+                          key={name}
+                          className="text-[10px] text-primary/80 border border-accent-20 px-1.5 rounded-inset"
+                        >
+                          {name}
+                        </span>
+                      ))
+                    )}
+                  </p>
                 </div>
                 <div className="flex gap-2 shrink-0">
                   <button
@@ -509,6 +608,23 @@ export default function NpcSmsPanel({ embedded = false }: { embedded?: boolean }
             <div className="p-20 text-center text-ash-500 flex flex-col items-center">
               <span className="material-symbols-outlined text-6xl mb-4 text-ash-700" aria-hidden>sms</span>
               <p className="text-[10px] font-black uppercase tracking-[0.4em]">{t('npcSms.empty')}</p>
+              {scopedCampaignId && (
+                <div className="mt-5 flex flex-col items-center gap-3">
+                  <p className="text-[12px] text-ash-400 max-w-sm leading-relaxed">
+                    {tab === 'contacts' ? t('scope.emptyForMission') : t('npcSms.emptyDialoguesForMission')}
+                  </p>
+                  {tab === 'contacts' && (
+                    <button
+                      type="button"
+                      onClick={() => openCreateContact()}
+                      className="lmb-btn lmb-btn-primary"
+                    >
+                      <span className="material-symbols-outlined text-base" aria-hidden>person_add</span>
+                      {t('npcSms.createForMission')}
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -597,6 +713,15 @@ export default function NpcSmsPanel({ embedded = false }: { embedded?: boolean }
                     {t('npcSms.active')}
                   </label>
                 </div>
+              </div>
+              <div className="border-t border-border-subtle pt-4">
+                <CampaignBindingPicker
+                  label={t('npcSms.campaigns')}
+                  hint={t('npcSms.campaignsGlobalHint')}
+                  value={contactEditor.campaignIds}
+                  campaigns={campaigns}
+                  onChange={(next) => setContactEditor({ ...contactEditor, campaignIds: next })}
+                />
               </div>
             </div>
             <div className="px-6 py-4 border-t border-border flex gap-3 bg-black/40">

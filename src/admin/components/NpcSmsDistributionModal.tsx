@@ -10,6 +10,8 @@ import type { NpcDialogue, NpcSmsDialogueLegacy } from '../../types/npcSms';
 import Screw from '../../components/player/Screw';
 import OverlayPortal from './OverlayPortal';
 import { ADMIN_SPRING } from '../lib/motion';
+import { useAdminCampaigns } from '../hooks/useAdminCampaigns';
+import { bindingIncludes, isGlobalBinding } from '../lib/campaignResources';
 
 interface NpcSmsDistributionModalProps {
   group: Group;
@@ -47,7 +49,23 @@ export default function NpcSmsDistributionModal({
 }: NpcSmsDistributionModalProps) {
   const { t } = useTranslation('admin');
   const { enabledContacts, enabledDialogues, getContact } = useNpcSmsCatalog();
+  const { campaigns } = useAdminCampaigns();
   const [selectedNpc, setSelectedNpc] = useState<string>('all');
+  const [showAllNpcs, setShowAllNpcs] = useState(false);
+
+  const missionId = group.campaignId;
+  const missionName = missionId
+    ? campaigns.find((c) => c.id === missionId)?.name || missionId
+    : null;
+
+  /** NPCs que valem na missão do esquadrão (globais + vinculados); "todos" ignora o vínculo. */
+  const visibleContacts = useMemo(() => {
+    if (!missionId || showAllNpcs) return enabledContacts;
+    return enabledContacts.filter(
+      (c) => isGlobalBinding(c.campaignIds) || bindingIncludes(c.campaignIds, missionId),
+    );
+  }, [enabledContacts, missionId, showAllNpcs]);
+  const hiddenNpcCount = enabledContacts.length - visibleContacts.length;
   const [mode, setMode] = useState<DistMode>('shuffle');
   const [pickedIds, setPickedIds] = useState<Set<string>>(new Set());
   const [assignments, setAssignments] = useState<SmsAssignment[]>([]);
@@ -67,9 +85,12 @@ export default function NpcSmsDistributionModal({
   }, [group.characterSlots, allCharacters]);
 
   const availableDialogues = useMemo(() => {
-    if (selectedNpc === 'all') return enabledDialogues;
+    if (selectedNpc === 'all') {
+      const ids = new Set(visibleContacts.map((c) => c.id));
+      return enabledDialogues.filter((d) => ids.has(d.npcId));
+    }
     return enabledDialogues.filter((d) => d.npcId === selectedNpc);
-  }, [enabledDialogues, selectedNpc]);
+  }, [enabledDialogues, selectedNpc, visibleContacts]);
 
   const toLegacy = (d: NpcDialogue): NpcSmsDialogueLegacy =>
     toLegacyDialogue(d, getContact(d.npcId));
@@ -82,7 +103,7 @@ export default function NpcSmsDistributionModal({
 
     const npcIds =
       selectedNpc === 'all'
-        ? enabledContacts.map((n) => n.id)
+        ? visibleContacts.map((n) => n.id)
         : [selectedNpc];
 
     const newAssignments: SmsAssignment[] = [];
@@ -140,7 +161,13 @@ export default function NpcSmsDistributionModal({
     if (mode === 'shuffle') generateShuffleAssignments();
     else generatePickAssignments();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedNpc, groupCharacters, mode, pickedIds, enabledDialogues, enabledContacts]);
+  }, [selectedNpc, groupCharacters, mode, pickedIds, enabledDialogues, visibleContacts]);
+
+  useEffect(() => {
+    if (selectedNpc !== 'all' && !visibleContacts.some((c) => c.id === selectedNpc)) {
+      setSelectedNpc('all');
+    }
+  }, [visibleContacts, selectedNpc]);
 
   useEffect(() => {
     setPickedIds(new Set());
@@ -218,7 +245,26 @@ export default function NpcSmsDistributionModal({
               </h3>
               <p className="text-[10px] text-ash-500 font-bold uppercase tracking-widest mt-1">
                 Grupo: <span className="text-primary">{group.name}</span>
+                {missionName && (
+                  <>
+                    {' · '}
+                    {t('npcSms.distMission')}: <span className="text-bone">{missionName}</span>
+                  </>
+                )}
               </p>
+              {missionId && (hiddenNpcCount > 0 || showAllNpcs) && (
+                <label className="mt-3 flex items-center gap-2 text-[11px] text-ash-400 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={showAllNpcs}
+                    onChange={(e) => setShowAllNpcs(e.target.checked)}
+                    className="accent-[var(--color-accent)]"
+                  />
+                  {showAllNpcs
+                    ? t('npcSms.distShowingAll')
+                    : t('npcSms.distHidden', { count: hiddenNpcCount })}
+                </label>
+              )}
             </div>
             <button
               onClick={onClose}
@@ -240,7 +286,7 @@ export default function NpcSmsDistributionModal({
             >
               {t('deliver.npcAll')}
             </button>
-            {enabledContacts.map((npc) => (
+            {visibleContacts.map((npc) => (
               <button
                 key={npc.id}
                 onClick={() => setSelectedNpc(npc.id)}

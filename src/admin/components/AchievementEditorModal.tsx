@@ -9,7 +9,8 @@ import {
   type AchievementTier,
   type PlayerPlatform,
 } from '../../services/AchievementManager';
-import { campaigns as CAMPAIGNS } from '../../data/campaigns';
+import { useAdminCampaigns } from '../hooks/useAdminCampaigns';
+import CampaignBindingPicker from './CampaignBindingPicker';
 
 const STAT_KEYS: (keyof PlayerStats)[] = [
   'totalListenTime',
@@ -62,7 +63,8 @@ export type AchievementEditorForm = {
   ruleFlagKeys: (keyof PlayerStats)[];
 };
 
-export function emptyAchievementForm(): AchievementEditorForm {
+/** Formulário vazio; com `campaignId`, a conquista nasce vinculada àquela missão. */
+export function emptyAchievementForm(campaignId?: string): AchievementEditorForm {
   return {
     id: '',
     title: '',
@@ -72,8 +74,8 @@ export function emptyAchievementForm(): AchievementEditorForm {
     category: 'progression',
     tier: 'common',
     platforms: ['global'],
-    campaignMode: 'global',
-    campaignIds: [],
+    campaignMode: campaignId ? 'list' : 'global',
+    campaignIds: campaignId ? [campaignId] : [],
     isSecret: true,
     unlockCondition: '',
     enabled: true,
@@ -193,6 +195,7 @@ export default function AchievementEditorModal({
   onClose,
   onSave,
 }: Props) {
+  const { campaigns } = useAdminCampaigns();
   const [form, setForm] = useState(initial);
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -226,15 +229,6 @@ export default function AchievementEditorModal({
         platforms: has ? f.platforms.filter((x) => x !== p) : [...f.platforms, p],
       };
     });
-  };
-
-  const toggleCampaign = (id: string) => {
-    setForm((f) => ({
-      ...f,
-      campaignIds: f.campaignIds.includes(id)
-        ? f.campaignIds.filter((c) => c !== id)
-        : [...f.campaignIds, id],
-    }));
   };
 
   const toggleFlagKey = (key: keyof PlayerStats) => {
@@ -422,51 +416,18 @@ export default function AchievementEditorModal({
             </div>
           </div>
 
-          <div>
-            <label className={labelClass}>Campanhas</label>
-            <div className="flex flex-wrap gap-2 mb-2">
-              <button
-                type="button"
-                onClick={() => setForm((f) => ({ ...f, campaignMode: 'global' }))}
-                className={`text-[9px] font-black uppercase tracking-widest px-3 py-1.5 border rounded-sm ${
-                  form.campaignMode === 'global'
-                    ? 'border-secondary text-secondary bg-secondary/10'
-                    : 'border-border text-ash-500'
-                }`}
-              >
-                Global
-              </button>
-              <button
-                type="button"
-                onClick={() => setForm((f) => ({ ...f, campaignMode: 'list' }))}
-                className={`text-[9px] font-black uppercase tracking-widest px-3 py-1.5 border rounded-sm ${
-                  form.campaignMode === 'list'
-                    ? 'border-secondary text-secondary bg-secondary/10'
-                    : 'border-border text-ash-500'
-                }`}
-              >
-                Específicas
-              </button>
-            </div>
-            {form.campaignMode === 'list' && (
-              <div className="flex flex-wrap gap-2">
-                {CAMPAIGNS.map((c) => (
-                  <button
-                    key={c.id}
-                    type="button"
-                    onClick={() => toggleCampaign(c.id)}
-                    className={`text-[9px] font-black uppercase tracking-widest px-2.5 py-1 border rounded-sm ${
-                      form.campaignIds.includes(c.id)
-                        ? 'border-primary text-primary bg-primary/10'
-                        : 'border-border text-ash-500'
-                    }`}
-                  >
-                    {c.name || c.id}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+          <CampaignBindingPicker
+            label="Missões"
+            value={form.campaignMode === 'global' ? 'global' : form.campaignIds}
+            campaigns={campaigns}
+            onChange={(next) =>
+              setForm((f) =>
+                next === 'global'
+                  ? { ...f, campaignMode: 'global', campaignIds: [] }
+                  : { ...f, campaignMode: 'list', campaignIds: next }
+              )
+            }
+          />
 
           <div className="border-t border-border-subtle pt-4 space-y-3">
             <label className={labelClass}>Regra de desbloqueio</label>

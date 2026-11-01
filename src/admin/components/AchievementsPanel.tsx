@@ -14,7 +14,6 @@ import { useAchievementCatalog } from '../../hooks/useAchievementCatalog';
 import { achievementCatalogService } from '../../services/AchievementCatalogService';
 import { useToast } from './ToastProvider';
 import { useModal } from './ConfirmModal';
-import CampaignScopeSelect from './CampaignScopeSelect';
 import { useAdminCampaigns } from '../hooks/useAdminCampaigns';
 import {
   bindingLabels,
@@ -31,12 +30,15 @@ import AchievementEditorModal, {
 
 interface AchievementsPanelProps {
   embedded?: boolean;
+  /** Filtro de missão (vem do `?mission=` de Conteúdo). */
+  campaignScope?: CampaignScope;
   scopeRequest?: CampaignScopeRequest | null;
   onScopeConsumed?: () => void;
 }
 
 export default function AchievementsPanel({
   embedded = false,
+  campaignScope = 'all',
   scopeRequest,
   onScopeConsumed,
 }: AchievementsPanelProps) {
@@ -47,7 +49,6 @@ export default function AchievementsPanel({
   const { campaigns } = useAdminCampaigns();
 
   const [search, setSearch] = useState('');
-  const [campaignScope, setCampaignScope] = useState<CampaignScope>('all');
   const [categoryFilter, setCategoryFilter] = useState<AchievementCategory | 'all'>('all');
   const [editorOpen, setEditorOpen] = useState(false);
   const [editing, setEditing] = useState<AchievementDef | null>(null);
@@ -90,7 +91,6 @@ export default function AchievementsPanel({
 
   useEffect(() => {
     if (!scopeRequest) return;
-    setCampaignScope(scopeRequest.campaignId);
     setCategoryFilter('all');
     setSearch('');
     if (scopeRequest.create) openCreate(scopeRequest.campaignId);
@@ -258,12 +258,6 @@ export default function AchievementsPanel({
                 className="w-full bg-black/40 border-2 border-border-subtle text-[11px] font-black uppercase px-12 py-3 text-bone outline-none focus:border-secondary transition rounded-sm"
               />
             </div>
-            <CampaignScopeSelect
-              value={campaignScope}
-              onChange={setCampaignScope}
-              campaigns={campaigns}
-              className="w-full sm:w-60"
-            />
             <div className="flex items-center gap-2 flex-wrap sm:ml-auto">
               <span className="text-[10px] font-black text-ash-600 uppercase tracking-widest shrink-0">
                 {filteredDefs.length} {t('achievements.countLabel')}

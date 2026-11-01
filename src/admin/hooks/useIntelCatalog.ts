@@ -18,13 +18,13 @@ import {
   type IntelFormData,
 } from '../components/intel/intelFormUtils';
 
-export function useIntelCatalog() {
+/** `campaignScope` vem de quem exibe o catálogo (Conteúdo: `?mission=` do URL). */
+export function useIntelCatalog({ campaignScope = 'all' }: { campaignScope?: CampaignScope } = {}) {
   const { showConfirm, modal } = useModal();
   const [allItems, setAllItems] = useState<IntelItem[]>(() => intelRegistry.getAll());
   const [search, setSearch] = useState('');
   const [filterType, setFilterType] = useState<IntelType | 'ALL'>('ALL');
   const [statusFilter, setStatusFilter] = useState<IntelStatusFilter>('all');
-  const [campaignScope, setCampaignScope] = useState<CampaignScope>('all');
   /** Missão do filtro ativo: intel nova (em branco ou via upload) nasce vinculada a ela. */
   const scopedCampaignId =
     campaignScope !== 'all' && campaignScope !== 'global' ? campaignScope : undefined;
@@ -400,7 +400,6 @@ export function useIntelCatalog() {
     statusFilter,
     setStatusFilter,
     campaignScope,
-    setCampaignScope,
     showEditor,
     setShowEditor,
     editingItem,

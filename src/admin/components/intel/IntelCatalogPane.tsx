@@ -28,7 +28,8 @@ interface IntelCatalogPaneProps {
   statusFilter: IntelStatusFilter;
   campaignScope: CampaignScope;
   campaigns: Campaign[];
-  onCampaignScope: (scope: CampaignScope) => void;
+  /** Sem handler, o filtro de missão fica no cabeçalho de quem hospeda o catálogo. */
+  onCampaignScope?: (scope: CampaignScope) => void;
   isLoading?: boolean;
   onSearch: (v: string) => void;
   onFilterType: (v: IntelType | 'ALL') => void;
@@ -93,7 +94,9 @@ export default function IntelCatalogPane({
       </div>
 
       <div className="p-3 space-y-2 border-b border-primary/5 shrink-0">
-        <CampaignScopeSelect value={campaignScope} onChange={onCampaignScope} campaigns={campaigns} />
+        {onCampaignScope && (
+          <CampaignScopeSelect value={campaignScope} onChange={onCampaignScope} campaigns={campaigns} />
+        )}
         <div className="flex flex-wrap gap-1">
           {(Object.keys(INTEL_STATUS_FILTER_LABELS) as IntelStatusFilter[]).map((key) => (
             <button

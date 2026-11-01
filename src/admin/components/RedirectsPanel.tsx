@@ -8,6 +8,7 @@ import Screw from '../../components/player/Screw';
 import { intelService } from '../../services/IntelService';
 import { intelRegistry } from '../../data/intel_registry';
 import type { IntelItem } from '../../types/intel';
+import { matchesIntelScope, type CampaignScope } from '../lib/campaignResources';
 
 interface QrRedirect {
   sourceId: string;
@@ -16,7 +17,14 @@ interface QrRedirect {
   reason?: string;
 }
 
-export default function RedirectsPanel({ embedded = false }: { embedded?: boolean }) {
+export default function RedirectsPanel({
+  embedded = false,
+  campaignScope = 'all',
+}: {
+  embedded?: boolean;
+  /** Filtro de missão de Conteúdo: vale pela intel de destino (destino inexistente só em "todas"). */
+  campaignScope?: CampaignScope;
+}) {
   const { t } = useTranslation('admin');
   const [redirects, setRedirects] = useState<QrRedirect[]>([]);
   const [loading, setLoading] = useState(true);
@@ -77,12 +85,16 @@ export default function RedirectsPanel({ embedded = false }: { embedded?: boolea
     }
   };
 
-  const filteredRedirects = redirects.filter(r => 
-    (r.sourceId || '').toLowerCase().includes(search.toLowerCase()) || 
+  const filteredRedirects = redirects.filter(r => {
+    if (campaignScope !== 'all') {
+      const target = intelById.get(r.targetId);
+      if (!target || !matchesIntelScope(target, campaignScope)) return false;
+    }
+    return (r.sourceId || '').toLowerCase().includes(search.toLowerCase()) || 
     (r.targetId || '').toLowerCase().includes(search.toLowerCase()) ||
     (intelById.get(r.targetId)?.title || '').toLowerCase().includes(search.toLowerCase()) ||
-    (r.reason || '').toLowerCase().includes(search.toLowerCase())
-  );
+    (r.reason || '').toLowerCase().includes(search.toLowerCase());
+  });
 
   return (
     <section className="space-y-8">

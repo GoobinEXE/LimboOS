@@ -427,7 +427,7 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
     (area: CampaignScopedArea, campaignId: string, create = false) => {
       const section = area === 'intel' ? 'intel' : area === 'achievements' ? 'conquistas' : 'npcs';
       setScopeRequest({ area, campaignId, create });
-      nav.go(adminPath.content(section));
+      nav.go(adminPath.content(section, campaignId));
     },
     [nav]
   );

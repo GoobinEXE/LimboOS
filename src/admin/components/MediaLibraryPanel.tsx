@@ -12,6 +12,7 @@ import type { IntelItem } from '../../types/intel';
 import { Campaign } from '../../data/campaigns';
 import { useAdminCampaigns } from '../hooks/useAdminCampaigns';
 import type { CampaignScopeRequest } from '../lib/adminNavigation';
+import type { CampaignScope } from '../lib/campaignResources';
 import { useModal } from './ConfirmModal';
 import {
   formatFileSize,
@@ -42,6 +43,8 @@ interface MediaLibraryPanelProps {
   onScopeConsumed?: () => void;
   /** Dentro de Conteúdo: o título fica no cabeçalho do destino, só a contagem aparece aqui. */
   embedded?: boolean;
+  /** Filtro de missão do catálogo de intel (vem do `?mission=` de Conteúdo). */
+  campaignScope?: CampaignScope;
 }
 
 export default function MediaLibraryPanel({
@@ -50,6 +53,7 @@ export default function MediaLibraryPanel({
   allowedTypes,
   compact = false,
   embedded = false,
+  campaignScope = 'all',
   scopeRequest,
   onScopeConsumed,
 }: MediaLibraryPanelProps) {
@@ -72,12 +76,11 @@ export default function MediaLibraryPanel({
   const { showAlert, showConfirm, modal } = useModal();
   const syncingRef = useRef(false);
 
-  const intel = useIntelCatalog();
+  const intel = useIntelCatalog({ campaignScope });
   const { campaigns: campaignsForEditor } = useAdminCampaigns();
 
   useEffect(() => {
     if (!scopeRequest) return;
-    intel.setCampaignScope(scopeRequest.campaignId);
     intel.setSearch('');
     intel.setStatusFilter('all');
     intel.setFilterType('ALL');
@@ -629,7 +632,6 @@ export default function MediaLibraryPanel({
               statusFilter={intel.statusFilter}
               campaignScope={intel.campaignScope}
               campaigns={campaignsForEditor}
-              onCampaignScope={intel.setCampaignScope}
               isLoading={intel.isLoading}
               onSearch={intel.setSearch}
               onFilterType={intel.setFilterType}

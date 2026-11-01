@@ -6,13 +6,17 @@ import NpcSmsPanel from './NpcSmsPanel';
 import RedirectsPanel from './RedirectsPanel';
 import AdminSubTabs from './AdminSubTabs';
 import AdminSectionPanels from './AdminSectionPanels';
+import CampaignScopeSelect from './CampaignScopeSelect';
+import { useAdminCampaigns } from '../hooks/useAdminCampaigns';
 import {
   CONTENT_SECTIONS,
   adminPath,
   type CampaignScopeRequest,
   type ContentSectionId,
+  type NpcViewId,
   type RouteOf,
 } from '../lib/adminNavigation';
+import type { CampaignScope } from '../lib/campaignResources';
 import { useAdminNavigate } from '../hooks/useAdminRoute';
 
 interface ContentPanelProps {
@@ -24,17 +28,29 @@ interface ContentPanelProps {
 
 /**
  * Conteúdo: todos os catálogos de campanha num destino só
- * (Intel & Mídia, Conquistas, NPCs & SMS, QR & Links).
+ * (Intel & Mídia, Conquistas, NPCs & SMS, QR & Links), com um filtro de
+ * missão único no URL (`?mission=`) que vale para todos eles.
  */
 export default function ContentPanel({ route, scopeRequest, onScopeConsumed }: ContentPanelProps) {
   const { t } = useTranslation('admin');
   const nav = useAdminNavigate();
+  const { campaigns } = useAdminCampaigns();
+  const scope = route.mission;
 
   const tabs = CONTENT_SECTIONS.map((s) => ({ id: s.id, label: t(s.labelKey), icon: s.icon }));
   const current = CONTENT_SECTIONS.find((s) => s.id === route.section) ?? CONTENT_SECTIONS[0];
 
   const changeSection = (section: ContentSectionId) => {
-    if (section !== route.section) nav.go(adminPath.content(section, route.mission));
+    if (section !== route.section) nav.go(adminPath.content(section, scope));
+  };
+
+  // Filtro não cria entrada de histórico: Voltar desfaz navegação, não ajuste de filtro
+  const changeScope = (next: CampaignScope) => {
+    nav.go(adminPath.content(route.section, next, route.npcView), { replace: true });
+  };
+
+  const changeNpcView = (view: NpcViewId) => {
+    if (view !== route.npcView) nav.go(adminPath.content('npcs', scope, view));
   };
 
   return (
@@ -53,6 +69,12 @@ export default function ContentPanel({ route, scopeRequest, onScopeConsumed }: C
             )}
           </div>
         </div>
+        <CampaignScopeSelect
+          value={scope}
+          onChange={changeScope}
+          campaigns={campaigns}
+          className="w-full max-w-60 shrink-0"
+        />
       </header>
 
       <AdminSubTabs
@@ -71,6 +93,7 @@ export default function ContentPanel({ route, scopeRequest, onScopeConsumed }: C
               return (
                 <MediaLibraryPanel
                   embedded
+                  campaignScope={scope}
                   scopeRequest={scopeRequest?.area === 'intel' ? scopeRequest : null}
                   onScopeConsumed={onScopeConsumed}
                 />
@@ -79,6 +102,7 @@ export default function ContentPanel({ route, scopeRequest, onScopeConsumed }: C
               return (
                 <AchievementsPanel
                   embedded
+                  campaignScope={scope}
                   scopeRequest={scopeRequest?.area === 'achievements' ? scopeRequest : null}
                   onScopeConsumed={onScopeConsumed}
                 />
@@ -87,12 +111,15 @@ export default function ContentPanel({ route, scopeRequest, onScopeConsumed }: C
               return (
                 <NpcSmsPanel
                   embedded
+                  campaignScope={scope}
+                  npcView={route.npcView}
+                  onNpcViewChange={changeNpcView}
                   scopeRequest={scopeRequest?.area === 'sms' ? scopeRequest : null}
                   onScopeConsumed={onScopeConsumed}
                 />
               );
             case 'qr':
-              return <RedirectsPanel embedded />;
+              return <RedirectsPanel embedded campaignScope={scope} />;
           }
         }}
       />

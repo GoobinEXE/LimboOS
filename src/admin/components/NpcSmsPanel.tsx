@@ -5,7 +5,6 @@ import { useNpcSmsCatalog } from '../../hooks/useNpcSmsCatalog';
 import { npcSmsCatalogService } from '../../services/NpcSmsCatalogService';
 import { useToast } from './ToastProvider';
 import { useModal } from './ConfirmModal';
-import CampaignScopeSelect from './CampaignScopeSelect';
 import CampaignBindingPicker from './CampaignBindingPicker';
 import { useAdminCampaigns } from '../hooks/useAdminCampaigns';
 import {
@@ -13,7 +12,7 @@ import {
   matchesBindingScope,
   type CampaignScope,
 } from '../lib/campaignResources';
-import type { CampaignScopeRequest } from '../lib/adminNavigation';
+import type { CampaignScopeRequest, NpcViewId } from '../lib/adminNavigation';
 
 type TabId = 'contacts' | 'dialogues';
 
@@ -45,12 +44,20 @@ function emptyDialogue(npcId = ''): NpcDialogue {
 
 interface NpcSmsPanelProps {
   embedded?: boolean;
+  /** Filtro de missão (vem do `?mission=` de Conteúdo). */
+  campaignScope?: CampaignScope;
+  /** Aba interna controlada pela rota (`/content/npcs` ou `/content/npcs/dialogos`). */
+  npcView?: NpcViewId;
+  onNpcViewChange?: (view: NpcViewId) => void;
   scopeRequest?: CampaignScopeRequest | null;
   onScopeConsumed?: () => void;
 }
 
 export default function NpcSmsPanel({
   embedded = false,
+  campaignScope = 'all',
+  npcView,
+  onNpcViewChange,
   scopeRequest,
   onScopeConsumed,
 }: NpcSmsPanelProps) {
@@ -61,9 +68,13 @@ export default function NpcSmsPanel({
     useNpcSmsCatalog();
   const { campaigns } = useAdminCampaigns();
 
-  const [tab, setTab] = useState<TabId>('contacts');
+  const [localTab, setLocalTab] = useState<TabId>('contacts');
+  const tab: TabId = npcView ? (npcView === 'dialogos' ? 'dialogues' : 'contacts') : localTab;
+  const setTab = (id: TabId) => {
+    if (onNpcViewChange) onNpcViewChange(id === 'dialogues' ? 'dialogos' : 'contatos');
+    else setLocalTab(id);
+  };
   const [search, setSearch] = useState('');
-  const [campaignScope, setCampaignScope] = useState<CampaignScope>('all');
   const [npcFilter, setNpcFilter] = useState<string>('all');
   const [importing, setImporting] = useState(false);
 
@@ -158,10 +169,8 @@ export default function NpcSmsPanel({
 
   useEffect(() => {
     if (!scopeRequest) return;
-    setCampaignScope(scopeRequest.campaignId);
     setNpcFilter('all');
     setSearch('');
-    setTab('contacts');
     if (scopeRequest.create) openCreateContact(scopeRequest.campaignId);
     onScopeConsumed?.();
   }, [scopeRequest]);
@@ -447,12 +456,6 @@ export default function NpcSmsPanel({
                 className="w-full bg-black/40 border-2 border-border-subtle text-[11px] font-black uppercase px-12 py-3 text-bone outline-none focus:border-secondary rounded-sm"
               />
             </div>
-            <CampaignScopeSelect
-              value={campaignScope}
-              onChange={setCampaignScope}
-              campaigns={campaigns}
-              className="w-full sm:w-60"
-            />
             {tab === 'dialogues' && (
               <select
                 className={`${fieldClass} max-w-[200px]`}

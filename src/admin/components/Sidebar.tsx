@@ -33,7 +33,7 @@ export default function Sidebar({ activeDest, hrefFor, isCollapsed, onToggleColl
   return (
     <aside
       className={clsx(
-        'bg-surface-container-low border-r border-seam flex flex-col z-40 overflow-hidden shrink-0',
+        'bg-surface-container-low border-r border-seam hidden lg:flex flex-col z-40 overflow-hidden shrink-0',
         'transition-[width] duration-300 ease-drawer motion-reduce:transition-none',
         isCollapsed ? 'w-18' : 'w-60'
       )}

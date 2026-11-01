@@ -16,6 +16,9 @@ interface HeaderProps {
   /** Badge da sessão ativa (esquadrão · missão). */
   sessionLabel?: string | null;
   onOpenLive?: () => void;
+  /** Link para o app do jogador em modo jogo (`/?mode=play`). */
+  playAsAgentHref?: string;
+  onPlayAsAgent?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
 }
 
 function operatorInitials(email?: string | null): string {
@@ -32,6 +35,8 @@ export default function Header({
   breadcrumb,
   sessionLabel,
   onOpenLive,
+  playAsAgentHref,
+  onPlayAsAgent,
 }: HeaderProps) {
   const { t } = useTranslation('admin');
   const mod = modKeyLabel();
@@ -41,7 +46,7 @@ export default function Header({
       <div className="flex flex-1 items-center gap-3 min-w-0">
         <div className="flex items-center gap-2 pr-3 border-r border-border-subtle shrink-0">
           <span className="lmb-led text-accent animate-led" aria-hidden />
-          <span className="font-display uppercase font-bold tracking-[0.2em] text-[9px] text-primary hidden sm:inline">
+          <span className="font-display uppercase font-bold tracking-[0.2em] text-[9px] text-primary hidden lg:inline">
             {t('header.statusConnected')}
           </span>
         </div>
@@ -99,14 +104,15 @@ export default function Header({
           <button
             type="button"
             onClick={onSpotlight}
-            className="group flex items-center gap-2.5 h-8 pl-2.5 pr-1.5 md:w-56 bg-surface-sunken border border-border rounded-inset shadow-pressed hover:border-border-strong transition-colors"
+            className="group flex items-center gap-2.5 h-8 pl-2.5 pr-1.5 lg:w-56 bg-surface-sunken border border-border rounded-inset shadow-pressed hover:border-border-strong transition-colors"
             title={t('header.searchTitle')}
+            aria-label={t('header.searchTitle')}
           >
             <Search size={14} className="text-ash-500 group-hover:text-primary transition-colors shrink-0" />
-            <span className="flex-1 text-left text-[11px] text-ash-500 group-hover:text-ash-300 hidden md:inline transition-colors">
+            <span className="flex-1 text-left text-[11px] text-ash-500 group-hover:text-ash-300 hidden lg:inline transition-colors">
               {t('header.search')}
             </span>
-            <kbd className="lmb-kbd hidden md:inline-flex">
+            <kbd className="lmb-kbd hidden lg:inline-flex">
               {mod}K
             </kbd>
           </button>
@@ -115,7 +121,7 @@ export default function Header({
         <LanguageSelector variant="admin" className="hidden sm:flex" />
 
         <div className="flex items-center gap-3 pl-3 border-l border-border-subtle">
-          <div className="text-right hidden md:block">
+          <div className="text-right hidden lg:block">
             <p className="text-[9px] font-display font-bold uppercase tracking-[0.2em] text-ash-500 leading-none">
               {t('header.operator')}
             </p>
@@ -130,6 +136,21 @@ export default function Header({
             {operatorInitials(user?.email)}
           </div>
         </div>
+
+        {playAsAgentHref && (
+          <a
+            href={playAsAgentHref}
+            onClick={onPlayAsAgent}
+            className="lmb-btn h-8 min-h-0 px-3"
+            title={t('header.playAsAgentTitle')}
+            aria-label={t('header.playAsAgent')}
+          >
+            <span className="material-symbols-outlined text-base tracking-normal normal-case" aria-hidden>
+              sports_esports
+            </span>
+            <span className="hidden xl:inline">{t('header.playAsAgent')}</span>
+          </a>
+        )}
 
         {user && (
           <button

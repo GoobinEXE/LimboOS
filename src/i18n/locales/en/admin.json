@@ -35,6 +35,9 @@
     "statusOnlineTitle": "Grid Online",
     "navLabel": "Console navigation"
   },
+  "bottomNav": {
+    "label": "Main navigation"
+  },
   "header": {
     "statusConnected": "Status: Connected",
     "search": "Search...",
@@ -45,7 +48,9 @@
     "operator": "Authenticated Operator",
     "logout": "Logout",
     "logoutTitle": "End Session",
-    "squadFallback": "Squad"
+    "squadFallback": "Squad",
+    "playAsAgent": "Play as agent",
+    "playAsAgentTitle": "Open the player app in play mode (⌘/Ctrl+click opens a new tab)"
   },
   "footer": {
     "realtimeSync": "Realtime Data Sync",
@@ -91,7 +96,9 @@
     "item": {
       "missionInventory": "Mission Inventory",
       "missionInventorySub": "Open missions → inventory",
-      "jukebox": "Jukebox"
+      "jukebox": "Jukebox",
+      "playAsAgent": "Play as agent",
+      "playAsAgentSub": "Open the player app in play mode"
     },
     "sub": {
       "mesa": "Table",

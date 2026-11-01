@@ -35,6 +35,9 @@
     "statusOnlineTitle": "Grid Online",
     "navLabel": "Navegação do console"
   },
+  "bottomNav": {
+    "label": "Navegação principal"
+  },
   "header": {
     "statusConnected": "Status: Conectado",
     "search": "Buscar...",
@@ -45,7 +48,9 @@
     "operator": "Operador Autenticado",
     "logout": "Logout",
     "logoutTitle": "Encerrar Sessão",
-    "squadFallback": "Esquadrão"
+    "squadFallback": "Esquadrão",
+    "playAsAgent": "Jogar como agente",
+    "playAsAgentTitle": "Abrir o app do jogador em modo jogo (⌘/Ctrl+clique abre em aba nova)"
   },
   "footer": {
     "realtimeSync": "Sincronização de Dados em Tempo Real",
@@ -91,7 +96,9 @@
     "item": {
       "missionInventory": "Inventário de Missão",
       "missionInventorySub": "Abrir missões → inventário",
-      "jukebox": "Jukebox"
+      "jukebox": "Jukebox",
+      "playAsAgent": "Jogar como agente",
+      "playAsAgentSub": "Abrir o app do jogador em modo jogo"
     },
     "sub": {
       "mesa": "Mesa",

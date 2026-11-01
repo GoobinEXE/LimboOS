@@ -19,7 +19,7 @@ export interface SearchableItem {
   sublabel?: string;
   category: 'account' | 'agent' | 'tab' | 'group' | 'mission';
   icon: string;
-  /** Caminho do admin: selecionar um item é navegar (entra no histórico). */
+  /** Caminho do admin (entra no histórico) ou, fora de `/admin`, o app do jogador. */
   to: string;
 }
 
@@ -262,6 +262,15 @@ export function buildSearchItems({
     category: 'tab',
     icon: 'inventory_2',
     to: inventoryMissionId ? adminPath.mission(inventoryMissionId, 'inventario') : adminPath.missions(),
+  });
+
+  items.push({
+    id: 'tab_play_as_agent',
+    label: adminT('spotlight.item.playAsAgent'),
+    sublabel: adminT('spotlight.item.playAsAgentSub'),
+    category: 'tab',
+    icon: 'sports_esports',
+    to: '/?mode=play',
   });
 
   items.push({

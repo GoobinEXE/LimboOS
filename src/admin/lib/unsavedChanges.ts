@@ -13,3 +13,8 @@ export function setUnsavedChanges(key: string, dirty: boolean): void {
 export function hasUnsavedChanges(): boolean {
   return dirtyKeys.size > 0;
 }
+
+/** Depois que o usuário confirmou sair: evita o segundo aviso do `beforeunload`. */
+export function clearUnsavedChanges(): void {
+  dirtyKeys.clear();
+}

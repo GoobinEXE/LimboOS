@@ -18,7 +18,8 @@ import { useAdminActiveSession } from '../hooks/useAdminActiveSession';
 import { useAdminLocation, useAdminNavigate } from '../hooks/useAdminRoute';
 import { campaignLabel, masterAccountLabel } from '../lib/entityLabels';
 import { buildAdminBreadcrumb } from '../lib/adminBreadcrumb';
-import { hasUnsavedChanges } from '../lib/unsavedChanges';
+import { clearUnsavedChanges, hasUnsavedChanges } from '../lib/unsavedChanges';
+import AdminBottomNav from './AdminBottomNav';
 import { useModal } from './ConfirmModal';
 import i18n from '../../i18n';
 import { motion } from 'motion/react';
@@ -40,6 +41,7 @@ import {
 } from '../lib/adminNavigation';
 
 const SIDEBAR_COLLAPSED_KEY = 'limbo.admin.sidebarCollapsed';
+const PLAY_AS_AGENT_URL = '/?mode=play';
 
 const CampaignsPanel = React.lazy(() => import('./CampaignsPanel'));
 const ContentPanel = React.lazy(() => import('./ContentPanel'));
@@ -476,20 +478,38 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
     return () => window.removeEventListener('beforeunload', onBeforeUnload);
   }, []);
 
-  const confirmLeaveApp = useCallback(
-    async () =>
-      !hasUnsavedChanges() ||
-      showConfirm(
-        t('missions.page.leaveUnsavedTitle'),
-        t('missions.page.leaveUnsavedBody'),
-        t('missions.page.leaveUnsavedAction')
-      ),
-    [showConfirm, t]
-  );
+  const confirmLeaveApp = useCallback(async () => {
+    if (!hasUnsavedChanges()) return true;
+    const ok = await showConfirm(
+      t('missions.page.leaveUnsavedTitle'),
+      t('missions.page.leaveUnsavedBody'),
+      t('missions.page.leaveUnsavedAction')
+    );
+    if (ok) clearUnsavedChanges();
+    return ok;
+  }, [showConfirm, t]);
 
   const handleLogout = useCallback(async () => {
     if (await confirmLeaveApp()) onLogout();
   }, [confirmLeaveApp, onLogout]);
+
+  /** Abre o app do jogador em modo jogo; ⌘/Ctrl+clique abre em aba nova sem sair do console. */
+  const handlePlayAsAgent = useCallback(
+    async (e?: React.MouseEvent) => {
+      if (e && (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0)) return;
+      e?.preventDefault();
+      if (await confirmLeaveApp()) window.location.assign(PLAY_AS_AGENT_URL);
+    },
+    [confirmLeaveApp]
+  );
+
+  const handleSpotlightNavigate = useCallback(
+    (to: string) => {
+      if (to.startsWith('/admin')) nav.go(to);
+      else void handlePlayAsAgent();
+    },
+    [nav, handlePlayAsAgent]
+  );
   useEffect(() => () => {
     document.title = 'LimboOS';
   }, []);
@@ -497,7 +517,7 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
   const modKey = modKeyLabel();
 
   return (
-    <div className="h-screen bg-surface flex relative overflow-hidden font-sans">
+    <div className="h-dvh bg-surface flex relative overflow-hidden font-sans">
       <div className="noise-overlay" />
       <div className="scanlines" />
 
@@ -515,13 +535,18 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
         <Header
           user={user}
           onLogout={() => void handleLogout()}
+          playAsAgentHref={PLAY_AS_AGENT_URL}
+          onPlayAsAgent={(e) => void handlePlayAsAgent(e)}
           onSpotlight={() => setSpotlightOpen(true)}
           breadcrumb={breadcrumb}
           sessionLabel={sessionLabel}
           onOpenLive={() => nav.go(hrefFor('live'))}
         />
 
-        <main ref={mainRef} className="flex-1 overflow-y-auto px-4 py-5 sm:px-6 sm:py-6 2xl:px-10 custom-scrollbar">
+        <main
+          ref={mainRef}
+          className="flex-1 overflow-y-auto px-4 pt-5 pb-24 sm:px-6 sm:pt-6 lg:pb-6 2xl:px-10 custom-scrollbar"
+        >
           <div className="max-w-7xl mx-auto space-y-8">
             <React.Suspense
               fallback={
@@ -601,7 +626,7 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
           </div>
         </main>
 
-        <footer className="h-8 border-t border-seam bg-surface-container-lowest flex items-center justify-between gap-6 px-4 sm:px-6 shrink-0">
+        <footer className="h-8 border-t border-seam bg-surface-container-lowest hidden lg:flex items-center justify-between gap-6 px-4 sm:px-6 shrink-0">
           <div className="flex items-center gap-2.5 min-w-0">
             <span className="lmb-led text-accent animate-led" aria-hidden />
             <span className="text-[9px] font-display font-bold uppercase tracking-[0.3em] text-ash-500 truncate">
@@ -632,8 +657,10 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
         open={spotlightOpen}
         onClose={() => setSpotlightOpen(false)}
         items={spotlightItems}
-        onNavigate={nav.go}
+        onNavigate={handleSpotlightNavigate}
       />
+
+      <AdminBottomNav activeDest={route.dest} hrefFor={hrefFor} />
     </div>
   );
 }

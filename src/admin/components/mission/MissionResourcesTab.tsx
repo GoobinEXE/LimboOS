@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import type { Campaign } from '../../../data/campaigns';
 import { ACHIEVEMENT_TIER_LABELS } from '../../../services/AchievementManager';
-import type { CampaignScopedArea } from '../../lib/adminNavigation';
+import type { CampaignScopedArea, MissionSectionId } from '../../lib/adminNavigation';
 import {
   campaignReadiness,
   readinessScore,
@@ -11,13 +11,14 @@ import {
   type ReadinessState,
 } from '../../lib/campaignResources';
 import { INTEL_TYPE_OPTIONS, accessLevelLabel } from '../../lib/intelDisplay';
-import type { MissionTabId } from './types';
 
 interface MissionResourcesTabProps {
   campaign: Partial<Campaign>;
   summary: CampaignResourceSummary;
-  onGoToTab: (tab: MissionTabId) => void;
+  onGoToTab: (section: MissionSectionId) => void;
+  /** `create`: abre o editor sobre a página; sem ele, empilha o catálogo filtrado. */
   onOpenScoped: (area: CampaignScopedArea, create?: boolean) => void;
+  onWriteDialogue: () => void;
 }
 
 const LIST_LIMIT = 6;
@@ -32,13 +33,15 @@ const STATE_STYLE: Record<ReadinessState, { icon: string; tone: string; bar: str
 /**
  * Aba "Recursos" da missão: o que já existe para esta campanha em cada
  * catálogo modular (intel, conquistas, NPCs) e o que falta para jogá-la.
- * Os atalhos levam ao catálogo certo já filtrado pela missão.
+ * Criar abre o editor sobre a página; "Ver no catálogo" leva ao catálogo
+ * filtrado pela missão, e o Voltar retorna para cá.
  */
 export default function MissionResourcesTab({
   campaign,
   summary,
   onGoToTab,
   onOpenScoped,
+  onWriteDialogue,
 }: MissionResourcesTabProps) {
   const { t } = useTranslation('admin');
   const checks = campaignReadiness(campaign, summary);
@@ -96,7 +99,7 @@ export default function MissionResourcesTab({
         };
       case 'npcs':
         return summary.npcs.length > 0
-          ? { label: t('missions.resources.action.writeDialogue'), run: () => onOpenScoped('sms') }
+          ? { label: t('missions.resources.action.writeDialogue'), run: onWriteDialogue }
           : { label: t('missions.resources.action.createNpc'), run: () => onOpenScoped('sms', true) };
       case 'squads':
         return { label: t('missions.resources.action.openAccess'), run: () => onGoToTab('vinculos') };

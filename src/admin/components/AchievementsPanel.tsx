@@ -82,7 +82,6 @@ export default function AchievementsPanel({
     if (!scopeRequest) return;
     setCategoryFilter('all');
     setSearch('');
-    if (scopeRequest.create) openCreate(scopeRequest.campaignId);
     onScopeConsumed?.();
   }, [scopeRequest]);
 

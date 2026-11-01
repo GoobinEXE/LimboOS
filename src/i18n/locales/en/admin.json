@@ -272,7 +272,6 @@
       "dados": "Data",
       "vinculos": "Links",
       "inventario": "Inventory",
-      "transmissao": "Broadcast",
       "recursos": "Resources"
     },
     "modal": {
@@ -282,10 +281,24 @@
       "commandBadge": "COMMAND-CENTER",
       "commandSubtitle": "Unified operational instance management"
     },
+    "page": {
+      "back": "Missions",
+      "notFound": "Mission not found",
+      "notFoundBody": "It may have been deleted, or the link is wrong.",
+      "unsaved": "Unsaved changes",
+      "discard": "Discard changes",
+      "discardNew": "Cancel creation",
+      "discardConfirmTitle": "Discard changes?",
+      "discardConfirmBody": "The Data tab draft will be lost.",
+      "leaveUnsavedTitle": "There are unsaved changes",
+      "leaveUnsavedBody": "A mission has an unsaved draft on the Data tab. Continuing discards it.",
+      "leaveUnsavedAction": "Continue"
+    },
     "toast": {
       "saved": "Mission saved successfully.",
       "saveFail": "Could not save the campaign.",
-      "invalidSlug": "Invalid identifier: use a slug without spaces or slashes, other than \"new\"."
+      "invalidSlug": "Invalid identifier: use a slug without spaces or slashes, other than \"new\".",
+      "slugTaken": "A mission with this identifier already exists. Pick another slug."
     },
     "data": {
       "save": "Save Settings",
@@ -293,7 +306,10 @@
     },
     "inventory": {
       "revokeTitle": "Revoke Evidence",
-      "revokeBody": "Remove this item from the character inventory for this campaign?"
+      "revokeBody": "Remove this item from the character inventory for this campaign?",
+      "broadcastTitle": "Video broadcast",
+      "broadcastBody": "Plays a video on the screens of the {{n}} agent(s) in this mission, offline ones included.",
+      "broadcastAction": "Broadcast video"
     },
     "video": {
       "title": "Video Broadcast — Mission"

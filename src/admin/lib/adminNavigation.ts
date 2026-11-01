@@ -5,10 +5,10 @@
  * Só `import type` aqui: o módulo roda isolado em Node para checagens headless.
  */
 import type { CampaignScope } from './campaignResources';
-import type { MissionTabId } from '../components/mission/types';
 
 export type AdminDestinationId = 'live' | 'missions' | 'content' | 'mesa' | 'system';
-export type MissionSectionId = MissionTabId;
+/** Seções da página da missão; `apps` (mini-apps por campanha) entra aqui quando existir. */
+export type MissionSectionId = 'recursos' | 'dados' | 'vinculos' | 'inventario';
 export type ContentSectionId = 'intel' | 'conquistas' | 'npcs' | 'qr';
 export type NpcViewId = 'contatos' | 'dialogos';
 export type MesaSectionId = 'esquadroes' | 'contas' | 'acesso';
@@ -18,13 +18,12 @@ export type SystemSectionId = 'relatorios' | 'log';
 export type CampaignScopedArea = 'intel' | 'achievements' | 'sms';
 
 /**
- * Pedido de criação vindo da missão: o catálogo de destino abre o editor já
- * vinculado à campanha e consome o pedido uma vez (ver `onScopeConsumed`).
+ * "Ver no catálogo" vindo da missão: o catálogo de destino limpa busca e
+ * filtros locais (o filtro de missão já chega no URL) e consome o pedido uma vez.
  */
 export interface CampaignScopeRequest {
   area: CampaignScopedArea;
   campaignId: string;
-  create?: boolean;
 }
 
 export type AdminRoute =
@@ -71,11 +70,10 @@ export const ADMIN_DESTINATIONS: readonly AdminDestinationDef[] = [
 ];
 
 export const MISSION_SECTIONS: readonly AdminSectionDef<MissionSectionId>[] = [
-  { id: 'dados', labelKey: 'missions.tab.dados', icon: 'edit_note' },
   { id: 'recursos', labelKey: 'missions.tab.recursos', icon: 'checklist' },
+  { id: 'dados', labelKey: 'missions.tab.dados', icon: 'edit_note' },
   { id: 'vinculos', labelKey: 'missions.tab.vinculos', icon: 'key' },
   { id: 'inventario', labelKey: 'missions.tab.inventario', icon: 'inventory_2' },
-  { id: 'transmissao', labelKey: 'missions.tab.transmissao', icon: 'live_tv' },
 ];
 
 export const CONTENT_SECTIONS: readonly AdminSectionDef<ContentSectionId>[] = [
@@ -241,12 +239,9 @@ function parseRoute(segments: string[], params: URLSearchParams): AdminRoute {
     case 'missions': {
       if (!a) return { dest: 'missions', view: 'list' };
       if (a === NEW_MISSION_SEGMENT) return { dest: 'missions', view: 'new' };
-      return {
-        dest: 'missions',
-        view: 'mission',
-        campaignId: a,
-        section: isOneOf(b, MISSION_SECTIONS) ? b : DEFAULT_MISSION_SECTION,
-      };
+      // A antiga aba Transmissão virou o botão "Transmitir vídeo" do Inventário
+      const section = b === 'transmissao' ? 'inventario' : isOneOf(b, MISSION_SECTIONS) ? b : DEFAULT_MISSION_SECTION;
+      return { dest: 'missions', view: 'mission', campaignId: a, section };
     }
     case 'content': {
       const section = isOneOf(a, CONTENT_SECTIONS) ? a : DEFAULT_CONTENT_SECTION;

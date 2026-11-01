@@ -9,10 +9,8 @@ import { Group, MasterAccount, CharacterData } from '../../types/player';
 import { campaignAdminService } from '../../services/CampaignAdminService';
 import { useModal } from './ConfirmModal';
 import { intelRegistry } from '../../data/intel_registry';
-import { userService } from '../../services/UserService';
-import MissionCommandModal from './MissionCommandModal';
+import MissionWorkspace from './mission/MissionWorkspace';
 import OverlayPortal from './OverlayPortal';
-import { MissionTabId } from './mission/types';
 import { ADMIN_SPRING } from '../lib/motion';
 import { intelService } from '../../services/IntelService';
 import type { IntelItem } from '../../types/intel';
@@ -23,14 +21,25 @@ import {
   readinessScore,
   summarizeCampaignResources,
 } from '../lib/campaignResources';
-import { adminPath, type CampaignScopedArea, type RouteOf } from '../lib/adminNavigation';
+import {
+  NEW_MISSION_SEGMENT,
+  adminPath,
+  type CampaignScopedArea,
+  type MissionSectionId,
+  type NpcViewId,
+  type RouteOf,
+} from '../lib/adminNavigation';
 import { useAdminNavigate } from '../hooks/useAdminRoute';
+import { setUnsavedChanges } from '../lib/unsavedChanges';
 
 interface CampaignsPanelProps {
-  /** Última rota de Missões: lista, criação ou missão aberta numa aba. */
+  /** Última rota de Missões: lista, criação ou página de uma missão. */
   route: RouteOf<'missions'>;
-  /** Abre o catálogo de intel, conquistas ou SMS filtrado pela missão (empilha no histórico). */
-  onOpenScoped?: (area: CampaignScopedArea, campaignId: string, create?: boolean) => void;
+  /** Contas e agentes completos (listeners do Dashboard). */
+  accounts: MasterAccount[];
+  characters: { uid: string; char: CharacterData }[];
+  /** Empilha o catálogo de intel, conquistas ou SMS filtrado pela missão. */
+  onOpenScoped?: (area: CampaignScopedArea, campaignId: string, npcView?: NpcViewId) => void;
 }
 
 function createNewCampaignDraft(): Partial<Campaign> {
@@ -48,6 +57,8 @@ function createNewCampaignDraft(): Partial<Campaign> {
 
 export default function CampaignsPanel({
   route,
+  accounts,
+  characters,
   onOpenScoped,
 }: CampaignsPanelProps) {
   const { t } = useTranslation('admin');
@@ -56,16 +67,14 @@ export default function CampaignsPanel({
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [persistentItems, setPersistentItems] = useState<string[]>([]);
   const [groups, setGroups] = useState<Group[]>([]);
-  const [allCharacters, setAllCharacters] = useState<
-    { account: MasterAccount; character: CharacterData }[]
-  >([]);
   const [loading, setLoading] = useState(true);
   const [showItemsModal, setShowItemsModal] = useState(false);
   const [itemSearch, setItemSearch] = useState('');
-  const [commandModal, setCommandModal] = useState<{
-    campaign: Partial<Campaign>;
-    isNew: boolean;
-  } | null>(null);
+  // Rascunhos de Dados por missão (chave `new` para a criação): sobrevivem à navegação
+  const [drafts, setDrafts] = useState<Record<string, Partial<Campaign>>>({});
+  const [blankDraft, setBlankDraft] = useState<Partial<Campaign>>(createNewCampaignDraft);
+  // Missão recém-criada, até o snapshot do Firestore trazê-la na lista
+  const [recentlySaved, setRecentlySaved] = useState<Campaign | null>(null);
   const [intelItems, setIntelItems] = useState<IntelItem[]>(() => intelRegistry.getAll());
   const { defs: achievementDefs } = useAchievementCatalog();
   const { contacts: npcContacts, dialogues: npcDialogues } = useNpcSmsCatalog();
@@ -83,14 +92,49 @@ export default function CampaignsPanel({
     [intelItems, achievementDefs, npcContacts, npcDialogues, groups]
   );
 
-  const modalSummary = useMemo(() => {
-    const id = commandModal?.campaign.id;
-    return id ? summarizeCampaignResources(id, resourceSources) : null;
-  }, [commandModal?.campaign.id, resourceSources]);
+  /** Agentes jogáveis (sem arquivados e sem contas admin), no formato das abas da missão. */
+  const allCharacters = useMemo(() => {
+    const accountByUid = new Map(accounts.map((a) => [a.uid, a]));
+    const list: { account: MasterAccount; character: CharacterData }[] = [];
+    characters.forEach(({ uid, char }) => {
+      const account = accountByUid.get(uid);
+      if (account && !char.archived && account.role !== 'admin') list.push({ account, character: char });
+    });
+    return list;
+  }, [accounts, characters]);
 
-  // A missão continua aberta na rota de Missões: Voltar a partir do catálogo retorna a ela
-  const handleOpenScoped = (area: CampaignScopedArea, campaignId: string, create?: boolean) => {
-    onOpenScoped?.(area, campaignId, create);
+  const missionKey = route.view === 'mission' ? route.campaignId : route.view === 'new' ? NEW_MISSION_SEGMENT : null;
+  const openCampaign =
+    route.view === 'mission'
+      ? campaigns.find((c) => c.id === route.campaignId) ??
+        (recentlySaved?.id === route.campaignId ? recentlySaved : null)
+      : null;
+
+  const missionSummary = useMemo(
+    () => (openCampaign ? summarizeCampaignResources(openCampaign.id, resourceSources) : null),
+    [openCampaign, resourceSources]
+  );
+
+  useEffect(() => {
+    if (route.view === 'new' && !drafts[NEW_MISSION_SEGMENT]) setBlankDraft(createNewCampaignDraft());
+    // Só ao entrar na criação: um id novo por tentativa
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [route.view]);
+
+  // Registro global de rascunhos: recarregar, sair ou abrir o modo jogador pedem confirmação
+  useEffect(() => {
+    const keys = Object.keys(drafts);
+    keys.forEach((key) => setUnsavedChanges(`mission:${key}`, true));
+    return () => keys.forEach((key) => setUnsavedChanges(`mission:${key}`, false));
+  }, [drafts]);
+
+  const setDraft = (key: string, draft: Partial<Campaign> | null) => {
+    setDrafts((prev) => {
+      const next = { ...prev };
+      if (draft) next[key] = draft;
+      else delete next[key];
+      return next;
+    });
   };
 
   useEffect(() => {
@@ -124,7 +168,6 @@ export default function CampaignsPanel({
       setGroups(list);
     });
 
-    fetchInitialAgents();
 
     return () => {
       unsubCampaigns();
@@ -132,46 +175,6 @@ export default function CampaignsPanel({
       unsubGroups();
     };
   }, []);
-
-  // Missão aberta vem da rota; o objeto da campanha só troca quando o id muda,
-  // para que um snapshot novo não apague o rascunho do formulário
-  const routeMissionId = route.view === 'mission' ? route.campaignId : null;
-  useEffect(() => {
-    if (route.view === 'list') {
-      setCommandModal(null);
-      return;
-    }
-    if (route.view === 'new') {
-      setCommandModal((prev) => (prev?.isNew ? prev : { campaign: createNewCampaignDraft(), isNew: true }));
-      return;
-    }
-    if (loading) return;
-    setCommandModal((prev) => {
-      if (prev && !prev.isNew && prev.campaign.id === routeMissionId) return prev;
-      const target = campaigns.find((c) => c.id === routeMissionId);
-      return target ? { campaign: target, isNew: false } : null;
-    });
-  }, [route.view, routeMissionId, campaigns, loading]);
-
-  const fetchInitialAgents = async () => {
-    try {
-      const result = await userService.fetchUsersPage(50);
-      const charPromises = result.users.map((u) => userService.fetchCharactersForUser(u.uid));
-      const charResults = await Promise.all(charPromises);
-
-      const combined: { account: MasterAccount; character: CharacterData }[] = [];
-      result.users.forEach((acc, i) => {
-        charResults[i].forEach((char) => {
-          if (!char.archived && acc.role !== 'admin') {
-            combined.push({ account: acc as MasterAccount, character: char });
-          }
-        });
-      });
-      setAllCharacters(combined);
-    } catch (err) {
-      console.error('Erro ao carregar agentes iniciais:', err);
-    }
-  };
 
   const handleDeleteCampaign = async (id: string, name: string) => {
     const ok = await showConfirm(
@@ -202,8 +205,8 @@ export default function CampaignsPanel({
     }
   };
 
-  const openManage = (campaign: Campaign, tab?: MissionTabId) => {
-    nav.go(adminPath.mission(campaign.id, tab));
+  const openManage = (campaign: Campaign, section?: MissionSectionId) => {
+    nav.go(adminPath.mission(campaign.id, section));
   };
 
   const openNewMission = () => {
@@ -212,11 +215,30 @@ export default function CampaignsPanel({
 
   const handleMissionSaved = (saved: Campaign) => {
     if (route.view !== 'new') return;
-    // Troca o rascunho pela missão salva antes da rota, para o modal não fechar
-    // enquanto o snapshot do Firestore ainda não trouxe o documento novo
-    setCommandModal({ campaign: saved, isNew: false });
+    // Missão nova: a rota troca para Recursos, que mostra o que falta para jogá-la
+    setRecentlySaved(saved);
     nav.go(adminPath.mission(saved.id, 'recursos'), { replace: true });
   };
+
+  if (missionKey) {
+    return (
+      <MissionWorkspace
+        key={missionKey}
+        mode={route.view === 'new' ? 'new' : 'existing'}
+        campaign={openCampaign}
+        campaignsReady={!loading}
+        section={route.view === 'mission' ? route.section : 'dados'}
+        blankDraft={blankDraft}
+        draft={drafts[missionKey] ?? null}
+        onDraftChange={(draft) => setDraft(missionKey, draft)}
+        onSaved={handleMissionSaved}
+        groups={groups}
+        allCharacters={allCharacters}
+        resourceSummary={missionSummary}
+        onViewCatalog={(area, campaignId, npcView) => onOpenScoped?.(area, campaignId, npcView)}
+      />
+    );
+  }
 
   if (loading) {
     return (
@@ -404,25 +426,6 @@ export default function CampaignsPanel({
           );
         })}
       </div>
-
-      {commandModal && (
-        <MissionCommandModal
-          open
-          campaign={commandModal.campaign}
-          isNewMission={commandModal.isNew}
-          activeTab={route.view === 'mission' ? route.section : 'dados'}
-          onTabChange={(tab) => {
-            if (route.view === 'mission' && tab !== route.section) nav.go(adminPath.mission(route.campaignId, tab));
-          }}
-          onSaved={handleMissionSaved}
-          groups={groups}
-          allCharacters={allCharacters}
-          onClose={() => nav.back(adminPath.missions())}
-          onCharacterUpdate={setAllCharacters}
-          resourceSummary={modalSummary}
-          onOpenScoped={handleOpenScoped}
-        />
-      )}
 
       <OverlayPortal open={showItemsModal} onClose={() => setShowItemsModal(false)} withExitAnimation>
         <AnimatePresence>

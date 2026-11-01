@@ -272,7 +272,6 @@
       "dados": "Dados",
       "vinculos": "Vínculos",
       "inventario": "Inventário",
-      "transmissao": "Transmissão",
       "recursos": "Recursos"
     },
     "modal": {
@@ -282,10 +281,24 @@
       "commandBadge": "CENTRO-DE-COMANDO",
       "commandSubtitle": "Gestão unificada de instância operacional"
     },
+    "page": {
+      "back": "Missões",
+      "notFound": "Missão não encontrada",
+      "notFoundBody": "Ela pode ter sido apagada ou o link está incorreto.",
+      "unsaved": "Alterações não salvas",
+      "discard": "Descartar alterações",
+      "discardNew": "Cancelar criação",
+      "discardConfirmTitle": "Descartar alterações?",
+      "discardConfirmBody": "O rascunho da aba Dados será perdido.",
+      "leaveUnsavedTitle": "Há alterações não salvas",
+      "leaveUnsavedBody": "Uma missão tem rascunho não salvo na aba Dados. Continuar mesmo assim descarta o rascunho.",
+      "leaveUnsavedAction": "Continuar"
+    },
     "toast": {
       "saved": "Missão salva com sucesso.",
       "saveFail": "Não foi possível salvar a campanha.",
-      "invalidSlug": "Identificador inválido: use um slug sem espaços nem barras e diferente de \"new\"."
+      "invalidSlug": "Identificador inválido: use um slug sem espaços nem barras e diferente de \"new\".",
+      "slugTaken": "Já existe uma missão com este identificador. Escolha outro slug."
     },
     "data": {
       "save": "Salvar Configurações",
@@ -293,7 +306,10 @@
     },
     "inventory": {
       "revokeTitle": "Revogar Evidência",
-      "revokeBody": "Remover este item do inventário do personagem para esta campanha?"
+      "revokeBody": "Remover este item do inventário do personagem para esta campanha?",
+      "broadcastTitle": "Transmissão de vídeo",
+      "broadcastBody": "Dispara um vídeo na tela dos {{n}} agente(s) desta missão, inclusive offline.",
+      "broadcastAction": "Transmitir vídeo"
     },
     "video": {
       "title": "Transmissão de Vídeo — Missão"

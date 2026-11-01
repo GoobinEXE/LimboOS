@@ -156,7 +156,6 @@ export default function NpcSmsPanel({
     if (!scopeRequest) return;
     setNpcFilter('all');
     setSearch('');
-    if (scopeRequest.create) openCreateContact(scopeRequest.campaignId);
     onScopeConsumed?.();
   }, [scopeRequest]);
 

@@ -4,7 +4,7 @@ Revisão de 30/10/2026. Este documento cobre o que ainda exige código para mont
 
 ## 0. Linha de base: o que o admin cobre hoje
 
-A missão passou a ser o ponto de entrada para os recursos modulares. O modal de comando ganhou a aba **Recursos**, que mostra um checklist de prontidão (briefing, capa, intel, conquistas, NPCs/SMS e esquadrões com acesso) e as listas de intel, conquistas e NPCs vinculados àquela campanha. Cada atalho abre o catálogo certo já filtrado pela missão ou com o editor de criação aberto e a missão pré-selecionada. O cartão de cada missão mostra a contagem de recursos e a nota de prontidão.
+A missão passou a ser o ponto de entrada para os recursos modulares. O modal de comando ganhou a aba **Recursos**, que mostra um checklist de prontidão (briefing, capa, intel, conquistas, NPCs/SMS e esquadrões com acesso) e as listas de intel, conquistas e NPCs vinculados àquela campanha. Cada atalho abre o catálogo certo já filtrado pela missão ou com o editor de criação aberto e a missão pré-selecionada. O cartão de cada missão mostra a contagem de recursos e a nota de prontidão. Na Etapa 4 o modal virou a página da missão (`/admin/missions/:id/:seção`): criar intel, conquista ou NPC abre o editor sobre a própria página, e "Ver no catálogo" empilha Conteúdo filtrado pela missão.
 
 Os catálogos de intel (Conteúdo), conquistas e SMS/NPCs ganharam o mesmo filtro por missão (todas, só globais ou uma campanha). O editor de NPC passou a expor o vínculo com missões, que existia no modelo `NpcContact.campaignIds` sem campo na tela. O editor de conquistas listava só as campanhas do seed local e agora usa a lista viva do Firestore. A distribuição de SMS de um esquadrão mostra apenas os NPCs globais e os da missão dele, com opção de exibir todos. O painel de QR & Links sugere a intel de destino pelo título e marca destinos que não existem no catálogo.
 
@@ -37,7 +37,7 @@ A proposta separa renderizador e conteúdo. Cada mini-app vira um componente que
 
 Os efeitos ficam numa lista fechada, interpretada por um motor que chama os serviços existentes (`IntelService` para liberar intel, a escrita de stats que já alimenta `FlagRule`). Pacote não executa código: o mestre combina efeitos conhecidos, e um efeito novo continua sendo trabalho de programação. Essa fronteira mantém as regras do Firestore simples (leitura para jogadores autenticados, escrita só para admin) e impede que um pacote quebre o player.
 
-No admin, a edição entra como uma aba **Apps** no modal da missão, com um editor por tipo: tabela de comandos e hosts para o MH-DOS, editor de tópicos para o fórum (o editor de turnos de diálogo do `NpcSmsPanel` já resolve a mesma forma de lista ordenada de mensagens) e lista de arquivos para os desktops. Importar e exportar o pacote em JSON cobre a criação em massa e o versionamento fora do Firestore.
+No admin, a edição entra como a seção **Apps** da página da missão (`/admin/missions/:id/apps`, um id a mais em `MISSION_SECTIONS` de `src/admin/lib/adminNavigation.ts`), com um editor por tipo: tabela de comandos e hosts para o MH-DOS, editor de tópicos para o fórum (o editor de turnos de diálogo do `NpcSmsPanel` já resolve a mesma forma de lista ordenada de mensagens) e lista de arquivos para os desktops. Importar e exportar o pacote em JSON cobre a criação em massa e o versionamento fora do Firestore.
 
 A ordem recomendada começa pelo fórum, que é conteúdo puro sem efeitos e tem o menor risco de regressão. Depois vem o MH-DOS, que exige o motor de efeitos. Win95 e Mac reaproveitam o motor. DiskRepair fica por último, porque a mecânica do quebra-cabeça está acoplada a `DiskRepairService.ts` e aos ids de intel fixos.
 
@@ -91,7 +91,7 @@ Apagar uma missão hoje deixa referências soltas, e o próprio texto de confirm
 |---|---|---|---|
 | 1 | `system/catalogState`, fim da recriação do seed, `campaignLabel` sem fallback, limpeza de vínculos ao apagar missão | baixo | nada |
 | 2 | Regra `condition`, `RULE_REGISTRY` e editor gerado por esquema | médio, isolado em `AchievementManager` e no editor | nada |
-| 3 | Pacote do fórum Limbo e aba Apps no modal da missão | médio | etapa 1 |
+| 3 | Pacote do fórum Limbo e seção Apps da página da missão | médio | etapa 1 |
 | 4 | Pacote do MH-DOS e motor de efeitos | alto, toca no fluxo de desbloqueio | etapa 3 |
 | 5 | Registro de aparelhos e troca de `isNokiaTheme` por capacidades | alto, toca nos shells do player | nada |
 | 6 | Pacotes de Win95, Mac e DiskRepair, saída da intel fixa | médio | etapas 4 e 5 |

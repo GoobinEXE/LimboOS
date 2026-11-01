@@ -9,7 +9,10 @@ interface MissionDataTabProps {
   isNew: boolean;
   onChange: (campaign: Partial<Campaign>) => void;
   onSave: (e: React.FormEvent) => void;
-  onCancel: () => void;
+  /** Descarta o rascunho (na criação, também volta à lista). */
+  onDiscard: () => void;
+  discardLabel: string;
+  discardDisabled?: boolean;
   saving?: boolean;
 }
 
@@ -18,7 +21,9 @@ export default function MissionDataTab({
   isNew,
   onChange,
   onSave,
-  onCancel,
+  onDiscard,
+  discardLabel,
+  discardDisabled = false,
   saving = false,
 }: MissionDataTabProps) {
   const { t } = useTranslation('admin');
@@ -219,10 +224,11 @@ export default function MissionDataTab({
         <div className="flex flex-col sm:flex-row justify-end gap-4 pt-8 border-t border-border-subtle">
           <button
             type="button"
-            onClick={onCancel}
-            className="px-8 py-4 text-[10px] font-display font-bold text-ash-600 hover:text-bone uppercase tracking-[0.3em] transition"
+            onClick={onDiscard}
+            disabled={discardDisabled || saving}
+            className="px-8 py-4 text-[10px] font-display font-bold text-ash-600 hover:text-bone uppercase tracking-[0.3em] transition disabled:opacity-40 disabled:hover:text-ash-600"
           >
-            Abortar Missão
+            {discardLabel}
           </button>
           <button
             type="submit"

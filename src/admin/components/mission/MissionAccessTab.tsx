@@ -86,10 +86,6 @@ export default function MissionAccessTab({
 
   return (
     <div className="space-y-8">
-      <p className="text-[9px] font-display font-bold text-ash-600 uppercase tracking-widest border border-border-subtle bg-black/20 px-4 py-3 rounded-sm">
-        Lista limitada aos 50 agentes mais recentes. Use a aba Jogadores para buscas avançadas.
-      </p>
-
       <div className="flex items-center gap-3">
         <div className="h-px flex-1 bg-white/5" />
         <span className="text-[9px] font-display font-bold text-ash-600 uppercase tracking-[0.3em]">

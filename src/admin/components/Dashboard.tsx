@@ -18,6 +18,8 @@ import { useAdminActiveSession } from '../hooks/useAdminActiveSession';
 import { useAdminLocation, useAdminNavigate } from '../hooks/useAdminRoute';
 import { campaignLabel, masterAccountLabel } from '../lib/entityLabels';
 import { buildAdminBreadcrumb } from '../lib/adminBreadcrumb';
+import { hasUnsavedChanges } from '../lib/unsavedChanges';
+import { useModal } from './ConfirmModal';
 import i18n from '../../i18n';
 import { motion } from 'motion/react';
 import { ADMIN_FADE } from '../lib/motion';
@@ -33,6 +35,7 @@ import {
   type AdminRoute,
   type CampaignScopeRequest,
   type CampaignScopedArea,
+  type NpcViewId,
   type RouteOf,
 } from '../lib/adminNavigation';
 
@@ -144,6 +147,7 @@ function computeCampaignMetrics(campaigns: Campaign[]): CampaignMetrics {
 export default function Dashboard({ user, onLogout }: DashboardProps) {
   const { t } = useTranslation('admin');
   const [isAdmin, setIsAdmin] = useState(false);
+  const { showConfirm, modal: confirmModal } = useModal();
   const { route, redirect, key: locationKey, hash, path } = useAdminLocation();
   const nav = useAdminNavigate();
   // Última rota de cada destino visitado: mantém o painel montado (keep-alive)
@@ -422,12 +426,12 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
 
   const clearScopeRequest = useCallback(() => setScopeRequest(null), []);
 
-  /** Atalhos da missão: empilha o catálogo do recurso; Voltar retorna à missão. */
+  /** "Ver no catálogo" da missão: empilha o catálogo filtrado; Voltar retorna à missão. */
   const openCampaignScope = useCallback(
-    (area: CampaignScopedArea, campaignId: string, create = false) => {
+    (area: CampaignScopedArea, campaignId: string, npcView?: NpcViewId) => {
       const section = area === 'intel' ? 'intel' : area === 'achievements' ? 'conquistas' : 'npcs';
-      setScopeRequest({ area, campaignId, create });
-      nav.go(adminPath.content(section, campaignId));
+      setScopeRequest({ area, campaignId });
+      nav.go(adminPath.content(section, campaignId, npcView));
     },
     [nav]
   );
@@ -460,6 +464,32 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
   useEffect(() => {
     document.title = `${[...breadcrumb].reverse().map((c) => c.label).join(' · ')} · LimboOS`;
   }, [breadcrumb]);
+
+  // Rascunho só se perde saindo do app (recarga, fechar aba, logout, modo jogador)
+  useEffect(() => {
+    const onBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (!hasUnsavedChanges()) return;
+      e.preventDefault();
+      e.returnValue = '';
+    };
+    window.addEventListener('beforeunload', onBeforeUnload);
+    return () => window.removeEventListener('beforeunload', onBeforeUnload);
+  }, []);
+
+  const confirmLeaveApp = useCallback(
+    async () =>
+      !hasUnsavedChanges() ||
+      showConfirm(
+        t('missions.page.leaveUnsavedTitle'),
+        t('missions.page.leaveUnsavedBody'),
+        t('missions.page.leaveUnsavedAction')
+      ),
+    [showConfirm, t]
+  );
+
+  const handleLogout = useCallback(async () => {
+    if (await confirmLeaveApp()) onLogout();
+  }, [confirmLeaveApp, onLogout]);
   useEffect(() => () => {
     document.title = 'LimboOS';
   }, []);
@@ -471,6 +501,7 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
       <div className="noise-overlay" />
       <div className="scanlines" />
 
+      {confirmModal}
       {redirect && <Navigate to={redirect.includes('#') ? redirect : `${redirect}${hash}`} replace />}
 
       <Sidebar
@@ -483,7 +514,7 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
       <div className="flex-1 flex flex-col overflow-hidden relative z-10">
         <Header
           user={user}
-          onLogout={onLogout}
+          onLogout={() => void handleLogout()}
           onSpotlight={() => setSpotlightOpen(true)}
           breadcrumb={breadcrumb}
           sessionLabel={sessionLabel}
@@ -526,7 +557,12 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
 
               {routeOf('missions') && (
                 <AdminTabPanel active={route.dest === 'missions'}>
-                  <CampaignsPanel route={routeOf('missions')!} onOpenScoped={openCampaignScope} />
+                  <CampaignsPanel
+                    route={routeOf('missions')!}
+                    accounts={allAccounts}
+                    characters={allCharacters}
+                    onOpenScoped={openCampaignScope}
+                  />
                 </AdminTabPanel>
               )}
 

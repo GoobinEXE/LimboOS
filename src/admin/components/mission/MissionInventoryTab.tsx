@@ -35,6 +35,7 @@ export default function MissionInventoryTab({
     null
   );
   const [remoteIntelTitles, setRemoteIntelTitles] = useState<Record<string, string>>({});
+  const [showBroadcast, setShowBroadcast] = useState(false);
 
   const campaignCharacters = useMemo(() => {
     return allCharacters.filter(({ character }) => {
@@ -161,6 +162,23 @@ export default function MissionInventoryTab({
     <>
       {modal}
       <div className="space-y-8">
+        {campaignCharacters.length > 0 && (
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-border bg-black/30 p-5 rounded-sm">
+            <div className="min-w-0">
+              <h4 className="text-[11px] font-display font-bold uppercase tracking-[0.2em] text-primary">
+                {t('missions.inventory.broadcastTitle')}
+              </h4>
+              <p className="text-[11px] text-ash-400 leading-relaxed mt-1">
+                {t('missions.inventory.broadcastBody', { n: campaignCharacters.length })}
+              </p>
+            </div>
+            <button type="button" onClick={() => setShowBroadcast(true)} className="lmb-btn lmb-btn-primary shrink-0">
+              <span className="material-symbols-outlined text-base" aria-hidden>cast</span>
+              {t('missions.inventory.broadcastAction')}
+            </button>
+          </div>
+        )}
+
         {campaignCharacters.length === 0 && (
           <div className="py-24 text-center border-2 border-dashed border-border-subtle rounded-sm flex flex-col items-center">
             <span className="material-symbols-outlined text-5xl text-ash-700 mb-4" aria-hidden>
@@ -272,6 +290,20 @@ export default function MissionInventoryTab({
           );
         })}
       </div>
+
+      {showBroadcast && (
+        <IntelDistributionDrawer
+          broadcastMode
+          campaignId={campaign.id}
+          targets={campaignCharacters.map(({ account, character }) => ({
+            uid: account.uid,
+            characterId: character.id,
+          }))}
+          title={t('missions.video.title')}
+          onClose={() => setShowBroadcast(false)}
+          onSuccess={() => setShowBroadcast(false)}
+        />
+      )}
 
       {showGrantModal &&
         (() => {

@@ -6,6 +6,9 @@ export interface AdminSubTab<T extends string> {
   id: T;
   label: string;
   icon: string;
+  /** Aba visível mas inativa (ex.: seções da missão antes de salvar). */
+  disabled?: boolean;
+  title?: string;
 }
 
 interface AdminSubTabsProps<T extends string> {
@@ -63,10 +66,16 @@ export default function AdminSubTabs<T extends string>({
             role="tab"
             data-tab-id={tab.id}
             aria-selected={isActive}
+            aria-disabled={tab.disabled || undefined}
             tabIndex={isActive ? 0 : -1}
-            onClick={() => onChange(tab.id)}
+            title={tab.title}
+            onClick={() => !tab.disabled && onChange(tab.id)}
             className={`relative flex items-center gap-2 h-10 px-4 text-[10px] font-display font-bold tracking-[0.2em] uppercase rounded-t-inset transition-colors ${
-              isActive ? 'text-primary' : 'text-ash-500 hover:text-bone hover:bg-white/[0.03]'
+              isActive
+                ? 'text-primary'
+                : tab.disabled
+                  ? 'text-ash-700 cursor-not-allowed'
+                  : 'text-ash-500 hover:text-bone hover:bg-white/[0.03]'
             }`}
           >
             <span className="material-symbols-outlined text-base" aria-hidden>{tab.icon}</span>

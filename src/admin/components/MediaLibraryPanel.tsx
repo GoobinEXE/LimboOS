@@ -37,7 +37,7 @@ interface MediaLibraryPanelProps {
   allowedTypes?: MediaType[];
   /** Compact chrome for modal selector. */
   compact?: boolean;
-  /** Pedido vindo da missão: filtra o catálogo intel pela campanha (e abre o editor com `create`). */
+  /** "Ver no catálogo" vindo da missão: limpa busca e filtros locais do catálogo de intel. */
   scopeRequest?: CampaignScopeRequest | null;
   onScopeConsumed?: () => void;
   /** Dentro de Conteúdo: o título fica no cabeçalho do destino, só a contagem aparece aqui. */
@@ -83,7 +83,6 @@ export default function MediaLibraryPanel({
     intel.setSearch('');
     intel.setStatusFilter('all');
     intel.setFilterType('ALL');
-    if (scopeRequest.create) intel.handleNewItem(scopeRequest.campaignId);
     onScopeConsumed?.();
   }, [scopeRequest]);
 

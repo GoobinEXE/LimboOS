@@ -706,6 +706,13 @@ export default function LiveWorkspace({
             key={deliverKind}
             kind={deliverKind}
             targets={deliverTargets}
+            missionId={
+              activeSession?.campaignId ||
+              (deliverTargets.length > 0 &&
+              deliverTargets.every((d) => d.character.campaignId === deliverTargets[0].character.campaignId)
+                ? deliverTargets[0].character.campaignId
+                : null)
+            }
             onClose={() => {
               setDeliverKind(null);
               setDeliverTargets([]);

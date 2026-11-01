@@ -223,6 +223,14 @@
       "achievementFail": "Falha ao outorgar conquista",
       "smsOk": "{{n}} torpedo(s) enviados",
       "smsFail": "Falha ao distribuir SMS"
+    },
+    "sms": {
+      "noSquad": "Sem esquadrão — SMS não será enviado",
+      "noAgents": "Nenhum destinatário em esquadrão",
+      "summary": "{{dialogues}} diálogo(s) para {{agents}} agente(s)",
+      "send": "Distribuir SMS",
+      "sending": "Enviando...",
+      "squadLine": "Esquadrão: {{name}}"
     }
   },
   "sessionGlobals": {

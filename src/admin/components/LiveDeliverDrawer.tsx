@@ -1,20 +1,18 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
 import type { CharacterData, Group } from '../../types/player';
 import type { IntelGrantTarget } from '../../services/IntelService';
 import { userService } from '../../services/UserService';
 import { groupService } from '../../services/GroupService';
 import { activityLogger } from '../../services/ActivityLogger';
 import { resolveCampaignPlatform } from '../../data/campaigns';
-import { toLegacyDialogue } from '../../data/npcMessages';
 import { useAchievementCatalog } from '../../hooks/useAchievementCatalog';
-import { useNpcSmsCatalog } from '../../hooks/useNpcSmsCatalog';
 import IntelDistributionDrawer from './IntelDistributionDrawer';
-import OverlayPortal from './OverlayPortal';
-import Screw from '../../components/player/Screw';
+import SmsDistributionDrawer, { type SmsTarget } from './SmsDistributionDrawer';
+import DeliverShell from './DeliverShell';
 import { useToast } from './ToastProvider';
-import { ADMIN_SPRING, overlayFade } from '../lib/motion';
+import { ADMIN_SPRING } from '../lib/motion';
 
 export type LiveDeliverKind = 'intel' | 'achievements' | 'sms' | 'video';
 
@@ -28,17 +26,10 @@ export interface LiveDeliverTarget {
 interface LiveDeliverDrawerProps {
   kind: LiveDeliverKind;
   targets: LiveDeliverTarget[];
+  /** Missão da sessão (ou dos alvos): filtra os NPCs da distribuição de SMS. */
+  missionId?: string | null;
   onClose: () => void;
   onSuccess: () => void;
-}
-
-function shuffleArray<T>(array: T[]): T[] {
-  const arr = [...array];
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr;
 }
 
 /**
@@ -47,6 +38,7 @@ function shuffleArray<T>(array: T[]): T[] {
 export default function LiveDeliverDrawer({
   kind,
   targets,
+  missionId,
   onClose,
   onSuccess,
 }: LiveDeliverDrawerProps) {
@@ -83,7 +75,7 @@ export default function LiveDeliverDrawer({
     );
   }
 
-  return <SmsDeliverPane targets={targets} onClose={onClose} onSuccess={onSuccess} />;
+  return <LiveSmsDeliver targets={targets} missionId={missionId} onClose={onClose} onSuccess={onSuccess} />;
 }
 
 function AchievementDeliverPane({
@@ -213,233 +205,51 @@ function AchievementDeliverPane({
   );
 }
 
-function SmsDeliverPane({
+/** SMS ao vivo: resolve o esquadrão de cada alvo e abre a distribuição unificada. */
+function LiveSmsDeliver({
   targets,
+  missionId,
   onClose,
   onSuccess,
 }: {
   targets: LiveDeliverTarget[];
+  missionId?: string | null;
   onClose: () => void;
   onSuccess: () => void;
 }) {
   const { t } = useTranslation('admin');
-  const toast = useToast();
-  const { enabledContacts, enabledDialogues, getContact } = useNpcSmsCatalog();
   const [groups, setGroups] = useState<Group[]>([]);
-  const [selectedNpc, setSelectedNpc] = useState('all');
-  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    return groupService.subscribeToGroups(setGroups);
-  }, []);
+  useEffect(() => groupService.subscribeToGroups(setGroups), []);
 
-  const targetsWithGroup = useMemo(() => {
-    return targets.map((t) => {
-      const group = groups.find((g) =>
-        (g.characterSlots || []).some((s) => s.uid === t.uid && s.characterId === t.characterId)
-      );
-      return { ...t, group };
-    });
-  }, [targets, groups]);
-
-  const missingGroup = targetsWithGroup.filter((t) => !t.group);
-  const ready = targetsWithGroup.filter((t) => t.group);
-
-  const handleDistribute = async () => {
-    if (ready.length === 0) return;
-    setLoading(true);
-    try {
-      const npcIds =
-        selectedNpc === 'all' ? enabledContacts.map((n) => n.id) : [selectedNpc];
-      let sent = 0;
-
-      for (const npcId of npcIds) {
-        const dialogues = enabledDialogues.filter((d) => d.npcId === npcId);
-        if (dialogues.length === 0) continue;
-        const shuffled = shuffleArray(dialogues);
-
-        for (let i = 0; i < ready.length; i++) {
-          const target = ready[i];
-          const dialogue = shuffled[i % shuffled.length];
-          const legacy = toLegacyDialogue(dialogue, getContact(npcId));
-          await groupService.sendNpcDialogueToCharacter(
-            target.group!.id,
-            target.characterId,
-            target.character.codinome || 'Agente',
-            target.character.phoneNumber || '(Sem Telefone)',
-            legacy
-          );
-          sent++;
-        }
-      }
-
-      activityLogger.logAdmin(
-        'gm.mpg',
-        'npc_sms_distributed_live',
-        `SMS ao vivo: ${sent} diálogo(s) para ${ready.length} agente(s)`
-      );
-      toast.success(t('deliver.toast.smsOk', { n: sent }));
-      onSuccess();
-      onClose();
-    } catch (err) {
-      console.error(err);
-      toast.error(t('deliver.toast.smsFail'));
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <DeliverShell title={t('deliver.kind.sms')} targets={targets} onClose={loading ? undefined : onClose}>
-      <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
-        <div>
-          <p className="text-[9px] font-display font-bold uppercase tracking-widest text-ash-500 mb-2">
-            NPC
-          </p>
-          <select
-            value={selectedNpc}
-            onChange={(e) => setSelectedNpc(e.target.value)}
-            className="w-full bg-black/50 border border-border px-4 py-3 text-[10px] font-display font-bold uppercase tracking-widest text-primary outline-none"
-          >
-            <option value="all">{t('deliver.npcAll')}</option>
-            {enabledContacts.map((n) => (
-              <option key={n.id} value={n.id}>
-                {n.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {missingGroup.length > 0 && (
-          <div className="border border-yellow-500/30 bg-yellow-500/5 px-4 py-3">
-            <p className="text-[9px] font-display font-bold uppercase tracking-widest text-yellow-500/80">
-              Sem esquadrão — SMS não será enviado
-            </p>
-            <p className="text-[10px] text-ash-500 mt-1">
-              {missingGroup.map((t) => t.label).join(', ')}
-            </p>
-          </div>
-        )}
-
-        <div className="space-y-2">
-          <p className="text-[9px] font-display font-bold uppercase tracking-widest text-ash-500">
-            Destinatários prontos ({ready.length})
-          </p>
-          {ready.map((t) => (
-            <div
-              key={`${t.uid}_${t.characterId}`}
-              className="flex justify-between px-3 py-2 bg-black/40 border border-border-subtle text-[10px] font-display font-bold uppercase tracking-widest"
-            >
-              <span className="text-bone">{t.label}</span>
-              <span className="text-primary/60">{t.group?.name}</span>
-            </div>
-          ))}
-          {ready.length === 0 && (
-            <p className="text-[10px] text-ash-600 uppercase tracking-widest">
-              Nenhum alvo em esquadrão
-            </p>
-          )}
-        </div>
-      </div>
-      <div className="p-4 border-t border-border-subtle bg-black/30 flex justify-end gap-3">
-        <button
-          type="button"
-          disabled={loading}
-          onClick={onClose}
-          className="px-4 py-2 text-[10px] font-display font-bold uppercase tracking-widest text-ash-500 hover:text-bone"
-        >
-          {t('accounts.cancel')}
-        </button>
-        <motion.button
-          type="button"
-          disabled={loading || ready.length === 0}
-          onClick={handleDistribute}
-          whileTap={{ scale: 0.97 }}
-          animate={loading ? { scale: [1, 0.98, 1] } : { scale: 1 }}
-          transition={loading ? { repeat: Infinity, duration: 0.8 } : ADMIN_SPRING}
-          className="px-5 py-2 bg-primary text-black text-[10px] font-display font-black uppercase tracking-widest disabled:opacity-30 flex items-center gap-2"
-        >
-          {loading ? (
-            <>
-              <span className="material-symbols-outlined text-sm animate-spin">progress_activity</span>
-              Enviando...
-            </>
-          ) : (
-            `Enviar a ${ready.length}`
-          )}
-        </motion.button>
-      </div>
-    </DeliverShell>
+  const smsTargets = useMemo(
+    (): SmsTarget[] =>
+      targets.map((target) => {
+        const group = groups.find((g) =>
+          (g.characterSlots || []).some((s) => s.uid === target.uid && s.characterId === target.characterId)
+        );
+        return {
+          uid: target.uid,
+          characterId: target.characterId,
+          codinome: target.character.codinome,
+          phoneNumber: target.character.phoneNumber,
+          groupId: group?.id ?? null,
+          groupName: group?.name,
+          label: target.label,
+        };
+      }),
+    [targets, groups]
   );
-}
-
-function DeliverShell({
-  title,
-  targets,
-  onClose,
-  children,
-}: {
-  title: string;
-  targets: LiveDeliverTarget[];
-  onClose?: () => void;
-  children: React.ReactNode;
-}) {
-  const [visible, setVisible] = useState(true);
-
-  const requestClose = () => {
-    if (!onClose) return;
-    setVisible(false);
-  };
 
   return (
-    <OverlayPortal open onClose={onClose ? requestClose : undefined}>
-      <AnimatePresence onExitComplete={() => { if (!visible) onClose?.(); }}>
-        {visible && (
-          <motion.div
-            key="deliver-backdrop"
-            variants={overlayFade}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            className="fixed inset-0 z-[120] flex justify-end bg-surface-scrim"
-            onClick={() => requestClose()}
-          >
-            <motion.div
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
-              transition={ADMIN_SPRING}
-              className="bg-surface-container-low border-l border-seam w-full max-w-xl shadow-2xl flex flex-col h-full relative overflow-hidden font-display"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <Screw className="top-4 left-4" />
-              <Screw className="top-4 right-4 -rotate-90" />
-              <div className="noise-overlay" />
-              <div className="scanlines" />
-
-              <div className="p-6 border-b-4 border-seam bg-black/40 relative z-10 flex justify-between items-start gap-4">
-                <div className="min-w-0">
-                  <h3 className="font-black text-xl text-bone uppercase tracking-widest truncate">{title}</h3>
-                  <p className="text-[10px] text-ash-500 font-bold uppercase tracking-widest mt-1 truncate">
-                    {targets.length} alvo(s): {targets.map((t) => t.label).join(', ')}
-                  </p>
-                </div>
-                {onClose && (
-                  <button
-                    type="button"
-                    onClick={requestClose}
-                    className="p-2 text-ash-600 hover:text-bone material-symbols-outlined shrink-0"
-                  >
-                    close
-                  </button>
-                )}
-              </div>
-
-              <div className="flex-1 flex flex-col min-h-0 relative z-10">{children}</div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </OverlayPortal>
+    <SmsDistributionDrawer
+      title={t('deliver.kind.sms')}
+      targets={smsTargets}
+      missionId={missionId}
+      onClose={onClose}
+      onSuccess={onSuccess}
+      logAction="npc_sms_distributed_live"
+      logContext="SMS ao vivo"
+    />
   );
 }

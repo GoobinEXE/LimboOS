@@ -223,6 +223,14 @@
       "achievementFail": "Failed to grant achievement",
       "smsOk": "{{n}} message(s) sent",
       "smsFail": "Failed to distribute SMS"
+    },
+    "sms": {
+      "noSquad": "No squad — SMS will not be sent",
+      "noAgents": "No recipient belongs to a squad",
+      "summary": "{{dialogues}} dialogue(s) for {{agents}} agent(s)",
+      "send": "Distribute SMS",
+      "sending": "Sending...",
+      "squadLine": "Squad: {{name}}"
     }
   },
   "sessionGlobals": {

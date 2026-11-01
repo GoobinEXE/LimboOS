@@ -10,7 +10,7 @@ import { db } from '../../lib/firebase';
 import { collection, onSnapshot, Timestamp } from 'firebase/firestore';
 import { useModal } from './ConfirmModal';
 import IntelDistributionDrawer from './IntelDistributionDrawer';
-import NpcSmsDistributionModal from './NpcSmsDistributionModal';
+import SmsDistributionDrawer from './SmsDistributionDrawer';
 import { Link } from 'react-router-dom';
 import { campaignLabel, masterAccountLabel, masterAccountLabelByUid } from '../lib/entityLabels';
 import { ADMIN_FADE, listItem, staggerDelay } from '../lib/motion';
@@ -690,11 +690,28 @@ export default function GroupManager({
       {showSmsModal && (() => {
         const targetGroup = groups.find(g => g.id === showSmsModal);
         return targetGroup ? (
-          <NpcSmsDistributionModal 
-             group={targetGroup}
-             allCharacters={allCharacters}
-             onClose={() => setShowSmsModal(null)}
-             onSuccess={() => {}}
+          <SmsDistributionDrawer
+            title={t('squads.smsTitle')}
+            subtitle={t('deliver.sms.squadLine', { name: targetGroup.name })}
+            missionId={targetGroup.campaignId}
+            targets={(targetGroup.characterSlots || []).flatMap((slot) => {
+              const found = allCharacters.find((c) => c.uid === slot.uid && c.char.id === slot.characterId);
+              return found
+                ? [{
+                    uid: slot.uid,
+                    characterId: slot.characterId,
+                    codinome: found.char.codinome,
+                    phoneNumber: found.char.phoneNumber,
+                    groupId: targetGroup.id,
+                    groupName: targetGroup.name,
+                    label: found.char.codinome || slot.characterId,
+                  }]
+                : [];
+            })}
+            onClose={() => setShowSmsModal(null)}
+            onSuccess={() => {}}
+            logAction="npc_sms_distributed"
+            logContext={`Distribuição de torpedos para o grupo ${targetGroup.name}`}
           />
         ) : null;
       })()}

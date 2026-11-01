@@ -21,12 +21,7 @@ import {
   type CampaignScope,
 } from '../lib/campaignResources';
 import type { CampaignScopeRequest } from '../lib/adminNavigation';
-import AchievementEditorModal, {
-  emptyAchievementForm,
-  formFromDef,
-  formToDefInput,
-  type AchievementEditorForm,
-} from './AchievementEditorModal';
+import { useAchievementEditor } from '../hooks/useAchievementEditor';
 
 interface AchievementsPanelProps {
   embedded?: boolean;
@@ -50,11 +45,7 @@ export default function AchievementsPanel({
 
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<AchievementCategory | 'all'>('all');
-  const [editorOpen, setEditorOpen] = useState(false);
-  const [editing, setEditing] = useState<AchievementDef | null>(null);
-  const [editorForm, setEditorForm] = useState<AchievementEditorForm>(emptyAchievementForm());
-  const [saving, setSaving] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
+  const achievementEditor = useAchievementEditor();
   const [importing, setImporting] = useState(false);
 
   const filteredDefs = useMemo(() => {
@@ -84,9 +75,7 @@ export default function AchievementsPanel({
   const openCreate = (campaignId?: string) => {
     const scoped =
       campaignId ?? (campaignScope !== 'all' && campaignScope !== 'global' ? campaignScope : undefined);
-    setEditing(null);
-    setEditorForm(emptyAchievementForm(scoped));
-    setEditorOpen(true);
+    achievementEditor.openCreate(scoped);
   };
 
   useEffect(() => {
@@ -97,11 +86,7 @@ export default function AchievementsPanel({
     onScopeConsumed?.();
   }, [scopeRequest]);
 
-  const openEdit = (def: AchievementDef) => {
-    setEditing(def);
-    setEditorForm(formFromDef(def));
-    setEditorOpen(true);
-  };
+  const openEdit = achievementEditor.openEdit;
 
   const handleImport = async () => {
     const ok = await showConfirm(
@@ -155,65 +140,6 @@ export default function AchievementsPanel({
     } catch (err) {
       console.error(err);
       toast.error(t('achievements.deleteFail'));
-    }
-  };
-
-  const handleSave = async (form: AchievementEditorForm, file: File | null) => {
-    const isEdit = Boolean(editing);
-    const source = editing?.source || 'custom';
-    let input;
-    try {
-      input = formToDefInput(form, source);
-    } catch {
-      toast.error(t('achievements.saveFail'));
-      return;
-    }
-    if (!input.id || !input.title) {
-      toast.error(t('achievements.validation'));
-      return;
-    }
-    if (!isRemote && !isEdit) {
-      // A primeira conquista no Firestore substitui as sugestões em memória:
-      // importa antes para o catálogo não "perder" as sugestões.
-      const ok = await showConfirm(
-        t('achievements.firstCreateTitle'),
-        t('achievements.firstCreateBody'),
-        t('achievements.firstCreateAction'),
-      );
-      if (!ok) return;
-      try {
-        await achievementCatalogService.importSuggestions();
-      } catch (err) {
-        console.error(err);
-        toast.error(t('achievements.importFail'));
-        return;
-      }
-    }
-
-    setSaving(true);
-    setUploadProgress(file ? 0 : null);
-    try {
-      if (file) {
-        const url = await achievementCatalogService.uploadIcon(input.id, file, (pct) =>
-          setUploadProgress(pct),
-        );
-        input.iconUrl = url;
-      }
-
-      if (isEdit && editing) {
-        const { id: _id, source: _src, ...patch } = input;
-        await achievementCatalogService.update(editing.id, patch);
-      } else {
-        await achievementCatalogService.create({ ...input, source: 'custom' });
-      }
-      toast.success(t('achievements.saveOk'));
-      setEditorOpen(false);
-    } catch (err) {
-      console.error(err);
-      toast.error(t('achievements.saveFail'));
-    } finally {
-      setSaving(false);
-      setUploadProgress(null);
     }
   };
 
@@ -445,15 +371,7 @@ export default function AchievementsPanel({
         </div>
       </div>
 
-      <AchievementEditorModal
-        open={editorOpen}
-        initial={editorForm}
-        isEdit={Boolean(editing)}
-        saving={saving}
-        uploadProgress={uploadProgress}
-        onClose={() => !saving && setEditorOpen(false)}
-        onSave={handleSave}
-      />
+      {achievementEditor.editor}
     </section>
   );
 }

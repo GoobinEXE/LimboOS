@@ -5,7 +5,8 @@ import { useNpcSmsCatalog } from '../../hooks/useNpcSmsCatalog';
 import { npcSmsCatalogService } from '../../services/NpcSmsCatalogService';
 import { useToast } from './ToastProvider';
 import { useModal } from './ConfirmModal';
-import CampaignBindingPicker from './CampaignBindingPicker';
+import { npcFieldClass, npcLabelClass } from './NpcContactEditorModal';
+import { ensureNpcCatalogImported, useNpcContactEditor } from '../hooks/useNpcContactEditor';
 import { useAdminCampaigns } from '../hooks/useAdminCampaigns';
 import {
   bindingLabels,
@@ -16,20 +17,8 @@ import type { CampaignScopeRequest, NpcViewId } from '../lib/adminNavigation';
 
 type TabId = 'contacts' | 'dialogues';
 
-const fieldClass =
-  'w-full bg-black/50 border border-border text-[11px] font-bold uppercase px-3 py-2.5 text-bone outline-none focus:border-secondary rounded-sm';
-const labelClass = 'text-[9px] font-black uppercase tracking-widest text-ash-500 mb-1.5 block';
-
-function emptyContact(campaignId?: string): NpcContact {
-  return {
-    id: '',
-    name: '',
-    number: '',
-    campaignIds: campaignId ? [campaignId] : 'global',
-    enabled: true,
-    source: 'custom',
-  };
-}
+const fieldClass = npcFieldClass;
+const labelClass = npcLabelClass;
 
 function emptyDialogue(npcId = ''): NpcDialogue {
   return {
@@ -78,12 +67,10 @@ export default function NpcSmsPanel({
   const [npcFilter, setNpcFilter] = useState<string>('all');
   const [importing, setImporting] = useState(false);
 
-  const [contactEditor, setContactEditor] = useState<NpcContact | null>(null);
+  const contactEditor = useNpcContactEditor();
   const [dialogueEditor, setDialogueEditor] = useState<NpcDialogue | null>(null);
   const [isEdit, setIsEdit] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [avatarFile, setAvatarFile] = useState<File | null>(null);
-  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
 
   const filteredContacts = useMemo(() => {
     const q = search.toLowerCase();
@@ -162,9 +149,7 @@ export default function NpcSmsPanel({
 
   /** Com uma missão no filtro, o novo NPC já nasce vinculado a ela. */
   const openCreateContact = (campaignId?: string) => {
-    setIsEdit(false);
-    setContactEditor(emptyContact(campaignId ?? scopedCampaignId));
-    setAvatarFile(null);
+    contactEditor.openCreate(campaignId ?? scopedCampaignId);
   };
 
   useEffect(() => {
@@ -175,11 +160,7 @@ export default function NpcSmsPanel({
     onScopeConsumed?.();
   }, [scopeRequest]);
 
-  const openEditContact = (c: NpcContact) => {
-    setIsEdit(true);
-    setContactEditor({ ...c });
-    setAvatarFile(null);
-  };
+  const openEditContact = contactEditor.openEdit;
 
   const openCreateDialogue = () => {
     const defaultNpc =
@@ -199,69 +180,8 @@ export default function NpcSmsPanel({
     });
   };
 
-  /**
-   * O primeiro registro remoto substitui as sugestões em memória (contatos e
-   * diálogos são trocados juntos pelo serviço): importa antes de criar.
-   */
-  const ensureImportedBeforeCreate = async (hasRemote: boolean) => {
-    if (hasRemote) return true;
-    const ok = await showConfirm(
-      t('npcSms.firstCreateTitle'),
-      t('npcSms.firstCreateBody'),
-      t('npcSms.firstCreateAction'),
-    );
-    if (!ok) return false;
-    try {
-      await npcSmsCatalogService.importSuggestions();
-      return true;
-    } catch (err) {
-      console.error(err);
-      toast.error(t('npcSms.importFail'));
-      return false;
-    }
-  };
-
-  const saveContact = async () => {
-    if (!contactEditor) return;
-    const id = contactEditor.id.trim().toUpperCase().replace(/\s+/g, '_');
-    if (!id || !contactEditor.name.trim()) {
-      toast.error(t('npcSms.validationContact'));
-      return;
-    }
-    if (!isEdit && !(await ensureImportedBeforeCreate(hasRemoteContacts))) return;
-    setSaving(true);
-    setUploadProgress(avatarFile ? 0 : null);
-    try {
-      let avatarUrl = contactEditor.avatarUrl;
-      if (avatarFile) {
-        avatarUrl = await npcSmsCatalogService.uploadAvatar(id, avatarFile, (p) =>
-          setUploadProgress(p),
-        );
-      }
-      const payload = {
-        ...contactEditor,
-        id,
-        name: contactEditor.name.trim(),
-        number: contactEditor.number.trim(),
-        avatarUrl,
-        source: isEdit ? contactEditor.source : ('custom' as const),
-      };
-      if (isEdit) {
-        const { id: _id, source: _s, ...patch } = payload;
-        await npcSmsCatalogService.updateContact(id, patch);
-      } else {
-        await npcSmsCatalogService.createContact(payload);
-      }
-      toast.success(t('npcSms.saveOk'));
-      setContactEditor(null);
-    } catch (err) {
-      console.error(err);
-      toast.error(t('npcSms.saveFail'));
-    } finally {
-      setSaving(false);
-      setUploadProgress(null);
-    }
-  };
+  const ensureImportedBeforeCreate = (hasRemote: boolean) =>
+    ensureNpcCatalogImported(hasRemote, showConfirm, () => toast.error(t('npcSms.importFail')), t);
 
   const saveDialogue = async () => {
     if (!dialogueEditor) return;
@@ -633,121 +553,7 @@ export default function NpcSmsPanel({
         </div>
       </div>
 
-      {/* Contact editor */}
-      {contactEditor && (
-        <div
-          className="fixed inset-0 z-[9000] flex items-center justify-center bg-surface-scrim p-4"
-          onMouseDown={(e) => {
-            if (e.target === e.currentTarget && !saving) setContactEditor(null);
-          }}
-        >
-          <div className="bg-seam border-2 border-border w-full max-w-lg rounded-card shadow-2xl overflow-hidden">
-            <div className="px-6 py-4 border-b border-border flex justify-between items-center bg-black/40">
-              <h3 className="text-xs font-black uppercase tracking-[0.2em] text-bone">
-                {isEdit ? t('npcSms.editContact') : t('npcSms.createContact')}
-              </h3>
-              <button type="button" onClick={() => !saving && setContactEditor(null)} className="material-symbols-outlined text-ash-500">
-                close
-              </button>
-            </div>
-            <div className="p-6 space-y-4">
-              <div className="flex gap-4">
-                <div className="shrink-0 space-y-2">
-                  <div className="w-16 h-16 rounded-lg border border-secondary/30 overflow-hidden bg-black flex items-center justify-center">
-                    {avatarFile || contactEditor.avatarUrl ? (
-                      <img
-                        src={avatarFile ? URL.createObjectURL(avatarFile) : contactEditor.avatarUrl}
-                        alt=""
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <span className="material-symbols-outlined text-ash-600">person</span>
-                    )}
-                  </div>
-                  <label className="block cursor-pointer text-[9px] font-black uppercase tracking-widest text-secondary border border-secondary/30 px-2 py-1.5 text-center rounded-sm">
-                    {t('npcSms.avatar')}
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(e) => setAvatarFile(e.target.files?.[0] || null)}
-                    />
-                  </label>
-                  {uploadProgress != null && (
-                    <p className="text-[9px] text-ash-500 font-mono">{Math.round(uploadProgress)}%</p>
-                  )}
-                </div>
-                <div className="flex-1 space-y-3">
-                  <div>
-                    <label className={labelClass}>ID</label>
-                    <input
-                      className={fieldClass}
-                      disabled={isEdit}
-                      value={contactEditor.id}
-                      placeholder="NIL_ECHO"
-                      onChange={(e) => setContactEditor({ ...contactEditor, id: e.target.value })}
-                    />
-                  </div>
-                  <div>
-                    <label className={labelClass}>{t('npcSms.name')}</label>
-                    <input
-                      className={fieldClass}
-                      value={contactEditor.name}
-                      onChange={(e) => setContactEditor({ ...contactEditor, name: e.target.value })}
-                    />
-                  </div>
-                  <div>
-                    <label className={labelClass}>{t('npcSms.number')}</label>
-                    <input
-                      className={fieldClass}
-                      value={contactEditor.number}
-                      placeholder="(11) 92003-0100"
-                      onChange={(e) => setContactEditor({ ...contactEditor, number: e.target.value })}
-                    />
-                  </div>
-                  <label className="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-ash-400">
-                    <input
-                      type="checkbox"
-                      checked={contactEditor.enabled}
-                      onChange={(e) =>
-                        setContactEditor({ ...contactEditor, enabled: e.target.checked })
-                      }
-                    />
-                    {t('npcSms.active')}
-                  </label>
-                </div>
-              </div>
-              <div className="border-t border-border-subtle pt-4">
-                <CampaignBindingPicker
-                  label={t('npcSms.campaigns')}
-                  hint={t('npcSms.campaignsGlobalHint')}
-                  value={contactEditor.campaignIds}
-                  campaigns={campaigns}
-                  onChange={(next) => setContactEditor({ ...contactEditor, campaignIds: next })}
-                />
-              </div>
-            </div>
-            <div className="px-6 py-4 border-t border-border flex gap-3 bg-black/40">
-              <button
-                type="button"
-                disabled={saving}
-                onClick={() => setContactEditor(null)}
-                className="flex-1 px-4 py-3 text-[10px] font-black uppercase tracking-widest text-ash-500 bg-[#333] rounded-sm"
-              >
-                {t('npcSms.cancel')}
-              </button>
-              <button
-                type="button"
-                disabled={saving}
-                onClick={saveContact}
-                className="flex-1 px-4 py-3 text-[10px] font-black uppercase tracking-widest bg-primary text-black rounded-sm disabled:opacity-40"
-              >
-                {saving ? '…' : t('npcSms.save')}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {contactEditor.editor}
 
       {/* Dialogue editor */}
       {dialogueEditor && (

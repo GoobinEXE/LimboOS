@@ -25,9 +25,8 @@ import {
 import MediaUploadZone from './media/MediaUploadZone';
 import MediaFolderSidebar, { FolderFilter } from './media/MediaFolderSidebar';
 import MediaFolderAssignModal from './media/MediaFolderAssignModal';
-import MediaSelectorModal from './MediaSelectorModal';
 import IntelCatalogPane from './intel/IntelCatalogPane';
-import IntelEditorModal from './intel/IntelEditorModal';
+import IntelEditorHost from './intel/IntelEditorHost';
 import IntelQrModal from './intel/IntelQrModal';
 import IntelExportDrawer from './intel/IntelExportDrawer';
 import { useIntelCatalog } from '../hooks/useIntelCatalog';
@@ -648,31 +647,7 @@ export default function MediaLibraryPanel({
 
       {showCatalog && (
         <>
-          <MediaSelectorModal
-            isOpen={intel.isMediaSelectorOpen}
-            onClose={() => intel.setIsMediaSelectorOpen(false)}
-            onSelect={intel.handleMediaSelect}
-            allowedTypes={intel.formData.type === 'VIDEO' ? ['video'] : undefined}
-            title={intel.formData.type === 'VIDEO' ? t('media.selectVideo') : t('media.selectMedia')}
-          />
-          <IntelEditorModal
-            open={intel.showEditor}
-            editingItem={intel.editingItem}
-            formData={intel.formData}
-            campaigns={campaignsForEditor}
-            youtubeInput={intel.youtubeInput}
-            mediaUploading={intel.mediaUploading}
-            mediaFileInputRef={intel.mediaFileInputRef}
-            videoFileInputRef={intel.videoFileInputRef}
-            onClose={() => intel.setShowEditor(false)}
-            onSave={() => void intel.handleSave()}
-            onUpdateField={intel.updateField}
-            onUpdateMeta={intel.updateMeta}
-            onYoutubeInput={intel.setYoutubeInput}
-            onApplyYoutube={intel.handleApplyYoutubeLink}
-            onMediaUpload={(files) => void intel.handleMediaFileUpload(files)}
-            onOpenLibrary={() => intel.setIsMediaSelectorOpen(true)}
-          />
+          <IntelEditorHost intel={intel} campaigns={campaignsForEditor} />
           <IntelQrModal
             item={intel.qrCodeModal}
             onClose={() => intel.setQrCodeModal(null)}

@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useDateLocale } from '../../i18n/dateLocale';
 import { format, formatDistanceToNow } from "date-fns";
@@ -12,6 +13,8 @@ import AgentDossierView from "./AgentDossierView";
 import OverlayPortal from './OverlayPortal';
 import { motion, AnimatePresence } from 'motion/react';
 import { ADMIN_SPRING, ADMIN_FADE, listItem, staggerDelay } from '../lib/motion';
+import { adminPath } from '../lib/adminNavigation';
+import { useAdminNavigate } from '../hooks/useAdminRoute';
 
 type SortField = 'masterName' | 'role' | 'createdAt' | 'lastLogin';
 type SortDir = 'asc' | 'desc';
@@ -55,17 +58,19 @@ function statusBadge(status: ReturnType<typeof getAccountStatus>, label: string)
 export default function UserRegistry({
   isAdmin,
   embedded = false,
-  deepLinkAccountUid,
-  deepLinkAgent,
-  onDeepLinkConsumed,
+  accountUid,
+  agentId,
 }: {
   isAdmin: boolean;
   embedded?: boolean;
-  deepLinkAccountUid?: string | null;
-  deepLinkAgent?: { uid: string; charId: string } | null;
-  onDeepLinkConsumed?: () => void;
+  /** Conta aberta (`/admin/mesa/contas/:uid`). */
+  accountUid?: string;
+  /** Dossiê aberto (`/admin/mesa/contas/:uid/:charId`). */
+  agentId?: string;
 }) {
   const { t } = useTranslation('admin');
+  const nav = useAdminNavigate();
+  const appliedRouteRef = useRef<string | null>(null);
   const dateLocale = useDateLocale();
   const [accounts, setAccounts] = useState<MasterAccount[]>([]);
   const [charactersByUid, setCharactersByUid] = useState<Record<string, CharacterData[]>>({});
@@ -185,21 +190,24 @@ export default function UserRegistry({
     return () => unsub();
   }, [isAdmin]);
 
-  // Deep link do Spotlight / Dashboard
+  // Conta e dossiê abertos vêm do URL; sem uid na rota, os overlays fecham
   useEffect(() => {
-    if (!deepLinkAccountUid && !deepLinkAgent) return;
-    if (accounts.length === 0) return;
+    const routeKey = accountUid ? `${accountUid}/${agentId ?? ''}` : null;
+    if (!routeKey) {
+      appliedRouteRef.current = null;
+      setSelectedAgent(null);
+      setEditingAccount(null);
+      setResetPasswordValue('');
+      return;
+    }
+    if (appliedRouteRef.current === routeKey || accounts.length === 0) return;
 
     let cancelled = false;
 
     const run = async () => {
-      const uid = deepLinkAgent?.uid || deepLinkAccountUid;
-      if (!uid) return;
+      const uid = accountUid!;
       const acc = accounts.find((a) => a.uid === uid);
-      if (!acc) {
-        onDeepLinkConsumed?.();
-        return;
-      }
+      if (!acc) return;
 
       setExpandedAccounts((prev) => new Set(prev).add(uid));
       let chars = getOwnProperty(charactersByUid, uid);
@@ -209,32 +217,35 @@ export default function UserRegistry({
           if (cancelled) return;
           setCharactersByUid((prev) => ({ ...prev, [uid]: chars! }));
         } catch {
-          onDeepLinkConsumed?.();
           return;
         }
       }
 
       if (cancelled) return;
+      appliedRouteRef.current = routeKey;
 
-      if (deepLinkAgent) {
-        const char = (chars || []).find((c) => c.id === deepLinkAgent.charId);
-        if (char) setSelectedAgent({ uid, char });
-        else setEditingAccount(acc);
+      const char = agentId ? (chars || []).find((c) => c.id === agentId) : undefined;
+      if (char) {
+        setEditingAccount(null);
+        setSelectedAgent({ uid, char });
       } else {
+        setSelectedAgent(null);
         setEditMasterName(acc.masterName || '');
         setEditNotes(acc.notes || '');
+        setResetPasswordValue('');
         setEditingAccount(acc);
       }
-      onDeepLinkConsumed?.();
     };
 
     void run();
     return () => {
       cancelled = true;
     };
-    // charactersByUid intencionalmente omitido — só reage ao deep link
+    // charactersByUid intencionalmente omitido — só reage à rota e à chegada das contas
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [deepLinkAccountUid, deepLinkAgent, accounts]);
+  }, [accountUid, agentId, accounts]);
+
+  const closeOverlay = () => nav.back(adminPath.mesa('contas'));
 
   const handleCreateUser = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -285,10 +296,7 @@ export default function UserRegistry({
 
   const handleOpenEdit = (e: React.MouseEvent, acc: MasterAccount) => {
     e.stopPropagation();
-    setEditingAccount(acc);
-    setEditMasterName(acc.masterName || '');
-    setEditNotes(acc.notes || '');
-    setResetPasswordValue('');
+    nav.go(adminPath.account(acc.uid));
   };
 
   const toggleSort = (field: SortField) => {
@@ -581,7 +589,7 @@ export default function UserRegistry({
                               {chars.map(item => (
                                 <div 
                                   key={item.char.id} 
-                                  onClick={(e) => { e.stopPropagation(); setSelectedAgent(item); }} 
+                                  onClick={(e) => { e.stopPropagation(); nav.go(adminPath.agent(item.uid, item.char.id)); }} 
                                   className={`bg-surface-container-low border border-border-subtle p-4 hover:border-primary/30 transition cursor-pointer flex justify-between items-center group shadow-md ${item.char.archived ? 'opacity-40 hover:opacity-80 grayscale' : ''}`}
                                 >
                                    <div className="flex items-center gap-4">
@@ -627,7 +635,7 @@ export default function UserRegistry({
           uid={selectedAgent.uid} 
           character={selectedAgent.char} 
           masterAccount={accounts.find(a => a.uid === selectedAgent.uid)!}
-          onClose={() => setSelectedAgent(null)}
+          onClose={closeOverlay}
           onUpdate={refreshAgents}
         />
       )}
@@ -688,7 +696,7 @@ export default function UserRegistry({
       </OverlayPortal>
 
       {/* Edit Account Drawer */}
-      <OverlayPortal open={!!editingAccount} onClose={() => { setEditingAccount(null); setResetPasswordValue(""); }} withExitAnimation>
+      <OverlayPortal open={!!editingAccount} onClose={closeOverlay} withExitAnimation>
         <AnimatePresence>
           {editingAccount && (
         <motion.div
@@ -697,7 +705,7 @@ export default function UserRegistry({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
-          onClick={(e) => { if (e.target === e.currentTarget) { setEditingAccount(null); setResetPasswordValue(""); } }}
+          onClick={(e) => { if (e.target === e.currentTarget) closeOverlay(); }}
         >
           <motion.div
             initial={{ x: '100%' }}
@@ -711,7 +719,7 @@ export default function UserRegistry({
                  <div className="bg-primary px-2 py-0.5 text-[10px] font-black text-black tracking-widest uppercase inline-block mb-2">{t('accounts.edit.protocol')}</div>
                  <h3 className="font-black text-3xl text-bone uppercase tracking-tighter">Diretrizes da <span className="text-primary">Conta</span></h3>
                </div>
-               <button onClick={() => { setEditingAccount(null); setResetPasswordValue(""); }} className="text-ash-600 hover:text-bone transition material-symbols-outlined -mt-2">close</button>
+               <button onClick={closeOverlay} aria-label={t('close', { ns: 'common' })} className="text-ash-600 hover:text-bone transition material-symbols-outlined -mt-2">close</button>
             </div>
             
             <div className="flex-1 overflow-y-auto custom-scrollbar p-8 bg-black/40 space-y-10">
@@ -746,15 +754,15 @@ export default function UserRegistry({
                  <div className="space-y-4">
                     <label className="block text-[9px] font-black text-ash-500 uppercase tracking-[0.3em] mb-4">{t('reports.hardware')}</label>
                     <p className="text-[10px] text-ash-500 font-bold uppercase tracking-widest leading-relaxed">
-                      Autorização DOS/Mac fica em Sistema → Acesso (grants persistentes). Push durante a sessão fica no Ao Vivo.
+                      {t('accounts.edit.hardwareHint')}
                     </p>
-                    <a
-                      href="/admin?tab=systems&sub=acesso"
+                    <Link
+                      to={adminPath.mesa('acesso')}
                       className="inline-flex items-center gap-2 px-4 py-3 border border-primary/30 text-primary text-[10px] font-black uppercase tracking-widest hover:bg-primary/10 transition-colors"
                     >
-                      <span className="material-symbols-outlined text-base">lock_open</span>
-                      Gerenciar em Acesso
-                    </a>
+                      <span className="material-symbols-outlined text-base" aria-hidden>lock_open</span>
+                      {t('accounts.edit.hardwareLink')}
+                    </Link>
                  </div>
                  <div className="space-y-4">
                     <label className="block text-[9px] font-black text-ash-500 uppercase tracking-[0.3em] mb-4">{t('accounts.edit.authorityLevel')}</label>

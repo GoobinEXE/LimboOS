@@ -1,6 +1,17 @@
-import React, { useEffect, useRef } from 'react';
+import React, { createContext, useContext, useEffect, useRef } from 'react';
 import { useAnimate } from 'motion/react';
 import { ADMIN_FADE } from '../lib/motion';
+
+/**
+ * Falso quando algum painel ancestral está oculto. Overlays em portal
+ * (modais, gavetas, menus) consultam o contexto para não ficarem sobre
+ * outro destino depois de um Voltar ou de um atalho ⌘1–5.
+ */
+export const AdminPanelActiveContext = createContext(true);
+
+export function useAdminPanelActive(): boolean {
+  return useContext(AdminPanelActiveContext);
+}
 
 interface AdminTabPanelProps {
   active: boolean;
@@ -13,6 +24,7 @@ interface AdminTabPanelProps {
  * remounting children (Firestore listeners stay alive).
  */
 export default function AdminTabPanel({ active, children }: AdminTabPanelProps) {
+  const parentActive = useContext(AdminPanelActiveContext);
   const [scope, animate] = useAnimate();
   const wasActive = useRef(active);
   const isFirst = useRef(true);
@@ -36,7 +48,11 @@ export default function AdminTabPanel({ active, children }: AdminTabPanelProps) 
 
   return (
     <div className={active ? 'block' : 'hidden'} aria-hidden={!active}>
-      <div ref={scope}>{children}</div>
+      <div ref={scope}>
+        <AdminPanelActiveContext.Provider value={active && parentActive}>
+          {children}
+        </AdminPanelActiveContext.Provider>
+      </div>
     </div>
   );
 }

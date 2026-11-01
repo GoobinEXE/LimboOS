@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { createPortal } from 'react-dom';
+import { useAdminPanelActive } from './AdminTabPanel';
 import { format } from 'date-fns';
 import { motion } from 'motion/react';
 import { userService } from '../../services/UserService';
@@ -33,6 +34,7 @@ interface AgentDossierViewProps {
 }
 
 export default function AgentDossierView({ uid, character, masterAccount, onClose, onUpdate }: AgentDossierViewProps) {
+  const panelActive = useAdminPanelActive();
   const { t } = useTranslation('admin');
   const [details, setDetails] = useState<{
     intel: { id: string; unlockedAt: any }[];
@@ -210,6 +212,9 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
     activityLogger.logAdmin('gm.mpg', 'achievement_revoke', `Revogou medalha ${achId} de ${character.codinome}`, { uid, charId: character.id, achId });
     await loadDetails();
   };
+
+  // Painel oculto (outra rota ativa): o dossiê não fica sobre o destino atual
+  if (!panelActive) return null;
 
   if (loading) return createPortal(
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-surface-scrim">

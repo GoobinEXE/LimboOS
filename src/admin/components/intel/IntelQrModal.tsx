@@ -97,7 +97,7 @@ export default function IntelQrModal({ item, onClose, onFeedback }: IntelQrModal
               Gerar QR desta <span className="text-primary">{t('live.deliver.intel')}</span>
             </h3>
             <p className="text-[9px] font-display font-bold text-ash-500 uppercase tracking-widest text-center mb-6">
-              Valor = ID da intel · Para mapear QR físico errado → Sistema → QR & Links
+              Valor = ID da intel · Para mapear QR físico errado → Conteúdo → QR & Links
             </p>
             <div id="qr-code-container-intel" className="bg-white p-6 rounded-sm mb-8 shadow-inner ring-4 ring-primary/20">
               <QRCode value={item.id} size={200} />

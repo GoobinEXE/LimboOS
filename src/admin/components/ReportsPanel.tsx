@@ -1,7 +1,8 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import AnalyticsPanel from './AnalyticsPanel';
-import SystemLogPanel from './SystemLogPanel';
+import { adminPath } from '../lib/adminNavigation';
+import { useAdminNavigate } from '../hooks/useAdminRoute';
 
 export type AgentMetrics = {
   active: number;
@@ -39,21 +40,17 @@ interface ReportsPanelProps {
   campaigns: CampaignMetrics;
   health: HealthMetrics;
   engagement: EngagementMetrics;
-  onNavigate: (tab: string, options?: { opsSubTab?: string; scrollTo?: string; mesaSubTab?: string }) => void;
 }
 
 /**
- * Sistema → Relatórios — Panorama + BI + log completo (fora da home Ao Vivo).
+ * Sistema → Relatórios — Panorama + BI. O log completo é a seção Sistema → Log.
  */
 export default function ReportsPanel({
   agents,
   campaigns,
   health,
   engagement,
-  onNavigate,
 }: ReportsPanelProps) {
-  const { t } = useTranslation('admin');
-
   return (
     <div className="space-y-8">
       <OperationalPanorama
@@ -61,14 +58,9 @@ export default function ReportsPanel({
         campaigns={campaigns}
         health={health}
         engagement={engagement}
-        onNavigate={onNavigate}
       />
-      <div id="admin-analytics">
-        <AnalyticsPanel onNavigate={onNavigate as never} />
-      </div>
-      <div id="admin-system-log" className="border-t border-primary/10 pt-8">
-        <SectionDivider title={t('reports.logDivider')} />
-        <SystemLogPanel />
+      <div id="admin-analytics" className="scroll-mt-6">
+        <AnalyticsPanel />
       </div>
     </div>
   );
@@ -79,15 +71,15 @@ function OperationalPanorama({
   campaigns,
   health,
   engagement,
-  onNavigate,
 }: ReportsPanelProps) {
   const { t } = useTranslation('admin');
-  const goPlayers = () => onNavigate('mesa', { mesaSubTab: 'contas' });
-  const goMissions = () => onNavigate('missions');
-  const goAcesso = () => onNavigate('systems', { opsSubTab: 'acesso' });
-  const goAnalytics = () => onNavigate('systems', { opsSubTab: 'relatorios', scrollTo: 'admin-analytics' });
-  const goLog = () => onNavigate('systems', { opsSubTab: 'relatorios', scrollTo: 'admin-system-log' });
-  const goAchievements = () => onNavigate('systems', { opsSubTab: 'conquistas' });
+  const nav = useAdminNavigate();
+  const goPlayers = () => nav.go(adminPath.mesa('contas'));
+  const goMissions = () => nav.go(adminPath.missions());
+  const goAcesso = () => nav.go(adminPath.mesa('acesso'));
+  const goAnalytics = () => nav.go(adminPath.system('relatorios', 'analytics'));
+  const goLog = () => nav.go(adminPath.system('log'));
+  const goAchievements = () => nav.go(adminPath.content('conquistas'));
 
   return (
     <div className="space-y-6">
@@ -119,7 +111,7 @@ function OperationalPanorama({
           value={health.limboSeized ? t('live.stat.limboTaken') : t('live.stat.limboFree')}
           icon="security"
           active={health.limboSeized}
-          onClick={() => onNavigate('live')}
+          onClick={() => nav.go(adminPath.live())}
         />
       </MetricGroup>
 

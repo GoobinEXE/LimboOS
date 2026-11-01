@@ -40,6 +40,8 @@ interface MediaLibraryPanelProps {
   /** Pedido vindo da missão: filtra o catálogo intel pela campanha (e abre o editor com `create`). */
   scopeRequest?: CampaignScopeRequest | null;
   onScopeConsumed?: () => void;
+  /** Dentro de Conteúdo: o título fica no cabeçalho do destino, só a contagem aparece aqui. */
+  embedded?: boolean;
 }
 
 export default function MediaLibraryPanel({
@@ -47,6 +49,7 @@ export default function MediaLibraryPanel({
   selectionMode = false,
   allowedTypes,
   compact = false,
+  embedded = false,
   scopeRequest,
   onScopeConsumed,
 }: MediaLibraryPanelProps) {
@@ -323,13 +326,17 @@ export default function MediaLibraryPanel({
       {!compact && (
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div
-              className={`w-1 h-9 bg-accent shrink-0 ${uploading ? 'animate-pulse' : ''}`}
-            />
+            {!embedded && (
+              <div
+                className={`w-1 h-9 bg-accent shrink-0 ${uploading ? 'animate-pulse' : ''}`}
+              />
+            )}
             <div>
-              <h2 className="font-display font-bold uppercase tracking-widest text-xl text-bone">
-                {t('media.title')}
-              </h2>
+              {!embedded && (
+                <h2 className="font-display font-bold uppercase tracking-widest text-xl text-bone">
+                  {t('media.title')}
+                </h2>
+              )}
               <p className="text-[10px] font-display font-bold text-ash-500 tracking-[0.2em] uppercase">
                 {t('media.subtitle', {
                   files: filteredAssets.length,

@@ -1,44 +1,34 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { clsx } from 'clsx';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion } from 'motion/react';
 import { ADMIN_SPRING_INDICATOR } from '../lib/motion';
 import { modKeyLabel } from '../lib/platform';
+import { ADMIN_DESTINATIONS, ADMIN_NAV_GROUPS, type AdminDestinationId } from '../lib/adminNavigation';
 
 interface SidebarProps {
-  activeTab: string;
-  setActiveTab: (tab: string) => void;
+  activeDest: AdminDestinationId;
+  /** Destino ativo leva à raiz dele; os outros voltam à última rota visitada. */
+  hrefFor: (dest: AdminDestinationId) => string;
   isCollapsed: boolean;
   onToggleCollapse: () => void;
 }
 
-export default function Sidebar({ activeTab, setActiveTab, isCollapsed, onToggleCollapse }: SidebarProps) {
+export default function Sidebar({ activeDest, hrefFor, isCollapsed, onToggleCollapse }: SidebarProps) {
   const { t } = useTranslation('admin');
   const mod = modKeyLabel();
 
-  const groups = [
-    {
-      title: t('sidebar.group.session'),
-      items: [
-        { id: 'live', label: t('sidebar.live'), icon: 'sensors', shortcut: '1' },
-        { id: 'mesa', label: t('sidebar.mesa'), icon: 'groups', shortcut: '2' },
-        { id: 'missions', label: t('sidebar.missions'), icon: 'map', shortcut: '3' },
-      ],
-    },
-    {
-      title: t('sidebar.group.arsenal'),
-      items: [
-        { id: 'media', label: t('sidebar.media'), icon: 'folder_open', shortcut: '4' },
-      ],
-    },
-    {
-      title: t('sidebar.group.core'),
-      items: [
-        { id: 'systems', label: t('sidebar.systems'), icon: 'tune', shortcut: '5' },
-      ],
-    },
-  ];
+  const groups = ADMIN_NAV_GROUPS.map((group) => ({
+    title: t(group.labelKey),
+    items: ADMIN_DESTINATIONS.filter((d) => d.group === group.id).map((d) => ({
+      id: d.id,
+      label: t(d.labelKey),
+      icon: d.icon,
+      shortcut: d.shortcut,
+    })),
+  }));
 
   return (
     <aside
@@ -87,12 +77,11 @@ export default function Sidebar({ activeTab, setActiveTab, isCollapsed, onToggle
             )}
             <ul className="space-y-px">
               {group.items.map((item) => {
-                const isActive = activeTab === item.id;
+                const isActive = activeDest === item.id;
                 return (
                   <li key={item.id}>
-                    <button
-                      type="button"
-                      onClick={() => setActiveTab(item.id)}
+                    <Link
+                      to={hrefFor(item.id)}
                       aria-current={isActive ? 'page' : undefined}
                       title={isCollapsed ? `${item.label} (${mod}${item.shortcut})` : undefined}
                       className={clsx(
@@ -138,7 +127,7 @@ export default function Sidebar({ activeTab, setActiveTab, isCollapsed, onToggle
                           </kbd>
                         </>
                       )}
-                    </button>
+                    </Link>
                   </li>
                 );
               })}

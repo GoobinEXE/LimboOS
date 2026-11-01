@@ -1,17 +1,18 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { User } from 'firebase/auth';
 import { LogOut, Search } from 'lucide-react';
-import { AnimatePresence, motion } from 'motion/react';
 import LanguageSelector from '../../components/LanguageSelector';
-import { ADMIN_FADE } from '../lib/motion';
 import { modKeyLabel } from '../lib/platform';
+import type { AdminCrumb } from '../lib/adminBreadcrumb';
 
 interface HeaderProps {
   user: User | null;
   onLogout: () => void;
   onSpotlight?: () => void;
-  contextLabel?: string;
+  /** Trilha destino › seção › entidade; o último nível é a página atual. */
+  breadcrumb: AdminCrumb[];
   /** Badge da sessão ativa (esquadrão · missão). */
   sessionLabel?: string | null;
   onOpenLive?: () => void;
@@ -28,12 +29,11 @@ export default function Header({
   user,
   onLogout,
   onSpotlight,
-  contextLabel,
+  breadcrumb,
   sessionLabel,
   onOpenLive,
 }: HeaderProps) {
   const { t } = useTranslation('admin');
-  const label = contextLabel || t('header.defaultContext');
   const mod = modKeyLabel();
 
   return (
@@ -46,21 +46,34 @@ export default function Header({
           </span>
         </div>
 
-        {/* Rótulo absoluto (crossfade) não dá largura ao pai: flex-1 + teto evita cortar o contexto */}
-        <span className="relative hidden lg:block flex-1 min-w-[10rem] max-w-[20rem] h-4">
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.span
-              key={label}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0, transition: { duration: 0.08 } }}
-              transition={ADMIN_FADE}
-              className="absolute inset-0 text-[10px] font-display uppercase font-bold tracking-[0.24em] text-bone/70 truncate leading-4"
-            >
-              {label}
-            </motion.span>
-          </AnimatePresence>
-        </span>
+        <nav aria-label={t('breadcrumb.navLabel')} className="min-w-0 flex-1 max-w-[32rem]">
+          <ol className="flex items-center gap-1.5 min-w-0 text-[10px] font-display uppercase font-bold tracking-[0.2em] leading-4">
+            {breadcrumb.map((crumb, i) => {
+              const last = i === breadcrumb.length - 1;
+              return (
+                <li
+                  key={`${i}-${crumb.label}`}
+                  className={`flex items-center gap-1.5 min-w-0 ${last ? '' : 'hidden md:flex shrink-0'}`}
+                >
+                  {crumb.to ? (
+                    <Link to={crumb.to} className="text-ash-500 hover:text-bone transition-colors truncate max-w-[12rem]">
+                      {crumb.label}
+                    </Link>
+                  ) : (
+                    <span aria-current="page" className="text-bone/80 truncate">
+                      {crumb.label}
+                    </span>
+                  )}
+                  {!last && (
+                    <span className="text-ash-700" aria-hidden>
+                      ›
+                    </span>
+                  )}
+                </li>
+              );
+            })}
+          </ol>
+        </nav>
 
         {sessionLabel ? (
           <button

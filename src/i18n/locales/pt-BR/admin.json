@@ -18,7 +18,8 @@
     "brandCollapsed": "ADM",
     "group": {
       "session": "Sessão",
-      "arsenal": "Arsenal",
+      "prep": "Preparação",
+      "table": "Jogadores",
       "core": "Núcleo"
     },
     "live": "Ao Vivo",
@@ -41,7 +42,6 @@
     "sessionPrefix": "Sessão:",
     "sessionGoLive": "Ir para Ao Vivo — sessão ativa",
     "noSession": "Nenhuma sessão",
-    "defaultContext": "Terminal de Comando",
     "operator": "Operador Autenticado",
     "logout": "Logout",
     "logoutTitle": "Encerrar Sessão",
@@ -51,15 +51,8 @@
     "realtimeSync": "Sincronização de Dados em Tempo Real",
     "systemId": "RM ADMIN SYSTEM V5.0 // ENCRYPTED NODE",
     "shortcutSearch": "Busca",
-    "shortcutSections": "Seções",
+    "shortcutSections": "Destinos",
     "shortcutMenu": "Menu"
-  },
-  "context": {
-    "live": "Ao Vivo — sessão e entrega",
-    "mesa": "Mesa — esquadrões e contas",
-    "missions": "Missões — comando de campanha",
-    "media": "Conteúdo — biblioteca e intel",
-    "systems": "Sistema — relatórios e acesso"
   },
   "entity": {
     "unknown": "Desconhecido",
@@ -91,7 +84,7 @@
       "navigate": "↑↓ Navegar",
       "select": "↵ Selecionar",
       "shortcut": "⌘/Ctrl+K Spotlight",
-      "tabs": "⌘/Ctrl+1–6 Abas"
+      "tabs": "⌘/Ctrl+1–5 Destinos"
     },
     "resultsCount": "{{n}} resultados",
     "enter": "ENTER ↵",
@@ -99,9 +92,6 @@
       "missionInventory": "Inventário de Missão",
       "missionInventorySub": "Abrir missões → inventário",
       "jukebox": "Jukebox"
-    },
-    "ops": {
-      "accessHardware": "Acesso Hardware"
     },
     "sub": {
       "mesa": "Mesa",
@@ -111,13 +101,32 @@
       "mission": "Missão"
     }
   },
+  "breadcrumb": {
+    "navLabel": "Você está em",
+    "newMission": "Nova missão"
+  },
   "mesa": {
     "title": "Mesa",
     "sub": {
       "squads": "Esquadrões",
       "squadsBlurb": "Mesas de jogo, membros e ações em lote",
-      "accounts": "Contas",
-      "accountsBlurb": "Contas mestras, personagens e dossiês"
+      "accounts": "Agentes & Contas",
+      "accountsBlurb": "Contas mestras, personagens e dossiês",
+      "access": "Acesso",
+      "accessBlurb": "Autorização persistente de hardware DOS/Mac"
+    }
+  },
+  "content": {
+    "title": "Conteúdo",
+    "sub": {
+      "intel": "Intel & Mídia",
+      "intelBlurb": "Arquivos de mídia e catálogo de intel",
+      "achievements": "Conquistas",
+      "achievementsBlurb": "Catálogo de conquistas e regras de desbloqueio",
+      "npcs": "NPCs & SMS",
+      "npcsBlurb": "Contatos e diálogos de torpedos",
+      "qr": "QR & Links",
+      "qrBlurb": "Mapear QR físico → intel de destino"
     }
   },
   "systems": {
@@ -125,14 +134,8 @@
     "sub": {
       "reports": "Relatórios",
       "reportsBlurb": "Panorama, BI e telemetria completa",
-      "access": "Acesso",
-      "accessBlurb": "Autorização persistente de hardware DOS/Mac",
-      "qr": "QR & Links",
-      "qrBlurb": "Mapear QR físico → intel de destino",
-      "achievements": "Conquistas",
-      "achievementsBlurb": "Catálogo global de achievements",
-      "sms": "SMS / NPCs",
-      "smsBlurb": "Contatos e diálogos de torpedos"
+      "log": "Log",
+      "logBlurb": "Registro completo de eventos e ações"
     }
   },
   "live": {
@@ -163,7 +166,7 @@
       "empty": "Nenhum agente com login recente",
       "emptySession": "Nenhum membro da sessão online",
       "seeAllOnline": "Ver todos online",
-      "openAccess": "Abrir Sistema → Acesso (grants offline)",
+      "openAccess": "Abrir Mesa → Acesso (grants offline)",
       "selectAll": "Selecionar todos ({{n}})",
       "clearSelection": "Limpar seleção ({{n}})",
       "marked": "{{n}} marcados",
@@ -197,7 +200,8 @@
     "quick": {
       "systems": "Sistema",
       "mesa": "Mesa",
-      "media": "Conteúdo"
+      "media": "Conteúdo",
+      "access": "Acesso"
     },
     "controls": "Controles de Sessão",
     "jukebox": "Jukebox da Mesa",
@@ -232,7 +236,7 @@
     "protocols": "Protocolos RPG",
     "diskRepair": "DiskRepair.exe",
     "diskRepairDesc": "Desmagnetização remota",
-    "hint": "Controles de sessão. Autorização persistente de hardware fica em Sistema → Acesso."
+    "hint": "Controles de sessão. Autorização persistente de hardware fica em Mesa → Acesso."
   },
   "missions": {
     "title": "Centro de Comando",
@@ -280,7 +284,8 @@
     },
     "toast": {
       "saved": "Missão salva com sucesso.",
-      "saveFail": "Não foi possível salvar a campanha."
+      "saveFail": "Não foi possível salvar a campanha.",
+      "invalidSlug": "Identificador inválido: use um slug sem espaços nem barras e diferente de \"new\"."
     },
     "data": {
       "save": "Salvar Configurações",
@@ -505,7 +510,9 @@
       "authorityLevel": "Nível de Autoridade",
       "accessControl": "Controle de Acesso",
       "resetCreds": "Redefinição de Credenciais de Campo",
-      "reset": "Resetar"
+      "reset": "Resetar",
+      "hardwareHint": "Autorização DOS/Mac persistente fica em Mesa → Acesso. Push durante a sessão fica no Ao Vivo.",
+      "hardwareLink": "Gerenciar em Acesso"
     },
     "createMasterTitle": "Nova Conexão Mestra",
     "createPassword": "Senha Provisória",
@@ -634,7 +641,6 @@
   },
   "reports": {
     "panorama": "Panorama Operacional",
-    "logDivider": "Log Central do Nucleo",
     "group": {
       "agents": "Agentes",
       "campaigns": "Campanhas",

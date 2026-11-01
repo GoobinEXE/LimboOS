@@ -1,24 +1,36 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { masterAccountLabel } from '../lib/entityLabels';
+import {
+  ADMIN_DESTINATIONS,
+  CONTENT_SECTIONS,
+  MESA_SECTIONS,
+  SYSTEM_SECTIONS,
+  adminPath,
+  defaultDestinationPath,
+  type AdminDestinationId,
+  type AdminSectionDef,
+} from '../lib/adminNavigation';
 import i18n from '../../i18n';
 
-interface SearchableItem {
+export interface SearchableItem {
   id: string;
   label: string;
   sublabel?: string;
   category: 'account' | 'agent' | 'tab' | 'group' | 'mission';
   icon: string;
-  action: () => void;
+  /** Caminho do admin: selecionar um item é navegar (entra no histórico). */
+  to: string;
 }
 
 interface SpotlightSearchProps {
   open: boolean;
   onClose: () => void;
   items: SearchableItem[];
+  onNavigate: (to: string) => void;
 }
 
-export default function SpotlightSearch({ open, onClose, items }: SpotlightSearchProps) {
+export default function SpotlightSearch({ open, onClose, items, onNavigate }: SpotlightSearchProps) {
   const { t } = useTranslation('admin');
   const [query, setQuery] = useState('');
   const [selectedIdx, setSelectedIdx] = useState(0);
@@ -63,9 +75,9 @@ export default function SpotlightSearch({ open, onClose, items }: SpotlightSearc
   }, [query]);
 
   const handleSelect = useCallback((item: SearchableItem) => {
-    item.action();
     onClose();
-  }, [onClose]);
+    onNavigate(item.to);
+  }, [onClose, onNavigate]);
 
   // Mantém o item ativo visível ao navegar pelo teclado
   useEffect(() => {
@@ -193,76 +205,55 @@ function adminT(key: string, opts?: Record<string, unknown>): string {
   return i18n.t(key, { ns: 'admin', ...opts });
 }
 
-export function buildSearchItems(
-  accounts: { uid: string; email?: string; masterName?: string }[],
-  characters: { uid: string; char: { id: string; codinome?: string } }[],
-  setActiveTab: (tab: string) => void,
-  onSelectAccount?: (uid: string) => void,
-  onSelectAgent?: (uid: string, charId: string) => void,
-  onOpenMissionInventory?: () => void,
-  onOpenOpsSub?: (sub: 'relatorios' | 'acesso' | 'qr' | 'conquistas') => void,
-  onOpenMesaSub?: (sub: 'esquadroes' | 'contas') => void,
-  groups?: { id: string; name: string }[],
-  campaigns?: { id: string; name: string }[],
-  onSelectGroup?: (groupId: string) => void,
-  onSelectMission?: (campaignId: string) => void,
-): SearchableItem[] {
+interface SearchSources {
+  accounts: { uid: string; email?: string; masterName?: string }[];
+  characters: { uid: string; char: { id: string; codinome?: string } }[];
+  groups: { id: string; name: string }[];
+  campaigns: { id: string; name: string }[];
+  /** Missão usada pelo atalho "Inventário de missão" (a da sessão ativa, se houver). */
+  inventoryMissionId?: string | null;
+}
+
+/** Itens da paleta: destinos e seções vêm do config de navegação; entidades viram deep links. */
+export function buildSearchItems({
+  accounts,
+  characters,
+  groups,
+  campaigns,
+  inventoryMissionId,
+}: SearchSources): SearchableItem[] {
   const items: SearchableItem[] = [];
 
-  const tabs = [
-    { id: 'live', label: adminT('sidebar.live'), icon: 'sensors' },
-    { id: 'mesa', label: adminT('sidebar.mesa'), icon: 'groups' },
-    { id: 'missions', label: adminT('sidebar.missions'), icon: 'map' },
-    { id: 'media', label: adminT('sidebar.media'), icon: 'folder_open' },
-    { id: 'systems', label: adminT('sidebar.systems'), icon: 'tune' },
-  ];
-  tabs.forEach((tab) => {
+  ADMIN_DESTINATIONS.forEach((dest) => {
     items.push({
-      id: `tab_${tab.id}`,
-      label: tab.label,
+      id: `tab_${dest.id}`,
+      label: adminT(dest.labelKey),
       category: 'tab',
-      icon: tab.icon,
-      action: () => setActiveTab(tab.id),
+      icon: dest.icon,
+      to: defaultDestinationPath(dest.id),
     });
   });
 
-  const mesaSubs: { id: 'esquadroes' | 'contas'; label: string; icon: string }[] = [
-    { id: 'esquadroes', label: adminT('mesa.sub.squads'), icon: 'groups' },
-    { id: 'contas', label: adminT('mesa.sub.accounts'), icon: 'group' },
-  ];
-  mesaSubs.forEach((s) => {
-    items.push({
-      id: `mesa_${s.id}`,
-      label: s.label,
-      sublabel: adminT('spotlight.sub.mesa'),
-      category: 'tab',
-      icon: s.icon,
-      action: () => {
-        if (onOpenMesaSub) onOpenMesaSub(s.id);
-        else setActiveTab('mesa');
-      },
+  const pushSections = <S extends string>(
+    dest: AdminDestinationId,
+    sections: readonly AdminSectionDef<S>[],
+    pathFor: (section: S) => string
+  ) => {
+    const destLabel = adminT(ADMIN_DESTINATIONS.find((d) => d.id === dest)!.labelKey);
+    sections.forEach((section) => {
+      items.push({
+        id: `${dest}_${section.id}`,
+        label: adminT(section.labelKey),
+        sublabel: destLabel,
+        category: 'tab',
+        icon: section.icon,
+        to: pathFor(section.id),
+      });
     });
-  });
-
-  const opsSubs: { id: 'relatorios' | 'acesso' | 'qr' | 'conquistas'; label: string; icon: string }[] = [
-    { id: 'relatorios', label: adminT('systems.sub.reports'), icon: 'analytics' },
-    { id: 'acesso', label: adminT('spotlight.ops.accessHardware'), icon: 'lock_open' },
-    { id: 'qr', label: adminT('systems.sub.qr'), icon: 'qr_code' },
-    { id: 'conquistas', label: adminT('systems.sub.achievements'), icon: 'emoji_events' },
-  ];
-  opsSubs.forEach((s) => {
-    items.push({
-      id: `ops_${s.id}`,
-      label: s.label,
-      sublabel: adminT('spotlight.sub.systems'),
-      category: 'tab',
-      icon: s.icon,
-      action: () => {
-        if (onOpenOpsSub) onOpenOpsSub(s.id);
-        else setActiveTab('systems');
-      },
-    });
-  });
+  };
+  pushSections('content', CONTENT_SECTIONS, (s) => adminPath.content(s));
+  pushSections('mesa', MESA_SECTIONS, (s) => adminPath.mesa(s));
+  pushSections('system', SYSTEM_SECTIONS, (s) => adminPath.system(s));
 
   items.push({
     id: 'tab_mission_inventory',
@@ -270,10 +261,7 @@ export function buildSearchItems(
     sublabel: adminT('spotlight.item.missionInventorySub'),
     category: 'tab',
     icon: 'inventory_2',
-    action: () => {
-      if (onOpenMissionInventory) onOpenMissionInventory();
-      else setActiveTab('missions');
-    },
+    to: inventoryMissionId ? adminPath.mission(inventoryMissionId, 'inventario') : adminPath.missions(),
   });
 
   items.push({
@@ -282,40 +270,28 @@ export function buildSearchItems(
     sublabel: adminT('spotlight.sub.live'),
     category: 'tab',
     icon: 'queue_music',
-    action: () => {
-      setActiveTab('live');
-      window.setTimeout(() => {
-        document.getElementById('admin-jukebox')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 200);
-    },
+    to: adminPath.live('jukebox'),
   });
 
-  (groups || []).forEach((g) => {
+  groups.forEach((g) => {
     items.push({
       id: `group_${g.id}`,
       label: g.name,
       sublabel: adminT('spotlight.sub.squad'),
       category: 'group',
       icon: 'groups',
-      action: () => {
-        if (onSelectGroup) onSelectGroup(g.id);
-        else if (onOpenMesaSub) onOpenMesaSub('esquadroes');
-        else setActiveTab('mesa');
-      },
+      to: adminPath.squad(g.id),
     });
   });
 
-  (campaigns || []).forEach((c) => {
+  campaigns.forEach((c) => {
     items.push({
       id: `mission_${c.id}`,
       label: c.name,
       sublabel: adminT('spotlight.sub.mission'),
       category: 'mission',
       icon: 'map',
-      action: () => {
-        if (onSelectMission) onSelectMission(c.id);
-        else setActiveTab('missions');
-      },
+      to: adminPath.mission(c.id),
     });
   });
 
@@ -326,11 +302,7 @@ export function buildSearchItems(
       sublabel: acc.email,
       category: 'account',
       icon: 'person',
-      action: () => {
-        if (onOpenMesaSub) onOpenMesaSub('contas');
-        else setActiveTab('mesa');
-        onSelectAccount?.(acc.uid);
-      },
+      to: adminPath.account(acc.uid),
     });
   });
 
@@ -343,11 +315,7 @@ export function buildSearchItems(
       sublabel: masterAccountLabel(account, adminT('entity.masterUnknown')),
       category: 'agent',
       icon: 'badge',
-      action: () => {
-        if (onOpenMesaSub) onOpenMesaSub('contas');
-        else setActiveTab('mesa');
-        onSelectAgent?.(uid, char.id);
-      },
+      to: adminPath.agent(uid, char.id),
     });
   });
 

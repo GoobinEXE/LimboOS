@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AnimatePresence, motion } from 'motion/react';
 import { Group, MasterAccount, CharacterData, GroupCharacterSlot } from '../../types/player';
@@ -14,23 +14,24 @@ import NpcSmsDistributionModal from './NpcSmsDistributionModal';
 import GroupMissionsModal from './GroupMissionsModal';
 import { campaignLabel, masterAccountLabel, masterAccountLabelByUid } from '../lib/entityLabels';
 import { ADMIN_FADE, listItem, staggerDelay } from '../lib/motion';
+import { adminPath } from '../lib/adminNavigation';
+import { useAdminNavigate } from '../hooks/useAdminRoute';
 
 interface GroupManagerProps {
   isAdmin: boolean;
-  onNavigateToMission?: (campaignId: string) => void;
   embedded?: boolean;
-  deepLinkGroupId?: string | null;
-  onDeepLinkConsumed?: () => void;
+  /** Esquadrão a destacar (`?squad=`); `key` muda a cada navegação para repetir o destaque. */
+  highlight?: { groupId: string; key: string } | null;
 }
 
 export default function GroupManager({
   isAdmin,
-  onNavigateToMission,
   embedded = false,
-  deepLinkGroupId,
-  onDeepLinkConsumed,
+  highlight,
 }: GroupManagerProps) {
   const { t } = useTranslation('admin');
+  const nav = useAdminNavigate();
+  const highlightedKeyRef = useRef<string | null>(null);
   const [groups, setGroups] = useState<Group[]>([]);
   const [users, setUsers] = useState<MasterAccount[]>([]);
   const [allCharacters, setAllCharacters] = useState<{uid: string, char: CharacterData}[]>([]);
@@ -79,16 +80,16 @@ export default function GroupManager({
   }, []);
 
   useEffect(() => {
-    if (!deepLinkGroupId) return;
+    if (!highlight || highlightedKeyRef.current === highlight.key) return;
     if (groups.length === 0) return;
-    const el = document.getElementById(`group-${deepLinkGroupId}`);
+    highlightedKeyRef.current = highlight.key;
+    const el = document.getElementById(`group-${highlight.groupId}`);
     if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'center' });
       el.classList.add('ring-2', 'ring-primary');
       window.setTimeout(() => el.classList.remove('ring-2', 'ring-primary'), 2500);
     }
-    onDeepLinkConsumed?.();
-  }, [deepLinkGroupId, groups, onDeepLinkConsumed]);
+  }, [highlight, groups]);
 
   const fetchInitialAgents = async () => {
     try {
@@ -687,7 +688,7 @@ export default function GroupManager({
             campaigns={campaigns}
             onClose={() => setShowMissionsModal(null)}
             showAlert={showAlert}
-            onNavigateToMission={onNavigateToMission}
+            onNavigateToMission={(campaignId) => nav.go(adminPath.mission(campaignId, 'vinculos'))}
           />
         ) : null;
       })()}

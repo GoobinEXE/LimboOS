@@ -23,17 +23,13 @@ import {
   readinessScore,
   summarizeCampaignResources,
 } from '../lib/campaignResources';
-import type { CampaignScopedArea } from '../lib/adminNavigation';
-
-export interface MissionDeepLink {
-  campaignId: string;
-  tab?: MissionTabId;
-}
+import { adminPath, type CampaignScopedArea, type RouteOf } from '../lib/adminNavigation';
+import { useAdminNavigate } from '../hooks/useAdminRoute';
 
 interface CampaignsPanelProps {
-  missionDeepLink?: MissionDeepLink | null;
-  onDeepLinkConsumed?: () => void;
-  /** Abre o catálogo de intel, conquistas ou SMS filtrado pela missão. */
+  /** Última rota de Missões: lista, criação ou missão aberta numa aba. */
+  route: RouteOf<'missions'>;
+  /** Abre o catálogo de intel, conquistas ou SMS filtrado pela missão (empilha no histórico). */
   onOpenScoped?: (area: CampaignScopedArea, campaignId: string, create?: boolean) => void;
 }
 
@@ -51,11 +47,11 @@ function createNewCampaignDraft(): Partial<Campaign> {
 }
 
 export default function CampaignsPanel({
-  missionDeepLink,
-  onDeepLinkConsumed,
+  route,
   onOpenScoped,
 }: CampaignsPanelProps) {
   const { t } = useTranslation('admin');
+  const nav = useAdminNavigate();
   const { showAlert, showConfirm, modal } = useModal();
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [persistentItems, setPersistentItems] = useState<string[]>([]);
@@ -68,7 +64,7 @@ export default function CampaignsPanel({
   const [itemSearch, setItemSearch] = useState('');
   const [commandModal, setCommandModal] = useState<{
     campaign: Partial<Campaign>;
-    tab: MissionTabId;
+    isNew: boolean;
   } | null>(null);
   const [intelItems, setIntelItems] = useState<IntelItem[]>(() => intelRegistry.getAll());
   const { defs: achievementDefs } = useAchievementCatalog();
@@ -92,8 +88,8 @@ export default function CampaignsPanel({
     return id ? summarizeCampaignResources(id, resourceSources) : null;
   }, [commandModal?.campaign.id, resourceSources]);
 
+  // A missão continua aberta na rota de Missões: Voltar a partir do catálogo retorna a ela
   const handleOpenScoped = (area: CampaignScopedArea, campaignId: string, create?: boolean) => {
-    setCommandModal(null);
     onOpenScoped?.(area, campaignId, create);
   };
 
@@ -137,14 +133,25 @@ export default function CampaignsPanel({
     };
   }, []);
 
+  // Missão aberta vem da rota; o objeto da campanha só troca quando o id muda,
+  // para que um snapshot novo não apague o rascunho do formulário
+  const routeMissionId = route.view === 'mission' ? route.campaignId : null;
   useEffect(() => {
-    if (!missionDeepLink || loading) return;
-    const target = campaigns.find((c) => c.id === missionDeepLink.campaignId);
-    if (target) {
-      setCommandModal({ campaign: target, tab: missionDeepLink.tab || 'vinculos' });
-      onDeepLinkConsumed?.();
+    if (route.view === 'list') {
+      setCommandModal(null);
+      return;
     }
-  }, [missionDeepLink, campaigns, loading, onDeepLinkConsumed]);
+    if (route.view === 'new') {
+      setCommandModal((prev) => (prev?.isNew ? prev : { campaign: createNewCampaignDraft(), isNew: true }));
+      return;
+    }
+    if (loading) return;
+    setCommandModal((prev) => {
+      if (prev && !prev.isNew && prev.campaign.id === routeMissionId) return prev;
+      const target = campaigns.find((c) => c.id === routeMissionId);
+      return target ? { campaign: target, isNew: false } : null;
+    });
+  }, [route.view, routeMissionId, campaigns, loading]);
 
   const fetchInitialAgents = async () => {
     try {
@@ -195,12 +202,20 @@ export default function CampaignsPanel({
     }
   };
 
-  const openManage = (campaign: Campaign, tab: MissionTabId = 'dados') => {
-    setCommandModal({ campaign, tab });
+  const openManage = (campaign: Campaign, tab?: MissionTabId) => {
+    nav.go(adminPath.mission(campaign.id, tab));
   };
 
   const openNewMission = () => {
-    setCommandModal({ campaign: createNewCampaignDraft(), tab: 'dados' });
+    nav.go(adminPath.newMission());
+  };
+
+  const handleMissionSaved = (saved: Campaign) => {
+    if (route.view !== 'new') return;
+    // Troca o rascunho pela missão salva antes da rota, para o modal não fechar
+    // enquanto o snapshot do Firestore ainda não trouxe o documento novo
+    setCommandModal({ campaign: saved, isNew: false });
+    nav.go(adminPath.mission(saved.id, 'recursos'), { replace: true });
   };
 
   if (loading) {
@@ -394,10 +409,15 @@ export default function CampaignsPanel({
         <MissionCommandModal
           open
           campaign={commandModal.campaign}
-          initialTab={commandModal.tab}
+          isNewMission={commandModal.isNew}
+          activeTab={route.view === 'mission' ? route.section : 'dados'}
+          onTabChange={(tab) => {
+            if (route.view === 'mission' && tab !== route.section) nav.go(adminPath.mission(route.campaignId, tab));
+          }}
+          onSaved={handleMissionSaved}
           groups={groups}
           allCharacters={allCharacters}
-          onClose={() => setCommandModal(null)}
+          onClose={() => nav.back(adminPath.missions())}
           onCharacterUpdate={setAllCharacters}
           resourceSummary={modalSummary}
           onOpenScoped={handleOpenScoped}

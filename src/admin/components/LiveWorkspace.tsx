@@ -1,5 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { useAdminPanelActive } from './AdminTabPanel';
+import { adminPath } from '../lib/adminNavigation';
+import { useAdminNavigate } from '../hooks/useAdminRoute';
 import { useTranslation } from 'react-i18next';
 import { useDateLocale } from '../../i18n/dateLocale';
 import { formatDistanceToNow } from 'date-fns';
@@ -31,12 +34,6 @@ interface LiveWorkspaceProps {
   limboSeized: boolean;
   activeSession: AdminActiveSession | null;
   onSessionChange: (session: AdminActiveSession | null) => void;
-  onOpenSystems: () => void;
-  onOpenMesa: (groupId?: string) => void;
-  onOpenMedia: () => void;
-  onOpenFullLog: () => void;
-  onOpenMission?: (campaignId: string) => void;
-  scrollToJukebox?: boolean;
 }
 
 interface PresenceRow {
@@ -64,13 +61,9 @@ export default function LiveWorkspace({
   limboSeized,
   activeSession,
   onSessionChange,
-  onOpenSystems,
-  onOpenMesa,
-  onOpenMedia,
-  onOpenFullLog,
-  onOpenMission,
 }: LiveWorkspaceProps) {
   const { t } = useTranslation('admin');
+  const nav = useAdminNavigate();
   const dateLocale = useDateLocale();
   const toast = useToast();
   const { showConfirm, modal } = useModal();
@@ -298,10 +291,10 @@ export default function LiveWorkspace({
             </div>
           </div>
           <div className="flex flex-wrap gap-2">
-            {activeSession?.campaignId && onOpenMission && (
+            {activeSession?.campaignId && (
               <button
                 type="button"
-                onClick={() => onOpenMission(activeSession.campaignId)}
+                onClick={() => nav.go(adminPath.mission(activeSession.campaignId))}
                 className="text-[9px] font-display font-bold uppercase tracking-widest px-3 py-1.5 border border-primary/30 text-primary hover:bg-primary/10"
               >
                 {t('live.session.openMission')}
@@ -310,7 +303,7 @@ export default function LiveWorkspace({
             {activeSession?.groupId && (
               <button
                 type="button"
-                onClick={() => onOpenMesa(activeSession.groupId)}
+                onClick={() => nav.go(adminPath.squad(activeSession.groupId))}
                 className="text-[9px] font-display font-bold uppercase tracking-widest px-3 py-1.5 border border-primary/30 text-primary hover:bg-primary/10"
               >
                 {t('live.session.openSquad')}
@@ -418,9 +411,9 @@ export default function LiveWorkspace({
               </div>
             </div>
             <div className="flex flex-wrap gap-2">
-              <QuickBtn label={t('logs.type.system')} icon="tune" onClick={onOpenSystems} />
-              <QuickBtn label={t('live.quick.mesa')} icon="groups" onClick={() => onOpenMesa()} />
-              <QuickBtn label={t('live.quick.media')} icon="folder_open" onClick={onOpenMedia} />
+              <QuickBtn label={t('live.quick.access')} icon="lock_open" onClick={() => nav.go(adminPath.mesa('acesso'))} />
+              <QuickBtn label={t('live.quick.mesa')} icon="groups" onClick={() => nav.go(adminPath.mesa())} />
+              <QuickBtn label={t('live.quick.media')} icon="folder_open" onClick={() => nav.go(adminPath.content())} />
             </div>
           </div>
 
@@ -488,7 +481,7 @@ export default function LiveWorkspace({
             ) : (
               <button
                 type="button"
-                onClick={onOpenSystems}
+                onClick={() => nav.go(adminPath.mesa('acesso'))}
                 className="mt-4 text-[9px] font-display font-bold uppercase tracking-widest text-primary/60 hover:text-primary"
               >
                 {t('live.presence.openAccess')}
@@ -691,7 +684,7 @@ export default function LiveWorkspace({
             action={
               <button
                 type="button"
-                onClick={onOpenFullLog}
+                onClick={() => nav.go(adminPath.system('log'))}
                 className="text-[9px] font-display font-bold uppercase tracking-widest text-primary/70 hover:text-primary shrink-0 transition-colors"
               >
                 {t('live.fullLog')}
@@ -749,6 +742,7 @@ function PresenceRowMenu({
   onClose: () => void;
   children: React.ReactNode;
 }) {
+  const panelActive = useAdminPanelActive();
   const btnRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const [coords, setCoords] = useState<{ top: number; left: number } | null>(null);
@@ -806,6 +800,7 @@ function PresenceRowMenu({
         ⋯
       </button>
       {open &&
+        panelActive &&
         typeof document !== 'undefined' &&
         createPortal(
           <div

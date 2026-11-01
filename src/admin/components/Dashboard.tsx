@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useMemo, useRef, useCallback } from 'react';
+import { Navigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { User } from 'firebase/auth';
 import { db } from '../../lib/firebase';
@@ -14,30 +15,31 @@ import Sidebar from './Sidebar';
 import Header from './Header';
 import AdminTabPanel from './AdminTabPanel';
 import { useAdminActiveSession } from '../hooks/useAdminActiveSession';
-import { campaignLabel } from '../lib/entityLabels';
+import { useAdminLocation, useAdminNavigate } from '../hooks/useAdminRoute';
+import { campaignLabel, masterAccountLabel } from '../lib/entityLabels';
+import { buildAdminBreadcrumb } from '../lib/adminBreadcrumb';
 import i18n from '../../i18n';
 import { motion } from 'motion/react';
 import { ADMIN_FADE } from '../lib/motion';
 import { modKeyLabel } from '../lib/platform';
 import RetroSpinner from '../../components/player/RetroSpinner';
 import {
-  type OperationsSubId,
-  type MesaSubId,
-  type MissionTabId,
-  type MetricNavigationOptions,
-  type AdminTabId,
+  ADMIN_DESTINATIONS,
+  adminPath,
+  defaultDestinationPath,
+  destinationRootPath,
+  routeToPath,
+  type AdminDestinationId,
+  type AdminRoute,
   type CampaignScopeRequest,
   type CampaignScopedArea,
-  readAdminTabFromUrl,
-  readOperationsSubFromUrl,
-  readMesaSubFromUrl,
-  syncAdminTabsToUrl,
+  type RouteOf,
 } from '../lib/adminNavigation';
 
 const SIDEBAR_COLLAPSED_KEY = 'limbo.admin.sidebarCollapsed';
 
 const CampaignsPanel = React.lazy(() => import('./CampaignsPanel'));
-const MediaLibraryPanel = React.lazy(() => import('./MediaLibraryPanel'));
+const ContentPanel = React.lazy(() => import('./ContentPanel'));
 const OperationsPanel = React.lazy(() => import('./OperationsPanel'));
 const LiveWorkspace = React.lazy(() => import('./LiveWorkspace'));
 const MesaPanel = React.lazy(() => import('./MesaPanel'));
@@ -142,21 +144,13 @@ function computeCampaignMetrics(campaigns: Campaign[]): CampaignMetrics {
 export default function Dashboard({ user, onLogout }: DashboardProps) {
   const { t } = useTranslation('admin');
   const [isAdmin, setIsAdmin] = useState(false);
-  const [activeTab, setActiveTab] = useState<AdminTabId>(readAdminTabFromUrl);
-  const [mountedTabs, setMountedTabs] = useState<Set<string>>(
-    () => new Set([readAdminTabFromUrl()])
-  );
-  const [opsTab, setOpsTab] = useState<OperationsSubId>(readOperationsSubFromUrl);
-  const [mesaTab, setMesaTab] = useState<MesaSubId>(readMesaSubFromUrl);
-  const [missionDeepLink, setMissionDeepLink] = useState<{
-    campaignId: string;
-    tab?: MissionTabId;
-  } | null>(null);
-  const [mesaDeepLink, setMesaDeepLink] = useState<{
-    accountUid?: string;
-    agent?: { uid: string; charId: string };
-    groupId?: string;
-  } | null>(null);
+  const { route, redirect, key: locationKey, hash, path } = useAdminLocation();
+  const nav = useAdminNavigate();
+  // Última rota de cada destino visitado: mantém o painel montado (keep-alive)
+  // com os parâmetros dele e é para onde a navegação lateral volta
+  const [routeByDest, setRouteByDest] = useState<
+    Partial<Record<AdminDestinationId, { route: AdminRoute; key: string }>>
+  >(() => ({ [route.dest]: { route, key: locationKey } }));
   const [scopeRequest, setScopeRequest] = useState<CampaignScopeRequest | null>(null);
   const { session: activeSession, setSession: setActiveSession } = useAdminActiveSession();
   const [spotlightGroups, setSpotlightGroups] = useState<Group[]>([]);
@@ -198,14 +192,49 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
   const [spotlightOpen, setSpotlightOpen] = useState(false);
   const [allAccounts, setAllAccounts] = useState<MasterAccount[]>([]);
   const [allCharacters, setAllCharacters] = useState<{ uid: string; char: CharacterData }[]>([]);
-  const [firstCampaignId, setFirstCampaignId] = useState<string | null>(null);
   const [onlineCount, setOnlineCount] = useState(0);
+  const mainRef = useRef<HTMLElement>(null);
+  const scrollByKeyRef = useRef(new Map<string, number>());
+  const locationKeyRef = useRef(locationKey);
 
   const aggregatedPlaysRef = useRef<number | null>(null);
 
   useEffect(() => {
-    setMountedTabs((prev) => new Set(prev).add(activeTab));
-  }, [activeTab]);
+    setRouteByDest((prev) =>
+      prev[route.dest]?.key === locationKey
+        ? prev
+        : { ...prev, [route.dest]: { route, key: locationKey } }
+    );
+  }, [route, locationKey]);
+
+  // Scroll do <main> por entrada de histórico: Voltar restaura, entrada nova começa no topo,
+  // `#âncora` rola até a seção (o painel pode ainda estar carregando: tenta por ~1s)
+  useEffect(() => {
+    const el = mainRef.current;
+    if (!el) return;
+    const onScroll = () => scrollByKeyRef.current.set(locationKeyRef.current, el.scrollTop);
+    el.addEventListener('scroll', onScroll, { passive: true });
+    return () => el.removeEventListener('scroll', onScroll);
+  }, []);
+
+  useLayoutEffect(() => {
+    locationKeyRef.current = locationKey;
+    const el = mainRef.current;
+    if (!el) return;
+    if (!hash) {
+      el.scrollTop = scrollByKeyRef.current.get(locationKey) ?? 0;
+      return;
+    }
+    let frame = 0;
+    let tries = 0;
+    const seek = () => {
+      const target = document.getElementById(hash.slice(1));
+      if (target) target.scrollIntoView({ block: 'start' });
+      else if (tries++ < 60) frame = requestAnimationFrame(seek);
+    };
+    seek();
+    return () => cancelAnimationFrame(frame);
+  }, [locationKey, hash]);
 
   useEffect(() => {
     try {
@@ -214,10 +243,6 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
       /* storage indisponível (aba privada): preferência fica só na sessão */
     }
   }, [sidebarCollapsed]);
-
-  useEffect(() => {
-    syncAdminTabsToUrl(activeTab, opsTab, mesaTab);
-  }, [activeTab, opsTab, mesaTab]);
 
   useEffect(() => {
     let cancelled = false;
@@ -259,6 +284,7 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
       collection(db, 'users'),
       (snap) => {
         const users = snap.docs.map((d) => ({ uid: d.id, ...d.data() } as MasterAccount));
+        setAllAccounts(users);
         setHealthMetrics((prev) => ({
           ...prev,
           suspended: users.filter((u) => u.suspended).length,
@@ -288,6 +314,7 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
     });
 
     const unsubCharacters = userService.subscribeToAllCharacters((characters) => {
+      setAllCharacters(characters);
       setAgentMetrics(computeAgentMetrics(characters));
     });
 
@@ -297,8 +324,6 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
         const campaigns = snap.docs.map((d) => ({ id: d.id, ...d.data() } as Campaign));
         setCampaignMetrics(computeCampaignMetrics(campaigns));
         setSpotlightCampaigns(campaigns);
-        const firstActive = campaigns.find((c) => c.status === 'Ativa') || campaigns[0];
-        setFirstCampaignId(firstActive?.id ?? null);
       },
       (err) => console.warn('[Dashboard] campaigns listener error:', err),
     );
@@ -345,48 +370,33 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
     };
   }, [isAdmin]);
 
-  useEffect(() => {
-    if (!isAdmin) return;
+  const routeOf = <D extends AdminDestinationId>(dest: D): RouteOf<D> | undefined =>
+    (route.dest === dest ? route : routeByDest[dest]?.route) as RouteOf<D> | undefined;
 
-    const fetchRecentItems = async () => {
-      try {
-        const userResult = await userService.fetchUsersPage(20);
-        setAllAccounts(userResult.users);
-
-        const charPromises = userResult.users.map((u) => userService.fetchCharactersForUser(u.uid));
-        const charResults = await Promise.all(charPromises);
-
-        const combined: { uid: string; char: CharacterData }[] = [];
-        userResult.users.forEach((acc, i) => {
-          charResults[i].forEach((char) => {
-            combined.push({ uid: acc.uid, char });
-          });
-        });
-        setAllCharacters(combined);
-      } catch (err) {
-        console.error('Erro ao carregar itens recentes para Spotlight:', err);
-      }
-    };
-
-    fetchRecentItems();
-  }, [isAdmin]);
-
-  const setTab = useCallback((tab: string) => {
-    const allowed: AdminTabId[] = ['live', 'mesa', 'missions', 'media', 'systems'];
-    if ((allowed as string[]).includes(tab)) setActiveTab(tab as AdminTabId);
-  }, []);
+  /** Destino ativo leva à raiz dele; os outros reabrem a última rota visitada. */
+  const hrefFor = useCallback(
+    (dest: AdminDestinationId) => {
+      if (dest === route.dest) return destinationRootPath(route);
+      const last = routeByDest[dest]?.route;
+      return last ? routeToPath(last) : defaultDestinationPath(dest);
+    },
+    [route, routeByDest]
+  );
+  const hrefForRef = useRef(hrefFor);
+  hrefForRef.current = hrefFor;
 
   useEffect(() => {
-    const tabOrder: AdminTabId[] = ['live', 'mesa', 'missions', 'media', 'systems'];
     const handler = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
         setSpotlightOpen((prev) => !prev);
       }
       if ((e.metaKey || e.ctrlKey) && e.key >= '1' && e.key <= '5') {
-        e.preventDefault();
-        const idx = parseInt(e.key) - 1;
-        if (tabOrder[idx]) setActiveTab(tabOrder[idx]);
+        const dest = ADMIN_DESTINATIONS.find((d) => d.shortcut === e.key);
+        if (dest) {
+          e.preventDefault();
+          nav.go(hrefForRef.current(dest.id));
+        }
       }
       if ((e.metaKey || e.ctrlKey) && e.key === '\\') {
         e.preventDefault();
@@ -395,71 +405,7 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, []);
-
-  const navigateToMetric = useCallback(
-    (tab: string, options?: MetricNavigationOptions) => {
-      let nextTab: AdminTabId = 'live';
-      let nextOps = opsTab;
-      let nextMesa = mesaTab;
-
-      const legacySub = options?.intelSubTab;
-      const opsSub = options?.opsSubTab;
-      const mesaSub = options?.mesaSubTab;
-
-      if (tab === 'intel') {
-        if (legacySub === 'jukebox') {
-          nextTab = 'live';
-        } else if (legacySub === 'qr' || legacySub === 'conquistas') {
-          nextTab = 'systems';
-          nextOps = legacySub;
-        } else {
-          nextTab = 'media';
-        }
-      } else if (tab === 'dashboard') {
-        nextTab = 'live';
-      } else if (tab === 'players') {
-        nextTab = 'mesa';
-        nextMesa = 'contas';
-      } else if (tab === 'squads') {
-        nextTab = 'mesa';
-        nextMesa = 'esquadroes';
-      } else if (tab === 'live' || tab === 'mesa' || tab === 'missions' || tab === 'media' || tab === 'systems') {
-        nextTab = tab;
-        if (opsSub) nextOps = opsSub;
-        if (mesaSub) nextMesa = mesaSub;
-      } else if (opsSub) {
-        nextOps = opsSub;
-        nextTab = 'systems';
-      } else if (mesaSub) {
-        nextMesa = mesaSub;
-        nextTab = 'mesa';
-      } else if (legacySub === 'acervo') {
-        nextTab = 'media';
-      } else if (legacySub === 'jukebox') {
-        nextTab = 'live';
-      } else if (legacySub === 'qr' || legacySub === 'conquistas') {
-        nextTab = 'systems';
-        nextOps = legacySub;
-      }
-
-      setActiveTab(nextTab);
-      setOpsTab(nextOps);
-      setMesaTab(nextMesa);
-      if (options?.openMissionId) {
-        setMissionDeepLink({
-          campaignId: options.openMissionId,
-          tab: options.missionTab,
-        });
-      }
-      if (options?.scrollTo) {
-        window.setTimeout(() => {
-          document.getElementById(options.scrollTo!)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 200);
-      }
-    },
-    [opsTab, mesaTab]
-  );
+  }, [nav]);
 
   const sessionLabel = useMemo(() => {
     if (!activeSession?.groupId) return null;
@@ -474,83 +420,49 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
       : groupName;
   }, [activeSession, spotlightGroups, spotlightCampaigns, t]);
 
-  const clearMesaDeepLink = useCallback(() => setMesaDeepLink(null), []);
   const clearScopeRequest = useCallback(() => setScopeRequest(null), []);
 
-  /** Atalhos da missão: abre o catálogo do recurso já filtrado pela campanha. */
+  /** Atalhos da missão: empilha o catálogo do recurso; Voltar retorna à missão. */
   const openCampaignScope = useCallback(
     (area: CampaignScopedArea, campaignId: string, create = false) => {
-      if (area === 'intel') {
-        setActiveTab('media');
-      } else {
-        setOpsTab(area === 'achievements' ? 'conquistas' : 'sms');
-        setActiveTab('systems');
-      }
+      const section = area === 'intel' ? 'intel' : area === 'achievements' ? 'conquistas' : 'npcs';
       setScopeRequest({ area, campaignId, create });
+      nav.go(adminPath.content(section));
     },
-    []
+    [nav]
   );
 
-  const spotlightItems = useMemo(() => {
-    return buildSearchItems(
-      allAccounts,
-      allCharacters,
-      setTab,
-      (uid) => {
-        setMesaTab('contas');
-        setActiveTab('mesa');
-        setMesaDeepLink({ accountUid: uid });
-      },
-      (uid, charId) => {
-        setMesaTab('contas');
-        setActiveTab('mesa');
-        setMesaDeepLink({ agent: { uid, charId } });
-      },
-      () => {
-        if (firstCampaignId) {
-          navigateToMetric('missions', {
-            openMissionId: firstCampaignId,
-            missionTab: 'inventario',
-          });
-        } else {
-          setActiveTab('missions');
-        }
-      },
-      (opsSub) => {
-        setActiveTab('systems');
-        setOpsTab(opsSub);
-      },
-      (mesaSub) => {
-        setActiveTab('mesa');
-        setMesaTab(mesaSub);
-      },
-      spotlightGroups.map((g) => ({ id: g.id, name: g.name })),
-      spotlightCampaigns.map((c) => ({ id: c.id, name: c.name })),
-      (groupId) => {
-        setMesaTab('esquadroes');
-        setActiveTab('mesa');
-        setMesaDeepLink({ groupId });
-      },
-      (campaignId) => {
-        navigateToMetric('missions', { openMissionId: campaignId, missionTab: 'dados' });
-      }
-    );
-  }, [
-    allAccounts,
-    allCharacters,
-    firstCampaignId,
-    navigateToMetric,
-    setTab,
-    spotlightGroups,
-    spotlightCampaigns,
-  ]);
-
-  const handleNavigateToMission = useCallback(
-    (campaignId: string, tab: MissionTabId = 'vinculos') => {
-      navigateToMetric('missions', { openMissionId: campaignId, missionTab: tab });
-    },
-    [navigateToMetric]
+  const spotlightItems = useMemo(
+    () =>
+      buildSearchItems({
+        accounts: allAccounts,
+        characters: allCharacters,
+        groups: spotlightGroups.map((g) => ({ id: g.id, name: g.name })),
+        campaigns: spotlightCampaigns.map((c) => ({ id: c.id, name: c.name })),
+        inventoryMissionId: activeSession?.campaignId,
+      }),
+    [allAccounts, allCharacters, spotlightGroups, spotlightCampaigns, activeSession?.campaignId]
   );
+
+  const breadcrumb = useMemo(
+    () =>
+      buildAdminBreadcrumb(route, (key) => t(key), {
+        missionName: (id) => campaignLabel(id, spotlightCampaigns),
+        accountName: (uid) =>
+          masterAccountLabel(allAccounts.find((a) => a.uid === uid), t('entity.accountNoName')),
+        agentName: (uid, charId) =>
+          allCharacters.find((c) => c.uid === uid && c.char.id === charId)?.char.codinome ||
+          t('entity.agentNoCodename'),
+      }),
+    [route, t, spotlightCampaigns, allAccounts, allCharacters]
+  );
+
+  useEffect(() => {
+    document.title = `${[...breadcrumb].reverse().map((c) => c.label).join(' · ')} · LimboOS`;
+  }, [breadcrumb]);
+  useEffect(() => () => {
+    document.title = 'LimboOS';
+  }, []);
 
   const modKey = modKeyLabel();
 
@@ -559,9 +471,11 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
       <div className="noise-overlay" />
       <div className="scanlines" />
 
+      {redirect && <Navigate to={redirect.includes('#') ? redirect : `${redirect}${hash}`} replace />}
+
       <Sidebar
-        activeTab={activeTab}
-        setActiveTab={setTab}
+        activeDest={route.dest}
+        hrefFor={hrefFor}
         isCollapsed={sidebarCollapsed}
         onToggleCollapse={() => setSidebarCollapsed((prev) => !prev)}
       />
@@ -571,12 +485,12 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
           user={user}
           onLogout={onLogout}
           onSpotlight={() => setSpotlightOpen(true)}
-          contextLabel={t(`context.${activeTab}`)}
+          breadcrumb={breadcrumb}
           sessionLabel={sessionLabel}
-          onOpenLive={() => setActiveTab('live')}
+          onOpenLive={() => nav.go(hrefFor('live'))}
         />
 
-        <main className="flex-1 overflow-y-auto px-4 py-5 sm:px-6 sm:py-6 2xl:px-10 custom-scrollbar">
+        <main ref={mainRef} className="flex-1 overflow-y-auto px-4 py-5 sm:px-6 sm:py-6 2xl:px-10 custom-scrollbar">
           <div className="max-w-7xl mx-auto space-y-8">
             <React.Suspense
               fallback={
@@ -596,8 +510,8 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
                 </motion.div>
               }
             >
-              {mountedTabs.has('live') && (
-                <AdminTabPanel active={activeTab === 'live'}>
+              {routeOf('live') && (
+                <AdminTabPanel active={route.dest === 'live'}>
                   <LiveWorkspace
                     accounts={allAccounts}
                     characters={allCharacters}
@@ -606,75 +520,44 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
                     limboSeized={healthMetrics.limboSeized}
                     activeSession={activeSession}
                     onSessionChange={setActiveSession}
-                    onOpenSystems={() => navigateToMetric('systems', { opsSubTab: 'acesso' })}
-                    onOpenMesa={(groupId) => {
-                      setMesaTab('esquadroes');
-                      setActiveTab('mesa');
-                      if (groupId) setMesaDeepLink({ groupId });
-                    }}
-                    onOpenMedia={() => navigateToMetric('media')}
-                    onOpenFullLog={() =>
-                      navigateToMetric('systems', {
-                        opsSubTab: 'relatorios',
-                        scrollTo: 'admin-system-log',
-                      })
-                    }
-                    onOpenMission={(campaignId) =>
-                      navigateToMetric('missions', {
-                        openMissionId: campaignId,
-                        missionTab: 'vinculos',
-                      })
-                    }
                   />
                 </AdminTabPanel>
               )}
 
-              {mountedTabs.has('mesa') && (
-                <AdminTabPanel active={activeTab === 'mesa'}>
-                  <MesaPanel
-                    activeSub={mesaTab}
-                    onSubChange={setMesaTab}
-                    isAdmin={isAdmin}
-                    onNavigateToMission={handleNavigateToMission}
-                    deepLinkAccountUid={mesaDeepLink?.accountUid}
-                    deepLinkAgent={mesaDeepLink?.agent}
-                    deepLinkGroupId={mesaDeepLink?.groupId}
-                    onDeepLinkConsumed={clearMesaDeepLink}
-                  />
+              {routeOf('missions') && (
+                <AdminTabPanel active={route.dest === 'missions'}>
+                  <CampaignsPanel route={routeOf('missions')!} onOpenScoped={openCampaignScope} />
                 </AdminTabPanel>
               )}
 
-              {mountedTabs.has('missions') && (
-                <AdminTabPanel active={activeTab === 'missions'}>
-                  <CampaignsPanel
-                    missionDeepLink={missionDeepLink}
-                    onDeepLinkConsumed={() => setMissionDeepLink(null)}
-                    onOpenScoped={openCampaignScope}
-                  />
-                </AdminTabPanel>
-              )}
-
-              {mountedTabs.has('media') && (
-                <AdminTabPanel active={activeTab === 'media'}>
-                  <MediaLibraryPanel
-                    scopeRequest={scopeRequest?.area === 'intel' ? scopeRequest : null}
+              {routeOf('content') && (
+                <AdminTabPanel active={route.dest === 'content'}>
+                  <ContentPanel
+                    route={routeOf('content')!}
+                    scopeRequest={scopeRequest}
                     onScopeConsumed={clearScopeRequest}
                   />
                 </AdminTabPanel>
               )}
 
-              {mountedTabs.has('systems') && (
-                <AdminTabPanel active={activeTab === 'systems'}>
+              {routeOf('mesa') && (
+                <AdminTabPanel active={route.dest === 'mesa'}>
+                  <MesaPanel
+                    route={routeOf('mesa')!}
+                    locationKey={route.dest === 'mesa' ? locationKey : routeByDest.mesa?.key ?? ''}
+                    isAdmin={isAdmin}
+                  />
+                </AdminTabPanel>
+              )}
+
+              {routeOf('system') && (
+                <AdminTabPanel active={route.dest === 'system'}>
                   <OperationsPanel
-                    activeSub={opsTab}
-                    onSubChange={setOpsTab}
+                    route={routeOf('system')!}
                     agents={agentMetrics}
                     campaigns={campaignMetrics}
                     health={healthMetrics}
                     engagement={engagementMetrics}
-                    onNavigate={navigateToMetric}
-                    scopeRequest={scopeRequest?.area === 'intel' ? null : scopeRequest}
-                    onScopeConsumed={clearScopeRequest}
                   />
                 </AdminTabPanel>
               )}
@@ -709,7 +592,12 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
         </footer>
       </div>
 
-      <SpotlightSearch open={spotlightOpen} onClose={() => setSpotlightOpen(false)} items={spotlightItems} />
+      <SpotlightSearch
+        open={spotlightOpen}
+        onClose={() => setSpotlightOpen(false)}
+        items={spotlightItems}
+        onNavigate={nav.go}
+      />
     </div>
   );
 }

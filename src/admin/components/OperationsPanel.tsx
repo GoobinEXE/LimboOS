@@ -1,80 +1,38 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { motion } from 'motion/react';
-import TerminalPanel from './TerminalPanel';
-import RedirectsPanel from './RedirectsPanel';
-import AchievementsPanel from './AchievementsPanel';
-import NpcSmsPanel from './NpcSmsPanel';
 import ReportsPanel, {
   type AgentMetrics,
   type CampaignMetrics,
   type HealthMetrics,
   type EngagementMetrics,
 } from './ReportsPanel';
-import type { CampaignScopeRequest, OperationsSubId } from '../lib/adminNavigation';
-import { FADE_FAST } from '../../lib/motion';
+import SystemLogPanel from './SystemLogPanel';
 import AdminSubTabs from './AdminSubTabs';
+import AdminSectionPanels from './AdminSectionPanels';
+import { SYSTEM_SECTIONS, adminPath, type RouteOf, type SystemSectionId } from '../lib/adminNavigation';
+import { useAdminNavigate } from '../hooks/useAdminRoute';
 
 interface OperationsPanelProps {
-  activeSub: OperationsSubId;
-  onSubChange: (sub: OperationsSubId) => void;
+  route: RouteOf<'system'>;
   agents: AgentMetrics;
   campaigns: CampaignMetrics;
   health: HealthMetrics;
   engagement: EngagementMetrics;
-  onNavigate: (tab: string, options?: { opsSubTab?: OperationsSubId; scrollTo?: string; mesaSubTab?: string }) => void;
-  /** Pedido vindo da missão para abrir Conquistas ou SMS filtrados pela campanha. */
-  scopeRequest?: CampaignScopeRequest | null;
-  onScopeConsumed?: () => void;
 }
 
-export default function OperationsPanel({
-  activeSub,
-  onSubChange,
-  agents,
-  campaigns,
-  health,
-  engagement,
-  onNavigate,
-  scopeRequest,
-  onScopeConsumed,
-}: OperationsPanelProps) {
+/**
+ * Sistema: Relatórios (panorama e BI) e Log completo.
+ */
+export default function OperationsPanel({ route, agents, campaigns, health, engagement }: OperationsPanelProps) {
   const { t } = useTranslation('admin');
+  const nav = useAdminNavigate();
 
-  const SUBS: { id: OperationsSubId; label: string; icon: string; blurb: string }[] = [
-    {
-      id: 'relatorios',
-      label: t('systems.sub.reports'),
-      icon: 'analytics',
-      blurb: t('systems.sub.reportsBlurb'),
-    },
-    {
-      id: 'acesso',
-      label: t('systems.sub.access'),
-      icon: 'lock_open',
-      blurb: t('systems.sub.accessBlurb'),
-    },
-    {
-      id: 'qr',
-      label: t('systems.sub.qr'),
-      icon: 'qr_code',
-      blurb: t('systems.sub.qrBlurb'),
-    },
-    {
-      id: 'conquistas',
-      label: t('systems.sub.achievements'),
-      icon: 'emoji_events',
-      blurb: t('systems.sub.achievementsBlurb'),
-    },
-    {
-      id: 'sms',
-      label: t('systems.sub.sms'),
-      icon: 'sms',
-      blurb: t('systems.sub.smsBlurb'),
-    },
-  ];
+  const tabs = SYSTEM_SECTIONS.map((s) => ({ id: s.id, label: t(s.labelKey), icon: s.icon }));
+  const current = SYSTEM_SECTIONS.find((s) => s.id === route.section) ?? SYSTEM_SECTIONS[0];
 
-  const current = SUBS.find((s) => s.id === activeSub) || SUBS[0];
+  const changeSection = (section: SystemSectionId) => {
+    if (section !== route.section) nav.go(adminPath.system(section));
+  };
 
   return (
     <div className="space-y-6">
@@ -83,55 +41,33 @@ export default function OperationsPanel({
           <span className="w-1 h-9 bg-accent shrink-0" aria-hidden />
           <div className="min-w-0">
             <h2 className="font-display font-bold uppercase tracking-[0.18em] text-xl text-bone leading-none">{t('systems.title')}</h2>
-            <p className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.2em] mt-2 truncate">
-              {current.blurb}
-            </p>
+            {current.blurbKey && (
+              <p className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.2em] mt-2 truncate">
+                {t(current.blurbKey)}
+              </p>
+            )}
           </div>
         </div>
       </header>
 
       <AdminSubTabs
-        tabs={SUBS}
-        active={activeSub}
-        onChange={onSubChange}
+        tabs={tabs}
+        active={route.section}
+        onChange={changeSection}
         indicatorId="admin-ops-sub"
         ariaLabel={t('systems.title')}
       />
 
-      {/* Troca de sub-aba é frequente: troca imediata com fade curto, sem esperar saída */}
-      <motion.div
-          key={activeSub}
-          role="tabpanel"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={FADE_FAST}
-        >
-          {activeSub === 'relatorios' && (
-            <ReportsPanel
-              agents={agents}
-              campaigns={campaigns}
-              health={health}
-              engagement={engagement}
-              onNavigate={onNavigate}
-            />
-          )}
-          {activeSub === 'acesso' && <TerminalPanel embedded />}
-          {activeSub === 'qr' && <RedirectsPanel embedded />}
-          {activeSub === 'conquistas' && (
-            <AchievementsPanel
-              embedded
-              scopeRequest={scopeRequest?.area === 'achievements' ? scopeRequest : null}
-              onScopeConsumed={onScopeConsumed}
-            />
-          )}
-          {activeSub === 'sms' && (
-            <NpcSmsPanel
-              embedded
-              scopeRequest={scopeRequest?.area === 'sms' ? scopeRequest : null}
-              onScopeConsumed={onScopeConsumed}
-            />
-          )}
-        </motion.div>
+      <AdminSectionPanels
+        active={route.section}
+        render={(section) =>
+          section === 'relatorios' ? (
+            <ReportsPanel agents={agents} campaigns={campaigns} health={health} engagement={engagement} />
+          ) : (
+            <SystemLogPanel />
+          )
+        }
+      />
     </div>
   );
 }

@@ -7,19 +7,13 @@ import { PlayerStats } from '../../types/player';
 import { intelTitleLabel } from '../lib/entityLabels';
 import { activityLogger } from '../../services/ActivityLogger';
 import { staggerContainer, staggerItem } from '../lib/motion';
+import { adminPath } from '../lib/adminNavigation';
+import { useAdminNavigate } from '../hooks/useAdminRoute';
 
-type IntelSubTabId = 'acervo' | 'jukebox' | 'qr' | 'conquistas';
-
-interface MetricNavigationOptions {
-  intelSubTab?: IntelSubTabId;
-  scrollTo?: string;
-}
-
-interface AnalyticsPanelProps {
-  onNavigate?: (tab: string, options?: MetricNavigationOptions) => void;
-}
-
-export default function AnalyticsPanel({ onNavigate }: AnalyticsPanelProps = {}) {
+export default function AnalyticsPanel() {
+  const nav = useAdminNavigate();
+  const goAccounts = () => nav.go(adminPath.mesa('contas'));
+  const goContent = () => nav.go(adminPath.content('intel'));
   const { t } = useTranslation('admin');
   const [playEvents, setPlayEvents] = useState<PlayEvent[]>([]);
   const [users, setUsers] = useState<UserData[]>([]);
@@ -120,20 +114,19 @@ export default function AnalyticsPanel({ onNavigate }: AnalyticsPanelProps = {})
       </motion.div>
 
       <motion.div variants={staggerItem} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <KPICard label={t('analytics.activeUsers')} value={users.length} icon="group" color="text-primary" onClick={() => onNavigate?.('players')} />
-        <KPICard label="Ativos 7d" value={displayAnalytics.activeUsers} icon="trending_up" color="text-tertiary" onClick={() => onNavigate?.('players')} />
-        <KPICard label={t('analytics.audioFiles')} value={audios.length} icon="library_music" color="text-secondary" onClick={() => onNavigate?.('media')} />
+        <KPICard label={t('analytics.activeUsers')} value={users.length} icon="group" color="text-primary" onClick={goAccounts} />
+        <KPICard label="Ativos 7d" value={displayAnalytics.activeUsers} icon="trending_up" color="text-tertiary" onClick={goAccounts} />
+        <KPICard label={t('analytics.audioFiles')} value={audios.length} icon="library_music" color="text-secondary" onClick={goContent} />
         <KPICard
           label="Eventos Play"
           value={aggregatedData?.totalPlays ?? playEvents.length}
           icon="play_circle"
           color="text-primary"
-          onClick={() => onNavigate?.('dashboard', { scrollTo: 'admin-analytics' })}
         />
       </motion.div>
 
       <motion.div variants={staggerItem} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <ClickableSection onClick={() => onNavigate?.('media')} className="bg-surface-container-low border border-primary/10 p-6 shadow-xl group hover:border-primary/20 transition">
+        <ClickableSection onClick={goContent} className="bg-surface-container-low border border-primary/10 p-6 shadow-xl group hover:border-primary/20 transition">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               <span className="material-symbols-outlined text-secondary text-base">cloud_done</span>
@@ -202,7 +195,7 @@ export default function AnalyticsPanel({ onNavigate }: AnalyticsPanelProps = {})
       </motion.div>
 
       <motion.div variants={staggerItem} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <ClickableSection onClick={() => onNavigate?.('media')} className="bg-surface-container-low border border-primary/10 p-6 shadow-xl">
+        <ClickableSection onClick={goContent} className="bg-surface-container-low border border-primary/10 p-6 shadow-xl">
           <div className="flex items-center gap-3 mb-8">
             <span className="material-symbols-outlined text-primary text-base">leaderboard</span>
             <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-500">Top Conteúdo (Plays)</h3>
@@ -231,7 +224,7 @@ export default function AnalyticsPanel({ onNavigate }: AnalyticsPanelProps = {})
           </div>
         </ClickableSection>
 
-        <ClickableSection onClick={() => onNavigate?.('players')} className="bg-surface-container-low border border-primary/10 p-6 shadow-xl">
+        <ClickableSection onClick={goAccounts} className="bg-surface-container-low border border-primary/10 p-6 shadow-xl">
           <div className="flex items-center gap-3 mb-8">
             <span className="material-symbols-outlined text-primary text-base">person_play</span>
             <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-500">{t('analytics.mostActive')}</h3>
@@ -263,7 +256,7 @@ export default function AnalyticsPanel({ onNavigate }: AnalyticsPanelProps = {})
       </motion.div>
 
       <motion.div variants={staggerItem} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <ClickableSection onClick={() => onNavigate?.('systems', { intelSubTab: 'conquistas' })} className="bg-surface-container-low border border-primary/10 p-6 shadow-xl">
+        <ClickableSection onClick={() => nav.go(adminPath.content('conquistas'))} className="bg-surface-container-low border border-primary/10 p-6 shadow-xl">
           <div className="flex items-center gap-3 mb-8">
             <span className="material-symbols-outlined text-primary text-base">stars</span>
             <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-500">{t('analytics.rareAchievements')}</h3>
@@ -293,7 +286,7 @@ export default function AnalyticsPanel({ onNavigate }: AnalyticsPanelProps = {})
         </ClickableSection>
 
         <div className="space-y-6">
-          <ClickableSection onClick={() => onNavigate?.('players')} className="bg-surface-container-low border border-primary/10 p-6 shadow-xl">
+          <ClickableSection onClick={goAccounts} className="bg-surface-container-low border border-primary/10 p-6 shadow-xl">
             <div className="flex items-center gap-3 mb-8">
               <span className="material-symbols-outlined text-primary text-base">group_add</span>
               <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-500">Crescimento de Rede (Semanal)</h3>

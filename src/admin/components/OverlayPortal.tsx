@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
+import { useAdminPanelActive } from './AdminTabPanel';
 
 /**
  * Renderiza overlays (drawers/modais) diretamente em document.body via portal.
@@ -8,6 +9,9 @@ import { createPortal } from 'react-dom';
  * área rolável em vez de ancorar na viewport). Também trava o scroll do body,
  * fecha o overlay com a tecla Esc (quando onClose é fornecido) e devolve o
  * foco ao elemento que abriu o overlay quando ele fecha.
+ *
+ * Dentro de um painel oculto (keep-alive), o overlay não renderiza nem
+ * trava o scroll; volta a aparecer quando o painel fica ativo de novo.
  *
  * `withExitAnimation`: mantém o portal montado mesmo fechado, para que um
  * <AnimatePresence> interno consiga tocar a animação de saída. Só use quando
@@ -24,6 +28,8 @@ export default function OverlayPortal({
   withExitAnimation?: boolean;
   children: React.ReactNode;
 }) {
+  const panelActive = useAdminPanelActive();
+  const visible = open && panelActive;
   const rootRef = useRef<HTMLDivElement>(null);
   // Ref evita re-executar o efeito a cada render (chamadores passam arrow inline);
   // senão o cleanup devolveria o foco ao gatilho enquanto o usuário digita no modal.
@@ -31,7 +37,7 @@ export default function OverlayPortal({
   onCloseRef.current = onClose;
 
   useEffect(() => {
-    if (!open) return;
+    if (!visible) return;
     const trigger = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
@@ -50,9 +56,10 @@ export default function OverlayPortal({
         trigger.focus({ preventScroll: true });
       }
     };
-  }, [open]);
+  }, [visible]);
 
   if (typeof document === 'undefined') return null;
+  if (!panelActive) return null;
   if (!open && !withExitAnimation) return null;
   return createPortal(
     <div ref={rootRef} className="contents">

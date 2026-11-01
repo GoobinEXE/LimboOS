@@ -18,8 +18,10 @@ interface AdminSubTabsProps<T extends string> {
 }
 
 /**
- * Sub-abas dos painéis admin (Mesa, Sistema…): tablist com setas ←/→,
- * Home/End e indicador sublinhado que desliza entre abas.
+ * Sub-abas dos painéis admin (Conteúdo, Mesa, Sistema…): tablist com
+ * ativação manual. Setas ←/→ e Home/End só movem o foco; Enter/Espaço ou
+ * clique ativam. Cada ativação vira uma entrada de histórico, então mover
+ * o foco pelas abas não pode navegar.
  */
 export default function AdminSubTabs<T extends string>({
   tabs,
@@ -32,12 +34,12 @@ export default function AdminSubTabs<T extends string>({
 
   const focusTab = (index: number) => {
     const next = tabs[(index + tabs.length) % tabs.length];
-    onChange(next.id);
     listRef.current?.querySelector<HTMLButtonElement>(`[data-tab-id="${next.id}"]`)?.focus();
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    const index = tabs.findIndex((tab) => tab.id === active);
+    const focusedId = (document.activeElement as HTMLElement | null)?.dataset.tabId;
+    const index = tabs.findIndex((tab) => tab.id === (focusedId ?? active));
     if (e.key === 'ArrowRight') { e.preventDefault(); focusTab(index + 1); }
     else if (e.key === 'ArrowLeft') { e.preventDefault(); focusTab(index - 1); }
     else if (e.key === 'Home') { e.preventDefault(); focusTab(0); }

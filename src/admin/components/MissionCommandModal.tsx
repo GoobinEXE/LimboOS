@@ -14,12 +14,21 @@ import MissionVideoTab from './mission/MissionVideoTab';
 import MissionResourcesTab from './mission/MissionResourcesTab';
 import { MissionTabId, MISSION_TAB_ORDER } from './mission/types';
 import type { CampaignResourceSummary } from '../lib/campaignResources';
-import type { CampaignScopedArea } from '../lib/adminNavigation';
+import { NEW_MISSION_SEGMENT, type CampaignScopedArea } from '../lib/adminNavigation';
+
+/** Slug vira segmento de URL: sem barra, sem espaço e diferente de `new`. */
+function isValidMissionSlug(id: string): boolean {
+  return id !== NEW_MISSION_SEGMENT && /^[^\s/?#]+$/.test(id);
+}
 
 interface MissionCommandModalProps {
   open: boolean;
   campaign: Partial<Campaign> | null;
-  initialTab?: MissionTabId;
+  /** Aba ativa, controlada pela rota (`/admin/missions/:id/:seção`). */
+  activeTab: MissionTabId;
+  onTabChange: (tab: MissionTabId) => void;
+  /** Criação (`/admin/missions/new`): só Dados até salvar. */
+  isNewMission: boolean;
   groups: Group[];
   allCharacters: { account: MasterAccount; character: CharacterData }[];
   onClose: () => void;
@@ -39,7 +48,9 @@ interface MissionCommandModalProps {
 export default function MissionCommandModal({
   open,
   campaign,
-  initialTab = 'dados',
+  activeTab,
+  onTabChange,
+  isNewMission,
   groups,
   allCharacters,
   onClose,
@@ -50,23 +61,29 @@ export default function MissionCommandModal({
 }: MissionCommandModalProps) {
   const { t } = useTranslation('admin');
   const { showAlert, modal } = useModal();
-  const [activeTab, setActiveTab] = useState<MissionTabId>(initialTab);
   const [editingCampaign, setEditingCampaign] = useState<Partial<Campaign> | null>(null);
   const [isPersisted, setIsPersisted] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  const isNew = Boolean(editingCampaign?.id?.includes('new'));
+  const isNew = isNewMission;
 
+  // Só reinicia o rascunho quando a missão muda; trocar de aba não perde edição
   useEffect(() => {
     if (!open || !campaign) return;
     setEditingCampaign({ ...campaign });
-    setIsPersisted(!campaign.id?.includes('new'));
-    setActiveTab(initialTab);
-  }, [open, campaign, initialTab]);
+    setIsPersisted(!isNewMission);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, campaign]);
+
+  const setActiveTab = onTabChange;
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingCampaign?.name || !editingCampaign?.id) return;
+    if (isNew && !isPersisted && !isValidMissionSlug(editingCampaign.id)) {
+      showAlert('Erro', t('missions.toast.invalidSlug'));
+      return;
+    }
 
     setSaving(true);
     try {
@@ -75,12 +92,9 @@ export default function MissionCommandModal({
       );
       setIsPersisted(true);
       const saved = editingCampaign as Campaign;
+      // Missão recém-criada: o pai troca a rota para a aba Recursos, que mostra o que falta
       onSaved?.(saved);
       showAlert('Sucesso', t('missions.toast.saved'));
-      if (isNew) {
-        // Missão recém-criada: a aba Recursos mostra o que falta para jogá-la
-        setActiveTab('recursos');
-      }
     } catch (error) {
       console.error('Erro ao salvar campanha:', error);
       showAlert('Erro', t('missions.toast.saveFail'));

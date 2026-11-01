@@ -18,7 +18,8 @@
     "brandCollapsed": "ADM",
     "group": {
       "session": "Session",
-      "arsenal": "Arsenal",
+      "prep": "Prep",
+      "table": "Players",
       "core": "Core"
     },
     "live": "Live",
@@ -41,7 +42,6 @@
     "sessionPrefix": "Session:",
     "sessionGoLive": "Go to Live — active session",
     "noSession": "No session",
-    "defaultContext": "Terminal de Comando",
     "operator": "Authenticated Operator",
     "logout": "Logout",
     "logoutTitle": "End Session",
@@ -51,15 +51,8 @@
     "realtimeSync": "Realtime Data Sync",
     "systemId": "RM ADMIN SYSTEM V5.0 // ENCRYPTED NODE",
     "shortcutSearch": "Search",
-    "shortcutSections": "Sections",
+    "shortcutSections": "Destinations",
     "shortcutMenu": "Menu"
-  },
-  "context": {
-    "live": "Live — session and delivery",
-    "mesa": "Table — squads and accounts",
-    "missions": "Missions — campaign command",
-    "media": "Content — library and intel",
-    "systems": "System — reports and access"
   },
   "entity": {
     "unknown": "Unknown",
@@ -91,7 +84,7 @@
       "navigate": "↑↓ Navigate",
       "select": "↵ Select",
       "shortcut": "⌘/Ctrl+K Spotlight",
-      "tabs": "⌘/Ctrl+1–6 Abas"
+      "tabs": "⌘/Ctrl+1–5 Destinations"
     },
     "resultsCount": "{{n}} results",
     "enter": "ENTER ↵",
@@ -99,9 +92,6 @@
       "missionInventory": "Mission Inventory",
       "missionInventorySub": "Open missions → inventory",
       "jukebox": "Jukebox"
-    },
-    "ops": {
-      "accessHardware": "Hardware Access"
     },
     "sub": {
       "mesa": "Table",
@@ -111,13 +101,32 @@
       "mission": "Mission"
     }
   },
+  "breadcrumb": {
+    "navLabel": "You are here",
+    "newMission": "New mission"
+  },
   "mesa": {
     "title": "Table",
     "sub": {
       "squads": "Squads",
       "squadsBlurb": "Game tables, members and bulk actions",
-      "accounts": "Accounts",
-      "accountsBlurb": "Master accounts, characters and dossiers"
+      "accounts": "Agents & Accounts",
+      "accountsBlurb": "Master accounts, characters and dossiers",
+      "access": "Access",
+      "accessBlurb": "Persistent DOS/Mac hardware authorization"
+    }
+  },
+  "content": {
+    "title": "Content",
+    "sub": {
+      "intel": "Intel & Media",
+      "intelBlurb": "Media files and intel catalog",
+      "achievements": "Achievements",
+      "achievementsBlurb": "Achievement catalog and unlock rules",
+      "npcs": "NPCs & SMS",
+      "npcsBlurb": "Contacts and SMS dialogue scripts",
+      "qr": "QR & Links",
+      "qrBlurb": "Map physical QR → target intel"
     }
   },
   "systems": {
@@ -125,14 +134,8 @@
     "sub": {
       "reports": "Reports",
       "reportsBlurb": "Overview, BI and full telemetry",
-      "access": "Access",
-      "accessBlurb": "Persistent DOS/Mac hardware authorization",
-      "qr": "QR & Links",
-      "qrBlurb": "Map physical QR → target intel",
-      "achievements": "Achievements",
-      "achievementsBlurb": "Global achievements catalog",
-      "sms": "SMS / NPCs",
-      "smsBlurb": "Contacts and SMS dialogue scripts"
+      "log": "Log",
+      "logBlurb": "Full record of events and actions"
     }
   },
   "live": {
@@ -163,7 +166,7 @@
       "empty": "No agents with recent login",
       "emptySession": "No session members online",
       "seeAllOnline": "See all online",
-      "openAccess": "Open System → Access (offline grants)",
+      "openAccess": "Open Players → Access (offline grants)",
       "selectAll": "Select all ({{n}})",
       "clearSelection": "Clear selection ({{n}})",
       "marked": "{{n}} marked",
@@ -197,7 +200,8 @@
     "quick": {
       "systems": "System",
       "mesa": "Table",
-      "media": "Content"
+      "media": "Content",
+      "access": "Access"
     },
     "controls": "Session Controls",
     "jukebox": "Table Jukebox",
@@ -232,7 +236,7 @@
     "protocols": "RPG Protocols",
     "diskRepair": "DiskRepair.exe",
     "diskRepairDesc": "Remote demagnetization",
-    "hint": "Session controls. Persistent hardware auth is under System → Access."
+    "hint": "Session controls. Persistent hardware auth is under Players → Access."
   },
   "missions": {
     "title": "Command Center",
@@ -280,7 +284,8 @@
     },
     "toast": {
       "saved": "Mission saved successfully.",
-      "saveFail": "Could not save the campaign."
+      "saveFail": "Could not save the campaign.",
+      "invalidSlug": "Invalid identifier: use a slug without spaces or slashes, other than \"new\"."
     },
     "data": {
       "save": "Save Settings",
@@ -505,7 +510,9 @@
       "authorityLevel": "Authority Level",
       "accessControl": "Access Control",
       "resetCreds": "Field Credential Reset",
-      "reset": "Reset"
+      "reset": "Reset",
+      "hardwareHint": "Persistent DOS/Mac authorization lives in Players → Access. In-session push lives in Live.",
+      "hardwareLink": "Manage in Access"
     },
     "createMasterTitle": "New Master Connection",
     "createPassword": "Temporary Password",
@@ -634,7 +641,6 @@
   },
   "reports": {
     "panorama": "Operational Overview",
-    "logDivider": "Core Central Log",
     "group": {
       "agents": "Agents",
       "campaigns": "Campaigns",

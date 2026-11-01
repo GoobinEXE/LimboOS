@@ -11,11 +11,10 @@ import { collection, onSnapshot, Timestamp } from 'firebase/firestore';
 import { useModal } from './ConfirmModal';
 import IntelDistributionDrawer from './IntelDistributionDrawer';
 import NpcSmsDistributionModal from './NpcSmsDistributionModal';
-import GroupMissionsModal from './GroupMissionsModal';
+import { Link } from 'react-router-dom';
 import { campaignLabel, masterAccountLabel, masterAccountLabelByUid } from '../lib/entityLabels';
 import { ADMIN_FADE, listItem, staggerDelay } from '../lib/motion';
 import { adminPath } from '../lib/adminNavigation';
-import { useAdminNavigate } from '../hooks/useAdminRoute';
 
 interface GroupManagerProps {
   isAdmin: boolean;
@@ -30,7 +29,6 @@ export default function GroupManager({
   highlight,
 }: GroupManagerProps) {
   const { t } = useTranslation('admin');
-  const nav = useAdminNavigate();
   const highlightedKeyRef = useRef<string | null>(null);
   const [groups, setGroups] = useState<Group[]>([]);
   const [users, setUsers] = useState<MasterAccount[]>([]);
@@ -55,8 +53,8 @@ export default function GroupManager({
   // SMS Distribution State
   const [showSmsModal, setShowSmsModal] = useState<string | null>(null);
 
-  // Missions management State
-  const [showMissionsModal, setShowMissionsModal] = useState<string | null>(null);
+  // Esquadrões com a lista completa de missões autorizadas aberta ("+N")
+  const [expandedMissionChips, setExpandedMissionChips] = useState<Set<string>>(new Set());
 
   // Quick Action State
   const [quickAddGroup, setQuickAddGroup] = useState<string | null>(null);
@@ -532,30 +530,52 @@ export default function GroupManager({
                            {slots.length} AGENTES
                          </p>
                       </div>
+                      {/* Vínculo com missões é editado só em Missão → Vínculos: aqui os chips levam até lá */}
                       {group.campaignId && (
-                        <span className="text-[9px] font-black bg-phosphor-500/10 text-phosphor-500 border border-phosphor-500/20 px-2 py-1 rounded-sm uppercase tracking-widest flex items-center gap-1">
-                          <span className="material-symbols-outlined text-[10px]">rocket_launch</span>
+                        <Link
+                          to={adminPath.mission(group.campaignId, 'vinculos')}
+                          title={t('squads.missionChips.editInMission')}
+                          className="text-[9px] font-black bg-phosphor-500/10 text-phosphor-500 border border-phosphor-500/20 px-2 py-1 rounded-sm uppercase tracking-widest flex items-center gap-1 hover:bg-phosphor-500/20 transition-colors"
+                        >
+                          <span className="material-symbols-outlined text-[10px]" aria-hidden>rocket_launch</span>
+                          <span className="sr-only">{t('squads.missionChips.inField')}: </span>
                           {campaignLabel(group.campaignId, campaigns)}
-                        </span>
+                        </Link>
                       )}
-                      {group.unlockedCampaigns && group.unlockedCampaigns.length > 0 && (
-                        <div className="flex items-center gap-1.5 bg-black/40 px-2 py-1 rounded-sm border border-border-subtle">
-                          <span className="material-symbols-outlined text-[10px] text-ash-500">vpn_key</span>
-                          <p className="text-[9px] font-black text-ash-500 uppercase tracking-widest">
-                            {group.unlockedCampaigns.length} MISSÕES
-                          </p>
-                        </div>
-                      )}
+                      {(() => {
+                        const authorized = (group.unlockedCampaigns || []).filter((id) => id !== group.campaignId);
+                        if (authorized.length === 0) return null;
+                        const expanded = expandedMissionChips.has(group.id);
+                        const visible = expanded ? authorized : authorized.slice(0, 3);
+                        return (
+                          <>
+                            {visible.map((campaignId) => (
+                              <Link
+                                key={campaignId}
+                                to={adminPath.mission(campaignId, 'vinculos')}
+                                title={t('squads.missionChips.editInMission')}
+                                className="flex items-center gap-1.5 bg-black/40 px-2 py-1 rounded-sm border border-border-subtle text-[9px] font-black text-ash-400 uppercase tracking-widest hover:text-bone hover:border-border transition-colors"
+                              >
+                                <span className="material-symbols-outlined text-[10px] text-ash-500" aria-hidden>vpn_key</span>
+                                <span className="sr-only">{t('squads.missionChips.authorized')}: </span>
+                                {campaignLabel(campaignId, campaigns)}
+                              </Link>
+                            ))}
+                            {authorized.length > visible.length && (
+                              <button
+                                type="button"
+                                onClick={() => setExpandedMissionChips((prev) => new Set(prev).add(group.id))}
+                                className="text-[9px] font-black text-ash-500 uppercase tracking-widest px-2 py-1 border border-dashed border-border-subtle rounded-sm hover:text-bone"
+                              >
+                                {t('squads.missionChips.more', { n: authorized.length - visible.length })}
+                              </button>
+                            )}
+                          </>
+                        );
+                      })()}
                     </div>
                   </div>
                   <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition translate-x-2 group-hover:translate-x-0">
-                    <button
-                      onClick={() => setShowMissionsModal(group.id)}
-                      className="w-8 h-8 flex items-center justify-center bg-black/60 border border-border rounded-sm text-phosphor-500 hover:bg-phosphor-500 hover:text-black transition active:scale-95"
-                      title={t('squads.manageMissions')}
-                    >
-                      <span className="material-symbols-outlined text-sm">rocket_launch</span>
-                    </button>
                     <button onClick={() => setShowSmsModal(group.id)} className="w-8 h-8 flex items-center justify-center bg-black/60 border border-border rounded-sm text-primary hover:bg-primary hover:text-black transition active:scale-95" title={t('squads.smsTitle')}>
                       <span className="material-symbols-outlined text-sm">sms</span>
                     </button>
@@ -675,20 +695,6 @@ export default function GroupManager({
              allCharacters={allCharacters}
              onClose={() => setShowSmsModal(null)}
              onSuccess={() => {}}
-          />
-        ) : null;
-      })()}
-
-      {/* Group Missions Modal */}
-      {showMissionsModal && (() => {
-        const targetGroup = groups.find(g => g.id === showMissionsModal);
-        return targetGroup ? (
-          <GroupMissionsModal
-            group={targetGroup}
-            campaigns={campaigns}
-            onClose={() => setShowMissionsModal(null)}
-            showAlert={showAlert}
-            onNavigateToMission={(campaignId) => nav.go(adminPath.mission(campaignId, 'vinculos'))}
           />
         ) : null;
       })()}

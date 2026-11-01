@@ -572,7 +572,12 @@
     "abort": "ABORTAR",
     "sync": "SINCRONIZAR ALTERAÇÕES",
     "removeTitle": "Remover do Esquadrão",
-    "manageMissions": "Gerenciar Missões",
+    "missionChips": {
+      "inField": "Em campo",
+      "authorized": "Autorizada",
+      "more": "+{{n}}",
+      "editInMission": "Editar vínculo na página da missão"
+    },
     "smsTitle": "Distribuir Torpedos SMS de NPCs",
     "bulkIntelTitle": "Transferência de Evidências em Lote",
     "distTitle": "Distribuir Intel — Esquadrão",
@@ -589,14 +594,6 @@
     }
   },
   "groupMissions": {
-    "authorizedHint": "Autorizado libera a missão na seleção do jogador.",
-    "inFieldHint": "Em campo define a missão ativa do esquadrão.",
-    "allAuthorized": "Todas as missões já autorizadas",
-    "authorizePlaceholder": "Autorizar missão...",
-    "noneAvailable": "Nenhuma missão disponível",
-    "assignPlaceholder": "Designar missão para campo...",
-    "willAuthorize": " (autorizará)",
-    "removeAuth": "Remover autorização",
     "toast": {
       "authorized": "Missão autorizada para o esquadrão.",
       "authRemoved": "Autorização removida.",

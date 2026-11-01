@@ -572,7 +572,12 @@
     "abort": "ABORT",
     "sync": "SYNC CHANGES",
     "removeTitle": "Remove from Squad",
-    "manageMissions": "Manage Missions",
+    "missionChips": {
+      "inField": "In field",
+      "authorized": "Authorized",
+      "more": "+{{n}}",
+      "editInMission": "Edit the link on the mission page"
+    },
     "smsTitle": "Distribute NPC SMS Messages",
     "bulkIntelTitle": "Bulk Evidence Transfer",
     "distTitle": "Distribute Intel — Squad",
@@ -589,14 +594,6 @@
     }
   },
   "groupMissions": {
-    "authorizedHint": "Authorized unlocks the mission in player selection.",
-    "inFieldHint": "In field sets the squad's active mission.",
-    "allAuthorized": "All missions already authorized",
-    "authorizePlaceholder": "Authorize mission...",
-    "noneAvailable": "No missions available",
-    "assignPlaceholder": "Assign mission to field...",
-    "willAuthorize": " (will authorize)",
-    "removeAuth": "Remove authorization",
     "toast": {
       "authorized": "Mission authorized for the squad.",
       "authRemoved": "Authorization removed.",

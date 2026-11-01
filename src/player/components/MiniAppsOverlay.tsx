@@ -17,11 +17,13 @@ interface MiniAppsOverlayProps {
   playerData: PlayerData;
   limboStatus: LimboGlobalState;
   setScreen: (screen: AppScreen) => void;
+  /** Fechar volta à última tela que não é mini-app (player ou perfil). */
+  exitMiniApp: () => void;
 }
 
 const LIMBO_EASE = EASE_OUT;
 
-export default function MiniAppsOverlay({ screen, playerData, limboStatus, setScreen }: MiniAppsOverlayProps) {
+export default function MiniAppsOverlay({ screen, playerData, limboStatus, setScreen, exitMiniApp }: MiniAppsOverlayProps) {
   const { t } = useTranslation('player');
 
   useEffect(() => {
@@ -79,7 +81,7 @@ export default function MiniAppsOverlay({ screen, playerData, limboStatus, setSc
             characterId={playerData.activeCharacterId}
             characterName={playerData.character.codinome}
             onIpDetected={() => setScreen('limbo')}
-            onClose={() => setScreen('player')}
+            onClose={exitMiniApp}
             onAppLaunch={(app) => app === 'diskRepair' && setScreen('diskRepair')}
             onBootSystem={() => setScreen('windows95')}
           />
@@ -88,7 +90,7 @@ export default function MiniAppsOverlay({ screen, playerData, limboStatus, setSc
           <LimboBoard
             uid={playerData.uid}
             characterId={playerData.activeCharacterId}
-            onClose={() => setScreen('player')}
+            onClose={exitMiniApp}
             onBackToTerminal={() => setScreen('bios')}
             globalSeizedStatus={limboStatus.seized}
             readThreadIds={playerData.character.readThreadIds || []}
@@ -98,7 +100,7 @@ export default function MiniAppsOverlay({ screen, playerData, limboStatus, setSc
           <DiskRepairApp
             uid={playerData.uid}
             characterId={playerData.activeCharacterId}
-            onClose={() => setScreen('player')}
+            onClose={exitMiniApp}
             onBackToTerminal={() => setScreen('bios')}
           />
         )}
@@ -106,14 +108,14 @@ export default function MiniAppsOverlay({ screen, playerData, limboStatus, setSc
           <MacOsApp
             uid={playerData.uid}
             characterId={playerData.activeCharacterId}
-            onClose={() => setScreen('player')}
+            onClose={exitMiniApp}
           />
         )}
         {screen === 'windows95' && (
           <Windows95App
             uid={playerData.uid}
             characterId={playerData.activeCharacterId}
-            onClose={() => setScreen('player')}
+            onClose={exitMiniApp}
           />
         )}
       </React.Suspense>

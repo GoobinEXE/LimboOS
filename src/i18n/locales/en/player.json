@@ -57,6 +57,7 @@
     "titleAccent": "Agent",
     "operator": "Operator: {{name}} // Records: {{count}}",
     "logoutTitle": "Sign Out",
+    "consoleTitle": "Back to the game master console",
     "recruit": "Recruit New",
     "syncFail": "Failed to sync agent. Try again.",
     "empty": "No agents registered on this node.",
@@ -203,7 +204,13 @@
       "agent": "Switch Agent",
       "agentSub": "Assume new identity",
       "missionNokia": "> ALVO / MISSÃO",
-      "agentNokia": "> TROCAR AGENTE"
+      "agentNokia": "> TROCAR AGENTE",
+      "dossier": "Agent Dossier",
+      "dossierSub": "Codename, photo and records",
+      "dossierNokia": "> DOSSIER / FILE",
+      "console": "Back to Console",
+      "consoleSub": "Leave agent mode and open the panel",
+      "consoleNokia": "> MASTER CONSOLE"
     },
     "deck": {
       "title": "My Deck",

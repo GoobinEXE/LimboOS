@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { AnimatePresence } from 'motion/react';
 import { useSwipeable } from 'react-swipeable';
 import { useTranslation } from 'react-i18next';
@@ -21,11 +21,29 @@ export default function PlayerRootShell() {
   const playback = usePlayerPlayback();
   const isDesktop = useIsDesktopViewport(1024);
 
-  const { masterAccount, playerData, screen, setScreen, isNokiaTheme, showNokiaShell } = session;
+  const {
+    masterAccount,
+    playerData,
+    screen,
+    setScreen,
+    isNokiaTheme,
+    showNokiaShell,
+    goBack,
+    exitMiniApp,
+    openOverlay,
+    closeOverlay,
+  } = session;
 
   const closeEvidence = useCallback(() => {
     if (playback.activeEvidence) playback.setActiveEvidence(null);
   }, [playback.activeEvidence, playback.setActiveEvidence]);
+
+  // Leitor de evidência ocupa uma entrada de histórico: o Voltar do browser fecha o leitor.
+  const evidenceOpen = Boolean(playback.activeEvidence);
+  useEffect(() => {
+    if (evidenceOpen) openOverlay('evidence');
+    else closeOverlay('evidence');
+  }, [evidenceOpen, openOverlay, closeOverlay]);
 
   useDesktopPlayerShortcuts(
     screen,
@@ -33,6 +51,8 @@ export default function PlayerRootShell() {
     isDesktop && Boolean(playerData),
     playback.activeEvidence ? closeEvidence : undefined,
     Boolean(playerData?.character?.campaignId),
+    goBack,
+    exitMiniApp,
   );
 
   const swipeHandlers = useSwipeable({

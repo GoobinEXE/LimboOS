@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { EASE_OUT, dialogPop, overlayFade, staggerDelay } from '../lib/motion';
 import { useTranslation } from 'react-i18next';
-import { UserPlus, Shield, User, ChevronRight, AlertCircle, Skull, Search, LogOut } from 'lucide-react';
+import { UserPlus, Shield, User, ChevronRight, AlertCircle, Skull, Search, LogOut, MonitorCog } from 'lucide-react';
 import { fetchCharacters, createCharacter } from '../store/firestore';
 import { userService } from '../services/UserService';
 import type { CharacterData, MasterAccount } from '../types/player';
@@ -13,9 +13,11 @@ interface CharacterSelectionScreenProps {
   account: MasterAccount;
   onSelect: (character: CharacterData) => Promise<void>;
   onLogout?: () => void;
+  /** Só para admin em `?mode=play`: volta ao console do mestre. */
+  onOpenAdmin?: () => void;
 }
 
-export default function CharacterSelectionScreen({ account, onSelect, onLogout }: CharacterSelectionScreenProps) {
+export default function CharacterSelectionScreen({ account, onSelect, onLogout, onOpenAdmin }: CharacterSelectionScreenProps) {
   const { t } = useTranslation('player');
   const { t: tCommon } = useTranslation('common');
   const [characters, setCharacters] = useState<CharacterData[]>([]);
@@ -110,6 +112,11 @@ export default function CharacterSelectionScreen({ account, onSelect, onLogout }
             </p>
           </div>
           <div className="flex items-center gap-3">
+            {onOpenAdmin && (
+              <button onClick={onOpenAdmin} className="bg-surface-raised hover:bg-accent/10 text-ash-300 hover:text-accent border border-border hover:border-accent/30 w-10 h-10 rounded-control flex items-center justify-center transition-colors duration-(--duration-fast) active:scale-[0.97]" title={t('character.consoleTitle')} aria-label={t('character.consoleTitle')}>
+                <MonitorCog size={16} />
+              </button>
+            )}
             <button onClick={onLogout} className="bg-error/10 hover:bg-error/20 text-error border border-error/30 w-10 h-10 rounded-control flex items-center justify-center transition-colors duration-(--duration-fast) active:scale-[0.97]" title={t('character.logoutTitle')} aria-label={t('character.logoutTitle')}>
               <LogOut size={16} />
             </button>

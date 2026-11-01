@@ -2,23 +2,37 @@ import type { User } from 'firebase/auth';
 import { loadMasterAccount } from '../store/firestore';
 import type { MasterAccount } from '../types/player';
 
+/**
+ * Só papel no Firestore. Serve para listar outras contas (filtrar admins da
+ * presença, de seletores etc.). Para decidir se o usuário logado é admin, use
+ * `resolveAdminAccess`, que também aceita a custom claim.
+ */
 export function isAdminAccount(
   account: Pick<MasterAccount, 'role' | 'uid'> | null | undefined,
 ): boolean {
   return account?.role === 'admin';
 }
 
-export async function resolveAdminAccess(user: User): Promise<boolean> {
+/**
+ * Admin = custom claim `admin` OU papel `admin` na conta.
+ * Quem já carregou a conta passa `account` e evita uma leitura extra do Firestore.
+ */
+export async function resolveAdminAccess(
+  user: User,
+  account?: Pick<MasterAccount, 'role'> | null,
+): Promise<boolean> {
   try {
     const token = await user.getIdTokenResult();
     if (token.claims.admin === true) return true;
   } catch {
-    // Token indisponível — segue para checagem no Firestore.
+    // Token indisponível — segue para checagem do papel.
   }
 
+  if (account) return account.role === 'admin';
+
   try {
-    const account = await loadMasterAccount(user.uid);
-    return account.role === 'admin';
+    const loaded = await loadMasterAccount(user.uid);
+    return loaded.role === 'admin';
   } catch {
     return false;
   }
@@ -42,9 +56,20 @@ export function wantsPlayAsPlayerMode(): boolean {
   }
 }
 
+/** Sai do modo jogador: remove `mode` e `s` do URL sem perder `history.state`. */
 export function clearPlayAsPlayerMode(): void {
   try {
     sessionStorage.removeItem('limbo_play_as_player');
+  } catch {
+    // ignore
+  }
+
+  try {
+    const url = new URL(window.location.href);
+    if (!url.searchParams.has('mode') && !url.searchParams.has('s')) return;
+    url.searchParams.delete('mode');
+    url.searchParams.delete('s');
+    window.history.replaceState(window.history.state, '', `${url.pathname}${url.search}${url.hash}`);
   } catch {
     // ignore
   }
@@ -54,4 +79,9 @@ export function redirectToAdminPanel(): void {
   if (wantsPlayAsPlayerMode()) return;
   clearPlayAsPlayerMode();
   window.location.href = '/admin';
+}
+
+/** Ponte do modo jogador de volta ao console (recarga completa: outro bundle e outros listeners). */
+export function openAdminConsole(): void {
+  window.location.assign('/admin');
 }

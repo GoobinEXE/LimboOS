@@ -319,13 +319,12 @@ export function useWalkmanPlayback(options: UseWalkmanPlaybackOptions) {
 
   const handleNokiaBack = useCallback(
     (screen: AppScreen) => {
-      if (nokiaBackHandlerRef.current) {
-        const handled = nokiaBackHandlerRef.current();
-        if (handled) return;
-      }
+      // O NokiaPlayer segue montado (oculto) no perfil; o handler dele só vale com o player visível.
       if (screen !== 'player') {
         setScreen('player');
+        return;
       }
+      nokiaBackHandlerRef.current?.();
     },
     [setScreen]
   );

@@ -14,6 +14,7 @@ import type {
 } from '../types/player';
 import type { Toast } from '../components/ToastNotification';
 import type { DeviceCapabilities } from './hooks/useActiveCampaign';
+import type { HistoryOverlay } from './lib/screenHistoryModel';
 
 export interface PlayerSessionValue {
   masterAccount: MasterAccount | null | undefined;
@@ -37,6 +38,15 @@ export interface PlayerSessionValue {
   updateSpotify: (url: string) => Promise<void>;
   updatePhone: (num: string) => Promise<void>;
   selectCampaign: (campaign: Campaign) => Promise<void>;
+  /** Voltar de verdade (entrada anterior desta sessão); sem histórico, vai para `fallback`. */
+  goBack: (fallback: AppScreen) => void;
+  /** Fecha um mini-app voltando à última tela que não é mini-app (reserva: player). */
+  exitMiniApp: () => void;
+  openOverlay: (overlay: HistoryOverlay) => void;
+  closeOverlay: (overlay: HistoryOverlay) => void;
+  /** Admin jogando com `?mode=play`. */
+  isAdminOperator: boolean;
+  openAdminConsole: () => void;
 }
 
 export interface PlayerPlaybackValue {

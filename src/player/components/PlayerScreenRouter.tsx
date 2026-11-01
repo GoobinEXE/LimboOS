@@ -55,7 +55,13 @@ export default function PlayerScreenRouter() {
     updateSpotify,
     updatePhone,
     selectCampaign,
+    goBack,
+    exitMiniApp,
+    isAdminOperator,
+    openAdminConsole,
   } = session;
+
+  const onOpenAdmin = isAdminOperator ? openAdminConsole : undefined;
 
   return (
     <AnimatePresence mode="wait">
@@ -80,6 +86,7 @@ export default function PlayerScreenRouter() {
               account={masterAccount}
               onSelect={handleCharacterSelect}
               onLogout={handleLogout}
+              onOpenAdmin={onOpenAdmin}
             />
           </React.Suspense>
         </motion.div>
@@ -99,6 +106,8 @@ export default function PlayerScreenRouter() {
               onLogout={handleLogout}
               onChangeMission={() => setScreen('campaignSelection')}
               onChangeCharacter={handleCharacterSwitch}
+              onOpenDossier={() => setScreen('agentDossier')}
+              onOpenAdmin={onOpenAdmin}
               onUpdateSpotify={updateSpotify}
               onUpdatePhoneNumber={updatePhone}
             />
@@ -113,7 +122,7 @@ export default function PlayerScreenRouter() {
           <div className="w-full h-full max-w-130 rounded-none sm:rounded-panel shadow-panel border-0 sm:border border-border-accent relative flex flex-col mx-auto overflow-hidden bg-surface">
             <React.Suspense fallback={<RetroLoading message={t('app.loading.dossier')} />}>
               <AgentDossierOverlay
-                onClose={() => setScreen('campaignSelection')}
+                onClose={() => goBack('campaignSelection')}
                 playerData={playerData}
                 intelManager={intelManager}
                 onUpdateSpotify={updateSpotify}
@@ -177,6 +186,7 @@ export default function PlayerScreenRouter() {
             playerData={playerData}
             limboStatus={limboStatus}
             setScreen={setScreen}
+            exitMiniApp={exitMiniApp}
           />
         </React.Suspense>
       )}

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, LogOut, Trophy, Music, Pencil, Check, X, ExternalLink, Image, Map as MapIcon, User, Phone, ChevronRight } from 'lucide-react';
+import { ArrowLeft, LogOut, Trophy, Music, Pencil, Check, X, ExternalLink, Image, Map as MapIcon, User, Phone, ChevronRight, IdCard, MonitorCog } from 'lucide-react';
 import PlayerGallery from './PlayerGallery';
 import { AchievementCatalog } from './achievements/AchievementCatalog';
 import LanguageSelector from './LanguageSelector';
@@ -19,6 +19,10 @@ interface ProfileScreenProps {
   onUpdatePhoneNumber?: (phoneNumber: string) => void;
   onChangeMission?: () => void;
   onChangeCharacter?: () => void;
+  /** Dossiê (codinome e foto) direto do perfil, sem passar pela seleção de missão. */
+  onOpenDossier?: () => void;
+  /** Só para admin em `?mode=play`: volta ao console do mestre. */
+  onOpenAdmin?: () => void;
   variant?: 'default' | 'nokia';
 }
 
@@ -149,6 +153,8 @@ export default function ProfileScreen({
   onUpdatePhoneNumber,
   onChangeMission,
   onChangeCharacter,
+  onOpenDossier,
+  onOpenAdmin,
   variant = 'default'
 }: ProfileScreenProps) {
   const { t } = useTranslation('player');
@@ -282,6 +288,18 @@ export default function ProfileScreen({
               <span>{t('profile.action.agentNokia')}</span>
               <span>&raquo;</span>
             </button>
+            {onOpenDossier && (
+              <button onClick={onOpenDossier} className="w-full border-2 border-lcd-ink flex justify-between px-2 py-2 hover:bg-lcd-ink hover:text-lcd-paper font-black active:scale-[0.97] transition shadow-[1px_1px_0px_#111e14]">
+                <span>{t('profile.action.dossierNokia')}</span>
+                <span>&raquo;</span>
+              </button>
+            )}
+            {onOpenAdmin && (
+              <button onClick={onOpenAdmin} className="w-full border-2 border-dashed border-lcd-ink flex justify-between px-2 py-2 hover:bg-lcd-ink hover:text-lcd-paper font-black active:scale-[0.97] transition">
+                <span>{t('profile.action.consoleNokia')}</span>
+                <span>&raquo;</span>
+              </button>
+            )}
           </div>
 
           <NokiaSection index="00" title={t('profile.languageSection')}>
@@ -456,6 +474,12 @@ export default function ProfileScreen({
           <div className="px-4 pt-4 pb-2 space-y-2">
             <ActionRow onClick={onChangeMission} Icon={MapIcon} title={t('profile.action.mission')} sub={t('profile.action.missionSub')} />
             <ActionRow onClick={onChangeCharacter} Icon={User} title={t('profile.action.agent')} sub={t('profile.action.agentSub')} />
+            {onOpenDossier && (
+              <ActionRow onClick={onOpenDossier} Icon={IdCard} title={t('profile.action.dossier')} sub={t('profile.action.dossierSub')} />
+            )}
+            {onOpenAdmin && (
+              <ActionRow onClick={onOpenAdmin} Icon={MonitorCog} title={t('profile.action.console')} sub={t('profile.action.consoleSub')} />
+            )}
           </div>
 
           <section className="px-4 pt-4 pb-2">

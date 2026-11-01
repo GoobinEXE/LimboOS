@@ -57,6 +57,7 @@
     "titleAccent": "Agente",
     "operator": "Operador: {{name}} // Registros: {{count}}",
     "logoutTitle": "Sair da Conta",
+    "consoleTitle": "Voltar ao console do mestre",
     "recruit": "Recrutar Novo",
     "syncFail": "Falha ao sincronizar agente. Tente novamente.",
     "empty": "Nenhum agente registrado neste nó.",
@@ -203,7 +204,13 @@
       "agent": "Trocar Agente",
       "agentSub": "Assumir nova identidade",
       "missionNokia": "> ALVO / MISSÃO",
-      "agentNokia": "> TROCAR AGENTE"
+      "agentNokia": "> TROCAR AGENTE",
+      "dossier": "Dossiê do Agente",
+      "dossierSub": "Codinome, foto e registros",
+      "dossierNokia": "> DOSSIÊ / FICHA",
+      "console": "Voltar ao Console",
+      "consoleSub": "Encerrar o modo agente e abrir o painel",
+      "consoleNokia": "> CONSOLE MESTRE"
     },
     "deck": {
       "title": "Meu Deck",

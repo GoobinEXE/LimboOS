@@ -1,17 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
 import type { AppScreen } from '../../types/player';
-
-const MINI_APP_SCREENS: ReadonlySet<AppScreen> = new Set([
-  'bios',
-  'limbo',
-  'diskRepair',
-  'macos',
-  'windows95',
-  'agentDossier',
-  'campaignSelection',
-  'profile',
-]);
+import { MINI_APP_SCREENS } from '../lib/screenHistoryModel';
 
 function isTypingTarget(target: EventTarget | null): boolean {
   if (!(target instanceof HTMLElement)) return false;
@@ -26,14 +16,16 @@ function isTypingTarget(target: EventTarget | null): boolean {
 
 /**
  * Atalhos de teclado para viewport desktop (≥1024px).
- * P = perfil, Esc = fechar overlay/mini-app / voltar ao player.
+ * P = perfil, Esc = fechar overlay/mini-app / voltar à tela anterior.
  */
 export function useDesktopPlayerShortcuts(
   screen: AppScreen,
   setScreen: Dispatch<SetStateAction<AppScreen>>,
   enabled: boolean,
-  onCloseEvidence?: () => void,
-  hasCampaign?: boolean,
+  onCloseEvidence: (() => void) | undefined,
+  hasCampaign: boolean,
+  goBack: (fallback: AppScreen) => void,
+  exitMiniApp: () => void,
 ): void {
   useEffect(() => {
     if (!enabled) return;
@@ -57,9 +49,20 @@ export function useDesktopPlayerShortcuts(
           }
           return;
         }
+        if (screen === 'agentDossier') {
+          // Volta para onde o dossiê foi aberto (perfil ou seleção de missão)
+          e.preventDefault();
+          goBack('campaignSelection');
+          return;
+        }
+        if (screen === 'profile') {
+          e.preventDefault();
+          setScreen('player');
+          return;
+        }
         if (MINI_APP_SCREENS.has(screen)) {
           e.preventDefault();
-          setScreen(screen === 'agentDossier' ? 'campaignSelection' : 'player');
+          exitMiniApp();
         }
         return;
       }
@@ -78,7 +81,7 @@ export function useDesktopPlayerShortcuts(
 
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [enabled, screen, setScreen, onCloseEvidence, hasCampaign]);
+  }, [enabled, screen, setScreen, onCloseEvidence, hasCampaign, goBack, exitMiniApp]);
 }
 
 /** True quando a viewport é desktop larga. */

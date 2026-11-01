@@ -8,6 +8,7 @@ import { useToasts } from '../hooks/useToasts';
 import { useWalkmanPlayback } from '../hooks/useWalkmanPlayback';
 import { useAppScreenHistory } from '../hooks/useAppScreenHistory';
 import { achievementCatalogService } from '../../services/AchievementCatalogService';
+import { openAdminConsole } from '../../lib/adminAccess';
 import type { PlayerSessionValue, PlayerPlaybackValue } from '../types';
 
 const PlayerSessionContext = createContext<PlayerSessionValue | null>(null);
@@ -36,6 +37,8 @@ function PlayerProvidersInner({ children }: { children: React.ReactNode }) {
     screen,
     setScreen,
     limboStatus,
+    isAdminOperator,
+    setIsAdminOperator,
     intelCollection,
     setIntelCollection,
     playerDataRef,
@@ -108,9 +111,18 @@ function PlayerProvidersInner({ children }: { children: React.ReactNode }) {
     setPlayerData
   );
 
-  const handleLogin = usePlayerAuthLoginHandler(setMasterAccount, setScreen);
+  const handleLogin = usePlayerAuthLoginHandler(setMasterAccount, setScreen, setIsAdminOperator);
 
-  useAppScreenHistory(screen, setScreen, Boolean(masterAccount));
+  const dismissHistoryOverlay = useCallback(() => setActiveEvidence(null), [setActiveEvidence]);
+
+  const { goBack, exitMiniApp, openOverlay, closeOverlay } = useAppScreenHistory({
+    screen,
+    setScreen,
+    enabled: Boolean(masterAccount),
+    playerDataRef,
+    onCharacterSwitch: handleCharacterSwitch,
+    onOverlayDismiss: dismissHistoryOverlay,
+  });
 
   usePlayerServicesSync(auth, addToast);
   usePlayerScreenAnalytics(screen);
@@ -138,6 +150,12 @@ function PlayerProvidersInner({ children }: { children: React.ReactNode }) {
       updateSpotify,
       updatePhone,
       selectCampaign,
+      goBack,
+      exitMiniApp,
+      openOverlay,
+      closeOverlay,
+      isAdminOperator,
+      openAdminConsole,
     }),
     [
       masterAccount,
@@ -161,6 +179,11 @@ function PlayerProvidersInner({ children }: { children: React.ReactNode }) {
       updateSpotify,
       updatePhone,
       selectCampaign,
+      goBack,
+      exitMiniApp,
+      openOverlay,
+      closeOverlay,
+      isAdminOperator,
     ]
   );
 

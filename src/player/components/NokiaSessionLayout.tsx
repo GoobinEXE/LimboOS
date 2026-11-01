@@ -86,6 +86,8 @@ export default function NokiaSessionLayout() {
             onLogout={session.handleLogout}
             onChangeMission={() => setScreen('campaignSelection')}
             onChangeCharacter={session.handleCharacterSwitch}
+            onOpenDossier={() => setScreen('agentDossier')}
+            onOpenAdmin={session.isAdminOperator ? session.openAdminConsole : undefined}
             onUpdateSpotify={session.updateSpotify}
             onUpdatePhoneNumber={session.updatePhone}
             variant="nokia"

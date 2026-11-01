@@ -101,8 +101,6 @@
       "playAsAgentSub": "Open the player app in play mode"
     },
     "sub": {
-      "mesa": "Table",
-      "systems": "System",
       "live": "Live",
       "squad": "Squad",
       "mission": "Mission"
@@ -205,7 +203,6 @@
       "macFail": "Failed to push Mac"
     },
     "quick": {
-      "systems": "System",
       "mesa": "Table",
       "media": "Content",
       "access": "Access"

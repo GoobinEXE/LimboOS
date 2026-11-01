@@ -68,8 +68,10 @@ Todas são lazy-loaded em `App.tsx` com `Suspense` + `RetroLoading`.
 
 ### Navegação interna (History API)
 
-- **Player:** estado `AppScreen` sincronizado com o histórico do browser via `useAppScreenHistory` (`/?s=profile`, etc.). O botão Voltar do browser desfaz telas (perfil, campanha, mini-apps). Conta admin pode jogar com `/?mode=play`.
-- **Admin:** tabs refletidas em query (`/admin?tab=live`, `/admin?tab=mesa&sub=esquadroes`, `/admin?tab=systems&sub=relatorios`); keep-alive de painéis permanece em memória. Destinos: Ao Vivo, Mesa, Missões, Conteúdo, Sistema.
+- **Admin:** rotas por caminho sob `/admin/*`: `/admin/live`, `/admin/missions[/new|/:id/:seção]`, `/admin/content/:seção?mission=`, `/admin/mesa/:seção[/:uid[/:charId]]`, `/admin/system/:seção`. A fonte única é `src/admin/lib/adminNavigation.ts` (destinos, seções, rótulos i18n, ícones, atalhos ⌘1–5, grupos da barra lateral, construtores `adminPath.*`, `parseAdminLocation` e o redirecionamento das URLs antigas `?tab=&sub=`). `Dashboard` lê `useLocation`, mantém destinos e seções montados (keep-alive) e lembra a última rota de cada destino. Navegue sempre com `useAdminNavigate()` (`src/admin/hooks/useAdminRoute.ts`); não chame `window.history` no admin. Trocar destino ou seção empilha no histórico; o filtro `?mission=` substitui.
+- **Destinos do admin:** Ao Vivo (sessão e entregas), Missões (lista e página da missão), Conteúdo (Intel & Mídia, Conquistas, NPCs & SMS, QR & Links, com um filtro de missão único), Mesa (Esquadrões, Agentes & Contas, Acesso de hardware) e Sistema (Relatórios, Log). Abaixo de `lg` a barra lateral vira a barra inferior `AdminBottomNav`.
+- **Página da missão:** seções `recursos` (padrão), `dados`, `vinculos` e `inventario`; uma seção nova (ex.: `apps`) entra em `MISSION_SECTIONS` e no `render` de `MissionWorkspace`. Intel, conquistas e NPCs da missão são criados ali com os editores reutilizáveis (`useAchievementEditor`, `useNpcContactEditor`, `IntelEditorHost`). O vínculo esquadrão↔missão só é editado em Vínculos. Rascunhos de Dados sobrevivem à navegação; recarregar, sair ou abrir o modo jogador pedem confirmação (`src/admin/lib/unsavedChanges.ts`).
+- **Player:** `useAppScreenHistory` espelha o histórico do navegador com o modelo puro `src/player/lib/screenHistoryModel.ts`. Voltar a uma tela já empilhada usa `history.go(-n)` e nunca duplica entradas; trocar de agente ou sair colapsa o histórico; mini-apps fecham para a tela de origem (`exitMiniApp`); o leitor de evidência ocupa uma entrada própria. Conta admin joga com `/?mode=play` (o parâmetro some no logout) e volta pelo "Voltar ao console" (seleção de agentes e perfil); o admin abre o modo jogo pelo atalho "Jogar como agente".
 - Lazy de telas do jogador fica inline em `PlayerScreenRouter.tsx` / `MiniAppsOverlay.tsx` (não há `lazyScreens.ts`).
 
 ## Conceitos de domínio
@@ -86,7 +88,7 @@ Todas são lazy-loaded em `App.tsx` com `Suspense` + `RetroLoading`.
 ### Fontes de Intel
 
 1. **Local** — `src/data/intel_registry.ts` (hardcoded, lore fixa)
-2. **Remota** — Firestore + admin (`IntelCreatorPanel`, `MediaLibraryPanel`)
+2. **Remota** — Firestore + admin (`MediaLibraryPanel`, `useIntelCatalog`, `IntelEditorHost`)
 3. **Runtime** — `IntelService` mescla local + remoto; `IntelEngine` aplica Strategy/Factory por tipo
 
 ## Modelo Firestore (resumo)
@@ -164,7 +166,8 @@ Nunca commite `.env` com credenciais reais.
 | Lógica de unlock / intel | `src/services/IntelService.ts`, `IntelEngine.ts` |
 | Auth e perfil | `src/store/profile.ts`, `LoginScreen.tsx` |
 | CRUD Firestore | `src/store/firestore.ts` |
-| Painel admin | `src/admin/components/` |
+| Painel admin | `src/admin/components/`; destinos, seções e caminhos em `src/admin/lib/adminNavigation.ts` |
+| Nova seção do admin | `adminNavigation.ts` (config + `adminPath`) e o painel do destino (`ContentPanel`, `MesaPanel`, `OperationsPanel` ou `MissionWorkspace`) |
 | Conteúdo narrativo SMS | `sms/*.md` |
 | Deploy / hosting | submódulo `backend/` |
 
@@ -196,4 +199,4 @@ Login → Seleção de personagem → Seleção de campanha → Dispositivo (wal
 
 ---
 
-*Última revisão: jun/2026. Atualize este arquivo quando a arquitetura ou comandos mudarem.*
+*Última revisão: nov/2026 (Etapa 4: navegação por rotas). Atualize este arquivo quando a arquitetura ou comandos mudarem.*

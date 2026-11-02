@@ -262,7 +262,7 @@ export default function SmsDistributionDrawer({
             <span className="material-symbols-outlined text-4xl block mb-2" aria-hidden>
               person_off
             </span>
-            {t('deliver.sms.noAgents')}
+            {targets.length === 0 ? t('deliver.sms.noTargets') : t('deliver.sms.noAgents')}
           </div>
         ) : (
           <>

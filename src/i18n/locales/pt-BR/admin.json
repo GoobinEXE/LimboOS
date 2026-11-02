@@ -234,7 +234,8 @@
       "summary": "{{dialogues}} diálogo(s) para {{agents}} agente(s)",
       "send": "Distribuir SMS",
       "sending": "Enviando...",
-      "squadLine": "Esquadrão: {{name}}"
+      "squadLine": "Esquadrão: {{name}}",
+      "noTargets": "Nenhum agente vinculado para receber SMS"
     }
   },
   "sessionGlobals": {

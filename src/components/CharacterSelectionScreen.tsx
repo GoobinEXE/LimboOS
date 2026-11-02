@@ -101,7 +101,7 @@ export default function CharacterSelectionScreen({ account, onSelect, onLogout, 
       <div className="scanlines" />
 
       <motion.div initial={{ opacity: 0, transform: 'translateY(12px)' }} animate={{ opacity: 1, transform: 'translateY(0px)' }} transition={{ duration: 0.3, ease: EASE_OUT }} className="w-full max-w-2xl xl:max-w-3xl z-10">
-        <header className="mb-8 border-b border-border-accent pb-6 flex justify-between items-end">
+        <header className="mb-8 border-b border-border-accent pb-6 flex flex-wrap justify-between items-end gap-4">
           <div>
             <div className="text-protocol text-ash-500 mb-2">{t('character.eyebrow')}</div>
             <h1 className="text-display text-4xl text-bone uppercase">

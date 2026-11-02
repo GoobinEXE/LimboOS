@@ -30,6 +30,31 @@ interface SpotlightSearchProps {
   onNavigate: (to: string) => void;
 }
 
+const MAX_RESULTS = 12;
+const MIN_PER_CATEGORY = 2;
+
+/**
+ * Cada categoria tem lugar garantido: numa busca ampla, os itens de navegação
+ * (que vêm primeiro) não expulsam missões, esquadrões, contas e agentes.
+ * Mantém a ordem de `items`, em que cada categoria é contígua.
+ */
+function pickResults(matches: SearchableItem[]): SearchableItem[] {
+  const picked = new Set<SearchableItem>();
+  const perCategory = new Map<string, number>();
+  matches.forEach((item) => {
+    const count = perCategory.get(item.category) ?? 0;
+    if (count < MIN_PER_CATEGORY) {
+      picked.add(item);
+      perCategory.set(item.category, count + 1);
+    }
+  });
+  for (const item of matches) {
+    if (picked.size >= MAX_RESULTS) break;
+    picked.add(item);
+  }
+  return matches.filter((item) => picked.has(item));
+}
+
 export default function SpotlightSearch({ open, onClose, items, onNavigate }: SpotlightSearchProps) {
   const { t } = useTranslation('admin');
   const [query, setQuery] = useState('');
@@ -45,11 +70,11 @@ export default function SpotlightSearch({ open, onClose, items, onNavigate }: Sp
   }, [open]);
 
   const filtered = useMemo(() => {
-    if (!query.trim()) return items.slice(0, 12);
+    if (!query.trim()) return items.slice(0, MAX_RESULTS);
     const q = query.toLowerCase();
-    return items.filter(
-      (it) => it.label.toLowerCase().includes(q) || (it.sublabel || '').toLowerCase().includes(q)
-    ).slice(0, 12);
+    return pickResults(
+      items.filter((it) => it.label.toLowerCase().includes(q) || (it.sublabel || '').toLowerCase().includes(q))
+    );
   }, [items, query]);
 
   // Group results by category

@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { createPortal } from 'react-dom';
-import { useAdminPanelActive } from './AdminTabPanel';
+import OverlayPortal from './OverlayPortal';
 import { format } from 'date-fns';
 import { motion } from 'motion/react';
 import { userService } from '../../services/UserService';
@@ -34,7 +33,6 @@ interface AgentDossierViewProps {
 }
 
 export default function AgentDossierView({ uid, character, masterAccount, onClose, onUpdate }: AgentDossierViewProps) {
-  const panelActive = useAdminPanelActive();
   const { t } = useTranslation('admin');
   const [details, setDetails] = useState<{
     intel: { id: string; unlockedAt: any }[];
@@ -213,17 +211,23 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
     await loadDetails();
   };
 
-  // Painel oculto (outra rota ativa): o dossiê não fica sobre o destino atual
-  if (!panelActive) return null;
+  // Esc fecha primeiro o que estiver aberto dentro do dossiê
+  const handleEscape = () => {
+    if (showTransferModal) setShowTransferModal(false);
+    else if (showAchievementSelect) setShowAchievementSelect(false);
+    else onClose();
+  };
 
-  if (loading) return createPortal(
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-surface-scrim">
-      <RetroSpinner />
-    </div>,
-    document.body
+  if (loading) return (
+    <OverlayPortal open onClose={onClose}>
+      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-surface-scrim">
+        <RetroSpinner />
+      </div>
+    </OverlayPortal>
   );
 
-  return createPortal(
+  return (
+    <OverlayPortal open onClose={handleEscape}>
     <div className="fixed inset-0 z-[100] flex justify-end bg-surface-scrim animate-fade-in" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
       <motion.div
         initial={{ x: '100%' }}
@@ -601,8 +605,8 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
 
         {modal}
       </motion.div>
-    </div>,
-    document.body
+    </div>
+    </OverlayPortal>
   );
 }
 

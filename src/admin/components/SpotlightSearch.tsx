@@ -97,6 +97,7 @@ export default function SpotlightSearch({ open, onClose, items, onNavigate }: Sp
       e.preventDefault();
       if (filtered[selectedIdx]) handleSelect(filtered[selectedIdx]);
     } else if (e.key === 'Escape') {
+      e.stopPropagation();
       onClose();
     }
   }, [filtered, selectedIdx, handleSelect, onClose]);

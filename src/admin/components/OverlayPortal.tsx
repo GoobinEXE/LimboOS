@@ -2,13 +2,16 @@ import React, { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { useAdminPanelActive } from './AdminTabPanel';
 
+/** Overlays visíveis, do mais antigo ao mais recente: só o do topo responde ao Esc. */
+const overlayStack: object[] = [];
+
 /**
  * Renderiza overlays (drawers/modais) diretamente em document.body via portal.
  * Necessário porque ancestrais com backdrop-filter/transform criam um novo
  * containing block, quebrando o `position: fixed` (gaveta ficava presa na
  * área rolável em vez de ancorar na viewport). Também trava o scroll do body,
- * fecha o overlay com a tecla Esc (quando onClose é fornecido) e devolve o
- * foco ao elemento que abriu o overlay quando ele fecha.
+ * fecha o overlay do topo com a tecla Esc (quando onClose é fornecido) e devolve
+ * o foco ao elemento que abriu o overlay quando ele fecha.
  *
  * Dentro de um painel oculto (keep-alive), o overlay não renderiza nem
  * trava o scroll; volta a aparecer quando o painel fica ativo de novo.
@@ -35,19 +38,22 @@ export default function OverlayPortal({
   // senão o cleanup devolveria o foco ao gatilho enquanto o usuário digita no modal.
   const onCloseRef = useRef(onClose);
   onCloseRef.current = onClose;
+  const stackToken = useRef({}).current;
 
   useEffect(() => {
     if (!visible) return;
     const trigger = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
+    overlayStack.push(stackToken);
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onCloseRef.current?.();
+      if (e.key === 'Escape' && overlayStack[overlayStack.length - 1] === stackToken) onCloseRef.current?.();
     };
     window.addEventListener('keydown', onKey);
     return () => {
       document.body.style.overflow = prevOverflow;
       window.removeEventListener('keydown', onKey);
+      overlayStack.splice(overlayStack.indexOf(stackToken), 1);
       // Devolve o foco só se ele está no body ou ainda dentro deste overlay
       // (não rouba o foco de outro overlay que tenha aberto por cima)
       const active = document.activeElement;
@@ -56,7 +62,7 @@ export default function OverlayPortal({
         trigger.focus({ preventScroll: true });
       }
     };
-  }, [visible]);
+  }, [visible, stackToken]);
 
   if (typeof document === 'undefined') return null;
   if (!panelActive) return null;

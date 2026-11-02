@@ -1,10 +1,20 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { parseAdminLocation } from '../lib/adminNavigation';
+
+/** Caminho de cada entrada de histórico desta carga do app, por `history.state.idx`. */
+const pathByIdx = new Map<number, string>();
 
 /** Rota tipada do admin a partir do URL atual. */
 export function useAdminLocation() {
   const location = useLocation();
+  const path = `${location.pathname}${location.search}`;
+
+  useEffect(() => {
+    const idx = (window.history.state as { idx?: number } | null)?.idx;
+    if (typeof idx === 'number') pathByIdx.set(idx, path);
+  }, [path, location.key]);
+
   const parsed = useMemo(
     () => parseAdminLocation(location.pathname, location.search),
     [location.pathname, location.search]
@@ -13,14 +23,16 @@ export function useAdminLocation() {
     ...parsed,
     key: location.key,
     hash: location.hash,
-    path: `${location.pathname}${location.search}`,
+    path,
   };
 }
 
 /**
- * Único ponto de navegação do admin. `go` empilha (ou substitui, para filtros);
- * `back` volta uma entrada quando ela pertence a esta sessão do app e, se não,
- * substitui pela rota de reserva (link aberto direto numa aba nova).
+ * Único ponto de navegação do admin. `go` empilha (ou substitui, para filtros).
+ * `back(behind)` fecha um overlay revelando a tela atrás dele: desempilha quando
+ * a entrada anterior é essa tela; senão (aberto pelo Spotlight, link direto) a
+ * entrada do overlay é substituída por ela, e o destino não fica lembrando um
+ * overlay já fechado.
  */
 export function useAdminNavigate() {
   const navigate = useNavigate();
@@ -36,10 +48,10 @@ export function useAdminNavigate() {
   );
 
   const back = useCallback(
-    (fallback: string) => {
+    (behind: string) => {
       const idx = (window.history.state as { idx?: number } | null)?.idx ?? 0;
-      if (idx > 0) void navigate(-1);
-      else void navigate(fallback, { replace: true });
+      if (idx > 0 && pathByIdx.get(idx - 1) === behind) void navigate(-1);
+      else void navigate(behind, { replace: true });
     },
     [navigate]
   );

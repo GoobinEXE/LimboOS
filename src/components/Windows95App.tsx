@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'motion/react';
 import { EASE_OUT } from '../lib/motion';
-import { checkMacClosed } from '../store/firestore';
+import { checkTerminalClosed } from '../store/firestore';
 import { activityLogger } from '../services/ActivityLogger';
 import { useLandscapeLayout } from '../player/hooks/useLandscapeLayout';
 import DiskRepairApp from './DiskRepairApp';
@@ -57,7 +57,7 @@ export default function Windows95App({ uid, characterId, onClose }: Windows95App
 
   const handleShutdown = async () => {
     activityLogger.logAction('windows95', 'Solicitou desligamento do Windows 95');
-    await checkMacClosed(uid, characterId);
+    await checkTerminalClosed(uid, characterId);
     onClose();
   };
 

@@ -28,3 +28,6 @@ service-account.json
 *-firebase-adminsdk*.json
 **/GoogleService-Info.plist
 **/google-services.json
+
+# Worktrees de sessões do Claude Code
+.claude/worktrees/

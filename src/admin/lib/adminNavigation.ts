@@ -307,3 +307,39 @@ function decodedUrl(url: string): string {
   const entries = [...new URLSearchParams(query).entries()].map(([k, v]) => `${k}=${v}`).sort();
   return `${path.split('/').map(safeDecode).join('/')}?${entries.join('&')}`;
 }
+
+/** Posição da rota na hierarquia do destino: lista 0, missão ou criação 1. */
+function missionDepth(route: RouteOf<'missions'>): number {
+  return route.view === 'list' ? 0 : 1;
+}
+
+function sectionIndex(route: AdminRoute): number {
+  switch (route.dest) {
+    case 'content':
+      return CONTENT_SECTIONS.findIndex((s) => s.id === route.section);
+    case 'mesa':
+      return MESA_SECTIONS.findIndex((s) => s.id === route.section);
+    case 'system':
+      return SYSTEM_SECTIONS.findIndex((s) => s.id === route.section);
+    case 'missions':
+      return route.view === 'mission' ? MISSION_SECTIONS.findIndex((s) => s.id === route.section) : 0;
+    default:
+      return 0;
+  }
+}
+
+/**
+ * Direção da transição entre duas rotas: trocar de destino só faz fade;
+ * aprofundar ou ir para a seção à direita entra pela direita; o inverso,
+ * pela esquerda.
+ */
+export function adminMotionHint(prev: AdminRoute | null, next: AdminRoute): 'fade' | 'forward' | 'back' {
+  if (!prev || prev.dest !== next.dest) return 'fade';
+  if (prev.dest === 'missions' && next.dest === 'missions') {
+    const depthDelta = missionDepth(next) - missionDepth(prev);
+    if (depthDelta !== 0) return depthDelta > 0 ? 'forward' : 'back';
+    if (prev.view === 'mission' && next.view === 'mission' && prev.campaignId !== next.campaignId) return 'fade';
+  }
+  const delta = sectionIndex(next) - sectionIndex(prev);
+  return delta === 0 ? 'fade' : delta > 0 ? 'forward' : 'back';
+}

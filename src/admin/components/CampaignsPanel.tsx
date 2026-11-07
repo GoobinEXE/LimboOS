@@ -11,6 +11,7 @@ import { useModal } from './ConfirmModal';
 import { intelRegistry } from '../../data/intel_registry';
 import MissionWorkspace from './mission/MissionWorkspace';
 import OverlayPortal from './OverlayPortal';
+import { AdminRouteEnter } from './AdminTabPanel';
 import { ADMIN_SPRING } from '../lib/motion';
 import { intelService } from '../../services/IntelService';
 import type { IntelItem } from '../../types/intel';
@@ -222,8 +223,8 @@ export default function CampaignsPanel({
 
   if (missionKey) {
     return (
+      <AdminRouteEnter key={missionKey}>
       <MissionWorkspace
-        key={missionKey}
         mode={route.view === 'new' ? 'new' : 'existing'}
         campaign={openCampaign}
         campaignsReady={!loading}
@@ -237,6 +238,7 @@ export default function CampaignsPanel({
         resourceSummary={missionSummary}
         onViewCatalog={(area, campaignId, npcView) => onOpenScoped?.(area, campaignId, npcView)}
       />
+      </AdminRouteEnter>
     );
   }
 
@@ -251,6 +253,7 @@ export default function CampaignsPanel({
   const allRegistryIntel = intelRegistry.getAll();
 
   return (
+    <AdminRouteEnter key="list">
     <div className="space-y-8 font-sans">
       {modal}
 
@@ -552,5 +555,6 @@ export default function CampaignsPanel({
         </AnimatePresence>
       </OverlayPortal>
     </div>
+    </AdminRouteEnter>
   );
 }

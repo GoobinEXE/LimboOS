@@ -35,7 +35,7 @@
     "statusOnlineTitle": "Grid Online",
     "navLabel": "Navegação do console"
   },
-  "bottomNav": {
+  "navDrawer": {
     "label": "Navegação principal"
   },
   "header": {
@@ -50,7 +50,9 @@
     "logoutTitle": "Encerrar Sessão",
     "squadFallback": "Esquadrão",
     "playAsAgent": "Jogar como agente",
-    "playAsAgentTitle": "Abrir o app do jogador em modo jogo (⌘/Ctrl+clique abre em aba nova)"
+    "playAsAgentTitle": "Abrir o app do jogador em modo jogo (⌘/Ctrl+clique abre em aba nova)",
+    "openMenu": "Abrir menu",
+    "closeMenu": "Fechar menu"
   },
   "footer": {
     "realtimeSync": "Sincronização de Dados em Tempo Real",

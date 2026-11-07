@@ -80,6 +80,13 @@ export const drawerRight: Variants = {
   exit: { transform: 'translateX(100%)', transition: { duration: DURATION.base, ease: EASE_DRAWER } },
 };
 
+/** Gaveta pela esquerda (menu de navegação no celular) */
+export const drawerLeft: Variants = {
+  hidden: { transform: 'translateX(-100%)' },
+  visible: { transform: 'translateX(0%)', transition: SPRING_DRAWER },
+  exit: { transform: 'translateX(-100%)', transition: { duration: DURATION.base, ease: EASE_DRAWER } },
+};
+
 export const panelEnter: Variants = {
   hidden: { opacity: 0, transform: 'translateY(6px)' },
   visible: { opacity: 1, transform: 'translateY(0px)', transition: FADE },

@@ -13,13 +13,13 @@ import { groupService } from '../../services/GroupService';
 import SpotlightSearch, { buildSearchItems } from './SpotlightSearch';
 import Sidebar from './Sidebar';
 import Header from './Header';
-import AdminTabPanel from './AdminTabPanel';
+import AdminTabPanel, { AdminMotionHintContext, AdminPanelsRoot } from './AdminTabPanel';
 import { useAdminActiveSession } from '../hooks/useAdminActiveSession';
 import { useAdminLocation, useAdminNavigate } from '../hooks/useAdminRoute';
 import { campaignLabel, masterAccountLabel } from '../lib/entityLabels';
 import { buildAdminBreadcrumb } from '../lib/adminBreadcrumb';
 import { clearUnsavedChanges, hasUnsavedChanges } from '../lib/unsavedChanges';
-import AdminBottomNav from './AdminBottomNav';
+import AdminNavDrawer from './AdminNavDrawer';
 import { useModal } from './ConfirmModal';
 import i18n from '../../i18n';
 import { motion } from 'motion/react';
@@ -28,6 +28,7 @@ import { modKeyLabel } from '../lib/platform';
 import RetroSpinner from '../../components/player/RetroSpinner';
 import {
   ADMIN_DESTINATIONS,
+  adminMotionHint,
   adminPath,
   defaultDestinationPath,
   destinationRootPath,
@@ -158,6 +159,14 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
     Partial<Record<AdminDestinationId, { route: AdminRoute; key: string }>>
   >(() => ({ [route.dest]: { route, key: locationKey } }));
   const [scopeRequest, setScopeRequest] = useState<CampaignScopeRequest | null>(null);
+  const [navOpen, setNavOpen] = useState(false);
+  // Direção da transição: calculada uma vez por entrada de histórico, no mesmo
+  // render em que o painel de destino fica ativo
+  const prevRouteRef = useRef<AdminRoute | null>(null);
+  const motionHintRef = useRef<{ key: string; hint: ReturnType<typeof adminMotionHint> }>({ key: '', hint: 'fade' });
+  if (motionHintRef.current.key !== locationKey) {
+    motionHintRef.current = { key: locationKey, hint: adminMotionHint(prevRouteRef.current, route) };
+  }
   const { session: activeSession, setSession: setActiveSession } = useAdminActiveSession();
   const [spotlightGroups, setSpotlightGroups] = useState<Group[]>([]);
   const [spotlightCampaigns, setSpotlightCampaigns] = useState<Campaign[]>([]);
@@ -204,6 +213,11 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
   const locationKeyRef = useRef(locationKey);
 
   const aggregatedPlaysRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    prevRouteRef.current = route;
+    setNavOpen(false);
+  }, [route]);
 
   useEffect(() => {
     setRouteByDest((prev) =>
@@ -537,6 +551,7 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
           onLogout={() => void handleLogout()}
           playAsAgentHref={PLAY_AS_AGENT_URL}
           onPlayAsAgent={(e) => void handlePlayAsAgent(e)}
+          onOpenMenu={() => setNavOpen(true)}
           onSpotlight={() => setSpotlightOpen(true)}
           breadcrumb={breadcrumb}
           sessionLabel={sessionLabel}
@@ -545,9 +560,11 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
 
         <main
           ref={mainRef}
-          className="flex-1 overflow-y-auto px-4 pt-5 pb-24 sm:px-6 sm:pt-6 lg:pb-6 2xl:px-10 custom-scrollbar"
+          className="flex-1 overflow-y-auto px-4 pt-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))] sm:px-6 sm:pt-6 lg:pb-6 2xl:px-10 custom-scrollbar"
         >
           <div className="max-w-7xl mx-auto space-y-8">
+            <AdminMotionHintContext.Provider value={motionHintRef.current.hint}>
+            <AdminPanelsRoot>
             <React.Suspense
               fallback={
                 <motion.div
@@ -623,6 +640,8 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
                 </AdminTabPanel>
               )}
             </React.Suspense>
+            </AdminPanelsRoot>
+            </AdminMotionHintContext.Provider>
           </div>
         </main>
 
@@ -660,7 +679,7 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
         onNavigate={handleSpotlightNavigate}
       />
 
-      <AdminBottomNav activeDest={route.dest} hrefFor={hrefFor} />
+      <AdminNavDrawer open={navOpen} onClose={() => setNavOpen(false)} activeDest={route.dest} hrefFor={hrefFor} />
     </div>
   );
 }

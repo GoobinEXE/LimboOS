@@ -35,7 +35,7 @@
     "statusOnlineTitle": "Grid Online",
     "navLabel": "Console navigation"
   },
-  "bottomNav": {
+  "navDrawer": {
     "label": "Main navigation"
   },
   "header": {
@@ -50,7 +50,9 @@
     "logoutTitle": "End Session",
     "squadFallback": "Squad",
     "playAsAgent": "Play as agent",
-    "playAsAgentTitle": "Open the player app in play mode (⌘/Ctrl+click opens a new tab)"
+    "playAsAgentTitle": "Open the player app in play mode (⌘/Ctrl+click opens a new tab)",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
   },
   "footer": {
     "realtimeSync": "Realtime Data Sync",

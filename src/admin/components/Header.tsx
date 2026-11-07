@@ -19,6 +19,8 @@ interface HeaderProps {
   /** Link para o app do jogador em modo jogo (`/?mode=play`). */
   playAsAgentHref?: string;
   onPlayAsAgent?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
+  /** Abre a navegação em gaveta (abaixo de `lg`, onde a barra lateral some). */
+  onOpenMenu?: () => void;
 }
 
 function operatorInitials(email?: string | null): string {
@@ -37,14 +39,28 @@ export default function Header({
   onOpenLive,
   playAsAgentHref,
   onPlayAsAgent,
+  onOpenMenu,
 }: HeaderProps) {
   const { t } = useTranslation('admin');
   const mod = modKeyLabel();
 
   return (
-    <header className="w-full z-50 flex justify-between items-center gap-6 px-4 sm:px-6 h-14 bg-surface-container-low border-b border-seam shrink-0">
+    <header className="w-full z-50 flex justify-between items-center gap-3 sm:gap-6 pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))] sm:px-6 pt-[env(safe-area-inset-top)] h-[calc(3.5rem+env(safe-area-inset-top))] bg-surface-container-low border-b border-seam shrink-0">
       <div className="flex flex-1 items-center gap-3 min-w-0">
-        <div className="flex items-center gap-2 pr-3 border-r border-border-subtle shrink-0">
+        {onOpenMenu && (
+          // Contêiner com lg:hidden: o display de .lmb-btn venceria a utilidade no próprio botão
+          <div className="lg:hidden -ml-2 shrink-0">
+            <button
+              type="button"
+              onClick={onOpenMenu}
+              aria-label={t('header.openMenu')}
+              className="lmb-btn lmb-btn-ghost lmb-btn-icon material-symbols-outlined text-[22px] tracking-normal normal-case"
+            >
+              menu
+            </button>
+          </div>
+        )}
+        <div className="hidden lg:flex items-center gap-2 pr-3 border-r border-border-subtle shrink-0">
           <span className="lmb-led text-accent animate-led" aria-hidden />
           <span className="font-display uppercase font-bold tracking-[0.2em] text-[9px] text-primary hidden lg:inline">
             {t('header.statusConnected')}

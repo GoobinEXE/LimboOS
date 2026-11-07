@@ -71,7 +71,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
       {children}
       {/* Pilha de toasts — canto inferior direito, mesmo lado de entrada e saída */}
       <div
-        className="fixed bottom-24 lg:bottom-12 right-6 z-[9998] flex flex-col items-end gap-2 pointer-events-none w-full max-w-sm"
+        className="fixed bottom-[calc(1.5rem+env(safe-area-inset-bottom))] lg:bottom-12 right-6 z-[9998] flex flex-col items-end gap-2 pointer-events-none w-full max-w-sm"
         role="status"
         aria-live="polite"
         aria-relevant="additions"

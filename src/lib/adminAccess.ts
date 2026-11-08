@@ -1,38 +1,39 @@
 import type { User } from 'firebase/auth';
-import { loadMasterAccount } from '../store/firestore';
+import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
+import { db } from './firebase';
 import type { MasterAccount } from '../types/player';
 
 /**
- * Só papel no Firestore. Serve para listar outras contas (filtrar admins da
- * presença, de seletores etc.). Para decidir se o usuário logado é admin, use
- * `resolveAdminAccess`, que também aceita a custom claim.
+ * Legado: o papel `role` da conta não concede mais nada. Mantido para os filtros
+ * antigos de listas, sempre falso.
  */
 export function isAdminAccount(
-  account: Pick<MasterAccount, 'role' | 'uid'> | null | undefined,
+  _account: Pick<MasterAccount, 'role' | 'uid'> | null | undefined,
 ): boolean {
-  return account?.role === 'admin';
+  return false;
 }
 
 /**
- * Admin = custom claim `admin` OU papel `admin` na conta.
- * Quem já carregou a conta passa `account` e evita uma leitura extra do Firestore.
+ * A conta mestra alguma mesa? Dono de pasta (workspaces/{uid}) ou co-mestre
+ * convidado (users/{uid}/memberships com cogmCampaignIds). Decide as pontes
+ * entre o modo jogador e o painel; o acesso real ao conteúdo é das regras.
  */
 export async function resolveAdminAccess(
   user: User,
-  account?: Pick<MasterAccount, 'role'> | null,
+  _account?: Pick<MasterAccount, 'role'> | null,
 ): Promise<boolean> {
   try {
-    const token = await user.getIdTokenResult();
-    if (token.claims.admin === true) return true;
+    const own = await getDoc(doc(db, 'workspaces', user.uid));
+    if (own.exists()) return true;
   } catch {
-    // Token indisponível — segue para checagem do papel.
+    // sem permissão ou offline: segue para os convites
   }
-
-  if (account) return account.role === 'admin';
-
   try {
-    const loaded = await loadMasterAccount(user.uid);
-    return loaded.role === 'admin';
+    const memberships = await getDocs(collection(db, 'users', user.uid, 'memberships'));
+    return memberships.docs.some((d) => {
+      const ids = d.data().cogmCampaignIds;
+      return Array.isArray(ids) && ids.length > 0;
+    });
   } catch {
     return false;
   }

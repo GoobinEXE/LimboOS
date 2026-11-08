@@ -5,6 +5,7 @@ import { SPRING_MECHANICAL } from '../../lib/motion';
 import { User } from 'lucide-react';
 import { analyticsTracker } from '../../services/AnalyticsTracker';
 import { activityLogger } from '../../services/ActivityLogger';
+import { haptic } from '../../lib/native/haptics';
 export default React.memo(function SideControls({ volume, setVolume, onModeChange, onProfileOpen, onCharacterSwitch, landscape }: {
   volume: number; setVolume: (v: number) => void;
   onModeChange: (dir: 'up' | 'down') => void; onProfileOpen: () => void;
@@ -41,9 +42,7 @@ export default React.memo(function SideControls({ volume, setVolume, onModeChang
   const handleProfilePointerDown = (e: React.PointerEvent) => {
     longPressTimer.current = setTimeout(() => {
       if (onCharacterSwitch) {
-        if (typeof window !== 'undefined' && window.navigator?.vibrate) {
-          try { window.navigator.vibrate([50, 30, 50]); } catch(e) {}
-        }
+        haptic('double');
         activityLogger.logAction('player', 'Troca rápida de agente acionada via long-press');
         onCharacterSwitch();
       }

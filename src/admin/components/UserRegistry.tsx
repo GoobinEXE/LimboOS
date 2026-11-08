@@ -15,6 +15,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { ADMIN_SPRING, ADMIN_FADE, listItem, staggerDelay } from '../lib/motion';
 import { adminPath } from '../lib/adminNavigation';
 import { useAdminNavigate } from '../hooks/useAdminRoute';
+import { useAdminScope } from '../context/AdminScopeContext';
 
 type SortField = 'masterName' | 'role' | 'createdAt' | 'lastLogin';
 type SortDir = 'asc' | 'desc';
@@ -70,6 +71,7 @@ export default function UserRegistry({
 }) {
   const { t } = useTranslation('admin');
   const nav = useAdminNavigate();
+  const { isPlatformAdmin, canManage } = useAdminScope();
   const appliedRouteRef = useRef<string | null>(null);
   const dateLocale = useDateLocale();
   const [accounts, setAccounts] = useState<MasterAccount[]>([]);
@@ -93,7 +95,6 @@ export default function UserRegistry({
   const [showCreateUser, setShowCreateUser] = useState(false);
   const [newUserCodinome, setNewUserCodinome] = useState("");
   const [newUserPassword, setNewUserPassword] = useState("");
-  const [newUserRole, setNewUserRole] = useState("player");
   const [createUserLoading, setCreateUserLoading] = useState(false);
 
   const [resetPasswordValue, setResetPasswordValue] = useState('');
@@ -252,7 +253,7 @@ export default function UserRegistry({
     if (!newUserCodinome.trim() || !newUserPassword.trim()) return;
     setCreateUserLoading(true);
     try {
-      await userService.adminCreateUser(newUserCodinome, newUserPassword, newUserRole as 'player' | 'admin');
+      await userService.adminCreateUser(newUserCodinome, newUserPassword);
       toast.success(t('accounts.toast.createOk', { name: newUserCodinome }));
       setNewUserCodinome(""); setNewUserPassword("");
       setShowCreateUser(false);
@@ -454,9 +455,15 @@ export default function UserRegistry({
                     </div>
                   )}
                 </div>
-                <button onClick={() => setShowCreateUser(true)} className="flex items-center gap-3 bg-primary hover:bg-primary-container text-black px-6 py-3 rounded-sm font-display font-bold text-[11px] tracking-widest transition active:scale-[0.97]">
-                  <span className="material-symbols-outlined text-base">person_add</span> {t('accounts.create')}
-                </button>
+                {isPlatformAdmin ? (
+                  <button onClick={() => setShowCreateUser(true)} className="flex items-center gap-3 bg-primary hover:bg-primary-container text-black px-6 py-3 rounded-sm font-display font-bold text-[11px] tracking-widest transition active:scale-[0.97]">
+                    <span className="material-symbols-outlined text-base">person_add</span> {t('accounts.create')}
+                  </button>
+                ) : canManage ? (
+                  <Link to={adminPath.missions()} title={t('accounts.inviteHint')} className="flex items-center gap-3 bg-primary hover:bg-primary-container text-black px-6 py-3 rounded-sm font-display font-bold text-[11px] tracking-widest transition active:scale-[0.97]">
+                    <span className="material-symbols-outlined text-base">group_add</span> {t('accounts.invite')}
+                  </Link>
+                ) : null}
               </div>
             )}
           </div>
@@ -764,17 +771,10 @@ export default function UserRegistry({
                       {t('accounts.edit.hardwareLink')}
                     </Link>
                  </div>
-                 <div className="space-y-4">
-                    <label className="block text-[9px] font-black text-ash-500 uppercase tracking-[0.3em] mb-4">{t('accounts.edit.authorityLevel')}</label>
-                    <select value={editingAccount.role} onChange={(e) => handleUpdateAccountFlag(editingAccount.uid, 'role', e.target.value as any)}
-                      className="w-full bg-black/60 border-2 border-seam text-primary text-[11px] font-black px-4 py-4 outline-none transition uppercase rounded-sm cursor-pointer shadow-inner focus:border-primary">
-                      <option value="player">PLAYER (RECRUTA)</option>
-                      <option value="admin">ADMIN (COMANDO)</option>
-                    </select>
-                 </div>
               </div>
 
-              {/* Suspender Conta */}
+              {/* Suspender conta e trocar senha: só o admin da plataforma (a conta é do jogador). */}
+              {isPlatformAdmin && (<>
               <div className="pt-8 border-t border-border-subtle">
                 <label className="block text-[9px] font-black text-ash-500 uppercase tracking-[0.3em] mb-4">{t('accounts.edit.accessControl')}</label>
                 <button onClick={() => handleToggleSuspend(editingAccount.uid, !!editingAccount.suspended)}
@@ -793,6 +793,7 @@ export default function UserRegistry({
                     className="bg-seam text-primary hover:bg-primary hover:text-black disabled:opacity-20 disabled:hover:bg-seam disabled:hover:text-primary px-8 py-4 text-[11px] font-black uppercase tracking-widest transition rounded-sm active:scale-[0.97] shadow-lg border-2 border-primary/20 hover:border-primary">{t('accounts.edit.reset')}</button>
                 </div>
               </div>
+              </>)}
             </div>
           </motion.div>
         </motion.div>

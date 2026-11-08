@@ -317,7 +317,7 @@ export default function TerminalPanel({ embedded = false }: TerminalPanelProps) 
                           try {
                             await grantDos([row.uid], next, rowLabel(row));
                             activityLogger.logAdmin(
-                              'gm.mpg',
+                              'mestre',
                               next ? 'grant_terminal' : 'revoke_terminal',
                               `${next ? 'Liberou' : 'Revogou'} DOS: ${rowLabel(row)}`
                             );

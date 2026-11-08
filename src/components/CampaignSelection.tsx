@@ -77,9 +77,7 @@ export default function CampaignSelection({
       ]);
 
       // 2. Filter active campaigns
-      const visible = playerData.role === 'admin'
-        ? activeCampaigns
-        : activeCampaigns.filter(c => unlockedIds.has(c.id));
+      const visible = activeCampaigns.filter(c => unlockedIds.has(c.id));
 
       setCampaigns(visible);
       setLoading(false);

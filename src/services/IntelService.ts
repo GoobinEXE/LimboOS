@@ -4,8 +4,6 @@ import type { GalleryImage } from '../types/player';
 import type { MediaAsset } from '../types/media';
 import { intelRegistry } from '../data/intel_registry';
 import {
-  collection,
-  onSnapshot,
   doc,
   getDoc,
   deleteDoc,
@@ -13,6 +11,7 @@ import {
   serverTimestamp,
 } from 'firebase/firestore';
 import { db } from '../lib/firebase';
+import { functionScopeArgs, getTenantScope, subscribeScoped, wsDoc } from '../lib/tenantScope';
 import { callFunction } from '../lib/functions';
 import { mediaService } from './MediaService';
 import { normalizeQrPayload } from '../lib/qrCode';
@@ -163,9 +162,10 @@ class IntelService {
   }
 
   public subscribeToIntelRegistry(onUpdate: (items: IntelItem[]) => void): () => void {
-    const unsubMedia = onSnapshot(collection(db, 'mediaAssets'), (snapshot) => {
-      snapshot.forEach((doc) => {
-        this.registerMediaAssetAsIntel({ id: doc.id, ...doc.data() });
+    // Catálogo da pasta ativa (co-mestre: itens das campanhas dele).
+    const unsubMedia = subscribeScoped('mediaAssets', 'single', [], (docs) => {
+      docs.forEach((d) => {
+        this.registerMediaAssetAsIntel({ id: d.id, ...d.data() });
       });
       onUpdate(intelRegistry.getAll());
     }, (err) => console.warn('[IntelService] subscribeToMediaAssets error:', err));
@@ -209,6 +209,7 @@ class IntelService {
 
     const BATCH_LIMIT = 450;
     let grantCount = 0;
+    const workspaceId = getTenantScope()?.wsId ?? null;
     const operations: Array<{ ref: ReturnType<typeof doc>; data: Record<string, unknown> }> = [];
 
     for (const intelId of intelIds) {
@@ -223,6 +224,7 @@ class IntelService {
             type: intelType,
             unlockedAt: serverTimestamp(),
             campaignId: options?.campaignId ?? null,
+            workspaceId,
           },
         });
       }
@@ -251,7 +253,7 @@ class IntelService {
    * Opcionalmente remove o arquivo no Storage.
    */
   public async deleteIntel(item: IntelItem, options?: IntelDeleteOptions): Promise<void> {
-    const docSnap = await getDoc(doc(db, 'mediaAssets', item.id));
+    const docSnap = await getDoc(wsDoc('mediaAssets', item.id));
     if (docSnap.exists() && options?.deleteStorageFile) {
       const raw = docSnap.data() as { storagePath?: string; url?: string; filename?: string };
       if (raw.storagePath) {
@@ -272,13 +274,13 @@ class IntelService {
           await mediaService.deleteMedia(asset);
         } catch (err) {
           console.warn('[IntelService] Storage delete failed, removing Firestore doc:', err);
-          await deleteDoc(doc(db, 'mediaAssets', item.id));
+          await deleteDoc(wsDoc('mediaAssets', item.id));
         }
       } else {
-        await deleteDoc(doc(db, 'mediaAssets', item.id));
+        await deleteDoc(wsDoc('mediaAssets', item.id));
       }
     } else if (docSnap.exists()) {
-      await deleteDoc(doc(db, 'mediaAssets', item.id));
+      await deleteDoc(wsDoc('mediaAssets', item.id));
     }
 
     intelRegistry.unregister(item.id);
@@ -319,10 +321,10 @@ class IntelService {
     } | null = null;
 
     try {
-      result = await callFunction<{ code: string }, {
+      result = await callFunction<Record<string, unknown>, {
         redirectedId: string | null;
         asset: Record<string, unknown> | null;
-      }>('resolveIntelCode', { code: normalized });
+      }>('resolveIntelCode', { code: normalized, ...functionScopeArgs() });
     } catch (err) {
       console.warn('[IntelService] resolveIntelCode falhou, tentando registry local:', err);
       const localFallback = intelRegistry.getByCode(normalized);

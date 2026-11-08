@@ -7,6 +7,8 @@ import ReportsPanel, {
   type EngagementMetrics,
 } from './ReportsPanel';
 import SystemLogPanel from './SystemLogPanel';
+import PlatformAccountsPanel from './PlatformAccountsPanel';
+import { useAdminScope } from '../context/AdminScopeContext';
 import AdminSubTabs from './AdminSubTabs';
 import AdminSectionPanels from './AdminSectionPanels';
 import { SYSTEM_SECTIONS, adminPath, type RouteOf, type SystemSectionId } from '../lib/adminNavigation';
@@ -27,8 +29,12 @@ export default function OperationsPanel({ route, agents, campaigns, health, enga
   const { t } = useTranslation('admin');
   const nav = useAdminNavigate();
 
-  const tabs = SYSTEM_SECTIONS.map((s) => ({ id: s.id, label: t(s.labelKey), icon: s.icon }));
-  const current = SYSTEM_SECTIONS.find((s) => s.id === route.section) ?? SYSTEM_SECTIONS[0];
+  const { isPlatformAdmin } = useAdminScope();
+  // Contas é administração da plataforma: só aparece com o claim platformAdmin.
+  const sections = SYSTEM_SECTIONS.filter((s) => s.id !== 'contas' || isPlatformAdmin);
+  const tabs = sections.map((s) => ({ id: s.id, label: t(s.labelKey), icon: s.icon }));
+  const current = sections.find((s) => s.id === route.section) ?? sections[0];
+  const activeSection = current.id;
 
   const changeSection = (section: SystemSectionId) => {
     if (section !== route.section) nav.go(adminPath.system(section));
@@ -52,17 +58,19 @@ export default function OperationsPanel({ route, agents, campaigns, health, enga
 
       <AdminSubTabs
         tabs={tabs}
-        active={route.section}
+        active={activeSection}
         onChange={changeSection}
         indicatorId="admin-ops-sub"
         ariaLabel={t('systems.title')}
       />
 
       <AdminSectionPanels
-        active={route.section}
+        active={activeSection}
         render={(section) =>
           section === 'relatorios' ? (
             <ReportsPanel agents={agents} campaigns={campaigns} health={health} engagement={engagement} />
+          ) : section === 'contas' ? (
+            isPlatformAdmin ? <PlatformAccountsPanel /> : null
           ) : (
             <SystemLogPanel />
           )

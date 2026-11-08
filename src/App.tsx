@@ -10,6 +10,7 @@ const Player = lazy(() => import('./Player'));
 
 const AdminApp = lazy(() => import('./admin/AdminApp'));
 const TerminalApp = lazy(() => import('./terminal/TerminalApp'));
+const InviteApp = lazy(() => import('./invite/InviteApp'));
 
 function AppRoutes() {
   const { t } = useTranslation('common');
@@ -28,6 +29,7 @@ function AppRoutes() {
         <Route path="/*" element={<Player />} />
         <Route path="/admin/*" element={<AdminApp />} />
         <Route path="/terminal/*" element={<TerminalApp />} />
+        <Route path="/convite/:token" element={<InviteApp />} />
       </Routes>
     </Suspense>
   );

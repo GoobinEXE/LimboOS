@@ -1,10 +1,18 @@
 import { getApp } from 'firebase/app';
-import { getFunctions, httpsCallable, type HttpsCallableResult } from 'firebase/functions';
+import { connectFunctionsEmulator, getFunctions, httpsCallable, type HttpsCallableResult } from 'firebase/functions';
+import { emulatorHost, emulatorPorts, useEmulators } from './firebase';
 
 const REGION = 'southamerica-east1';
 
+let emulatorConnected = false;
+
 export function getCallableFunctions() {
-  return getFunctions(getApp(), REGION);
+  const functions = getFunctions(getApp(), REGION);
+  if (useEmulators && !emulatorConnected) {
+    connectFunctionsEmulator(functions, emulatorHost, emulatorPorts.functions);
+    emulatorConnected = true;
+  }
+  return functions;
 }
 
 export async function callFunction<TData = unknown, TResult = unknown>(

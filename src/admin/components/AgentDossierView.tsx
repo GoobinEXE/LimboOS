@@ -23,6 +23,7 @@ import {
 } from '../../services/AchievementManager';
 import { resolveCampaignPlatform } from '../../data/campaigns';
 import { extractSpotifyEmbedUrl, isValidSpotifyPlaylistInput } from '../../lib/spotify';
+import { getScopedDocs } from '../../lib/tenantScope';
 
 interface AgentDossierViewProps {
   uid: string;
@@ -76,8 +77,8 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
       const data = await userService.loadUserDetails(uid, character.id);
       
       // Load groups the character belongs to
-      const groupsSnap = await getDocs(collection(db, 'groups'));
-      const allGroupsList = groupsSnap.docs.map(d => ({ id: d.id, ...d.data() } as Group));
+      const groupDocs = await getScopedDocs('groups', 'list');
+      const allGroupsList = groupDocs.map(d => ({ id: d.id, ...d.data() } as Group));
       const groups = allGroupsList.filter(g => g.characterSlots?.some(slot => slot.characterId === character.id));
 
       setDetails({ ...data, groups });
@@ -104,7 +105,7 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
         spotifyPlaylistUrl: spotifyUrl,
       });
       activityLogger.logAdmin(
-        'gm.mpg',
+        'mestre',
         'character_update',
         `Atualizou dossiê de ${character.codinome}`,
         { uid, charId: character.id, spotify: Boolean(spotifyUrl) }
@@ -190,7 +191,7 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
     const ok = await showConfirm(t('dossier.removeItemTitle'), t('dossier.removeItemBody'), t('jukebox.removeAction'));
     if (!ok) return;
     await intelService.revokeIntel(uid, character.id, intelId);
-    activityLogger.logAdmin('gm.mpg', 'inventory_remove', `Removeu intel ${intelId} de ${character.codinome}`, { uid, charId: character.id, intelId });
+    activityLogger.logAdmin('mestre', 'inventory_remove', `Removeu intel ${intelId} de ${character.codinome}`, { uid, charId: character.id, intelId });
     await loadDetails();
   };
 
@@ -198,7 +199,7 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
     const campaignId = character.campaignId || 'unscoped';
     const platform = resolveCampaignPlatform(character.campaignId);
     await userService.grantUserAchievement(uid, character.id, achId, { campaignId, platform });
-    activityLogger.logAdmin('gm.mpg', 'achievement_grant', `Outorgou medalha ${achId} para ${character.codinome}`, { uid, charId: character.id, achId, campaignId });
+    activityLogger.logAdmin('mestre', 'achievement_grant', `Outorgou medalha ${achId} para ${character.codinome}`, { uid, charId: character.id, achId, campaignId });
     setShowAchievementSelect(false);
     await loadDetails();
   };
@@ -207,7 +208,7 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
     const ok = await showConfirm(t('dossier.revokeMedalTitle'), t('dossier.revokeMedalBody', { id: achId }), t('dossier.revokeMedalAction'));
     if (!ok) return;
     await userService.revokeUserAchievement(uid, character.id, achId);
-    activityLogger.logAdmin('gm.mpg', 'achievement_revoke', `Revogou medalha ${achId} de ${character.codinome}`, { uid, charId: character.id, achId });
+    activityLogger.logAdmin('mestre', 'achievement_revoke', `Revogou medalha ${achId} de ${character.codinome}`, { uid, charId: character.id, achId });
     await loadDetails();
   };
 

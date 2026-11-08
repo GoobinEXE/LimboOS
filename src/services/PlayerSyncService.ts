@@ -1,7 +1,9 @@
 import { collection, doc, onSnapshot } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { checkMacClosed, checkTerminalClosed } from '../store/firestore';
+import { getTenantScope, setTenantScope } from '../lib/tenantScope';
 import { activityLogger } from './ActivityLogger';
+import { diskRepairService } from './DiskRepairService';
 import type { PlayerData, LimboGlobalState, CharacterData } from '../types/player';
 import type { AppScreen } from '../types/player';
 
@@ -93,7 +95,67 @@ export class PlayerSyncService {
       (error) => console.warn('[PlayerSyncService] Intel/unified error:', error)
     );
 
-    // 2. Character Doc Listener (Character-specific flags)
+    // 2. Agente: flags de hardware (vivem no agente), mesa e campanha ativa.
+    //    A mesa (workspaceId) e o roster definem a pasta ativa do jogador.
+    let currentWsId: string | null = null;
+    let currentCampaignId: string | null = null;
+    let rosterCampaigns: string[] = [];
+    let unsubRoster: (() => void) | null = null;
+    let unsubState: (() => void) | null = null;
+
+    const applyScope = () => {
+      if (!currentWsId) {
+        if (getTenantScope()?.role === 'player') setTenantScope(null);
+        return;
+      }
+      const campaignIds = Array.from(new Set([
+        ...rosterCampaigns,
+        ...(currentCampaignId ? [currentCampaignId] : []),
+      ]));
+      setTenantScope({
+        wsId: currentWsId,
+        role: 'player',
+        campaignIds,
+        characterId,
+        activeCampaignId: currentCampaignId ?? undefined,
+        actorUid: uid,
+      });
+      activityLogger.setCampaign(currentCampaignId);
+    };
+
+    const watchRoster = (wsId: string | null) => {
+      unsubRoster?.();
+      unsubRoster = null;
+      rosterCampaigns = [];
+      if (!wsId) return;
+      unsubRoster = onSnapshot(doc(db, 'workspaces', wsId, 'players', uid),
+        (snap) => {
+          rosterCampaigns = snap.exists() && Array.isArray(snap.data().campaignIds) ? snap.data().campaignIds : [];
+          applyScope();
+        },
+        (error) => console.warn('[PlayerSyncService] Roster error:', error)
+      );
+    };
+
+    // 4. Estado da campanha ativa (Limbo e reparo de disco são por campanha).
+    const watchCampaignState = (wsId: string | null, campaignId: string | null) => {
+      unsubState?.();
+      unsubState = null;
+      if (!wsId || !campaignId) {
+        onLimboUpdate({ seized: false });
+        diskRepairService.setAllowed(false);
+        return;
+      }
+      unsubState = onSnapshot(doc(db, 'workspaces', wsId, 'campaigns', campaignId, 'state', 'live'),
+        (snap) => {
+          const data = snap.exists() ? snap.data() : {};
+          onLimboUpdate({ ...(data as LimboGlobalState), seized: !!data.seized });
+          diskRepairService.setAllowed(!!data.diskRepairAllowed);
+        },
+        (error) => console.warn('[PlayerSyncService] Campaign state error:', error)
+      );
+    };
+
     const unsubChar = onSnapshot(doc(db, 'users', uid, 'characters', characterId),
       (snap) => {
         if (snap.exists()) {
@@ -105,40 +167,27 @@ export class PlayerSyncService {
             applyOneShotForce(uid, characterId, 'mac', onScreenChange);
           }
 
-          onPlayerDataUpdate({ character: { ...data, id: characterId } });
-        }
-      },
-      (error) => console.warn('[PlayerSyncService] Character error:', error)
-    );
-
-    // 3. Master Account Listener (Account-level flags)
-    const unsubUser = onSnapshot(doc(db, 'users', uid),
-      (snap) => {
-        if (snap.exists()) {
-          const data = snap.data();
-
-          if (data.forceTerminalOpen) {
-            applyOneShotForce(uid, characterId, 'dos', onScreenChange);
-          } else if (data.forceMacOpen) {
-            applyOneShotForce(uid, characterId, 'mac', onScreenChange);
+          const wsId = data.workspaceId || null;
+          const campaignId = data.campaignId || null;
+          if (wsId !== currentWsId) {
+            currentWsId = wsId;
+            currentCampaignId = campaignId;
+            watchRoster(wsId);
+            watchCampaignState(wsId, campaignId);
+          } else if (campaignId !== currentCampaignId) {
+            currentCampaignId = campaignId;
+            watchCampaignState(wsId, campaignId);
           }
+          applyScope();
 
           onPlayerDataUpdate({
+            character: { ...data, id: characterId },
             hasTerminalAccess: !!data.hasTerminalAccess,
             hasMacAccess: !!data.hasMacAccess,
           });
         }
       },
-      (error) => console.warn('[PlayerSyncService] User error:', error)
-    );
-
-    // 4. Limbo Global State
-    const unsubLimbo = onSnapshot(doc(db, 'system', 'limboState'), 
-      (snap) => {
-        const lState: LimboGlobalState = snap.exists() ? (snap.data() as LimboGlobalState) : { seized: false };
-        onLimboUpdate(lState);
-      },
-      (error) => console.warn('[PlayerSyncService] Limbo error:', error)
+      (error) => console.warn('[PlayerSyncService] Character error:', error)
     );
 
     // 5. Achievements — grants admin/remotos refletem sem reload
@@ -152,12 +201,19 @@ export class PlayerSyncService {
       (error) => console.warn('[PlayerSyncService] Achievements error:', error)
     );
 
-    this.unsubs.push(unsubIntel, unsubChar, unsubUser, unsubLimbo, unsubAchievements);
+    this.unsubs.push(
+      unsubIntel,
+      unsubChar,
+      () => unsubRoster?.(),
+      () => unsubState?.(),
+      unsubAchievements,
+    );
   }
 
   public stopAll() {
     this.unsubs.forEach((unsub) => unsub());
     this.unsubs = [];
+    if (getTenantScope()?.role === 'player') setTenantScope(null);
   }
 }
 

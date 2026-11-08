@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { collection, onSnapshot, query, orderBy, limit, getDocs, writeBatch, Timestamp, collectionGroup } from 'firebase/firestore';
+import { orderBy, limit, writeBatch, Timestamp } from 'firebase/firestore';
 import { motion, AnimatePresence } from 'motion/react';
 import { db } from '../../lib/firebase';
 import { useModal } from './ConfirmModal';
-import { wipeAllUserData, type WipeProgress } from '../wipeUsers';
+import { getScopedDocs, isOwnerScope, subscribeScoped } from '../../lib/tenantScope';
 import { userService } from '../../services/UserService';
 import { masterAccountLabelByUid, characterLabelByKey } from '../lib/entityLabels';
 import type { MasterAccount } from '../../types/player';
@@ -196,22 +196,17 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
   const [filterCategory, setFilterCategory] = useState('');
   const [filterUser, setFilterUser] = useState('');
   const [searchText, setSearchText] = useState('');
-  const [isWiping, setIsWiping] = useState(false);
-  const [wipeProgress, setWipeProgress] = useState<WipeProgress | null>(null);
   const { showConfirm, showAlert, modal } = useModal();
 
   useEffect(() => {
     const unsubUsers = userService.subscribeToUsers(setUsers);
-    const unsubCharacters = onSnapshot(collectionGroup(db, 'characters'), (snap) => {
+    const unsubCharacters = userService.subscribeToAllCharacters((list) => {
       const map = new Map<string, string>();
-      snap.docs.forEach((docSnap) => {
-        const uid = docSnap.ref.parent.parent?.id;
-        if (!uid) return;
-        const data = docSnap.data() as { codinome?: string };
-        map.set(`${uid}_${docSnap.id}`, data.codinome?.trim() || t('entity.agentNoCodename'));
+      list.forEach(({ uid, char }) => {
+        map.set(`${uid}_${char.id}`, char.codinome?.trim() || t('entity.agentNoCodename'));
       });
       setCharacterMap(map);
-    }, (err) => console.warn('[SystemLogPanel] characters listener error:', err));
+    });
 
     return () => {
       unsubUsers();
@@ -220,19 +215,14 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
   }, []);
 
   useEffect(() => {
-    const q = query(
-      collection(db, 'activityLog'),
-      orderBy('timestamp', 'desc'),
-      limit(maxEntries)
-    );
-    const unsub = onSnapshot(q, (snap) => {
-      const list: LogEntry[] = [];
-      snap.forEach((d) => {
-        list.push({ id: d.id, ...(d.data() as Omit<LogEntry, 'id'>) });
-      });
+    // Log da pasta (co-mestre: só o das campanhas dele, ordenado aqui).
+    return subscribeScoped('activityLog', 'single', [orderBy('timestamp', 'desc'), limit(maxEntries)], (docs) => {
+      const list = docs
+        .map((d) => ({ id: d.id, ...(d.data() as Omit<LogEntry, 'id'>) }))
+        .sort((a, b) => ((b.timestamp as any)?.toMillis?.() ?? 0) - ((a.timestamp as any)?.toMillis?.() ?? 0))
+        .slice(0, maxEntries);
       setEntries(list);
-    });
-    return () => unsub();
+    }, (err) => console.warn('[SystemLogPanel] activityLog listener error:', err));
   }, [maxEntries]);
 
   const filtered = useMemo(() => {
@@ -260,10 +250,10 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
 
     setIsClearing(true);
     try {
-      const snap = await getDocs(collection(db, 'activityLog'));
+      const docs = await getScopedDocs('activityLog', 'single');
       let batch = writeBatch(db);
       let count = 0;
-      snap.docs.forEach((docSnap) => {
+      docs.forEach((docSnap) => {
         batch.delete(docSnap.ref);
         count++;
         if (count % 400 === 0) {
@@ -281,42 +271,7 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
     }
   };
 
-  const handleWipeUsers = async () => {
-    const ok = await showConfirm(
-      t('logs.wipeTitle'), 
-      t('logs.wipeBody'), 
-      'CONFIRMAR WIPE TOTAL'
-    );
-    if (!ok) return;
 
-    // Double confirmation
-    const ok2 = await showConfirm(
-      t('logs.wipeFinalTitle'),
-      t('logs.wipeFinalBody'),
-      'SIM, DESTRUIR TUDO'
-    );
-    if (!ok2) return;
-
-    setIsWiping(true);
-    setWipeProgress(null);
-    try {
-      const result = await wipeAllUserData((progress) => {
-        setWipeProgress(progress);
-      });
-      if (result.success) {
-        await showAlert(t('logs.wipeDone'), `${result.usersDeleted} usuários foram removidos permanentemente. A página será recarregada.`);
-        window.location.reload();
-      } else {
-        await showAlert('Erro', `Wipe parcial: ${result.usersDeleted} removidos. Erros: ${result.errors.join('; ')}`);
-      }
-    } catch (err) {
-      console.error(err);
-      await showAlert(t('logs.criticalError'), t('logs.serverFail'));
-    } finally {
-      setIsWiping(false);
-      setWipeProgress(null);
-    }
-  };
 
   const handleExportJSON = () => {
     const data = filtered.map(e => ({
@@ -377,20 +332,7 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
                 Exportar JSON
               </button>
 
-              <button
-                onClick={handleWipeUsers}
-                disabled={isWiping}
-                className={`px-6 py-2 text-[10px] font-display font-bold uppercase tracking-widest border transition flex items-center gap-2 rounded-sm shadow-lg ${
-                  isWiping
-                    ? 'bg-red-500/20 text-red-400 border-red-500/20 animate-pulse'
-                    : 'bg-red-500/5 text-red-500/60 border-red-500/10 hover:bg-red-500/10 hover:text-red-500'
-                }`}
-              >
-                <span className="material-symbols-outlined text-base">delete_forever</span>
-                {isWiping ? (wipeProgress ? `${wipeProgress.phase}: ${wipeProgress.usersProcessed}/${wipeProgress.totalUsers}` : 'APAGANDO...') : t('logs.wipeUsers')}
-              </button>
-
-              <button
+              {isOwnerScope() && <button
                 onClick={handleClearLogs}
                 disabled={isClearing}
                 className={`px-6 py-2 text-[10px] font-display font-bold uppercase tracking-widest border transition flex items-center gap-2 rounded-sm shadow-lg ${
@@ -401,7 +343,7 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
               >
                 <span className="material-symbols-outlined text-base">delete_sweep</span>
                 {isClearing ? 'PROCESSANDO...' : 'Purgar Logs'}
-              </button>
+              </button>}
             </>
           )}
         </div>

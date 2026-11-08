@@ -1,5 +1,3 @@
-import { doc, onSnapshot } from 'firebase/firestore';
-import { db } from '../lib/firebase';
 import { firestoreUnlockIntel } from '../store/firestore';
 import { analyticsTracker } from './AnalyticsTracker';
 import { activityLogger } from './ActivityLogger';
@@ -8,30 +6,23 @@ export type RepairPhase = 'idle' | 'reading' | 'corrupted' | 'repairing' | 'succ
 
 
 
+/**
+ * Reparo de disco. A liberação vem do estado da campanha ativa
+ * (workspaces/{ws}/campaigns/{c}/state/live.diskRepairAllowed), lido pelo
+ * PlayerSyncService junto com o estado do Limbo.
+ */
 class DiskRepairService {
   private diskRepairAllowed = false;
-  private unsubscribe: (() => void) | null = null;
-  private initialized = false;
 
   constructor() {}
 
-  public init() {
-    if (this.initialized || typeof window === 'undefined') return;
-    try {
-      this.unsubscribe = onSnapshot(doc(db, 'system', 'gameEvents'), (snap) => {
-        if (snap.exists()) {
-          this.diskRepairAllowed = !!snap.data().diskRepairAllowed;
-        }
-      }, (error) => {
-        if (error.code === 'permission-denied') return;
-        console.error("[DiskRepairService] Firestore error:", error);
-      });
-      this.initialized = true;
-    } catch (err) {}
-  }
+  /** Mantido para os chamadores antigos; o estado chega por setAllowed. */
+  public init() {}
 
-  public stop() {
-    if (this.unsubscribe) this.unsubscribe();
+  public stop() {}
+
+  public setAllowed(allowed: boolean) {
+    this.diskRepairAllowed = allowed;
   }
 
   public async startAnalysis(uid: string, characterId: string, onProgress: (p: number) => void): Promise<void> {

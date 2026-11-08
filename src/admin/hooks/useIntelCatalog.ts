@@ -164,7 +164,7 @@ export function useIntelCatalog({ campaignScope = 'all' }: { campaignScope?: Cam
     setMediaUploading(true);
     setFeedback(null);
     try {
-      const asset = await mediaService.uploadMedia(file, 'gm.mpg');
+      const asset = await mediaService.uploadMedia(file, 'mestre');
       const detectedType: IntelType = isVideo ? 'VIDEO' : isAudio ? 'AUDIO' : 'VISUAL';
       setFormData((prev) => {
         const useAssetId = !editingItem && (prev.id.startsWith('item-') || !prev.mediaUrl);

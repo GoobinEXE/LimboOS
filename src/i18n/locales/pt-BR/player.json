@@ -68,7 +68,9 @@
       "label": "Codinome do Agente",
       "placeholder": "EX: PHANTOM-84",
       "warning": "Aviso: Uma vez registrado na rede, o codinome se torna sua identidade primária. O progresso será isolado de outros agentes.",
-      "submit": "Confirmar Registro"
+      "submit": "Confirmar Registro",
+      "needInvite": "Você ainda não joga em nenhuma mesa. Peça o link de convite ao mestre e cole no campo de convite.",
+      "mesaLabel": "Mesa do novo agente"
     },
     "master": {
       "badge": "ATUALIZAÇÃO DE PROTOCOLO OBRIGATÓRIA",
@@ -82,6 +84,13 @@
     },
     "footer": {
       "grid": "Grid-Node: {{id}}"
+    },
+    "mesa": "Mesa: {{name}}",
+    "noMesa": "Sem mesa vinculada",
+    "invite": {
+      "label": "Entrar com convite",
+      "placeholder": "Cole o link ou código do convite do mestre",
+      "submit": "Usar convite"
     }
   },
   "campaign": {

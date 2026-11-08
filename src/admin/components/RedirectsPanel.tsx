@@ -60,8 +60,10 @@ export default function RedirectsPanel({
     if (!newSourceId || !newTargetId) return;
     setIsSaving(true);
     try {
-      await saveQrRedirect(newSourceId.trim(), newTargetId.trim(), newReason.trim());
-      activityLogger.logAdmin('gm.mpg', 'qr_redirect_add', `Criou redirecionamento: ${newSourceId} -> ${newTargetId}`, { sourceId: newSourceId, targetId: newTargetId });
+      // A campanha do redirect é a do item de destino (quem vê o QR vê o item).
+      const targetCampaign = intelRegistry.get(newTargetId.trim())?.campaignId ?? null;
+      await saveQrRedirect(newSourceId.trim(), newTargetId.trim(), newReason.trim(), targetCampaign);
+      activityLogger.logAdmin('mestre', 'qr_redirect_add', `Criou redirecionamento: ${newSourceId} -> ${newTargetId}`, { sourceId: newSourceId, targetId: newTargetId });
       setNewSourceId('');
       setNewTargetId('');
       setNewReason('');
@@ -77,7 +79,7 @@ export default function RedirectsPanel({
   const handleDelete = async (sourceId: string) => {
     try {
       await deleteQrRedirect(sourceId);
-      activityLogger.logAdmin('gm.mpg', 'qr_redirect_remove', `Removeu redirecionamento: ${sourceId}`, { sourceId });
+      activityLogger.logAdmin('mestre', 'qr_redirect_remove', `Removeu redirecionamento: ${sourceId}`, { sourceId });
       // Real-time listener handles state update
     } catch (err) {
       console.error('Error deleting redirect:', err);

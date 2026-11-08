@@ -1,23 +1,15 @@
-import { 
-  collection, 
-  onSnapshot, 
-  query, 
-  where,
-  DocumentData,
-  QuerySnapshot,
-  doc,
-  writeBatch
-} from 'firebase/firestore';
+import { doc, onSnapshot, query, where, type DocumentData } from 'firebase/firestore';
 import { db } from '../lib/firebase';
-import { Campaign, campaigns as localFallbackCampaigns } from '../data/campaigns';
+import { getTenantScope, onTenantScopeChange, wsCollection } from '../lib/tenantScope';
+import { Campaign, registerCampaigns } from '../data/campaigns';
 
 /**
- * CampaignService - Gerencia a lógica de negócios e persistência de missões.
- * Implementa o padrão Singleton para garantir uma única fonte de verdade.
+ * CampaignService: leitura das missões da pasta ativa.
+ * Dono: a coleção inteira da pasta. Co-mestre e jogador: só as campanhas da lista
+ * de acesso, lidas documento a documento (é o que as regras permitem).
  */
 class CampaignService {
   private static instance: CampaignService;
-  private readonly collectionName = 'campaigns';
 
   private constructor() {}
 
@@ -28,52 +20,93 @@ class CampaignService {
     return CampaignService.instance;
   }
 
-  /**
-   * Inicializa o banco com dados locais se estiver vazio.
-   */
-  private async initializeIfEmpty(size: number) {
-    if (size > 0 || localFallbackCampaigns.length === 0) return;
-    
-
-    try {
-      const batch = writeBatch(db);
-      localFallbackCampaigns.forEach(c => {
-        batch.set(doc(db, this.collectionName, c.id), c);
-      });
-      await batch.commit();
-    } catch (err) {
-      console.warn("[CampaignService] Falha na auto-inicialização (provavelmente sem permissão de escrita):", err);
+  /** Todas as campanhas visíveis para a sessão, vivas. */
+  public subscribeToScopedCampaigns(
+    callback: (campaigns: Campaign[]) => void,
+    onError?: (err: Error) => void,
+  ): () => void {
+    const scope = getTenantScope();
+    if (!scope) {
+      callback([]);
+      return () => {};
     }
+    const toCampaign = (id: string, data: DocumentData) => ({ id, ...data } as Campaign);
+    const emit = (list: Campaign[]) => {
+      registerCampaigns(list);
+      callback(list);
+    };
+
+    if (scope.campaignIds === null) {
+      return onSnapshot(
+        wsCollection('campaigns'),
+        (snap) => emit(snap.docs.map((d) => toCampaign(d.id, d.data()))),
+        (err) => {
+          console.warn('[CampaignService] campaigns listener error:', err.code || err);
+          onError?.(err);
+        },
+      );
+    }
+
+    const ids = [...scope.campaignIds];
+    if (ids.length === 0) {
+      callback([]);
+      return () => {};
+    }
+    const byId = new Map<string, Campaign | null>();
+    const flush = () => {
+      if (byId.size < ids.length) return;
+      emit(ids.map((id) => byId.get(id)).filter((c): c is Campaign => !!c));
+    };
+    const unsubs = ids.map((id) =>
+      onSnapshot(
+        doc(db, 'workspaces', scope.wsId, 'campaigns', id),
+        (snap) => {
+          byId.set(id, snap.exists() ? toCampaign(snap.id, snap.data()) : null);
+          flush();
+        },
+        (err) => {
+          console.warn('[CampaignService] campaign listener error:', id, err.code || err);
+          byId.set(id, null);
+          flush();
+          onError?.(err);
+        },
+      ),
+    );
+    return () => unsubs.forEach((u) => u());
   }
 
-  /**
-   * Subscreve para atualizações de campanhas ativas/bloqueadas.
-   */
+  /** Campanhas ativas ou bloqueadas (seleção do jogador), refeitas quando a pasta muda. */
   public subscribeToActiveCampaigns(callback: (campaigns: Campaign[]) => void): () => void {
-
-    
-    const q = query(
-      collection(db, this.collectionName), 
-      where('status', 'in', ['Ativa', 'Bloqueada'])
-    );
-
-    return onSnapshot(q, (snap: QuerySnapshot<DocumentData>) => {
-      if (snap.empty) {
-        this.initializeIfEmpty(0); // Tenta inicializar em background
-        callback(localFallbackCampaigns);
-        return;
-      }
-
-      const list = snap.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      } as Campaign));
-      callback(list);
-    }, (error) => {
-      console.error("[CampaignService] Erro de acesso ao Firestore. Usando fallback local:", error.message);
-      // Fallback para não travar o usuário
-      callback(localFallbackCampaigns);
+    let stop = this.subscribeActiveOnce(callback);
+    const stopScope = onTenantScopeChange(() => {
+      stop();
+      stop = this.subscribeActiveOnce(callback);
     });
+    return () => {
+      stop();
+      stopScope();
+    };
+  }
+
+  private subscribeActiveOnce(callback: (campaigns: Campaign[]) => void): () => void {
+    const scope = getTenantScope();
+    if (scope?.campaignIds === null) {
+      return onSnapshot(
+        query(wsCollection('campaigns'), where('status', 'in', ['Ativa', 'Bloqueada'])),
+        (snap) => {
+          const list = snap.docs.map((d) => ({ id: d.id, ...d.data() } as Campaign));
+          registerCampaigns(list);
+          callback(list);
+        },
+        (err) => {
+          console.warn('[CampaignService] active campaigns error:', err.code || err);
+          callback([]);
+        },
+      );
+    }
+    return this.subscribeToScopedCampaigns((list) =>
+      callback(list.filter((c) => c.status === 'Ativa' || c.status === 'Bloqueada')),
+    );
   }
 }
 

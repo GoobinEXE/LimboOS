@@ -1,11 +1,5 @@
 import {
-  collection,
-  doc,
-  getDocs,
-  onSnapshot,
-  setDoc,
   updateDoc,
-  deleteDoc,
   serverTimestamp,
   writeBatch,
 } from 'firebase/firestore';
@@ -16,6 +10,16 @@ import {
   deleteObject,
 } from 'firebase/storage';
 import { db, storage } from '../lib/firebase';
+import {
+  getScopedDocs,
+  getTenantScope,
+  listScopeFromFirestore,
+  listScopeToFirestore,
+  onTenantScopeChange,
+  requireWsId,
+  subscribeScoped,
+  wsDoc,
+} from '../lib/tenantScope';
 import type {
   NpcContact,
   NpcContactInput,
@@ -26,6 +30,7 @@ import {
   SUGGESTED_NPC_CONTACTS,
   SUGGESTED_NPC_DIALOGUES,
 } from '../data/npcMessages';
+import { catalogStateService } from './CatalogStateService';
 
 const CONTACTS_COL = 'npcContacts';
 const DIALOGUES_COL = 'npcDialogues';
@@ -38,19 +43,18 @@ export type NpcSmsCatalogSnapshot = {
   isRemote: boolean;
 };
 
+function toFirestorePatch<T extends { campaignIds?: string[] | 'global' }>(input: T): Record<string, unknown> {
+  const { campaignIds, ...rest } = input;
+  return campaignIds === undefined ? rest : { ...rest, ...listScopeToFirestore(campaignIds) };
+}
+
 function normalizeContact(id: string, raw: Record<string, unknown>): NpcContact {
-  const campaignIds = raw.campaignIds;
   return {
     id,
     name: String(raw.name ?? id),
     number: String(raw.number ?? ''),
     avatarUrl: raw.avatarUrl ? String(raw.avatarUrl) : undefined,
-    campaignIds:
-      campaignIds === 'global' || campaignIds == null
-        ? 'global'
-        : Array.isArray(campaignIds)
-          ? (campaignIds as string[])
-          : 'global',
+    campaignIds: listScopeFromFirestore(raw),
     enabled: raw.enabled !== false,
     source: raw.source === 'suggestion' ? 'suggestion' : 'custom',
     createdAt: raw.createdAt,
@@ -84,6 +88,8 @@ class NpcSmsCatalogService {
   private listeners = new Set<(snap: NpcSmsCatalogSnapshot) => void>();
   private unsubContacts: (() => void) | null = null;
   private unsubDialogues: (() => void) | null = null;
+  private unsubState: (() => void) | null = null;
+  private unsubScope: (() => void) | null = null;
   private startCount = 0;
 
   private constructor() {}
@@ -98,36 +104,21 @@ class NpcSmsCatalogService {
   start(): () => void {
     this.startCount += 1;
 
-    if (!this.unsubContacts) {
-      this.unsubContacts = onSnapshot(
-        collection(db, CONTACTS_COL),
-        (snap) => {
-          this.contacts = snap.docs.map((d) =>
-            normalizeContact(d.id, d.data() as Record<string, unknown>),
-          );
-          this.notify();
-        },
-        (err) => {
-          console.warn('[NpcSmsCatalogService] contacts subscribe error:', err);
-          this.notify();
-        },
-      );
+    if (!this.unsubState) {
+      // Catálogo inicializado vazio deixa de cair nas sugestões
+      this.unsubState = catalogStateService.subscribe(() => this.notify());
     }
 
-    if (!this.unsubDialogues) {
-      this.unsubDialogues = onSnapshot(
-        collection(db, DIALOGUES_COL),
-        (snap) => {
-          this.dialogues = snap.docs.map((d) =>
-            normalizeDialogue(d.id, d.data() as Record<string, unknown>),
-          );
-          this.notify();
-        },
-        (err) => {
-          console.warn('[NpcSmsCatalogService] dialogues subscribe error:', err);
-          this.notify();
-        },
-      );
+    if (!this.unsubContacts) {
+      this.subscribeRemote();
+      this.unsubScope = onTenantScopeChange(() => {
+        this.unsubContacts?.();
+        this.unsubDialogues?.();
+        this.contacts = [];
+        this.dialogues = [];
+        this.notify();
+        this.subscribeRemote();
+      });
     }
 
     return () => {
@@ -136,32 +127,85 @@ class NpcSmsCatalogService {
     };
   }
 
+  /** Contatos e diálogos visíveis na pasta ativa (co-mestre: campanhas dele e globais). */
+  private subscribeRemote() {
+    if (!getTenantScope()) {
+      this.unsubContacts = () => {};
+      this.unsubDialogues = () => {};
+      return;
+    }
+    this.unsubContacts = subscribeScoped(
+      CONTACTS_COL,
+      'list',
+      [],
+      (docs) => {
+        this.contacts = docs.map((d) => normalizeContact(d.id, d.data() as Record<string, unknown>));
+        this.notify();
+      },
+      (err) => {
+        console.warn('[NpcSmsCatalogService] contacts subscribe error:', err);
+        this.notify();
+      },
+    );
+    this.unsubDialogues = subscribeScoped(
+      DIALOGUES_COL,
+      'list',
+      [],
+      (docs) => {
+        this.dialogues = docs.map((d) => normalizeDialogue(d.id, d.data() as Record<string, unknown>));
+        this.notify();
+      },
+      (err) => {
+        console.warn('[NpcSmsCatalogService] dialogues subscribe error:', err);
+        this.notify();
+      },
+    );
+  }
+
+  /** Diálogos herdam o escopo do contato (as regras de co-mestre leem dele). */
+  private dialogueScope(npcId: string): { campaignIds: string[]; global: boolean } {
+    const contact = this.contacts.find((c) => c.id === npcId);
+    return listScopeToFirestore(contact?.campaignIds ?? 'global');
+  }
+
   stop() {
+    this.unsubScope?.();
+    this.unsubScope = null;
     this.unsubContacts?.();
     this.unsubDialogues?.();
     this.unsubContacts = null;
     this.unsubDialogues = null;
+    this.unsubState?.();
+    this.unsubState = null;
     this.startCount = 0;
   }
 
-  isUsingRemote(): boolean {
-    return this.contacts.length > 0 || this.dialogues.length > 0;
+  private initialized(): boolean {
+    return catalogStateService.isInitialized('npcSms');
   }
 
+  isUsingRemote(): boolean {
+    return this.initialized() || this.contacts.length > 0 || this.dialogues.length > 0;
+  }
+
+  /**
+   * Inicializado: só o Firestore, mesmo vazio. Antes da marca, cada coleção
+   * vazia cai nas sugestões (comportamento das instalações antigas).
+   */
   getSnapshot(): NpcSmsCatalogSnapshot {
     return {
-      contacts: this.contacts.length > 0 ? this.contacts : SUGGESTED_NPC_CONTACTS,
-      dialogues: this.dialogues.length > 0 ? this.dialogues : SUGGESTED_NPC_DIALOGUES,
+      contacts: this.hasRemoteContacts() ? this.contacts : SUGGESTED_NPC_CONTACTS,
+      dialogues: this.hasRemoteDialogues() ? this.dialogues : SUGGESTED_NPC_DIALOGUES,
       isRemote: this.isUsingRemote(),
     };
   }
 
   hasRemoteContacts(): boolean {
-    return this.contacts.length > 0;
+    return this.initialized() || this.contacts.length > 0;
   }
 
   hasRemoteDialogues(): boolean {
-    return this.dialogues.length > 0;
+    return this.initialized() || this.dialogues.length > 0;
   }
 
   /** Contatos ativos (enabled) do catálogo efetivo. */
@@ -208,31 +252,47 @@ class NpcSmsCatalogService {
     const id = input.id.trim();
     if (!id) throw new Error('ID obrigatório');
     const payload = {
-      ...input,
+      ...toFirestorePatch(input),
       id,
       enabled: input.enabled !== false,
       source: input.source || 'custom',
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     };
-    await setDoc(doc(db, CONTACTS_COL, id), payload);
+    const batch = writeBatch(db);
+    batch.set(wsDoc(CONTACTS_COL, id), payload);
+    catalogStateService.markInBatch(batch, 'npcSms');
+    await batch.commit();
     return normalizeContact(id, payload as unknown as Record<string, unknown>);
   }
 
   async updateContact(id: string, patch: Partial<NpcContactInput>): Promise<void> {
     const { id: _omit, ...rest } = patch as Partial<NpcContactInput> & { id?: string };
-    await updateDoc(doc(db, CONTACTS_COL, id), {
-      ...rest,
+    const batch = writeBatch(db);
+    batch.update(wsDoc(CONTACTS_COL, id), {
+      ...toFirestorePatch(rest),
       updatedAt: serverTimestamp(),
     });
+    // Escopo do contato mudou: os diálogos dele acompanham.
+    if (rest.campaignIds !== undefined) {
+      const scope = listScopeToFirestore(rest.campaignIds);
+      this.dialogues
+        .filter((d) => d.npcId === id)
+        .forEach((d) => batch.update(wsDoc(DIALOGUES_COL, d.id), scope));
+    }
+    await batch.commit();
   }
 
   async removeContact(id: string): Promise<void> {
     const existing = this.contacts.find((c) => c.id === id);
-    await deleteDoc(doc(db, CONTACTS_COL, id));
+    // Apagar marca o catálogo: apagar o último NPC não traz as sugestões de volta
+    const batch = writeBatch(db);
+    batch.delete(wsDoc(CONTACTS_COL, id));
+    catalogStateService.markInBatch(batch, 'npcSms');
+    await batch.commit();
     if (existing?.avatarUrl?.includes(AVATAR_PREFIX)) {
       try {
-        await deleteObject(ref(storage, `${AVATAR_PREFIX}/${id}`));
+        await deleteObject(ref(storage, `workspaces/${requireWsId()}/${AVATAR_PREFIX}/${id}`));
       } catch {
         // ignore
       }
@@ -245,6 +305,7 @@ class NpcSmsCatalogService {
     if (!input.npcId) throw new Error('npcId obrigatório');
     const payload = {
       ...input,
+      ...this.dialogueScope(input.npcId),
       id,
       enabled: input.enabled !== false,
       source: input.source || 'custom',
@@ -252,20 +313,27 @@ class NpcSmsCatalogService {
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     };
-    await setDoc(doc(db, DIALOGUES_COL, id), payload);
+    const batch = writeBatch(db);
+    batch.set(wsDoc(DIALOGUES_COL, id), payload);
+    catalogStateService.markInBatch(batch, 'npcSms');
+    await batch.commit();
     return normalizeDialogue(id, payload as unknown as Record<string, unknown>);
   }
 
   async updateDialogue(id: string, patch: Partial<NpcDialogueInput>): Promise<void> {
     const { id: _omit, ...rest } = patch as Partial<NpcDialogueInput> & { id?: string };
-    await updateDoc(doc(db, DIALOGUES_COL, id), {
+    await updateDoc(wsDoc(DIALOGUES_COL, id), {
       ...rest,
+      ...(rest.npcId ? this.dialogueScope(rest.npcId) : {}),
       updatedAt: serverTimestamp(),
     });
   }
 
   async removeDialogue(id: string): Promise<void> {
-    await deleteDoc(doc(db, DIALOGUES_COL, id));
+    const batch = writeBatch(db);
+    batch.delete(wsDoc(DIALOGUES_COL, id));
+    catalogStateService.markInBatch(batch, 'npcSms');
+    await batch.commit();
   }
 
   async importSuggestions(): Promise<{
@@ -274,12 +342,15 @@ class NpcSmsCatalogService {
     dialoguesImported: number;
     dialoguesSkipped: number;
   }> {
-    const [contactSnap, dialogueSnap] = await Promise.all([
-      getDocs(collection(db, CONTACTS_COL)),
-      getDocs(collection(db, DIALOGUES_COL)),
+    const [contactDocs, dialogueDocs] = await Promise.all([
+      getScopedDocs(CONTACTS_COL, 'list'),
+      getScopedDocs(DIALOGUES_COL, 'list'),
     ]);
-    const existingContacts = new Set(contactSnap.docs.map((d) => d.id));
-    const existingDialogues = new Set(dialogueSnap.docs.map((d) => d.id));
+    const existingContacts = new Set(contactDocs.map((d) => d.id));
+    const existingDialogues = new Set(dialogueDocs.map((d) => d.id));
+    const contactScope = new Map(
+      SUGGESTED_NPC_CONTACTS.map((c) => [c.id, listScopeToFirestore(c.campaignIds)]),
+    );
 
     let contactsImported = 0;
     let contactsSkipped = 0;
@@ -302,8 +373,8 @@ class NpcSmsCatalogService {
         contactsSkipped += 1;
         continue;
       }
-      batch.set(doc(db, CONTACTS_COL, c.id), {
-        ...c,
+      batch.set(wsDoc(CONTACTS_COL, c.id), {
+        ...toFirestorePatch(c),
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       });
@@ -317,8 +388,9 @@ class NpcSmsCatalogService {
         dialoguesSkipped += 1;
         continue;
       }
-      batch.set(doc(db, DIALOGUES_COL, d.id), {
+      batch.set(wsDoc(DIALOGUES_COL, d.id), {
         ...d,
+        ...(contactScope.get(d.npcId) ?? listScopeToFirestore('global')),
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       });
@@ -327,6 +399,8 @@ class NpcSmsCatalogService {
       if (ops >= batchSize) await commit();
     }
 
+    catalogStateService.markInBatch(batch, 'npcSms');
+    ops += 1;
     await commit();
     return { contactsImported, contactsSkipped, dialoguesImported, dialoguesSkipped };
   }
@@ -343,7 +417,7 @@ class NpcSmsCatalogService {
       throw new Error('Imagem inválida ou maior que 5MB.');
     }
     const ext = file.name.split('.').pop()?.toLowerCase() || 'png';
-    const storagePath = `${AVATAR_PREFIX}/${contactId}.${ext}`;
+    const storagePath = `workspaces/${requireWsId()}/${AVATAR_PREFIX}/${contactId}.${ext}`;
     const storageRef = ref(storage, storagePath);
 
     return new Promise((resolve, reject) => {

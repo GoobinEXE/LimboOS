@@ -1,3 +1,5 @@
+import type { CampaignFeatures } from '../types/workspace';
+
 export type PlayerDeviceType = 'walkman' | 'nokia';
 
 export interface Campaign {
@@ -10,79 +12,31 @@ export interface Campaign {
   status: 'Ativa' | 'Arquivada' | 'Bloqueada';
   imageUrl: string;
   playerType?: PlayerDeviceType;
+  /** Mini-apps narrativos ligados nesta campanha (ausente = todos desligados). */
+  features?: Partial<CampaignFeatures>;
 }
 
-export const campaigns: Campaign[] = [
-  {
-    id: 'last-rewind',
-    name: 'LAST REWIND',
-    description:
-      'O Bug do Milênio não destruiu o mundo exterior. Ele abriu uma porta para onde as memórias esquecidas vão. Swallow Rest, Polarized, Walkman e a fenda Y2K.',
-    location: 'Swallow Rest / Ashfield Springs',
-    year: '1999–2000',
-    rpgSystem: 'Kids on Bikes',
-    status: 'Ativa',
-    imageUrl: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=800&auto=format&fit=crop',
-    playerType: 'walkman',
-  },
-  {
-    id: 'last-rewind-side-b',
-    name: 'LAST REWIND: SIDE B',
-    description:
-      '2003 é um beco sem saída. Contagem regressiva, Nokia 3310 e a única saída: voltar ao ponto zero.',
-    location: 'Swallow Rest (2003)',
-    year: '2003',
-    rpgSystem: 'Kids on Bikes',
-    status: 'Ativa',
-    imageUrl: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=800&auto=format&fit=crop',
-    playerType: 'nokia',
-  },
-  {
-    id: 'neo-sampa-2099',
-    name: 'Neo-Sampa 2099',
-    description: 'A maior megalópole da América Latina agora é um labirinto de luzes neon e sombras corporativas. A resistência opera nos baixos níveis.',
-    location: 'Setor 011 - São Paulo',
-    year: '2099',
-    rpgSystem: 'Cyberpunk Red',
-    status: 'Ativa',
-    imageUrl: 'https://images.unsplash.com/photo-1514516311115-91220997d662?q=80&w=800&auto=format&fit=crop',
-  },
-  {
-    id: 'orbit-station-zero',
-    name: 'Estação Orbital Zero',
-    description: 'O último refúgio da elite, orbitando a Terra devastada. Segredos políticos e espionagem industrial definem o clima aqui.',
-    location: 'Órbita Terrestre Baixa',
-    year: '2105',
-    rpgSystem: 'Mothership',
-    status: 'Ativa',
-    imageUrl: 'https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?q=80&w=800&auto=format&fit=crop',
-  },
-  {
-    id: 'retro-grid-84',
-    name: 'The Retro Grid',
-    description: 'Uma simulação nostálgica dos anos 80 que esconde um vírus capaz de derrubar a rede global. Entre para desativá-lo.',
-    location: 'Cyber-Espaço',
-    year: '1984 (Simulação)',
-    rpgSystem: 'Tales from the Loop',
-    status: 'Ativa',
-    imageUrl: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=800&auto=format&fit=crop',
-    playerType: 'nokia',
-  },
-  {
-    id: 'dead-zone-arizona',
-    name: 'Zona Morta: Arizona',
-    description: 'Terras áridas fora do controle corporativo. A sobrevivência é a única regra. Rumores dizem que o Running Man foi visto aqui.',
-    location: 'Deserto do Arizona',
-    year: '2097',
-    rpgSystem: 'Fallout 2d20',
-    status: 'Bloqueada',
-    imageUrl: 'https://images.unsplash.com/photo-1542382156909-9ae37b3f56fd?q=80&w=800&auto=format&fit=crop',
-  },
-];
+/**
+ * Campanhas carregadas da pasta ativa (preenchido pelo CampaignService). Serve
+ * para resoluções síncronas por id, como a plataforma (walkman/nokia) da missão.
+ */
+const registry = new Map<string, Campaign>();
+
+export function registerCampaigns(list: Campaign[]): void {
+  list.forEach((c) => registry.set(c.id, c));
+}
+
+export function listRegisteredCampaigns(): Campaign[] {
+  return Array.from(registry.values());
+}
+
+export function clearCampaignRegistry(): void {
+  registry.clear();
+}
 
 export function getCampaignById(id: string | undefined): Campaign | undefined {
   if (!id) return undefined;
-  return campaigns.find((c) => c.id === id);
+  return registry.get(id);
 }
 
 export function resolveCampaignPlatform(campaignId: string | undefined): 'walkman' | 'nokia' {

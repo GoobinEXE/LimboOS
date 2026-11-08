@@ -1,6 +1,6 @@
 # Plano de modularidade do LimboOS
 
-Revisão de 30/10/2026. Este documento cobre o que ainda exige código para montar uma campanha nova e propõe a ordem para levar cada item ao painel admin. A seção 0 registra o que o admin já faz depois da entrega desta data, para servir de linha de base.
+Revisão de 30/10/2026, atualizada em 07/11/2026 com a etapa 1 concluída. Este documento cobre o que ainda exige código para montar uma campanha nova e propõe a ordem para levar cada item ao painel admin. A seção 0 registra o que o admin já faz depois da entrega desta data, para servir de linha de base.
 
 ## 0. Linha de base: o que o admin cobre hoje
 
@@ -10,17 +10,15 @@ Os catálogos de intel (Conteúdo), conquistas e SMS/NPCs ganharam o mesmo filtr
 
 Duas correções de comportamento acompanharam a entrega. Os seletores de campanha deixaram de mesclar o seed local com o Firestore, mistura que fazia missões apagadas reaparecerem nos formulários. Criar a primeira conquista ou o primeiro NPC antes de importar as sugestões agora pede para importar antes, porque o primeiro documento remoto substitui o catálogo de sugestões inteiro.
 
+A etapa 1 (07/11/2026) tirou o seed do caminho de runtime: nenhum código grava mais o seed sozinho. Apagar uma missão desfaz os vínculos no mesmo fluxo: esquadrões e agentes perdem a missão ativa e a liberada, conquistas e NPCs tiram o id do vínculo, e a confirmação lista o que muda e quantas intel ficam marcadas (essas não são alteradas, porque limpar o campo as tornaria globais). A marca `system/catalogState` que a etapa criou foi substituída pelo modelo de pastas da Fase 1 multi-tenant (seção 1). Com a lista de Missões vazia, o dono vê "Nova missão" e o co-mestre vê o aviso de que ainda não foi convidado para nenhuma missão da pasta.
+
 ## 1. Âncora comum: o pacote de campanha
 
 Conquistas e SMS já seguem um padrão que funciona e deve ser a referência para o resto: um serviço singleton de catálogo (`AchievementCatalogService`, `NpcSmsCatalogService`) com listener do Firestore, normalização de documentos, campo `source` (`suggestion` ou `custom`), vínculo `campaignIds` (`'global'` ou lista) e `importSuggestions()` para copiar o seed. Todo conteúdo que hoje vive em componente deve migrar para esse mesmo formato, agrupado no que este plano chama de **pacote de campanha**: documentos no Firestore indexados por `campaignId`, lidos pelo player em runtime e editados pelo admin.
 
-O padrão atual tem uma falha que precisa ser resolvida antes de ser replicado. Os serviços decidem entre remoto e seed pelo tamanho da coleção (`this.defs.length > 0 ? remoto : seed`). Isso causa três defeitos já observados no código:
+O padrão tinha uma falha, resolvida na etapa 1: os serviços decidiam entre remoto e seed pelo tamanho da coleção, o que recriava missões apagadas (o `CampaignsPanel` e o `CampaignService` do player gravavam o seed quando a consulta voltava vazia, inclusive com todas as missões arquivadas), fazia sugestões sumirem no primeiro documento remoto e deixava `campaignLabel()` mostrar nomes do seed para missões apagadas. A etapa 1 resolveu com a marca `system/catalogState`, gravada em toda escrita do admin.
 
-- **Recriação de missões apagadas:** `CampaignsPanel` chama `initializeCampaignsFromData()` quando a coleção `campaigns` fica vazia, então apagar a última missão reinstala as seis campanhas do seed.
-- **Sugestões que somem:** o primeiro documento remoto de conquistas ou de NPCs troca o catálogo inteiro, e as sugestões não importadas desaparecem da lista. A entrega desta data contorna o caso com uma confirmação de importação, sem corrigir a causa.
-- **Nomes fantasmas:** `campaignLabel()` em `src/admin/lib/entityLabels.ts` ainda cai no seed quando o id não existe no Firestore, o que mascara vínculos com missões apagadas.
-
-A correção proposta é um documento `system/catalogState` com um campo por catálogo (`campaigns`, `achievements`, `npcSms`, `intel`, depois cada tipo de pacote) gravado como `initialized: true` pela importação ou pela primeira criação. Com o campo presente, o serviço usa só o Firestore, mesmo com a coleção vazia; sem ele, mostra o seed como sugestão com o aviso de importação que já existe. O seed deixa de ser fonte de verdade em runtime e passa a ser só material importável.
+A Fase 1 multi-tenant tornou a marca desnecessária. Os catálogos passaram para `workspaces/{ws}/...`, cada pasta começa vazia e o conteúdo vem sempre do Firestore da pasta; o bundle só oferece como sugestão as conquistas globais dos mini-apps (`src/data/achievements.ts`), e a lore das campanhas originais (missões, conquistas e NPCs) foi para `backend/scripts/legacy-seed/*.json`, usada só na migração da pasta original. Por isso a regra de leitura de `system/catalogState` para jogadores não vai existir. `CatalogStateService` ficou como stub que responde "inicializado" para todo catálogo, e as chamadas a ele em `AchievementCatalogService` e `NpcSmsCatalogService` podem sair quando a Fase 1 fechar. Um catálogo novo, inclusive os pacotes da seção 2, não precisa de marca: basta morar dentro da pasta.
 
 ## 2. Mini-apps configuráveis por campanha
 
@@ -83,13 +81,13 @@ Cada `isNokiaTheme` vira uma consulta de capacidade (`capabilities.sms`, `capabi
 
 `LOCAL_INTEL_ITEMS` em `src/data/intel_registry.ts` tem dois itens (`evidence-disk-01` e `evidence-disk-01-corrupted`) que não podem ser apagados pelo admin, porque `DiskRepairApp.tsx`, `MacOsApp.tsx` e `DiskRepairService.ts` buscam esses ids diretamente. Eles devem migrar para o pacote do DiskRepair (seção 2) e, até lá, aparecer como sugestão importável no padrão das conquistas. Quando o DiskRepair ler os ids do pacote, `intel_registry.ts` fica só com o registro em memória, sem conteúdo de lore.
 
-Apagar uma missão hoje deixa referências soltas, e o próprio texto de confirmação avisa isso (`campaignId` e `unlockedCampaigns` em agentes e esquadrões). Com o resumo de recursos por missão desta entrega, o fluxo de exclusão pode contar o que aponta para a campanha (esquadrões, agentes, intel, conquistas, NPCs) e oferecer desvincular tudo na mesma confirmação, em `writeBatch`. O chip riscado de missão apagada no seletor de vínculo é a primeira parte visível desse trabalho.
+A integridade dos vínculos ao apagar uma missão foi resolvida na etapa 1 (`collectCampaignLinks` em `src/admin/lib/campaignResources.ts` e `CampaignAdminService.deleteCampaign`). O que sobra é a intel marcada com a missão apagada: ela fica invisível para os jogadores e aparece na confirmação, mas não há tela que liste intel órfã. Um filtro "missão apagada" no catálogo de Conteúdo resolveria isso quando a intel fixa sair do código.
 
 ## 6. Ordem de execução
 
 | Etapa | Escopo | Risco | Depende de |
 |---|---|---|---|
-| 1 | `system/catalogState`, fim da recriação do seed, `campaignLabel` sem fallback, limpeza de vínculos ao apagar missão | baixo | nada |
+| 1 | Concluída em 07/11/2026; a marca de catálogo deu lugar ao modelo de pastas da Fase 1 multi-tenant (ver seção 1) | baixo | nada |
 | 2 | Regra `condition`, `RULE_REGISTRY` e editor gerado por esquema | médio, isolado em `AchievementManager` e no editor | nada |
 | 3 | Pacote do fórum Limbo e seção Apps da página da missão | médio | etapa 1 |
 | 4 | Pacote do MH-DOS e motor de efeitos | alto, toca no fluxo de desbloqueio | etapa 3 |

@@ -3,8 +3,8 @@ import { motion, AnimatePresence } from 'motion/react';
 import { EASE_OUT, dialogPop, overlayFade, staggerDelay } from '../lib/motion';
 import { useTranslation } from 'react-i18next';
 import { UserPlus, Shield, User, ChevronRight, AlertCircle, Skull, Search, LogOut, MonitorCog } from 'lucide-react';
-import { fetchCharacters, createCharacter } from '../store/firestore';
-import { userService } from '../services/UserService';
+import { fetchCharacters, createCharacter, fetchPlayerMemberships, updateOwnDisplayName } from '../store/firestore';
+import { parseInviteToken } from '../invite/inviteToken';
 import type { CharacterData, MasterAccount } from '../types/player';
 import RetroLoading from './player/RetroLoading';
 import RetroSpinner from './player/RetroSpinner';
@@ -27,6 +27,17 @@ export default function CharacterSelectionScreen({ account, onSelect, onLogout, 
   const [creating, setCreating] = useState(false);
   const [selectedCharId, setSelectedCharId] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  // Mesas onde a conta joga: cada agente pertence a uma (workspaceId)
+  const [mesas, setMesas] = useState<{ wsId: string; workspaceName: string }[]>([]);
+  const [newWsId, setNewWsId] = useState('');
+  const [inviteInput, setInviteInput] = useState('');
+  const mesaName = (wsId?: string) => mesas.find((m) => m.wsId === wsId)?.workspaceName || '';
+
+  const openInvite = (e: React.FormEvent) => {
+    e.preventDefault();
+    const token = parseInviteToken(inviteInput);
+    if (token) window.location.assign(`/convite/${encodeURIComponent(token)}`);
+  };
 
   // Master Name / Display Name Flow
   const [showMasterNamePrompt, setShowMasterNamePrompt] = useState(!account.displayName && !account.masterName);
@@ -38,7 +49,7 @@ export default function CharacterSelectionScreen({ account, onSelect, onLogout, 
     if (!newMasterName.trim() || savingMasterName) return;
     setSavingMasterName(true);
     try {
-      await userService.updateMasterAccount(account.uid, { displayName: newMasterName.trim() });
+      await updateOwnDisplayName(account.uid, newMasterName.trim());
       account.displayName = newMasterName.trim(); // Local update
       setShowMasterNamePrompt(false);
     } catch (err) {
@@ -54,8 +65,13 @@ export default function CharacterSelectionScreen({ account, onSelect, onLogout, 
 
   const loadCharacters = async () => {
     try {
-      const list = await fetchCharacters(account.uid);
+      const [list, memberships] = await Promise.all([
+        fetchCharacters(account.uid),
+        fetchPlayerMemberships(account.uid).catch(() => []),
+      ]);
       setCharacters(list);
+      setMesas(memberships);
+      setNewWsId((prev) => prev || memberships[0]?.wsId || '');
     } catch (err) {
       console.error(err);
     } finally {
@@ -68,7 +84,7 @@ export default function CharacterSelectionScreen({ account, onSelect, onLogout, 
     if (!newCodinome.trim() || creating) return;
     setCreating(true);
     try {
-      const char = await createCharacter(account.uid, newCodinome.trim());
+      const char = await createCharacter(account.uid, newCodinome.trim(), newWsId);
       setCharacters([char, ...characters]);
       setIsCreating(false);
       setNewCodinome('');
@@ -163,6 +179,9 @@ export default function CharacterSelectionScreen({ account, onSelect, onLogout, 
                       </div>
                       {char.agentId && <span className="text-mono-ui text-ash-500">RM-{char.agentId}</span>}
                     </div>
+                    <p className="text-mono-ui text-ash-500 mt-1 truncate">
+                      {char.workspaceId ? t('character.mesa', { name: mesaName(char.workspaceId) || '—' }) : t('character.noMesa')}
+                    </p>
                   </div>
                   {selectedCharId === char.id ? (
                     <RetroSpinner size="sm" className="text-accent" />
@@ -195,6 +214,23 @@ export default function CharacterSelectionScreen({ account, onSelect, onLogout, 
             </div>
           )}
         </div>
+
+        <form onSubmit={openInvite} className="mt-6 flex flex-col sm:flex-row gap-2" aria-label={t('character.invite.label')}>
+          <input
+            type="text"
+            value={inviteInput}
+            onChange={(e) => setInviteInput(e.target.value)}
+            placeholder={t('character.invite.placeholder')}
+            autoComplete="off"
+            spellCheck={false}
+            className="focus-bare flex-1 bg-surface-sunken border border-border rounded-control py-3 px-4 text-bone font-mono text-sm outline-none focus:border-border-accent placeholder:text-ash-600"
+          />
+          <button type="submit" disabled={!parseInviteToken(inviteInput)} className="bg-accent/10 hover:bg-accent/20 text-accent border border-accent/30 px-4 py-3 rounded-control text-protocol transition-colors duration-(--duration-fast) disabled:opacity-40">
+            {t('character.invite.submit')}
+          </button>
+        </form>
+        <div>
+        </div>
       </motion.div>
 
       {/* Create New Character Modal */}
@@ -211,7 +247,26 @@ export default function CharacterSelectionScreen({ account, onSelect, onLogout, 
               <h2 className="text-display text-2xl text-bone uppercase mb-6">
                 {t('character.create.title')} <span className="text-accent">{t('character.create.titleAccent')}</span>
               </h2>
+              {mesas.length === 0 ? (
+                <div className="space-y-6">
+                  <p className="text-protocol text-ash-300 leading-relaxed">{t('character.create.needInvite')}</p>
+                  <button type="button" onClick={() => setIsCreating(false)} className="w-full py-4 text-protocol text-ash-400 hover:text-white transition-colors duration-(--duration-fast)">
+                    {tCommon('cancel')}
+                  </button>
+                </div>
+              ) : (
               <form onSubmit={handleCreate} className="space-y-6">
+                {mesas.length > 1 && (
+                  <label className="block">
+                    <span className="text-protocol text-ash-400 mb-2 block">{t('character.create.mesaLabel')}</span>
+                    <select value={newWsId} onChange={(e) => setNewWsId(e.target.value)}
+                      className="w-full bg-surface-sunken border border-border rounded-control py-3 px-4 text-bone outline-none focus:border-border-accent">
+                      {mesas.map((m) => (
+                        <option key={m.wsId} value={m.wsId}>{m.workspaceName || m.wsId}</option>
+                      ))}
+                    </select>
+                  </label>
+                )}
                 <div className="group">
                   <label className="text-protocol text-ash-400 group-focus-within:text-accent transition-colors duration-(--duration-fast) mb-2 block">
                     {t('character.create.label')}
@@ -244,6 +299,7 @@ export default function CharacterSelectionScreen({ account, onSelect, onLogout, 
                   </button>
                 </div>
               </form>
+              )}
             </motion.div>
           </motion.div>
         )}

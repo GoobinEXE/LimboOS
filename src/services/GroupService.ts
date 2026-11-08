@@ -1,28 +1,40 @@
-import { 
-  db 
-} from '../lib/firebase';
-import { 
-  collection, 
-  doc, 
-  setDoc, 
-  updateDoc, 
-  deleteDoc, 
+import { db } from '../lib/firebase';
+import {
+  doc,
+  setDoc,
+  updateDoc,
+  deleteDoc,
   getDoc,
   getDocs,
-  onSnapshot, 
-  serverTimestamp, 
-  query, 
+  onSnapshot,
+  serverTimestamp,
+  query,
   orderBy,
   where,
   Timestamp,
   arrayUnion,
 } from 'firebase/firestore';
+import { getTenantScope, subscribeScoped, wsCollection, wsDoc } from '../lib/tenantScope';
 import { Group, GroupCharacterSlot } from '../types/player';
 import type { GroupMessage } from '../types/npcSms';
 import { intelService } from './IntelService';
 
 function deriveMemberUids(slots: GroupCharacterSlot[]): string[] {
   return Array.from(new Set(slots.map((s) => s.uid).filter(Boolean)));
+}
+
+/** campaignIds = campanha ativa ∪ liberadas (as regras de co-mestre usam esta lista). */
+export function deriveGroupCampaignIds(campaignId: string | undefined | null, unlocked: string[] = []): string[] {
+  return Array.from(new Set([campaignId, ...unlocked].filter((c): c is string => !!c))).sort();
+}
+
+const groupsCol = () => wsCollection('groups');
+const groupDoc = (groupId: string) => wsDoc('groups', groupId);
+const messagesCol = (groupId: string) => wsCollection('groups', groupId, 'messages');
+
+function createdAtMillis(g: Group): number {
+  const v = g.createdAt as unknown as { toMillis?: () => number } | undefined;
+  return typeof v?.toMillis === 'function' ? v.toMillis() : 0;
 }
 
 export class GroupService {
@@ -36,39 +48,22 @@ export class GroupService {
     return GroupService.instance;
   }
 
-  private async ensureMemberUids(groupId: string, data: Partial<Group> & { characterSlots?: GroupCharacterSlot[] }): Promise<string[]> {
-    const slots = data.characterSlots || [];
-    const memberUids = deriveMemberUids(slots);
-    const existing = (data as Group).memberUids;
-    const same =
-      Array.isArray(existing)
-      && existing.length === memberUids.length
-      && memberUids.every((uid) => existing.includes(uid));
-    if (!same) {
-      await updateDoc(doc(db, 'groups', groupId), { memberUids }).catch(() => {
-        /* admin-only write; ignore if not admin */
-      });
-    }
-    return memberUids;
-  }
-
+  /** Esquadrões da pasta (co-mestre: só os das campanhas dele). */
   public subscribeToGroups(callback: (groups: Group[]) => void): () => void {
-    const q = query(collection(db, 'groups'), orderBy('createdAt', 'desc'));
-    return onSnapshot(q, (snapshot) => {
-      const groups = snapshot.docs.map(docSnap => {
+    return subscribeScoped('groups', 'list', [], (docs) => {
+      const groups = docs.map((docSnap) => {
         const data = { id: docSnap.id, ...docSnap.data() } as Group;
-        if (!Array.isArray(data.memberUids) || data.memberUids.length === 0) {
-          void this.ensureMemberUids(docSnap.id, data);
+        if (!Array.isArray(data.memberUids)) {
           data.memberUids = deriveMemberUids(data.characterSlots || []);
         }
         return data;
       });
-      callback(groups);
-    });
+      callback(groups.sort((a, b) => createdAtMillis(b) - createdAtMillis(a)));
+    }, (err) => console.warn('[GroupService] subscribeToGroups error:', err));
   }
 
   public async createGroup(name: string, characterSlots: GroupCharacterSlot[], sessions: string[], campaignId?: string, unlockedCampaigns?: string[]): Promise<string> {
-    const groupRef = doc(collection(db, 'groups'));
+    const groupRef = doc(groupsCol());
     const now = Timestamp.now();
     const memberUids = deriveMemberUids(characterSlots);
 
@@ -79,6 +74,7 @@ export class GroupService {
       memberUids,
       ...(campaignId ? { campaignId } : {}),
       unlockedCampaigns: unlockedCampaigns || [],
+      campaignIds: deriveGroupCampaignIds(campaignId, unlockedCampaigns || []),
       sessions,
       createdAt: now,
       updatedAt: now
@@ -89,7 +85,7 @@ export class GroupService {
   }
 
   public async updateGroup(groupId: string, data: Partial<Group>): Promise<void> {
-    const groupRef = doc(db, 'groups', groupId);
+    const groupRef = groupDoc(groupId);
     const patch: Record<string, unknown> = {
       ...data,
       updatedAt: serverTimestamp(),
@@ -102,11 +98,11 @@ export class GroupService {
   }
 
   public async deleteGroup(groupId: string): Promise<void> {
-    await deleteDoc(doc(db, 'groups', groupId));
+    await deleteDoc(groupDoc(groupId));
   }
 
   public async addSessionDate(groupId: string, date: string): Promise<void> {
-    const groupRef = doc(db, 'groups', groupId);
+    const groupRef = groupDoc(groupId);
     await updateDoc(groupRef, {
       sessions: arrayUnion(date),
       updatedAt: serverTimestamp()
@@ -117,7 +113,7 @@ export class GroupService {
    * Add a character slot to an existing group
    */
   public async addCharacterToGroup(groupId: string, uid: string, characterId: string): Promise<void> {
-    const groupRef = doc(db, 'groups', groupId);
+    const groupRef = groupDoc(groupId);
     const snap = await getDoc(groupRef);
     if (!snap.exists()) throw new Error('Group not found');
 
@@ -145,7 +141,7 @@ export class GroupService {
    * Remove a character slot from a group
    */
   public async removeCharacterFromGroup(groupId: string, characterId: string): Promise<void> {
-    const groupRef = doc(db, 'groups', groupId);
+    const groupRef = groupDoc(groupId);
     const snap = await getDoc(groupRef);
     if (!snap.exists()) throw new Error('Group not found');
 
@@ -191,10 +187,10 @@ export class GroupService {
    * Get all groups that a specific character belongs to.
    */
   public async getGroupsForCharacter(characterId: string, uid?: string): Promise<Group[]> {
-    if (!uid) {
+    if (!uid || !getTenantScope()) {
       return [];
     }
-    const q = query(collection(db, 'groups'), where('memberUids', 'array-contains', uid));
+    const q = query(groupsCol(), where('memberUids', 'array-contains', uid));
     const snap = await getDocs(q);
     const groups = snap.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() } as Group));
     return this.filterGroupsForCharacter(groups, characterId, uid);
@@ -208,11 +204,11 @@ export class GroupService {
     callback: (groups: Group[]) => void,
     uid?: string
   ): () => void {
-    if (!uid) {
+    if (!uid || !getTenantScope()) {
       callback([]);
       return () => {};
     }
-    const q = query(collection(db, 'groups'), where('memberUids', 'array-contains', uid));
+    const q = query(groupsCol(), where('memberUids', 'array-contains', uid));
     return onSnapshot(q, (snapshot) => {
       const groups = snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() } as Group));
       callback(this.filterGroupsForCharacter(groups, characterId, uid));
@@ -227,7 +223,7 @@ export class GroupService {
    * Returns the count of characters that received the intel.
    */
   public async grantIntelToGroup(groupId: string, intelId: string, aliveOnly: boolean = true): Promise<number> {
-    const groupSnap = await getDoc(doc(db, 'groups', groupId));
+    const groupSnap = await getDoc(groupDoc(groupId));
     if (!groupSnap.exists()) throw new Error('Group not found');
 
     const group = groupSnap.data() as Group;
@@ -290,7 +286,7 @@ export class GroupService {
    */
   public subscribeToGroupMessages(groupId: string, callback: (messages: GroupMessage[]) => void): () => void {
     const q = query(
-      collection(db, 'groups', groupId, 'messages'),
+      messagesCol(groupId),
       orderBy('createdAt', 'asc')
     );
     return onSnapshot(q, (snapshot) => {
@@ -318,7 +314,7 @@ export class GroupService {
     recipientName?: string,
     recipientNumber?: string
   ): Promise<void> {
-    const messageRef = doc(collection(db, 'groups', groupId, 'messages'));
+    const messageRef = doc(messagesCol(groupId));
     const data: Record<string, unknown> = {
       id: messageRef.id,
       senderId,
@@ -353,7 +349,7 @@ export class GroupService {
     const baseTime = Date.now();
     for (let i = 0; i < dialogue.messages.length; i++) {
       const msg = dialogue.messages[i];
-      const messageRef = doc(collection(db, 'groups', groupId, 'messages'));
+      const messageRef = doc(messagesCol(groupId));
 
       const isPlayer = msg.speaker === 'player';
 

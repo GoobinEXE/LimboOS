@@ -1,6 +1,5 @@
 import type { MasterAccount } from '../../types/player';
 import type { Campaign } from '../../data/campaigns';
-import { campaigns as localCampaigns } from '../../data/campaigns';
 import { intelRegistry } from '../../data/intel_registry';
 import { achievementManager } from '../../services/AchievementManager';
 import i18n from '../../i18n';
@@ -26,11 +25,13 @@ export function masterAccountLabelByUid(
   return masterAccountLabel(user, fallback);
 }
 
+/**
+ * Nome da missão na lista viva. Sem fallback para o seed: um id que não está
+ * no Firestore é vínculo com missão apagada e precisa aparecer como tal.
+ */
 export function campaignLabel(campaignId: string, campaigns: Campaign[]): string {
   const found = campaigns.find((c) => c.id === campaignId);
-  if (found?.name) return found.name;
-  const local = localCampaigns.find((c) => c.id === campaignId);
-  return local?.name || entityT('entity.missionUnknown');
+  return found?.name || entityT('entity.missionUnknown');
 }
 
 export interface IntelTitleSource {

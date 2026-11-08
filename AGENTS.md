@@ -24,7 +24,7 @@ Não é um OS real: é uma **SPA fictícia** com imersão ARG, lore temporal (Li
 | Path | Conteúdo |
 |------|----------|
 | `backend/` | Firebase Hosting, rules, deploy (`LimboOS-backend`) |
-| `mobile/` | App mobile (`LimboOS-mobile`) |
+| `mobile/` | App Flutter legado (`LimboOS-mobile`), substituído pelo shell Capacitor em `ios/` e `android/` |
 
 Se `backend/` estiver vazio, inicialize submódulos: `git submodule update --init --recursive`.
 
@@ -51,7 +51,10 @@ src/
 ├── store/                  # Firestore CRUD + auth/profile
 ├── types/                  # Modelos TypeScript
 ├── data/                   # Registros estáticos (campanhas, intel, achievements)
-└── lib/firebase.ts         # Inicialização Firebase
+├── lib/firebase.ts         # Inicialização Firebase (Auth sem popup no app nativo)
+└── lib/native/             # Ponte Capacitor: isNative, haptics, login nativo, status bar/splash
+
+ios/, android/              # Shell Capacitor (webDir: backend/dist), config em capacitor.config.ts
 
 sms/                        # Diálogos de NPCs (conteúdo narrativo em Markdown)
 ```
@@ -69,8 +72,8 @@ Todas são lazy-loaded em `App.tsx` com `Suspense` + `RetroLoading`.
 ### Navegação interna (History API)
 
 - **Admin:** rotas por caminho sob `/admin/*`: `/admin/live`, `/admin/missions[/new|/:id/:seção]`, `/admin/content/:seção?mission=`, `/admin/mesa/:seção[/:uid[/:charId]]`, `/admin/system/:seção`. A fonte única é `src/admin/lib/adminNavigation.ts` (destinos, seções, rótulos i18n, ícones, atalhos ⌘1–5, grupos da barra lateral, construtores `adminPath.*`, `parseAdminLocation` e o redirecionamento das URLs antigas `?tab=&sub=`). `Dashboard` lê `useLocation`, mantém destinos e seções montados (keep-alive) e lembra a última rota de cada destino. Navegue sempre com `useAdminNavigate()` (`src/admin/hooks/useAdminRoute.ts`); não chame `window.history` no admin. Trocar destino ou seção empilha no histórico; o filtro `?mission=` substitui.
-- **Destinos do admin:** Ao Vivo (sessão e entregas), Missões (lista e página da missão), Conteúdo (Intel & Mídia, Conquistas, NPCs & SMS, QR & Links, com um filtro de missão único), Mesa (Esquadrões, Agentes & Contas, Acesso de hardware) e Sistema (Relatórios, Log). Abaixo de `lg` a barra lateral vira a gaveta `AdminNavDrawer`, aberta pelo menu do cabeçalho; o conteúdo ocupa a tela inteira, respeitando as áreas seguras. Trocas de rota animam com direção (`adminMotionHint`): aprofundar ou ir para a seção à direita entra pela direita, o inverso pela esquerda, troca de destino só faz fade.
-- **Página da missão:** seções `recursos` (padrão), `dados`, `vinculos` e `inventario`; uma seção nova (ex.: `apps`) entra em `MISSION_SECTIONS` e no `render` de `MissionWorkspace`. Intel, conquistas e NPCs da missão são criados ali com os editores reutilizáveis (`useAchievementEditor`, `useNpcContactEditor`, `IntelEditorHost`). O vínculo esquadrão↔missão só é editado em Vínculos. Rascunhos de Dados sobrevivem à navegação; recarregar, sair ou abrir o modo jogador pedem confirmação (`src/admin/lib/unsavedChanges.ts`).
+- **Destinos do admin:** Ao Vivo (sessão e entregas), Missões (lista e página da missão), Conteúdo (Intel & Mídia, Conquistas, NPCs & SMS, QR & Links, com um filtro de missão único), Mesa (Esquadrões, Agentes & Contas, Acesso de hardware) e Sistema (Relatórios, Log e, só para quem tem o claim `platformAdmin`, Contas da plataforma em `PlatformAccountsPanel`). Abaixo de `lg` a barra lateral vira a gaveta `AdminNavDrawer`, aberta pelo menu do cabeçalho; o conteúdo ocupa a tela inteira, respeitando as áreas seguras. Trocas de rota animam com direção (`adminMotionHint`): aprofundar ou ir para a seção à direita entra pela direita, o inverso pela esquerda, troca de destino só faz fade.
+- **Página da missão:** seções `recursos` (padrão), `dados`, `vinculos`, `inventario`, `apps` (mini-apps liberados na missão, `Campaign.features`) e `equipe` (convites, co-mestres e jogadores, `MissionTeamTab`); uma seção nova entra em `MISSION_SECTIONS` e no `render` de `MissionWorkspace`. Intel, conquistas e NPCs da missão são criados ali com os editores reutilizáveis (`useAchievementEditor`, `useNpcContactEditor`, `IntelEditorHost`). O vínculo esquadrão↔missão só é editado em Vínculos. Rascunhos de Dados sobrevivem à navegação; recarregar, sair ou abrir o modo jogador pedem confirmação (`src/admin/lib/unsavedChanges.ts`).
 - **Player:** `useAppScreenHistory` espelha o histórico do navegador com o modelo puro `src/player/lib/screenHistoryModel.ts`. Voltar a uma tela já empilhada usa `history.go(-n)` e nunca duplica entradas; trocar de agente ou sair colapsa o histórico; mini-apps fecham para a tela de origem (`exitMiniApp`); o leitor de evidência ocupa uma entrada própria. Conta admin joga com `/?mode=play` (o parâmetro some no logout) e volta pelo "Voltar ao console" (seleção de agentes e perfil); o admin abre o modo jogo pelo atalho "Jogar como agente".
 - Lazy de telas do jogador fica inline em `PlayerScreenRouter.tsx` / `MiniAppsOverlay.tsx` (não há `lazyScreens.ts`).
 
@@ -93,19 +96,36 @@ Todas são lazy-loaded em `App.tsx` com `Suspense` + `RetroLoading`.
 
 ## Modelo Firestore (resumo)
 
-```
-users/{uid}                              → MasterAccount
-  └── characters/{characterId}           → CharacterData
-        ├── intel/{intelId}              → itens desbloqueados
-        └── achievements/{achievementId}
+O app é multi-tenant: cada mestre tem uma **pasta** (`workspaces/{uidDoDono}`) com todo o conteúdo das mesas dele. Coleções globais antigas (`campaigns`, `mediaAssets`, `groups`, `system/*` etc.) ficam só leitura para quem tem o claim legado `admin` e servem de origem para a migração.
 
-mediaAssets/{id}                         → biblioteca de mídia (admin)
-campaigns/{id}                           → campanhas (via CampaignService)
-playEvents/{id}                          → eventos de reprodução
-qrRedirects/{id}                         → redirects de QR code
+```
+users/{uid}                              → MasterAccount (conta pessoal, só a própria pessoa lê)
+  ├── memberships/{wsId}                 → índice das pastas onde joga ou é co-mestre (escrito por Functions)
+  └── characters/{characterId}           → CharacterData, com workspaceId da mesa
+        ├── intel/{intelId}              → itens desbloqueados (só via Function unlockIntel)
+        └── achievements/{achievementId} → conquistas (só via Function grantAchievements)
+
+workspaces/{wsId}                        → pasta (ownerUid, name); wsId = uid do dono
+  ├── campaigns/{c}                      → missões; features liga mini-apps por missão
+  │     └── state/live                   → estado ao vivo (seized, readThreadIds, diskRepairAllowed)
+  ├── members/{uid}                      → co-mestres e campanhas a que têm acesso (Functions)
+  ├── players/{uid}                      → roster: campaignIds/characterIds derivados por trigger;
+  │                                        o dono só edita notes e gmLabel
+  ├── groups/{g}                         → esquadrões; campaignIds e memberUids derivados (syncGroup)
+  ├── mediaAssets, mediaFolders, qrRedirects, playEvents, activityLog → escopo por campaignId (null = só dono)
+  ├── achievementDefs, npcContacts, npcDialogues, jukeboxTracks       → escopo por lista (campaignIds[] + global)
+  ├── config/settings                    → preferências do dono (persistentItemIds)
+  └── stats/*                            → agregados escritos por Functions
+invites/{hashDoToken}                    → convites de jogador ou co-mestre (só Functions leem)
 ```
 
-Persistência e queries: `src/store/firestore.ts`. Sync em tempo real do jogador: `src/services/PlayerSyncService.ts`.
+Papéis: **dono** (tudo na própria pasta), **co-mestre** (só as campanhas listadas em `members/{uid}`; listas precisam filtrar por campanha), **jogador** (lê a própria linha do roster e as campanhas do agente; nunca lista mídia, que chega pelas Functions `resolveIntelCode`/`getMediaAssetsByIds`) e **admin da plataforma** (claim `platformAdmin`: gerencia contas pelas Functions `listAccounts`/`setAccountSuspended`/`adminResetPassword`/`adminCreateUser`, sem acesso ao conteúdo das pastas). Ninguém entra numa mesa sem convite (`/convite/:token`, `src/invite/InviteApp.tsx`).
+
+No cliente, todo acesso à pasta passa por `src/lib/tenantScope.ts` (`wsCollection`/`wsDoc`, `subscribeScoped`/`getScopedDocs`, conversão do escopo `'global'` do cliente para `{ campaignIds: [], global: true }`). No admin, `useAdminScope()` (`src/admin/context/AdminScopeContext.tsx`) expõe papel e troca de pasta; a pasta ativa fica em `localStorage` (`limboos.admin.workspace`) e o `Dashboard` remonta com `key=wsId`. As rotas do admin não levam o id da pasta. Sync do jogador: `src/services/PlayerSyncService.ts` (`establishPlayerScope`). Persistência: `src/store/firestore.ts`.
+
+**Conteúdo inicial:** cada pasta nasce vazia. O bundle só traz a intel embutida dos mini-apps (`src/data/intel_registry.ts`) e as conquistas globais dos mini-apps (`src/data/achievements.ts`). A lore das campanhas originais está em `backend/scripts/legacy-seed/*.json` e entra só pela migração. `CatalogStateService` virou stub (todo catálogo conta como inicializado) porque `system/*` é global.
+
+**Regras e Functions:** `backend/firestore.rules`, `backend/storage.rules` e `backend/functions/index.js`. Mudou regra ou Function? Atualize os testes em `backend/rules-tests/firestore.rules.test.js`, `storage.rules.test.js` e `backend/functions/test/`.
 
 ## Serviços principais
 
@@ -113,7 +133,8 @@ Persistência e queries: `src/store/firestore.ts`. Sync em tempo real do jogador
 |---------|------------------|
 | `IntelService` / `IntelEngine` | Catálogo, unlock, comportamento por tipo |
 | `AudioEngine` | Reprodução de fitas |
-| `CampaignService` | Campanhas (local + Firestore) |
+| `CampaignService` | Campanhas do player, lidas da pasta do agente |
+| `InviteService` | Convites, co-mestres e roster (via Functions) |
 | `AchievementManager` | Regras e desbloqueio de conquistas |
 | `PlayerSyncService` | Snapshot listeners do estado do jogador |
 | `UserService` | CRUD de contas e personagens (admin) |
@@ -130,9 +151,29 @@ npm run preview      # Preview do build
 npm run lint         # Type-check (tsc --noEmit) — não há ESLint separado
 npm run deploy       # Build + Firebase Hosting (main)
 npm run deploy:beta  # Build + Firebase Hosting (staging)
+npm run native:sync  # Build + cap sync (copia o web para ios/ e android/)
+npm run native:ios   # native:sync + abre o Xcode
+npm run native:android # native:sync + abre o Android Studio (Gradle exige JDK 21)
+
+# Backend (Java e firebase-tools instalados)
+cd backend/rules-tests && npm test                # regras Firestore + Storage no emulador
+cd backend/rules-tests && npm run test:functions  # Functions + script de migração no emulador
+cd backend && firebase emulators:start --only auth,firestore,functions,storage --project demo-limboos
 ```
 
+Teste ponta a ponta local: suba os emuladores (portas em `backend/firebase.json`) e rode o app com `VITE_USE_EMULATORS=true` e `VITE_FIREBASE_PROJECT_ID=demo-limboos` (configuração `limboos-web-emulators` em `.claude/launch.json`, porta 5190).
+
+Migração das coleções globais para a pasta do mestre original: `backend/scripts/migrate-to-workspaces.cjs` (simula por padrão; grava só com `--apply`; idempotente; não move agente que já tem `workspaceId` de outra pasta). Contra produção, só o usuário roda, depois de exportar o Firestore.
+
 Após alterações de código, rode `npm run lint` no escopo alterado (ou no projeto inteiro).
+
+## App nativo (Capacitor)
+
+- `capacitor.config.ts` usa o appId `com.limboos.limboOs`, o mesmo dos apps já registrados no Firebase. `GoogleService-Info.plist` (`ios/App/App/`) e `google-services.json` (`android/app/`) ficam fora do git; copie de `mobile/` ou baixe do console.
+- Código que depende de plataforma passa por `src/lib/native/` e carrega plugins com `import()` atrás de `isNative()`, para o bundle web não mudar. Feedback tátil usa `haptic()`, nunca `navigator.vibrate`.
+- Login Google/Apple no app usa `@capacitor-firebase/authentication` com `skipNativeAuth` e `signInWithCredential`; `onAuthStateChanged` do SDK web continua sendo a fonte da sessão.
+- Depois de alterar `src/`, rode `npm run native:sync` antes de testar no Xcode ou Android Studio.
+- **Links universais:** só `/convite/*`. `public/well-known/` traz os arquivos, servidos em `/.well-known/` por rewrite no alvo `main` do Hosting; `assetlinks.json` tem só a chave de debug, adicione a de release antes da Play Store.
 
 ## Variáveis de ambiente
 
@@ -141,6 +182,8 @@ Copie `.env.example` → `.env`. Prefixo `VITE_` é obrigatório para variáveis
 | Variável | Uso |
 |----------|-----|
 | `VITE_FIREBASE_*` | Config Firebase (obrigatório) |
+| `VITE_USE_EMULATORS` | `true` liga Auth, Firestore, Storage e Functions nos emuladores locais (`VITE_EMULATOR_HOST`, `VITE_EMULATOR_<AUTH\|FIRESTORE\|STORAGE\|FUNCTIONS>_PORT` opcionais) |
+| `VITE_NATIVE_APP_CHECK` | `true` liga o App Check no app nativo, depois de registrar App Attest e Play Integrity no console |
 | `GEMINI_API_KEY` | Integrações de IA (quando aplicável) |
 | `APP_URL` | URL de hospedagem |
 
@@ -153,7 +196,7 @@ Nunca commite `.env` com credenciais reais.
 - **Estilo visual** — retro/cyberpunk; fontes: Space Grotesk, Inter, JetBrains Mono; accent `#FF8C00`.
 - **Idioma** — UI, lore e comentários em **português (BR)**; identificadores de código em inglês.
 - **Escopo mínimo** — altere só o necessário; não refatore áreas não relacionadas à tarefa.
-- **Sem testes automatizados** — o projeto não possui suíte de testes no momento; valide manualmente ou via `npm run lint`.
+- **Testes** — o front não tem suíte; valide com `npm run lint`. Regras e Functions têm testes no emulador (`backend/rules-tests`).
 
 ## Onde mexer para tarefas comuns
 
@@ -161,7 +204,7 @@ Nunca commite `.env` com credenciais reais.
 |--------|------------|
 | Fluxo do jogador / walkman | `src/Player.tsx`, `src/player/`, `src/components/player/` |
 | Nova tela do jogador (`AppScreen`) | `src/player/components/PlayerScreenRouter.tsx` (+ lazy inline) e `useAppScreenHistory` |
-| Nova campanha (seed local) | `src/data/campaigns.ts` + Firestore via admin |
+| Nova campanha | Admin (Missões → Nova missão), gravada em `workspaces/{ws}/campaigns` |
 | Novo intel hardcoded | `src/data/intel_registry.ts` |
 | Lógica de unlock / intel | `src/services/IntelService.ts`, `IntelEngine.ts` |
 | Auth e perfil | `src/store/profile.ts`, `LoginScreen.tsx` |
@@ -177,13 +220,15 @@ Nunca commite `.env` com credenciais reais.
 - **Não** commite secrets, `.env` ou `firebase-applet-config.json` com chaves reais.
 - **Não** crie commits ou PRs sem o usuário pedir explicitamente.
 - **Não** adicione README/docs extras sem solicitação — este `AGENTS.md` é o índice para IAs.
-- Respeite o modelo **conta → personagem → intel**; progresso fica em `users/{uid}/characters/{charId}/intel`.
+- Respeite o modelo **conta → personagem → intel**; progresso fica em `users/{uid}/characters/{charId}/intel`, e o agente pertence a uma pasta (`workspaceId`).
+- **Não** leia nem grave coleções globais de conteúdo no cliente: use `wsCollection`/`wsDoc` de `src/lib/tenantScope.ts`. Escritas de roster, co-mestres, convites, intel e conquistas do jogador passam pelas Functions.
+- **Não** rode `migrate-to-workspaces.cjs --apply` contra produção ou staging sem o usuário pedir.
 - Mini-apps (`BiosTerminal`, `LimboBoard`, `DiskRepairApp`, etc.) são experiências narrativas — preserve tom e imersão ao editar textos.
 
 ## Fluxo mental do jogador
 
 ```
-Login → Seleção de personagem → Seleção de campanha → Dispositivo (walkman/nokia)
+Convite (/convite/:token) → Login → Seleção de personagem (com a mesa de cada agente) → Seleção de campanha → Dispositivo (walkman/nokia)
   → Consumo de Intel → Mini-apps desbloqueáveis (bios, limbo, terminal, win95...)
 ```
 
@@ -199,4 +244,4 @@ Login → Seleção de personagem → Seleção de campanha → Dispositivo (wal
 
 ---
 
-*Última revisão: nov/2026 (Etapa 4: navegação por rotas). Atualize este arquivo quando a arquitetura ou comandos mudarem.*
+*Última revisão: nov/2026 (multi-tenant: pastas por mestre, convites, co-mestres). Atualize este arquivo quando a arquitetura ou comandos mudarem.*

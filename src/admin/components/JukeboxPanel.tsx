@@ -5,6 +5,7 @@ import {
   collection, onSnapshot, doc, deleteDoc, addDoc, updateDoc,
   serverTimestamp, query, orderBy, getDocs, writeBatch
 } from 'firebase/firestore';
+import { getTenantScope, subscribeScoped, wsCollection, wsDoc } from '../../lib/tenantScope';
 import { ref, deleteObject } from 'firebase/storage';
 import MediaSelectorModal from './MediaSelectorModal';
 import { MediaAsset } from '../../types/media';
@@ -39,6 +40,13 @@ function isYoutubeUrl(url: string): boolean {
 }
 
 /* ── Component ─────────────────────────────────────────── */
+/** Escopo de uma trilha nova: global para o dono; campanha do co-mestre para ele. */
+function trackScope(): { campaignIds: string[]; global: boolean } {
+  const scope = getTenantScope();
+  if (!scope || scope.campaignIds === null) return { campaignIds: [], global: true };
+  return { campaignIds: scope.campaignIds.slice(0, 1), global: false };
+}
+
 export default function JukeboxPanel({ embedded = false }: { embedded?: boolean }) {
   const { t } = useTranslation('admin');
   const [tracks, setTracks] = useState<JukeboxTrack[]>([]);
@@ -59,13 +67,12 @@ export default function JukeboxPanel({ embedded = false }: { embedded?: boolean 
 
   /* ── Firestore listener ──────────────────────────────── */
   useEffect(() => {
-    const q = query(collection(db, 'jukeboxTracks'), orderBy('order', 'asc'));
-    const unsub = onSnapshot(q, (snap) => {
-      const data: JukeboxTrack[] = [];
-      snap.forEach((d) => data.push({ id: d.id, ...d.data() } as JukeboxTrack));
-      setTracks(data);
-    });
-    return () => unsub();
+    // Trilhas da pasta: do dono valem para todas as missões (global); co-mestre vê
+    // as globais e as das campanhas dele.
+    return subscribeScoped('jukeboxTracks', 'list', [], (docs) => {
+      const data = docs.map((d) => ({ id: d.id, ...d.data() } as JukeboxTrack));
+      setTracks(data.sort((a, b) => (a.order ?? 0) - (b.order ?? 0)));
+    }, (err) => console.warn('[JukeboxPanel] tracks listener error:', err));
   }, []);
 
   /* ── YouTube IFrame API ──────────────────────────────── */
@@ -180,7 +187,8 @@ export default function JukeboxPanel({ embedded = false }: { embedded?: boolean 
     }
     const title = titleInput.trim() || `YouTube — ${extractYoutubeId(url)}`;
     const maxOrder = tracks.length > 0 ? Math.max(...tracks.map(t => t.order)) + 1 : 0;
-    await addDoc(collection(db, 'jukeboxTracks'), {
+    await addDoc(wsCollection('jukeboxTracks'), {
+      ...trackScope(),
       type: 'youtube',
       title,
       url,
@@ -195,7 +203,8 @@ export default function JukeboxPanel({ embedded = false }: { embedded?: boolean 
   const handleMediaSelect = async (asset: MediaAsset) => {
     try {
       const maxOrder = tracks.length > 0 ? Math.max(...tracks.map(t => t.order)) + 1 : 0;
-      await addDoc(collection(db, 'jukeboxTracks'), {
+      await addDoc(wsCollection('jukeboxTracks'), {
+        ...trackScope(),
         type: 'audio',
         title: titleInput.trim() || asset.metadata.title || asset.filename,
         url: asset.url,
@@ -217,7 +226,7 @@ export default function JukeboxPanel({ embedded = false }: { embedded?: boolean 
     if (track.storagePath) {
       try { await deleteObject(ref(storage, track.storagePath)); } catch {}
     }
-    await deleteDoc(doc(db, 'jukeboxTracks', track.id));
+    await deleteDoc(wsDoc('jukeboxTracks', track.id));
     if (currentTrack?.id === track.id) {
       setCurrentIndex(-1);
       setIsPlaying(false);
@@ -231,8 +240,8 @@ export default function JukeboxPanel({ embedded = false }: { embedded?: boolean 
     const swapIdx = idx + dir;
     if (swapIdx < 0 || swapIdx >= tracks.length) return;
     const batch = writeBatch(db);
-    batch.update(doc(db, 'jukeboxTracks', tracks[idx].id), { order: tracks[swapIdx].order });
-    batch.update(doc(db, 'jukeboxTracks', tracks[swapIdx].id), { order: tracks[idx].order });
+    batch.update(wsDoc('jukeboxTracks', tracks[idx].id), { order: tracks[swapIdx].order });
+    batch.update(wsDoc('jukeboxTracks', tracks[swapIdx].id), { order: tracks[idx].order });
     await batch.commit();
   };
 

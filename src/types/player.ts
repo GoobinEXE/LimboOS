@@ -12,17 +12,20 @@ export interface MasterAccount {
   email: string;
   masterName?: string;
   displayName?: string;
-  role: 'player' | 'admin';
+  /**
+   * Legado: não concede mais acesso. Painel de mestre vem da pasta
+   * (workspaces/{uid}) e o admin da plataforma usa o claim `platformAdmin`.
+   */
+  role?: 'player' | 'admin';
   createdAt: Timestamp | null;
   lastLogin?: Timestamp | null;
-  
-  // Account-level flags
+
+  /** Legado da conta (pré-multi-tenant). O mestre controla isso no agente. */
   hasTerminalAccess?: boolean;
   hasMacAccess?: boolean;
-  /** One-shot: mestre força abertura do DOS; jogador consome e limpa */
   forceTerminalOpen?: boolean;
-  /** One-shot: mestre força abertura do Mac; jogador consome e limpa */
   forceMacOpen?: boolean;
+  /** Só o admin da plataforma altera. */
   suspended?: boolean;
   notes?: string;
 }
@@ -35,12 +38,19 @@ export interface CharacterData {
   agentStatus: 'vivo' | 'morto' | 'desaparecido';
   dangerLevel: number; // 1-5
   profilePhotoUrl?: string;
+  /** Pasta (mesa) do mestre a que o agente pertence: workspaces/{workspaceId}. */
+  workspaceId?: string;
   campaignId?: string;
   createdAt: Timestamp;
   archived?: boolean; // Soft-delete: hides from default views but preserves logs
   
   // Character-specific game flags
   achievementsRevealed?: boolean;
+  /** Acesso de hardware liberado pelo mestre (antes ficava na conta). */
+  hasTerminalAccess?: boolean;
+  hasMacAccess?: boolean;
+  /** Anotações do mestre sobre o agente/jogador. */
+  notes?: string;
   forceTerminalOpen?: boolean;
   forceMacOpen?: boolean;
   spotifyPlaylistUrl?: string;
@@ -90,6 +100,7 @@ export interface PlayerData extends MasterAccount {
 
 // --- System States ---
 
+/** Estado do Limbo por campanha: workspaces/{ws}/campaigns/{c}/state/live. */
 export interface LimboGlobalState {
   seized: boolean;
   seizedBy?: string | null;
@@ -117,6 +128,8 @@ export interface Group {
   memberUids?: string[];
   campaignId?: string;
   unlockedCampaigns?: string[];
+  /** Derivado: campaignId ∪ unlockedCampaigns (escopo de co-mestre nas regras). */
+  campaignIds?: string[];
   sessions: string[];
   createdAt: Timestamp;
   updatedAt: Timestamp;

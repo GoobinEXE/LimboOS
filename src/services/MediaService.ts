@@ -1,16 +1,12 @@
 import {
-  collection,
   addDoc,
   deleteDoc,
-  doc,
-  query,
   where,
-  orderBy,
-  onSnapshot,
   serverTimestamp,
   updateDoc,
-  getDocs,
   getDoc,
+  type DocumentData,
+  type QueryDocumentSnapshot,
 } from 'firebase/firestore';
 import {
   ref,
@@ -18,8 +14,28 @@ import {
   getDownloadURL,
   deleteObject,
 } from 'firebase/storage';
-import { db, storage } from '../lib/firebase';
+import { storage } from '../lib/firebase';
+import {
+  getScopedDocs,
+  requireTenantScope,
+  subscribeScoped,
+  wsCollection,
+  wsDoc,
+} from '../lib/tenantScope';
 import { MediaAsset, MediaType } from '../types/media';
+
+function uploadedMillis(a: MediaAsset): number {
+  const v = a.uploadedAt as unknown as { toMillis?: () => number; getTime?: () => number } | undefined;
+  if (typeof v?.toMillis === 'function') return v.toMillis();
+  if (typeof v?.getTime === 'function') return v.getTime();
+  return 0;
+}
+
+function toAssets(docs: QueryDocumentSnapshot<DocumentData>[]): MediaAsset[] {
+  return docs
+    .map((d) => ({ id: d.id, ...d.data() }) as MediaAsset)
+    .sort((a, b) => uploadedMillis(b) - uploadedMillis(a));
+}
 
 const MAX_UPLOAD_BYTES = 100 * 1024 * 1024;
 const ALLOWED_MIME_PREFIXES = ['audio/', 'image/', 'video/', 'application/pdf'] as const;
@@ -27,6 +43,11 @@ const ALLOWED_MIME_PREFIXES = ['audio/', 'image/', 'video/', 'application/pdf'] 
 export type UploadMediaOptions = {
   folderIds?: string[];
   onProgress?: (progress: number) => void;
+  /**
+   * Campanha do item. Sem campanha o item fica só na biblioteca do dono;
+   * co-mestre sempre grava numa campanha dele.
+   */
+  campaignId?: string | null;
 };
 
 class MediaService {
@@ -76,7 +97,17 @@ class MediaService {
     const type = this.getMediaType(file.type);
     const timestamp = Date.now();
     const safeName = this.sanitizeFilename(file.name);
-    const storagePath = `media/${type}/${timestamp}_${safeName}`;
+    const scope = requireTenantScope();
+    const campaignId =
+      options.campaignId
+      ?? (scope.campaignIds === null ? null : scope.campaignIds[0] ?? null);
+    if (scope.campaignIds !== null && (!campaignId || !scope.campaignIds.includes(campaignId))) {
+      throw new Error('Escolha uma das suas campanhas para enviar a mídia.');
+    }
+    const base = campaignId
+      ? `workspaces/${scope.wsId}/campaigns/${campaignId}/media`
+      : `workspaces/${scope.wsId}/media`;
+    const storagePath = `${base}/${type}/${timestamp}_${safeName}`;
     const storageRef = ref(storage, storagePath);
 
     return new Promise((resolve, reject) => {
@@ -108,7 +139,7 @@ class MediaService {
               metadata.tags = folderIds;
             }
 
-            const assetData: Omit<MediaAsset, 'id'> = {
+            const assetData: Omit<MediaAsset, 'id'> & { campaignId: string | null } = {
               filename: safeName,
               originalName: file.name,
               url,
@@ -117,11 +148,12 @@ class MediaService {
               size: file.size,
               type,
               uploadedAt: serverTimestamp() as any,
-              uploadedBy,
+              uploadedBy: scope.actorName || uploadedBy,
               metadata,
+              campaignId,
             };
 
-            const docRef = await addDoc(collection(db, this.collectionName), assetData);
+            const docRef = await addDoc(wsCollection(this.collectionName), assetData);
             resolve({ id: docRef.id, ...assetData } as MediaAsset);
           } catch (error) {
             reject(error);
@@ -131,24 +163,15 @@ class MediaService {
     });
   }
 
+  /** Mídia da pasta (co-mestre: só das campanhas dele), mais recente primeiro. */
   subscribeToMedia(callback: (assets: MediaAsset[]) => void, type?: MediaType) {
-    let q = query(collection(db, this.collectionName), orderBy('uploadedAt', 'desc'));
-
-    if (type) {
-      q = query(
-        collection(db, this.collectionName),
-        where('type', '==', type),
-        orderBy('uploadedAt', 'desc'),
-      );
-    }
-
-    return onSnapshot(q, (snapshot) => {
-      const assets = snapshot.docs.map((docSnap) => ({
-        id: docSnap.id,
-        ...docSnap.data(),
-      })) as MediaAsset[];
-      callback(assets);
-    });
+    return subscribeScoped(
+      this.collectionName,
+      'single',
+      type ? [where('type', '==', type)] : [],
+      (docs) => callback(toAssets(docs)),
+      (err) => console.warn('[MediaService] subscribeToMedia error:', err),
+    );
   }
 
   async deleteMedia(asset: MediaAsset) {
@@ -157,7 +180,7 @@ class MediaService {
       await deleteObject(storageRef).catch((err) => {
         console.warn('File not found in storage, proceeding with Firestore deletion', err);
       });
-      await deleteDoc(doc(db, this.collectionName, asset.id));
+      await deleteDoc(wsDoc(this.collectionName, asset.id));
     } catch (error) {
       console.error('Error deleting media asset:', error);
       throw error;
@@ -168,7 +191,7 @@ class MediaService {
    * Merge parcial de metadata (não substitui o objeto inteiro).
    */
   async updateMetadata(assetId: string, metadata: Partial<MediaAsset['metadata']>) {
-    const docRef = doc(db, this.collectionName, assetId);
+    const docRef = wsDoc(this.collectionName, assetId);
     const snap = await getDoc(docRef);
     if (!snap.exists()) throw new Error('Asset não encontrado.');
     const existing = (snap.data().metadata || {}) as MediaAsset['metadata'];
@@ -177,19 +200,8 @@ class MediaService {
   }
 
   async getAllMedia(type?: MediaType): Promise<MediaAsset[]> {
-    let q = query(collection(db, this.collectionName), orderBy('uploadedAt', 'desc'));
-    if (type) {
-      q = query(
-        collection(db, this.collectionName),
-        where('type', '==', type),
-        orderBy('uploadedAt', 'desc'),
-      );
-    }
-    const snapshot = await getDocs(q);
-    return snapshot.docs.map((docSnap) => ({
-      id: docSnap.id,
-      ...docSnap.data(),
-    })) as MediaAsset[];
+    const docs = await getScopedDocs(this.collectionName, 'single', type ? [where('type', '==', type)] : []);
+    return toAssets(docs);
   }
 }
 

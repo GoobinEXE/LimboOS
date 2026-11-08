@@ -159,5 +159,30 @@
     "start": "Iniciar",
     "shutdown": "Desligar...",
     "window": "Janela"
+  },
+  "invite": {
+    "loading": "Verificando convite...",
+    "loadingSub": "Conferindo o sinal com o servidor",
+    "eyebrow": "Terminal RM-84 // Convite",
+    "loginFirst": "Entre para aceitar o convite de {{campaign}} ({{workspace}}).",
+    "invalidTitle": "Convite indisponível",
+    "reason": {
+      "expired": "Este convite venceu. Peça um novo ao mestre.",
+      "revoked": "O mestre revogou este convite.",
+      "exhausted": "Este convite já foi usado o máximo de vezes.",
+      "not-found": "Convite não encontrado. Confira o link."
+    },
+    "goHome": "Ir para o início",
+    "cogmTitle": "Convite de co-mestre",
+    "playerTitle": "Convite para a mesa",
+    "cogmBody": "Você vai mestrar a missão {{campaign}} na pasta {{workspace}}. Só essa missão aparece para você.",
+    "playerBody": "Você vai jogar a missão {{campaign}} na mesa {{workspace}}.",
+    "codinome": "Codinome do agente",
+    "codinomePlaceholder": "EX: PHANTOM-84",
+    "codinomeHint": "Se você já tem agente nesta mesa, ele é reaproveitado.",
+    "signedAs": "Conectado como {{name}}.",
+    "switchAccount": "Trocar de conta",
+    "accept": "Aceitar convite",
+    "acceptFail": "Não foi possível aceitar o convite. Ele pode ter vencido ou já ter sido usado."
   }
 }

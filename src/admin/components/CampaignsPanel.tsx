@@ -2,9 +2,12 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'motion/react';
 import Screw from '../../components/player/Screw';
-import { db } from '../../lib/firebase';
-import { collection, onSnapshot, doc } from 'firebase/firestore';
-import { Campaign, campaigns as initialCampaigns } from '../../data/campaigns';
+import { onSnapshot } from 'firebase/firestore';
+import { Campaign } from '../../data/campaigns';
+import { isOwnerScope, wsDoc } from '../../lib/tenantScope';
+import { campaignService } from '../../services/CampaignService';
+import { groupService } from '../../services/GroupService';
+import { useAdminScope } from '../context/AdminScopeContext';
 import { Group, MasterAccount, CharacterData } from '../../types/player';
 import { campaignAdminService } from '../../services/CampaignAdminService';
 import { useModal } from './ConfirmModal';
@@ -19,6 +22,7 @@ import { useAchievementCatalog } from '../../hooks/useAchievementCatalog';
 import { useNpcSmsCatalog } from '../../hooks/useNpcSmsCatalog';
 import {
   campaignReadiness,
+  collectCampaignLinks,
   readinessScore,
   summarizeCampaignResources,
 } from '../lib/campaignResources';
@@ -77,8 +81,13 @@ export default function CampaignsPanel({
   // Missão recém-criada, até o snapshot do Firestore trazê-la na lista
   const [recentlySaved, setRecentlySaved] = useState<Campaign | null>(null);
   const [intelItems, setIntelItems] = useState<IntelItem[]>(() => intelRegistry.getAll());
-  const { defs: achievementDefs } = useAchievementCatalog();
-  const { contacts: npcContacts, dialogues: npcDialogues } = useNpcSmsCatalog();
+  const { defs: achievementDefs, isRemote: achievementsRemote } = useAchievementCatalog();
+  const {
+    contacts: npcContacts,
+    dialogues: npcDialogues,
+    hasRemoteContacts: npcsRemote,
+  } = useNpcSmsCatalog();
+  const { canManage } = useAdminScope();
 
   useEffect(() => intelService.subscribeToIntelRegistry(setIntelItems), []);
 
@@ -99,7 +108,7 @@ export default function CampaignsPanel({
     const list: { account: MasterAccount; character: CharacterData }[] = [];
     characters.forEach(({ uid, char }) => {
       const account = accountByUid.get(uid);
-      if (account && !char.archived && account.role !== 'admin') list.push({ account, character: char });
+      if (account && !char.archived) list.push({ account, character: char });
     });
     return list;
   }, [accounts, characters]);
@@ -139,35 +148,22 @@ export default function CampaignsPanel({
   };
 
   useEffect(() => {
-    const unsubCampaigns = onSnapshot(
-      collection(db, 'campaigns'),
-      (snap) => {
-        const list: Campaign[] = [];
-        snap.forEach((d) => list.push({ id: d.id, ...d.data() } as Campaign));
-        if (list.length === 0 && initialCampaigns.length > 0) {
-          campaignAdminService.initializeCampaignsFromData();
-        }
+    // Campanhas da pasta (co-mestre: só as convidadas). Coleção vazia é estado legítimo.
+    const unsubCampaigns = campaignService.subscribeToScopedCampaigns(
+      (list) => {
         setCampaigns(list);
         setLoading(false);
       },
-      (err) => {
-        console.warn('[CampaignsPanel] campaigns listener error:', err);
-        setCampaigns(initialCampaigns);
-        setLoading(false);
-      }
+      () => setLoading(false),
     );
 
-    const unsubSettings = onSnapshot(doc(db, 'system', 'campaignSettings'), (snap) => {
-      if (snap.exists()) {
-        setPersistentItems(snap.data().persistentItemIds || []);
-      }
-    });
+    const unsubSettings = isOwnerScope()
+      ? onSnapshot(wsDoc('config', 'settings'), (snap) => {
+          setPersistentItems(snap.exists() ? snap.data().persistentItemIds || [] : []);
+        }, (err) => console.warn('[CampaignsPanel] settings listener error:', err))
+      : () => {};
 
-    const unsubGroups = onSnapshot(collection(db, 'groups'), (snap) => {
-      const list: Group[] = [];
-      snap.forEach((d) => list.push({ id: d.id, ...d.data() } as Group));
-      setGroups(list);
-    });
+    const unsubGroups = groupService.subscribeToGroups(setGroups);
 
 
     return () => {
@@ -177,16 +173,36 @@ export default function CampaignsPanel({
     };
   }, []);
 
+  /** Mensagem da confirmação: o que perde o vínculo e o que fica (intel). */
+  const deleteMessage = (name: string, links: ReturnType<typeof collectCampaignLinks>) => {
+    const lines = [t('missions.delete.lead', { name })];
+    if (links.groups.length) lines.push(t('missions.delete.squads', { count: links.groups.length }));
+    if (links.characters.length) lines.push(t('missions.delete.agents', { count: links.characters.length }));
+    const content = links.achievementIds.length + links.npcIds.length;
+    if (content) lines.push(t('missions.delete.content', { count: content }));
+    if (links.orphanedCount) lines.push(t('missions.delete.orphaned', { count: links.orphanedCount }));
+    if (links.intelCount) lines.push(t('missions.delete.intel', { count: links.intelCount }));
+    if (lines.length === 1) lines.push(t('missions.delete.noLinks'));
+    return lines.join('\n');
+  };
+
   const handleDeleteCampaign = async (id: string, name: string) => {
+    const links = collectCampaignLinks(id, {
+      groups,
+      characters,
+      intel: intelItems,
+      achievements: achievementsRemote ? achievementDefs : null,
+      npcs: npcsRemote ? npcContacts : null,
+    });
     const ok = await showConfirm(
       t('missions.deleteConfirmTitle'),
-      t('missions.deleteConfirmBody', { name }),
+      deleteMessage(name, links),
       t('missions.deleteAction')
     );
     if (!ok) return;
 
     try {
-      await campaignAdminService.deleteCampaign(id);
+      await campaignAdminService.deleteCampaign(id, links);
     } catch (error) {
       console.error('Erro ao deletar campanha:', error);
       showAlert('Erro', t('missions.deleteFail'));
@@ -213,6 +229,7 @@ export default function CampaignsPanel({
   const openNewMission = () => {
     nav.go(adminPath.newMission());
   };
+
 
   const handleMissionSaved = (saved: Campaign) => {
     if (route.view !== 'new') return;
@@ -269,6 +286,7 @@ export default function CampaignsPanel({
             </p>
           </div>
         </div>
+        {canManage && (
         <div className="flex gap-4">
           <button
             onClick={() => setShowItemsModal(true)}
@@ -285,7 +303,28 @@ export default function CampaignsPanel({
             {t('missions.modal.newTitle')}
           </button>
         </div>
+        )}
       </div>
+
+      {campaigns.length === 0 && (
+        <div className="border border-seam rounded-panel bg-surface-container-low px-6 py-14 flex flex-col items-center text-center gap-4">
+          <span className="material-symbols-outlined text-5xl text-ash-700" aria-hidden>map</span>
+          <div className="space-y-2 max-w-md">
+            <h3 className="font-display font-bold uppercase tracking-[0.18em] text-sm text-bone">
+              {t('missions.empty.title')}
+            </h3>
+            <p className="text-[13px] text-ash-400 leading-relaxed text-pretty">
+              {canManage ? t('missions.empty.bodyOwner') : t('missions.empty.bodyCogm')}
+            </p>
+          </div>
+          <div className="flex flex-wrap justify-center gap-2 pt-1">
+            {canManage && <button type="button" onClick={openNewMission} className="lmb-btn lmb-btn-primary">
+              <span className="material-symbols-outlined text-base" aria-hidden>add_circle</span>
+              {t('missions.modal.newTitle')}
+            </button>}
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6">
         {campaigns.map((campaign) => {
@@ -415,14 +454,14 @@ export default function CampaignsPanel({
                     <span className="material-symbols-outlined text-sm">tune</span>
                     {t('missions.manage')}
                   </button>
-                  <button
+                  {canManage && <button
                     onClick={() => handleDeleteCampaign(campaign.id, campaign.name)}
                     className="w-11 flex items-center justify-center bg-black/40 border border-border rounded-inset text-ash-500 hover:text-red-500 hover:border-red-500/30 transition active:scale-[0.97]"
                     title={t('missions.deleteTitle')}
                     aria-label={t('missions.deleteTitle')}
                   >
                     <span className="material-symbols-outlined text-xl">delete</span>
-                  </button>
+                  </button>}
                 </div>
               </div>
             </div>

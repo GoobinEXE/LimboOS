@@ -2,12 +2,12 @@ import React, { useState, useEffect, useLayoutEffect, useMemo, useRef, useCallba
 import { Navigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { User } from 'firebase/auth';
-import { db } from '../../lib/firebase';
-import { doc, collection, onSnapshot, query, orderBy, limit, where, getCountFromServer } from 'firebase/firestore';
+import { onSnapshot, orderBy, limit } from 'firebase/firestore';
 import { userService } from '../../services/UserService';
 import { adminAnalyticsService } from '../../services/AdminAnalyticsService';
+import { campaignService } from '../../services/CampaignService';
 import { MasterAccount, CharacterData, Group } from '../../types/player';
-import { resolveAdminAccess, isAdminAccount } from '../../lib/adminAccess';
+import { campaignStateDoc, subscribeScoped } from '../../lib/tenantScope';
 import { Campaign } from '../../data/campaigns';
 import { groupService } from '../../services/GroupService';
 import SpotlightSearch, { buildSearchItems } from './SpotlightSearch';
@@ -149,7 +149,8 @@ function computeCampaignMetrics(campaigns: Campaign[]): CampaignMetrics {
 
 export default function Dashboard({ user, onLogout }: DashboardProps) {
   const { t } = useTranslation('admin');
-  const [isAdmin, setIsAdmin] = useState(false);
+  // O Dashboard só monta com uma pasta ativa (AdminApp): quem está aqui mestra.
+  const isAdmin = Boolean(user);
   const { showConfirm, modal: confirmModal } = useModal();
   const { route, redirect, key: locationKey, hash, path } = useAdminLocation();
   const nav = useAdminNavigate();
@@ -265,69 +266,26 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
   }, [sidebarCollapsed]);
 
   useEffect(() => {
-    let cancelled = false;
-    if (!user) {
-      setIsAdmin(false);
-      return;
-    }
-    void resolveAdminAccess(user).then((ok) => {
-      if (!cancelled) setIsAdmin(ok);
+    if (!isAdmin) return;
+
+    // Jogadores da mesa (roster), com último acesso copiado da conta pelas Functions.
+    const unsubUsers = userService.subscribeToUsers((users) => {
+      setAllAccounts(users);
+      setHealthMetrics((prev) => ({
+        ...prev,
+        suspended: users.filter((u) => u.suspended).length,
+        dormant: countDormantUsers(users),
+      }));
+      const now = Date.now();
+      const ONLINE_MS = 15 * 60 * 1000;
+      setOnlineCount(
+        users.filter((u) => {
+          const ms = u.lastLogin?.toMillis?.() ?? 0;
+          return ms > 0 && now - ms <= ONLINE_MS;
+        }).length
+      );
+      void countActiveUsers7d(users);
     });
-    return () => {
-      cancelled = true;
-    };
-  }, [user]);
-
-  useEffect(() => {
-    if (!isAdmin) return;
-    let cancelled = false;
-    void import('../../lib/functions')
-      .then(({ callFunction }) => callFunction('backfillGroupMemberUids'))
-      .then((result) => {
-        if (!cancelled && result && typeof result === 'object' && 'updated' in result) {
-          const updated = Number((result as { updated?: number }).updated || 0);
-          if (updated > 0) {
-            console.info(`[Dashboard] memberUids backfill: ${updated} grupo(s)`);
-          }
-        }
-      })
-      .catch((err) => console.warn('[Dashboard] backfillGroupMemberUids:', err));
-    return () => {
-      cancelled = true;
-    };
-  }, [isAdmin]);
-
-  useEffect(() => {
-    if (!isAdmin) return;
-
-    const unsubUsers = onSnapshot(
-      collection(db, 'users'),
-      (snap) => {
-        const users = snap.docs.map((d) => ({ uid: d.id, ...d.data() } as MasterAccount));
-        setAllAccounts(users);
-        setHealthMetrics((prev) => ({
-          ...prev,
-          suspended: users.filter((u) => u.suspended).length,
-          dormant: countDormantUsers(users),
-        }));
-        const now = Date.now();
-        const ONLINE_MS = 15 * 60 * 1000;
-        setOnlineCount(
-          users.filter((u) => {
-            if (isAdminAccount(u)) return false;
-            const ms = u.lastLogin?.toMillis?.() ?? 0;
-            return ms > 0 && now - ms <= ONLINE_MS;
-          }).length
-        );
-        // keep activeUsers7d available indirectly via engagement listeners
-        void countActiveUsers7d(users);
-      },
-      (err) => console.warn('[Dashboard] users listener error:', err),
-    );
-
-    void getCountFromServer(query(collection(db, 'mediaAssets'), where('type', '==', 'audio'))).catch(
-      (err) => console.warn('[Dashboard] mediaAssets count error:', err)
-    );
 
     const unsubAgg = adminAnalyticsService.subscribeToAggregatedAnalytics((data) => {
       aggregatedPlaysRef.current = data?.totalPlays ?? null;
@@ -338,23 +296,20 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
       setAgentMetrics(computeAgentMetrics(characters));
     });
 
-    const unsubCampaigns = onSnapshot(
-      collection(db, 'campaigns'),
-      (snap) => {
-        const campaigns = snap.docs.map((d) => ({ id: d.id, ...d.data() } as Campaign));
-        setCampaignMetrics(computeCampaignMetrics(campaigns));
-        setSpotlightCampaigns(campaigns);
-      },
-      (err) => console.warn('[Dashboard] campaigns listener error:', err),
-    );
+    const unsubCampaigns = campaignService.subscribeToScopedCampaigns((campaigns) => {
+      setCampaignMetrics(computeCampaignMetrics(campaigns));
+      setSpotlightCampaigns(campaigns);
+    });
 
     const unsubGroups = groupService.subscribeToGroups(setSpotlightGroups);
 
-    const unsubActivityLog = onSnapshot(
-      query(collection(db, 'activityLog'), orderBy('timestamp', 'desc'), limit(200)),
-      (snap) => {
+    const unsubActivityLog = subscribeScoped(
+      'activityLog',
+      'single',
+      [orderBy('timestamp', 'desc'), limit(200)],
+      (docs) => {
         const twentyFourHoursAgo = Date.now() - 24 * 60 * 60 * 1000;
-        const errors24h = snap.docs.filter((d) => {
+        const errors24h = docs.filter((d) => {
           const data = d.data();
           if (data.type !== 'error') return false;
           const ts = data.timestamp;
@@ -364,15 +319,6 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
         setHealthMetrics((prev) => ({ ...prev, errors24h }));
       },
       (err) => console.warn('[Dashboard] activityLog listener error:', err),
-    );
-
-    const unsubLimbo = onSnapshot(
-      doc(db, 'system', 'limboState'),
-      (snap) => {
-        const seized = snap.exists() ? Boolean(snap.data()?.seized) : false;
-        setHealthMetrics((prev) => ({ ...prev, limboSeized: seized }));
-      },
-      (err) => console.warn('[Dashboard] limboState listener error:', err),
     );
 
     void adminAnalyticsService.fetchEngagementSnapshot().then((eng) => {
@@ -386,9 +332,22 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
       unsubCampaigns();
       unsubGroups();
       unsubActivityLog();
-      unsubLimbo();
     };
   }, [isAdmin]);
+
+  // Limbo é por missão: o painel mostra o estado da missão da sessão ativa.
+  const activeCampaignId = activeSession?.campaignId;
+  useEffect(() => {
+    if (!activeCampaignId) {
+      setHealthMetrics((prev) => ({ ...prev, limboSeized: false }));
+      return;
+    }
+    return onSnapshot(
+      campaignStateDoc(activeCampaignId, 'live'),
+      (snap) => setHealthMetrics((prev) => ({ ...prev, limboSeized: Boolean(snap.data()?.seized) })),
+      (err) => console.warn('[Dashboard] campaign state listener error:', err),
+    );
+  }, [activeCampaignId]);
 
   const routeOf = <D extends AdminDestinationId>(dest: D): RouteOf<D> | undefined =>
     (route.dest === dest ? route : routeByDest[dest]?.route) as RouteOf<D> | undefined;

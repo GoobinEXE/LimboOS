@@ -142,7 +142,9 @@
       "reports": "Relatórios",
       "reportsBlurb": "Panorama, BI e telemetria completa",
       "log": "Log",
-      "logBlurb": "Registro completo de eventos e ações"
+      "logBlurb": "Registro completo de eventos e ações",
+      "accounts": "Contas",
+      "accountsBlurb": "Administração da plataforma: suspender contas e trocar senhas"
     }
   },
   "live": {
@@ -251,7 +253,8 @@
     "protocols": "Protocolos RPG",
     "diskRepair": "DiskRepair.exe",
     "diskRepairDesc": "Desmagnetização remota",
-    "hint": "Controles de sessão. Autorização persistente de hardware fica em Mesa → Acesso."
+    "hint": "Controles de sessão. Autorização persistente de hardware fica em Mesa → Acesso.",
+    "pickMission": "Escolha a missão da sessão para controlar o Limbo e o reparo de disco."
   },
   "missions": {
     "title": "Centro de Comando",
@@ -262,7 +265,6 @@
     "manage": "Gerenciar",
     "deleteTitle": "Apagar missão",
     "deleteConfirmTitle": "Apagar Missão",
-    "deleteConfirmBody": "Tem certeza que deseja apagar \"{{name}}\"? Referências em agentes e esquadrões (campaignId / unlockedCampaigns) não serão limpas automaticamente.",
     "deleteAction": "Apagar",
     "deleteFail": "Falha ao remover campanha.",
     "badge": {
@@ -287,7 +289,9 @@
       "dados": "Dados",
       "vinculos": "Vínculos",
       "inventario": "Inventário",
-      "recursos": "Recursos"
+      "recursos": "Recursos",
+      "apps": "Mini-apps",
+      "equipe": "Equipe"
     },
     "modal": {
       "install": "INSTALAÇÃO-DE-MISSÃO",
@@ -407,6 +411,25 @@
       "disabled": "Off",
       "dialogueCount_one": "{{count}} diálogo",
       "dialogueCount_other": "{{count}} diálogos"
+    },
+    "delete": {
+      "lead": "Apagar \"{{name}}\" tira a missão do Firestore e desfaz os vínculos com ela.",
+      "squads_one": "• {{count}} esquadrão perde a missão (ativa ou liberada).",
+      "squads_other": "• {{count}} esquadrões perdem a missão (ativa ou liberada).",
+      "agents_one": "• {{count}} agente perde a missão (ativa ou liberada).",
+      "agents_other": "• {{count}} agentes perdem a missão (ativa ou liberada).",
+      "content_one": "• {{count}} conquista ou NPC deixa de citar a missão.",
+      "content_other": "• {{count}} conquistas e NPCs deixam de citar a missão.",
+      "orphaned_one": "• {{count}} deles só valia nesta missão e fica sem nenhuma, sem valer em lugar algum.",
+      "orphaned_other": "• {{count}} deles só valiam nesta missão e ficam sem nenhuma, sem valer em lugar algum.",
+      "intel_one": "• {{count}} intel continua marcada com a missão e fica invisível para os jogadores até você trocar a missão dela em Conteúdo.",
+      "intel_other": "• {{count}} intel continuam marcadas com a missão e ficam invisíveis para os jogadores até você trocar a missão delas em Conteúdo.",
+      "noLinks": "Nada aponta para esta missão."
+    },
+    "empty": {
+      "title": "Nenhuma missão nesta pasta",
+      "bodyOwner": "Crie a primeira missão para começar a montar a mesa.",
+      "bodyCogm": "O mestre ainda não te convidou para nenhuma missão desta pasta."
     }
   },
   "media": {
@@ -567,7 +590,9 @@
       "charCreated": "Personagem \"{{name}}\" criado com sucesso.",
       "charCreateFail": "Erro ao criar personagem.",
       "charsLoadFail": "Falha ao carregar personagens."
-    }
+    },
+    "invite": "Convidar jogador",
+    "inviteHint": "Jogadores entram por convite: abra a missão, aba Equipe, e gere um link."
   },
   "squads": {
     "title": "Gerenciamento de Esquadrões RPG",
@@ -907,5 +932,103 @@
     "orphanTitle": "Missão apagada. Clique para remover o vínculo.",
     "noneBound": "Sem missão",
     "emptyForMission": "Nada vinculado a esta missão ainda."
+  },
+  "workspace": {
+    "eyebrow": "Terminal RM-84 // Painel do mestre",
+    "createTitle": "Criar sua pasta de mestre",
+    "createBody": "Cada mestre tem uma pasta própria: campanhas, intel, conquistas, NPCs e jogadores ficam isolados nela. Ninguém de outra pasta enxerga o que está aqui.",
+    "nameLabel": "Nome da pasta",
+    "namePlaceholder": "Ex: Mesa de sábado",
+    "creating": "Criando...",
+    "createAction": "Criar pasta",
+    "createFail": "Não foi possível criar a pasta. Tente de novo.",
+    "inviteHint": "Recebeu um convite para mestrar a campanha de alguém? Abra o link do convite; a campanha aparece aqui depois de aceitar.",
+    "switch": "Trocar de pasta",
+    "current": "Pasta ativa",
+    "role": {
+      "owner": "Dono",
+      "cogm": "Co-mestre"
+    }
+  },
+  "apps": {
+    "body": "Ligue os mini-apps que esta missão usa. Desligado, o jogador da campanha não vê o atalho e o mestre não consegue abrir a tela para ele.",
+    "saveFail": "Não foi possível salvar os mini-apps.",
+    "feature": {
+      "bios": "BIOS",
+      "limbo": "Limbo",
+      "win95": "Windows 95",
+      "terminal": "Terminal DOS",
+      "mac": "Mac OS",
+      "diskRepair": "Reparo de disco"
+    },
+    "featureHint": {
+      "bios": "Tela de boot e diagnóstico.",
+      "limbo": "Fórum LIMBO_01 e a tomada militar.",
+      "win95": "Área de trabalho Windows 95.",
+      "terminal": "Atalho do DOS no aparelho do jogador.",
+      "mac": "Área de trabalho System 7.5.",
+      "diskRepair": "Reparo do disquete corrompido."
+    }
+  },
+  "team": {
+    "cogmTitle": "Mestres convidados",
+    "cogmBody": "Um co-mestre conduz a sessão, entrega intel e SMS e edita o conteúdo desta missão. Ele não vê suas outras missões, não exclui a missão e não convida ninguém.",
+    "noCogm": "Nenhum co-mestre nesta missão",
+    "inviteCogm": "Gerar convite de co-mestre",
+    "playersTitle": "Convidar jogadores",
+    "playersBody": "Quem abre o link entra na mesa com a própria conta e ganha um agente nesta missão. Com esquadrão escolhido, o agente já ocupa uma vaga nele.",
+    "squad": "Esquadrão",
+    "noSquad": "Sem esquadrão",
+    "maxUses": "Usos",
+    "days": "Validade (dias)",
+    "invitePlayers": "Gerar convite de jogadores",
+    "linkCogm": "Link do convite de co-mestre",
+    "linkPlayers": "Link do convite de jogadores",
+    "linkLabel": "Link do convite",
+    "linkOnce": "O link aparece só agora. Se perder, revogue e gere outro.",
+    "copy": "Copiar",
+    "activeInvites": "Convites ativos",
+    "noInvites": "Nenhum convite ativo",
+    "kindCogm": "Co-mestre",
+    "kindPlayer": "Jogadores",
+    "usage": "{{uses}}/{{max}} usos",
+    "expires": "vence em {{date}}",
+    "revoke": "Revogar",
+    "revokeTitle": "Revogar convite?",
+    "revokeBody": "O link para de funcionar. Quem já entrou continua na mesa.",
+    "remove": "Remover",
+    "removeTitle": "Remover co-mestre?",
+    "removeBody": "{{name}} perde o acesso a esta missão.",
+    "toast": {
+      "copied": "Link copiado.",
+      "created": "Convite criado.",
+      "createFail": "Não foi possível criar o convite.",
+      "revokeFail": "Não foi possível revogar o convite.",
+      "removed": "Co-mestre removido.",
+      "removeFail": "Não foi possível remover o co-mestre."
+    }
+  },
+  "platform": {
+    "title": "Contas da plataforma",
+    "body": "Só dados de conta. Conteúdo das pastas dos mestres não aparece aqui.",
+    "search": "Buscar por nome ou e-mail",
+    "suspend": "Suspender",
+    "reactivate": "Reativar",
+    "suspended": "Suspensa",
+    "active": "Ativa",
+    "newPassword": "Nova senha",
+    "setPassword": "Trocar senha",
+    "createTitle": "Criar conta Master ID",
+    "masterId": "Master ID",
+    "password": "Senha",
+    "create": "Criar conta",
+    "loadMore": "Carregar mais",
+    "lastSignIn": "Último acesso",
+    "toast": {
+      "saved": "Conta atualizada.",
+      "fail": "Operação recusada.",
+      "created": "Conta criada.",
+      "password": "Senha alterada."
+    }
   }
 }

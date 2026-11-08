@@ -1,5 +1,6 @@
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import type { Firestore } from 'firebase/firestore';
+import { getTenantScope } from '../lib/tenantScope';
 
 export type ActivityType = 'navigation' | 'action' | 'system' | 'error' | 'admin' | 'auth' | 'trace';
 
@@ -27,6 +28,8 @@ class ActivityLogger {
   private currentUid: string | null = null;
   private currentCharacterId: string | null = null;
   private currentUsername: string | null = null;
+  /** Campanha ativa do jogador (o log da pasta é filtrado por campanha para co-mestres). */
+  private currentCampaignId: string | null = null;
 
   private constructor() {}
 
@@ -47,6 +50,24 @@ class ActivityLogger {
     this.currentUid = null;
     this.currentUsername = null;
     this.currentCharacterId = null;
+    this.currentCampaignId = null;
+  }
+
+  public setCampaign(campaignId: string | null | undefined): void {
+    this.currentCampaignId = campaignId || null;
+  }
+
+  /**
+   * Campanha do registro: a informada no metadata, a do jogador, ou a única campanha
+   * do co-mestre (as regras exigem campanha nos logs de co-mestre).
+   */
+  private resolveCampaignId(metadata: Record<string, unknown> | undefined, source: 'player' | 'admin'): string | null {
+    const fromMeta = metadata && typeof metadata.campaignId === 'string' ? metadata.campaignId : null;
+    const scope = getTenantScope();
+    if (fromMeta && (!scope?.campaignIds || scope.campaignIds.includes(fromMeta))) return fromMeta;
+    if (source === 'player') return this.currentCampaignId;
+    if (scope?.role === 'cogm') return scope.campaignIds?.[0] ?? null;
+    return null;
   }
 
   private asMetadataRecord(value: unknown): Record<string, unknown> {
@@ -173,9 +194,13 @@ class ActivityLogger {
         source
       }) as Record<string, unknown>;
 
+      // Sem pasta ativa não há onde registrar (não existe mais log global).
+      const scope = getTenantScope();
+      if (!scope) return;
       const db = await this.resolveDb();
-      await addDoc(collection(db, 'activityLog'), {
+      await addDoc(collection(db, 'workspaces', scope.wsId, 'activityLog'), {
         ...cleanEvent,
+        campaignId: this.resolveCampaignId(metadata, source),
         timestamp: serverTimestamp(),
       });
     } catch (err) {
@@ -218,8 +243,13 @@ class ActivityLogger {
     this.write('trace', 'player', args);
   }
 
+  /**
+   * Registro de ação do mestre. O ator vem da pasta ativa (uid e nome reais);
+   * `adminName` só é usado quando a sessão não informa o nome.
+   */
   logAdmin(adminName: string, category: string, message: string, metadata?: Record<string, unknown>): void {
-    this.setUser('admin', adminName);
+    const scope = getTenantScope();
+    this.setUser(scope?.actorUid || 'admin', scope?.actorName || adminName);
     this.write('admin', 'admin', [category, message, metadata]);
   }
 }

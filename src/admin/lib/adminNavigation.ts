@@ -7,12 +7,13 @@
 import type { CampaignScope } from './campaignResources';
 
 export type AdminDestinationId = 'live' | 'missions' | 'content' | 'mesa' | 'system';
-/** Seções da página da missão; `apps` (mini-apps por campanha) entra aqui quando existir. */
-export type MissionSectionId = 'recursos' | 'dados' | 'vinculos' | 'inventario';
+/** Seções da página da missão: `apps` liga os mini-apps; `equipe` tem convites de mestres e jogadores. */
+export type MissionSectionId = 'recursos' | 'dados' | 'vinculos' | 'inventario' | 'apps' | 'equipe';
 export type ContentSectionId = 'intel' | 'conquistas' | 'npcs' | 'qr';
 export type NpcViewId = 'contatos' | 'dialogos';
 export type MesaSectionId = 'esquadroes' | 'contas' | 'acesso';
-export type SystemSectionId = 'relatorios' | 'log';
+/** `contas` só aparece para o admin da plataforma (claim platformAdmin). */
+export type SystemSectionId = 'relatorios' | 'log' | 'contas';
 
 /** Catálogos que aceitam abrir já filtrados por uma missão. */
 export type CampaignScopedArea = 'intel' | 'achievements' | 'sms';
@@ -74,6 +75,8 @@ export const MISSION_SECTIONS: readonly AdminSectionDef<MissionSectionId>[] = [
   { id: 'dados', labelKey: 'missions.tab.dados', icon: 'edit_note' },
   { id: 'vinculos', labelKey: 'missions.tab.vinculos', icon: 'key' },
   { id: 'inventario', labelKey: 'missions.tab.inventario', icon: 'inventory_2' },
+  { id: 'apps', labelKey: 'missions.tab.apps', icon: 'apps' },
+  { id: 'equipe', labelKey: 'missions.tab.equipe', icon: 'group_add' },
 ];
 
 export const CONTENT_SECTIONS: readonly AdminSectionDef<ContentSectionId>[] = [
@@ -92,6 +95,7 @@ export const MESA_SECTIONS: readonly AdminSectionDef<MesaSectionId>[] = [
 export const SYSTEM_SECTIONS: readonly AdminSectionDef<SystemSectionId>[] = [
   { id: 'relatorios', labelKey: 'systems.sub.reports', blurbKey: 'systems.sub.reportsBlurb', icon: 'analytics' },
   { id: 'log', labelKey: 'systems.sub.log', blurbKey: 'systems.sub.logBlurb', icon: 'receipt_long' },
+  { id: 'contas', labelKey: 'systems.sub.accounts', blurbKey: 'systems.sub.accountsBlurb', icon: 'manage_accounts' },
 ];
 
 export const DEFAULT_MISSION_SECTION: MissionSectionId = 'recursos';

@@ -9,7 +9,7 @@ import {
   ensureUserProfile,
   getCurrentFirebaseUser,
 } from '../../store/profile';
-import { loadPlayerData } from '../../store/firestore';
+import { establishPlayerScope, fetchCharacters, loadPlayerData } from '../../store/firestore';
 import type {
   MasterAccount,
   CharacterData,
@@ -56,8 +56,9 @@ export function usePlayerAuth(options: UsePlayerAuthOptions) {
         if (user) {
           const account = await ensureUserProfile(user);
           const isAdmin = await resolveAdminAccess(user, account);
-          // Admin sem ?mode=play → painel. Evita cair em seleção/criação de agentes.
-          if (isAdmin && !wantsPlayAsPlayerMode()) {
+          // Mestre sem agente e sem ?mode=play → painel. Mestre que também joga em
+          // alguma mesa fica na seleção de agentes, com a ponte para o console.
+          if (isAdmin && !wantsPlayAsPlayerMode() && (await fetchCharacters(user.uid)).length === 0) {
             clearPlayAsPlayerMode();
             redirectToAdminPanel();
             return;
@@ -90,6 +91,8 @@ export function usePlayerAuth(options: UsePlayerAuthOptions) {
     async (char: CharacterData) => {
       if (!masterAccount) return;
       const data = await loadPlayerData(masterAccount.uid, char.id);
+      // A pasta do agente vale antes de qualquer tela da mesa montar.
+      await establishPlayerScope(masterAccount.uid, data.character);
       setPlayerData(data);
       setLocalStats(data.stats);
 
@@ -167,7 +170,7 @@ export function usePlayerAuthLoginHandler(
     async (acc: MasterAccount) => {
       const user = getCurrentFirebaseUser();
       const isAdmin = user ? await resolveAdminAccess(user, acc) : isAdminAccount(acc);
-      if (isAdmin && !wantsPlayAsPlayerMode()) {
+      if (isAdmin && !wantsPlayAsPlayerMode() && (await fetchCharacters(acc.uid)).length === 0) {
         clearPlayAsPlayerMode();
         redirectToAdminPanel();
         return;

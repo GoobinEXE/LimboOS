@@ -11,7 +11,6 @@ import { AnimatePresence, motion } from 'motion/react';
 import { db } from '../../lib/firebase';
 import type { MasterAccount, CharacterData, Group } from '../../types/player';
 import type { Campaign } from '../../data/campaigns';
-import { isAdminAccount } from '../../lib/adminAccess';
 import { groupService } from '../../services/GroupService';
 import type { AdminActiveSession } from '../hooks/useAdminActiveSession';
 import { useToast } from './ToastProvider';
@@ -25,6 +24,7 @@ import LiveDeliverDrawer, {
 import JukeboxPanel from './JukeboxPanel';
 import SystemLogPanel from './SystemLogPanel';
 import { ADMIN_FADE, listItem, staggerDelay } from '../lib/motion';
+import { campaignService } from '../../services/CampaignService';
 
 interface LiveWorkspaceProps {
   accounts: MasterAccount[];
@@ -79,11 +79,7 @@ export default function LiveWorkspace({
 
   useEffect(() => {
     const unsubGroups = groupService.subscribeToGroups(setGroups);
-    const unsubCampaigns = onSnapshot(collection(db, 'campaigns'), (snap) => {
-      const list: Campaign[] = [];
-      snap.forEach((d) => list.push({ id: d.id, ...d.data() } as Campaign));
-      setCampaigns(list);
-    });
+    const unsubCampaigns = campaignService.subscribeToScopedCampaigns(setCampaigns);
     return () => {
       unsubGroups();
       unsubCampaigns();
@@ -130,7 +126,6 @@ export default function LiveWorkspace({
 
     const online: PresenceRow[] = [];
     accounts.forEach((acc) => {
-      if (isAdminAccount(acc)) return;
       const ms = acc.lastLogin?.toMillis?.() ?? 0;
       if (!ms || now - ms > ONLINE_WINDOW_MS) return;
       const agents = charsByUid.get(acc.uid) || [];
@@ -675,7 +670,7 @@ export default function LiveWorkspace({
       <div className="grid gap-8 xl:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] xl:items-start">
         <section className="space-y-3">
           <SectionLabel title={t('live.controls')} />
-          <SessionGlobalsPanel />
+          <SessionGlobalsPanel campaignId={activeSession?.campaignId || null} />
         </section>
 
         <section className="space-y-3">

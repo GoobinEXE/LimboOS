@@ -6,6 +6,7 @@ import { clsx } from 'clsx';
 import OverlayPortal from './OverlayPortal';
 import { drawerLeft, overlayFade } from '../lib/motion';
 import { ADMIN_DESTINATIONS, ADMIN_NAV_GROUPS, type AdminDestinationId } from '../lib/adminNavigation';
+import WorkspaceSwitcher from './WorkspaceSwitcher';
 
 interface AdminNavDrawerProps {
   open: boolean;
@@ -57,6 +58,7 @@ export default function AdminNavDrawer({ open, onClose, activeDest, hrefFor }: A
                   close
                 </button>
               </div>
+              <WorkspaceSwitcher className="px-5 py-3 border-b border-seam" />
 
               <div className="flex-1 overflow-y-auto custom-scrollbar px-3 py-5 space-y-6">
                 {ADMIN_NAV_GROUPS.map((group) => (

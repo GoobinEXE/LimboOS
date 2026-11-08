@@ -15,6 +15,7 @@ import { Link } from 'react-router-dom';
 import { campaignLabel, masterAccountLabel, masterAccountLabelByUid } from '../lib/entityLabels';
 import { ADMIN_FADE, listItem, staggerDelay } from '../lib/motion';
 import { adminPath } from '../lib/adminNavigation';
+import { campaignService } from '../../services/CampaignService';
 
 interface GroupManagerProps {
   isAdmin: boolean;
@@ -63,11 +64,7 @@ export default function GroupManager({
   useEffect(() => {
     const unsubGroups = groupService.subscribeToGroups(setGroups);
     
-    const unsubCampaigns = onSnapshot(collection(db, 'campaigns'), (snap) => {
-      const list: Campaign[] = [];
-      snap.forEach(d => list.push({ id: d.id, ...d.data() } as Campaign));
-      setCampaigns(list);
-    });
+    const unsubCampaigns = campaignService.subscribeToScopedCampaigns(setCampaigns);
 
     fetchInitialAgents();
 
@@ -146,7 +143,7 @@ export default function GroupManager({
       }));
 
       await groupService.createGroup(groupName, slots, sessions);
-      activityLogger.logAdmin('gm.mpg', 'group_created', `Grupo criado: ${groupName}`, { players: selectedCharacters.length });
+      activityLogger.logAdmin('mestre', 'group_created', `Grupo criado: ${groupName}`, { players: selectedCharacters.length });
       resetForm();
     } catch (error) {
       console.error("Erro ao criar grupo:", error);
@@ -169,7 +166,7 @@ export default function GroupManager({
         characterSlots: newSlots,
         sessions: sessions
       });
-      activityLogger.logAdmin('gm.mpg', 'group_updated', `Grupo atualizado: ${groupName}`);
+      activityLogger.logAdmin('mestre', 'group_updated', `Grupo atualizado: ${groupName}`);
       resetForm();
     } catch (error) {
       console.error("Erro ao atualizar grupo:", error);
@@ -181,7 +178,7 @@ export default function GroupManager({
     if (!ok) return;
     try {
       await groupService.deleteGroup(id);
-      activityLogger.logAdmin('gm.mpg', 'group_deleted', `Grupo excluído: ${id}`);
+      activityLogger.logAdmin('mestre', 'group_deleted', `Grupo excluído: ${id}`);
     } catch (error) {
       console.error("Erro ao excluir grupo:", error);
     }
@@ -193,7 +190,7 @@ export default function GroupManager({
       for (const intelId of intelIds) {
         await groupService.grantIntelToGroup(groupId, intelId, aliveOnly);
       }
-      activityLogger.logAdmin('gm.mpg', 'group_intel_granted', `${intelIds.size} Intels concedidas a agentes do esquadrão ${groupId}`);
+      activityLogger.logAdmin('mestre', 'group_intel_granted', `${intelIds.size} Intels concedidas a agentes do esquadrão ${groupId}`);
       setShowGrantModal(null);
     } catch (error) {
       console.error("Erro ao conceder intel:", error);
@@ -208,7 +205,7 @@ export default function GroupManager({
     if (!ok) return;
     try {
       await groupService.removeCharacterFromGroup(groupId, characterId);
-      activityLogger.logAdmin('gm.mpg', 'group_leave_quick', `Removeu ${charName} do esquadrão rapidamente`);
+      activityLogger.logAdmin('mestre', 'group_leave_quick', `Removeu ${charName} do esquadrão rapidamente`);
     } catch (err) {
       console.error("Erro ao remover rapidamente:", err);
     }
@@ -217,7 +214,7 @@ export default function GroupManager({
   const handleQuickAddMember = async (groupId: string, uid: string, characterId: string, charName: string) => {
     try {
       await groupService.addCharacterToGroup(groupId, uid, characterId);
-      activityLogger.logAdmin('gm.mpg', 'group_join_quick', `Adicionou ${charName} ao esquadrão rapidamente`);
+      activityLogger.logAdmin('mestre', 'group_join_quick', `Adicionou ${charName} ao esquadrão rapidamente`);
       setQuickAddGroup(null);
       setQuickAddSearch("");
     } catch (err) {

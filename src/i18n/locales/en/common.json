@@ -159,5 +159,30 @@
     "start": "Start",
     "shutdown": "Shut Down...",
     "window": "Window"
+  },
+  "invite": {
+    "loading": "Checking invite...",
+    "loadingSub": "Confirming the signal with the server",
+    "eyebrow": "Terminal RM-84 // Invite",
+    "loginFirst": "Sign in to accept the invite to {{campaign}} ({{workspace}}).",
+    "invalidTitle": "Invite unavailable",
+    "reason": {
+      "expired": "This invite expired. Ask the GM for a new one.",
+      "revoked": "The GM revoked this invite.",
+      "exhausted": "This invite reached its use limit.",
+      "not-found": "Invite not found. Check the link."
+    },
+    "goHome": "Go to start",
+    "cogmTitle": "Co-GM invite",
+    "playerTitle": "Table invite",
+    "cogmBody": "You will run the mission {{campaign}} in the folder {{workspace}}. Only that mission shows up for you.",
+    "playerBody": "You will play the mission {{campaign}} at the table {{workspace}}.",
+    "codinome": "Agent codename",
+    "codinomePlaceholder": "E.G. PHANTOM-84",
+    "codinomeHint": "If you already have an agent at this table, it is reused.",
+    "signedAs": "Signed in as {{name}}.",
+    "switchAccount": "Switch account",
+    "accept": "Accept invite",
+    "acceptFail": "Could not accept the invite. It may have expired or already been used."
   }
 }

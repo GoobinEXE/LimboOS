@@ -118,7 +118,7 @@ function AchievementDeliverPane({
         });
       }
       activityLogger.logAdmin(
-        'gm.mpg',
+        'mestre',
         'achievement_grant_live',
         `Outorgou ${selectedId} para ${targets.length} agente(s) ao vivo`,
         { achievementId: selectedId, count: targets.length }

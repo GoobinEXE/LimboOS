@@ -17,6 +17,16 @@ import {
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { storage, db } from '../lib/firebase';
 import { callFunction } from '../lib/functions';
+import {
+  campaignStateDoc,
+  functionScopeArgs,
+  getScopedDocs,
+  getTenantScope,
+  requireTenantScope,
+  subscribeScoped,
+  wsCollection,
+  wsDoc,
+} from '../lib/tenantScope';
 import { isValidSpotifyPlaylistInput } from '../lib/spotify';
 import { 
   PlayerData, 
@@ -113,6 +123,19 @@ export function waitForUserDoc(uid: string, timeoutMs = DEFAULT_WAIT_FOR_USER_DO
   });
 }
 
+/** Nome de exibição da própria conta (o jogador é o único que altera a conta). */
+export async function updateOwnDisplayName(uid: string, displayName: string): Promise<void> {
+  await setDoc(doc(db, 'users', uid), { displayName }, { merge: true });
+}
+
+/** Mesas em que a conta joga (índice escrito pelas Functions de convite). */
+export async function fetchPlayerMemberships(uid: string): Promise<{ wsId: string; workspaceName: string }[]> {
+  const snap = await getDocs(collection(db, 'users', uid, 'memberships'));
+  return snap.docs
+    .filter((d) => d.data().isPlayer === true)
+    .map((d) => ({ wsId: d.id, workspaceName: String(d.data().workspaceName || '') }));
+}
+
 export async function updateLastLogin(uid: string): Promise<void> {
   await setDoc(doc(db, 'users', uid), {
     lastLogin: serverTimestamp(),
@@ -129,14 +152,20 @@ export async function fetchCharacters(uid: string): Promise<CharacterData[]> {
     .filter(c => !c.archived);
 }
 
-export async function createCharacter(uid: string, codinome: string): Promise<CharacterData> {
+/**
+ * Novo agente numa mesa onde a conta já joga (roster da pasta). O primeiro agente
+ * de uma mesa nasce pelo convite (Function acceptInvite).
+ */
+export async function createCharacter(uid: string, codinome: string, workspaceId: string): Promise<CharacterData> {
   if (!uid) throw new Error('Cannot create character without UID');
+  if (!workspaceId) throw new Error('Escolha a mesa do novo agente.');
   const charId = `${Date.now()}_${Math.random().toString(36).slice(2, 5)}`;
   const charData: Omit<CharacterData, 'id'> = {
     codinome,
     agentStatus: 'vivo',
     dangerLevel: 1,
     archived: false,
+    workspaceId,
     createdAt: serverTimestamp() as any,
   };
   await setDoc(doc(db, 'users', uid, 'characters', charId), charData);
@@ -172,12 +201,43 @@ export async function loadPlayerData(uid: string, characterId: string): Promise<
 
   return {
     ...account,
+    // Acesso de hardware é do agente (o mestre não altera a conta do jogador).
+    hasTerminalAccess: !!character.hasTerminalAccess,
+    hasMacAccess: !!character.hasMacAccess,
     activeCharacterId: characterId,
     character,
     achievementIds: achievementsSnap.docs.map((d) => d.id),
     stats,
     unlockedIntelIds: intelSnap.docs.map((d) => d.id).sort(),
   };
+}
+
+/**
+ * Define a pasta ativa do jogador a partir da mesa do agente e do roster dela
+ * (campanhas em que joga). O PlayerSyncService mantém isso atualizado depois.
+ */
+export async function establishPlayerScope(uid: string, character: CharacterData): Promise<void> {
+  const { setTenantScope } = await import('../lib/tenantScope');
+  const wsId = character.workspaceId;
+  if (!wsId) {
+    setTenantScope(null);
+    return;
+  }
+  let rosterCampaigns: string[] = [];
+  try {
+    const roster = await getDoc(doc(db, 'workspaces', wsId, 'players', uid));
+    rosterCampaigns = roster.exists() && Array.isArray(roster.data().campaignIds) ? roster.data().campaignIds : [];
+  } catch (err) {
+    console.warn('[firestore] roster read failed:', err);
+  }
+  setTenantScope({
+    wsId,
+    role: 'player',
+    campaignIds: Array.from(new Set([...rosterCampaigns, ...(character.campaignId ? [character.campaignId] : [])])),
+    characterId: character.id,
+    activeCampaignId: character.campaignId,
+    actorUid: uid,
+  });
 }
 
 // --- Character Progress ---
@@ -270,32 +330,38 @@ export async function uploadProfilePhoto(uid: string, characterId: string, file:
   return { url };
 }
 
-// --- Global/Admin System State ---
+// --- Acesso de hardware e estado da campanha ---
 
-export async function setTerminalStateForUsers(uids: string[], force: boolean, grant: boolean): Promise<void> {
+/** Agente alvo de uma ação do mestre. */
+export interface CharacterTarget {
+  uid: string;
+  characterId: string;
+}
+
+/** Libera/força o DOS nos agentes (antes era na conta; a conta é do jogador). */
+export async function setTerminalStateForCharacters(targets: CharacterTarget[], force: boolean, grant: boolean): Promise<void> {
   const batch = writeBatch(db);
-  uids.forEach((uid) => {
-    batch.set(doc(db, 'users', uid), { 
+  targets.forEach(({ uid, characterId }) => {
+    batch.set(doc(db, 'users', uid, 'characters', characterId), {
       forceTerminalOpen: force,
-      hasTerminalAccess: grant 
+      hasTerminalAccess: grant,
     }, { merge: true });
   });
   await batch.commit();
 }
 
-export async function setMacStateForUsers(uids: string[], force: boolean, grant: boolean): Promise<void> {
+export async function setMacStateForCharacters(targets: CharacterTarget[], force: boolean, grant: boolean): Promise<void> {
   const batch = writeBatch(db);
-  uids.forEach((uid) => {
-    batch.set(doc(db, 'users', uid), { 
-      forceMacOpen: force, 
-      hasMacAccess: grant 
+  targets.forEach(({ uid, characterId }) => {
+    batch.set(doc(db, 'users', uid, 'characters', characterId), {
+      forceMacOpen: force,
+      hasMacAccess: grant,
     }, { merge: true });
   });
   await batch.commit();
 }
 
 export async function checkTerminalClosed(uid: string, characterId?: string): Promise<void> {
-  await setDoc(doc(db, 'users', uid), { forceTerminalOpen: false }, { merge: true });
   if (characterId) {
     await setDoc(
       doc(db, 'users', uid, 'characters', characterId),
@@ -306,7 +372,6 @@ export async function checkTerminalClosed(uid: string, characterId?: string): Pr
 }
 
 export async function checkMacClosed(uid: string, characterId?: string): Promise<void> {
-  await setDoc(doc(db, 'users', uid), { forceMacOpen: false }, { merge: true });
   if (characterId) {
     await setDoc(
       doc(db, 'users', uid, 'characters', characterId),
@@ -316,16 +381,24 @@ export async function checkMacClosed(uid: string, characterId?: string): Promise
   }
 }
 
-export async function setLimboMilitarySeizureGlobal(seized: boolean): Promise<void> {
-  await setDoc(doc(db, 'system', 'limboState'), { 
+/** Tomada militar do Limbo numa campanha (antes era global para todas as mesas). */
+export async function setLimboMilitarySeizure(campaignId: string, seized: boolean): Promise<void> {
+  const scope = requireTenantScope();
+  await setDoc(campaignStateDoc(campaignId, 'live'), {
     seized,
-    seizedAt: seized ? serverTimestamp() : null
+    seizedAt: seized ? serverTimestamp() : null,
+    seizedBy: seized ? (scope.actorName || scope.actorUid || null) : null,
   }, { merge: true });
 }
 
-export async function fetchLimboGlobalState(): Promise<LimboGlobalState> {
-  const snap = await getDoc(doc(db, 'system', 'limboState'));
+export async function fetchLimboState(campaignId: string): Promise<LimboGlobalState> {
+  const snap = await getDoc(campaignStateDoc(campaignId, 'live'));
   return snap.exists() ? (snap.data() as LimboGlobalState) : { seized: false };
+}
+
+/** Liberação do reparo de disco numa campanha (antes: system/gameEvents). */
+export async function setDiskRepairAllowed(campaignId: string, allowed: boolean): Promise<void> {
+  await setDoc(campaignStateDoc(campaignId, 'live'), { diskRepairAllowed: allowed }, { merge: true });
 }
 
 export async function firestoreMarkThreadRead(
@@ -348,11 +421,20 @@ export async function firestoreMarkThreadRead(
 
 // --- Play Events & Media Utils ---
 
-export async function recordPlayEvent(uid: string, characterId: string, tapeId: string): Promise<string> {
-  const docRef = await addDoc(collection(db, 'playEvents'), {
+/** Registra a reprodução na pasta da mesa do agente (sem pasta ativa, não registra). */
+export async function recordPlayEvent(
+  uid: string,
+  characterId: string,
+  tapeId: string,
+  campaignId?: string | null,
+): Promise<string> {
+  const scope = getTenantScope();
+  if (!scope) return '';
+  const docRef = await addDoc(wsCollection('playEvents'), {
     uid,
     characterId,
     tapeId,
+    campaignId: campaignId || scope.activeCampaignId || null,
     playedAt: serverTimestamp(),
     completed: false,
   });
@@ -360,7 +442,8 @@ export async function recordPlayEvent(uid: string, characterId: string, tapeId: 
 }
 
 export async function markPlayEventCompleted(eventId: string): Promise<void> {
-  await setDoc(doc(db, 'playEvents', eventId), { completed: true }, { merge: true });
+  if (!eventId || !getTenantScope()) return;
+  await setDoc(wsDoc('playEvents', eventId), { completed: true }, { merge: true });
 }
 
 export async function generateAgentId(uid: string, characterId: string): Promise<string> {
@@ -377,9 +460,9 @@ export async function fetchAudioTapeById(
   options?: { characterId?: string; forUnlockResolve?: boolean },
 ) {
   if (options?.forUnlockResolve) {
-    const result = await callFunction<{ code: string }, {
+    const result = await callFunction<Record<string, unknown>, {
       asset: Record<string, unknown> | null;
-    }>('resolveIntelCode', { code: audioId });
+    }>('resolveIntelCode', { code: audioId, ...functionScopeArgs() });
     return result.asset ? { id: String(result.asset.id || audioId), ...result.asset } : null;
   }
 
@@ -395,8 +478,8 @@ export async function fetchAudioTapeById(
     return asset ? { id: String(asset.id || audioId), ...asset } : null;
   }
 
-  // Admin path (rules: mediaAssets read admin-only)
-  const snap = await getDoc(doc(db, 'mediaAssets', audioId));
+  // Mestre: item da pasta ativa (co-mestre só lê o que é das campanhas dele).
+  const snap = await getDoc(wsDoc('mediaAssets', audioId));
   return snap.exists() ? { id: snap.id, ...snap.data() } : null;
 }
 
@@ -424,28 +507,30 @@ export async function fetchAudioTapesByIds(
     return audios;
   }
 
+  // Mestre: a Function filtra pelo acesso (consulta por id não é provável nas regras do co-mestre).
   const audios: any[] = [];
-  for (let i = 0; i < audioIds.length; i += 30) {
-    const chunk = audioIds.slice(i, i + 30);
-    const q = query(collection(db, 'mediaAssets'), where('__name__', 'in', chunk));
-    const snap = await getDocs(q);
-    snap.docs.forEach(d => {
-      audios.push({ id: d.id, ...d.data() });
-    });
+  const scopeArgs = functionScopeArgs();
+  for (let i = 0; i < audioIds.length; i += 50) {
+    const chunk = audioIds.slice(i, i + 50);
+    const result = await callFunction<Record<string, unknown>, { assets: Array<Record<string, unknown>> }>(
+      'getMediaAssetsByIds',
+      { ...scopeArgs, assetIds: chunk },
+    );
+    (result.assets || []).forEach((asset) => audios.push({ id: asset.id, ...asset }));
   }
   return audios;
 }
 
 export async function fetchAllMediaAssets() {
-  const snap = await getDocs(collection(db, 'mediaAssets'));
-  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  const docs = await getScopedDocs('mediaAssets', 'single');
+  return docs.map(d => ({ id: d.id, ...d.data() }));
 }
 
 /**
  * Persiste alterações de um IntelItem de volta para o Firebase.
  */
 export async function updateRemoteIntel(item: IntelItem): Promise<void> {
-  const docRef = doc(db, 'mediaAssets', item.id);
+  const docRef = wsDoc('mediaAssets', item.id);
 
   // setDoc merge substitui o mapa `metadata` inteiro — preservar tags de pastas da biblioteca
   const existingSnap = await getDoc(docRef);
@@ -510,36 +595,47 @@ export async function updateRemoteIntel(item: IntelItem): Promise<void> {
 }
 
 export async function fetchQrRedirect(sourceId: string): Promise<string | null> {
-  const result = await callFunction<{ sourceId: string }, { targetId: string | null }>(
+  const result = await callFunction<Record<string, unknown>, { targetId: string | null }>(
     'fetchQrRedirect',
-    { sourceId },
+    { sourceId, ...functionScopeArgs() },
   );
   return result.targetId || null;
 }
 
 export async function fetchAllQrRedirects(): Promise<QrRedirect[]> {
-  const snap = await getDocs(collection(db, 'qrRedirects'));
-  return snap.docs.map(d => ({ sourceId: d.id, ...d.data() } as QrRedirect));
+  const docs = await getScopedDocs('qrRedirects', 'single');
+  return docs.map(d => ({ sourceId: d.id, ...d.data() } as QrRedirect));
 }
 
 export function subscribeToQrRedirects(callback: (redirects: QrRedirect[]) => void): () => void {
-  const q = collection(db, 'qrRedirects');
-  return onSnapshot(q, (snap) => {
-    const list = snap.docs.map(d => ({ sourceId: d.id, ...d.data() } as QrRedirect));
-    callback(list);
+  return subscribeScoped('qrRedirects', 'single', [], (docs) => {
+    callback(docs.map(d => ({ sourceId: d.id, ...d.data() } as QrRedirect)));
   }, (err) => console.warn('[Firestore] subscribeToQrRedirects error:', err));
 }
 
-export async function saveQrRedirect(sourceId: string, targetId: string, reason?: string): Promise<void> {
-  await setDoc(doc(db, 'qrRedirects', sourceId), {
+/**
+ * Redirect de QR na pasta. A campanha decide quem enxerga: sem campanha, só o
+ * dono; co-mestre grava sempre numa campanha dele.
+ */
+export async function saveQrRedirect(
+  sourceId: string,
+  targetId: string,
+  reason?: string,
+  campaignId?: string | null,
+): Promise<void> {
+  const scope = requireTenantScope();
+  const resolved = campaignId
+    ?? (scope.campaignIds === null ? null : scope.campaignIds[0] ?? null);
+  await setDoc(wsDoc('qrRedirects', sourceId), {
     targetId,
     reason: reason || '',
+    campaignId: resolved,
     updatedAt: serverTimestamp(),
   });
 }
 
 export async function deleteQrRedirect(sourceId: string): Promise<void> {
-  await deleteDoc(doc(db, 'qrRedirects', sourceId));
+  await deleteDoc(wsDoc('qrRedirects', sourceId));
 }
 
 // --- Remote Video Broadcast (Admin → Player) ---
@@ -561,13 +657,16 @@ export async function broadcastVideoToCharacters(
   if (targets.length === 0) return '';
   const requestId = crypto.randomUUID();
   const batch = writeBatch(db);
+  const workspaceId = getTenantScope()?.wsId ?? null;
 
   targets.forEach(({ uid, characterId }) => {
     if (options?.grantIntel) {
       const intelRef = doc(db, 'users', uid, 'characters', characterId, 'intel', intelId);
       batch.set(intelRef, {
+        intelId,
         unlockedAt: serverTimestamp(),
         campaignId: options.campaignId || null,
+        workspaceId,
       }, { merge: true });
     }
     batch.set(doc(db, 'users', uid, 'characters', characterId), {

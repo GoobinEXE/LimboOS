@@ -3,12 +3,14 @@ import type { GalleryImage } from '../types/player';
 
 /**
  * intel_registry.ts — Master Database Unificado
- * 
- * Registra todos os itens Intel conhecidos localmente (hardcoded).
- * Itens remotos (do Firebase) são incorporados em runtime pelo IntelService.
+ *
+ * Itens remotos (da pasta ativa no Firebase) são incorporados em runtime pelo
+ * IntelService. Os únicos itens locais são o conteúdo embutido do mini-app de
+ * reparo de disco, que existe em toda mesa que liga o mini-app (a Function
+ * unlockIntel conhece os mesmos ids em BUILTIN_INTEL_IDS).
  */
 
-// --- Itens locais hardcoded (antigos EVIDENCE_TAPES) ---
+// --- Conteúdo embutido do mini-app de reparo de disco ---
 
 const LOCAL_INTEL_ITEMS: IntelItem[] = [
   {
@@ -131,6 +133,12 @@ class IntelRegistry {
   /** Remove um item do registro em memória (não afeta Firestore). */
   public unregister(id: string): boolean {
     return this.items.delete(id);
+  }
+
+  /** Esvazia o registro ao trocar de pasta, mantendo só o conteúdo embutido. */
+  public reset(): void {
+    this.items.clear();
+    LOCAL_INTEL_ITEMS.forEach(item => this.items.set(item.id, item));
   }
 
   // --- Incorporação de dados remotos ---

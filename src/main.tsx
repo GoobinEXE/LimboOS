@@ -4,6 +4,7 @@ import './i18n';
 import App from './App.tsx';
 import './index.css';
 import {applyWebKitLiteClass} from './lib/webkitLite';
+import {initNativeShell} from './lib/native/nativeShell';
 
 // Antes do paint React: overlays CSS leves em Safari / iOS WebKit
 applyWebKitLiteClass();
@@ -39,3 +40,6 @@ createRoot(document.getElementById('root')!).render(
     <App />
   </StrictMode>,
 );
+
+// App Capacitor: status bar e splash nativo (no-op no navegador)
+initNativeShell();

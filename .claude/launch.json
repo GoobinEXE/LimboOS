@@ -4,8 +4,40 @@
     {
       "name": "limboos-web",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["vite", "--port", "5173", "--strictPort"],
+      "runtimeArgs": [
+        "vite",
+        "--port",
+        "5173",
+        "--strictPort"
+      ],
       "port": 5173
+    },
+    {
+      "name": "limboos-web-5180",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "vite",
+        "--port",
+        "5180",
+        "--strictPort"
+      ],
+      "port": 5180
+    },
+    {
+      "name": "limboos-web-emulators",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "vite",
+        "--port",
+        "5190",
+        "--strictPort"
+      ],
+      "env": {
+        "VITE_USE_EMULATORS": "true",
+        "VITE_FIREBASE_PROJECT_ID": "demo-limboos",
+        "VITE_FIREBASE_STORAGE_BUCKET": "demo-limboos.appspot.com"
+      },
+      "port": 5190
     }
   ]
 }

@@ -1,15 +1,13 @@
 import {
-  collection,
   addDoc,
   deleteDoc,
-  doc,
-  onSnapshot,
   serverTimestamp,
   updateDoc,
   getDoc,
   writeBatch,
 } from 'firebase/firestore';
 import { db } from '../lib/firebase';
+import { isOwnerScope, subscribeScoped, wsCollection, wsDoc } from '../lib/tenantScope';
 import { MediaFolder } from '../types/media';
 import { mediaService } from './MediaService';
 import { getIntlLocale } from '../i18n/dateLocale';
@@ -20,10 +18,12 @@ class MediaFolderService {
   private collectionName = 'mediaFolders';
 
   subscribeFolders(callback: (folders: MediaFolder[]) => void): () => void {
-    return onSnapshot(
-      collection(db, this.collectionName),
-      (snapshot) => {
-        const folders = snapshot.docs.map((d) => ({
+    return subscribeScoped(
+      this.collectionName,
+      'single',
+      [],
+      (docs) => {
+        const folders = docs.map((d) => ({
           id: d.id,
           ...d.data(),
         })) as MediaFolder[];
@@ -42,6 +42,8 @@ class MediaFolderService {
     campaigns: CampaignLike[],
     existingFolders: MediaFolder[],
   ): Promise<void> {
+    // Pastas são do dono; co-mestre só enxerga as das campanhas dele.
+    if (!isOwnerScope()) return;
     const campaignIds = new Set(campaigns.map((c) => c.id));
     const byCampaign = new Map<string, MediaFolder>();
     for (const f of existingFolders) {
@@ -54,7 +56,7 @@ class MediaFolderService {
       const folder = byCampaign.get(campaign.id);
       if (!folder) {
         ops.push(
-          addDoc(collection(db, this.collectionName), {
+          addDoc(wsCollection(this.collectionName), {
             name: campaign.name,
             campaignId: campaign.id,
             createdAt: serverTimestamp(),
@@ -63,7 +65,7 @@ class MediaFolderService {
         );
       } else if (folder.name !== campaign.name) {
         ops.push(
-          updateDoc(doc(db, this.collectionName, folder.id), {
+          updateDoc(wsDoc(this.collectionName, folder.id), {
             name: campaign.name,
             updatedAt: serverTimestamp(),
           }),
@@ -74,7 +76,7 @@ class MediaFolderService {
     for (const folder of existingFolders) {
       if (folder.campaignId && !campaignIds.has(folder.campaignId)) {
         ops.push(
-          updateDoc(doc(db, this.collectionName, folder.id), {
+          updateDoc(wsDoc(this.collectionName, folder.id), {
             campaignId: null,
             updatedAt: serverTimestamp(),
           }),
@@ -90,7 +92,7 @@ class MediaFolderService {
   async createFolder(name: string): Promise<string> {
     const trimmed = name.trim();
     if (!trimmed) throw new Error('Nome da pasta é obrigatório.');
-    const ref = await addDoc(collection(db, this.collectionName), {
+    const ref = await addDoc(wsCollection(this.collectionName), {
       name: trimmed,
       campaignId: null,
       createdAt: serverTimestamp(),
@@ -102,7 +104,7 @@ class MediaFolderService {
   async renameFolder(folderId: string, name: string): Promise<void> {
     const trimmed = name.trim();
     if (!trimmed) throw new Error('Nome da pasta é obrigatório.');
-    await updateDoc(doc(db, this.collectionName, folderId), {
+    await updateDoc(wsDoc(this.collectionName, folderId), {
       name: trimmed,
       updatedAt: serverTimestamp(),
     });
@@ -125,14 +127,14 @@ class MediaFolderService {
       const batch = writeBatch(db);
       for (const asset of chunk) {
         const nextTags = (asset.metadata?.tags || []).filter((t) => t !== folder.id);
-        batch.update(doc(db, 'mediaAssets', asset.id), {
+        batch.update(wsDoc('mediaAssets', asset.id), {
           'metadata.tags': nextTags,
         });
       }
       await batch.commit();
     }
 
-    await deleteDoc(doc(db, this.collectionName, folder.id));
+    await deleteDoc(wsDoc(this.collectionName, folder.id));
   }
 
   async setAssetFolders(assetId: string, folderIds: string[]): Promise<void> {
@@ -141,7 +143,7 @@ class MediaFolderService {
   }
 
   async toggleAssetFolder(assetId: string, folderId: string): Promise<void> {
-    const snap = await getDoc(doc(db, 'mediaAssets', assetId));
+    const snap = await getDoc(wsDoc('mediaAssets', assetId));
     if (!snap.exists()) throw new Error('Asset não encontrado.');
     const data = snap.data() as { metadata?: { tags?: string[] } };
     const current = data.metadata?.tags || [];

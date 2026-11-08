@@ -14,6 +14,7 @@ import { auth, db } from '../lib/firebase';
 import i18n from '../i18n';
 import { updateLastLogin, waitForUserDoc } from './firestore';
 import type { MasterAccount } from '../types/player';
+import { isNative } from '../lib/native/platform';
 
 function masterIdToEmail(masterId: string): string {
   const slug = masterId.trim().toLowerCase().replace(/[^a-z0-9._-]/g, '_');
@@ -36,11 +37,8 @@ function isProfileProvisioningError(message: string): boolean {
 }
 
 async function callProvisionUserProfile(): Promise<void> {
-  const { getFunctions, httpsCallable } = await import('firebase/functions');
-  const { getApp } = await import('firebase/app');
-  const functions = getFunctions(getApp(), 'southamerica-east1');
-  const fn = httpsCallable(functions, 'provisionUserProfile');
-  await fn();
+  const { callFunction } = await import('../lib/functions');
+  await callFunction('provisionUserProfile');
 }
 
 /**
@@ -149,7 +147,7 @@ export async function loginOrCreate(
   try {
     const { user } = await signInWithEmailAndPassword(auth, email, password);
     const account = await ensureUserProfile(user);
-    if (account.suspended && account.role !== 'admin') {
+    if (account.suspended) {
       await firebaseSignOut(auth);
       return { ok: false, error: 'unknown' as const, message: i18n.t('auth.error.suspended', { ns: 'common' }) };
     }
@@ -197,17 +195,20 @@ export async function loginOrCreate(
 
 export async function loginWithProvider(providerName: 'google' | 'apple'): Promise<LoginResult> {
   try {
-    let provider;
-    if (providerName === 'google') {
-      provider = new GoogleAuthProvider();
+    let user: User;
+    if (isNative()) {
+      // WebView não abre popup OAuth: credencial vem da folha nativa do provedor.
+      const { signInWithNativeProvider } = await import('../lib/native/nativeAuth');
+      user = await signInWithNativeProvider(providerName);
     } else {
-      provider = new OAuthProvider('apple.com');
+      const provider = providerName === 'google'
+        ? new GoogleAuthProvider()
+        : new OAuthProvider('apple.com');
+      ({ user } = await signInWithPopup(auth, provider));
     }
-
-    const { user } = await signInWithPopup(auth, provider);
     const account = await ensureUserProfile(user);
 
-    if (account.suspended && account.role !== 'admin') {
+    if (account.suspended) {
       await firebaseSignOut(auth);
       return { ok: false, error: 'unknown' as const, message: i18n.t('auth.error.suspended', { ns: 'common' }) };
     }
@@ -238,6 +239,10 @@ export async function loginWithProvider(providerName: 'google' | 'apple'): Promi
 
 export async function logout(): Promise<void> {
   await firebaseSignOut(auth);
+  if (isNative()) {
+    const { signOutNativeProviders } = await import('../lib/native/nativeAuth');
+    await signOutNativeProviders();
+  }
 }
 
 export function onAuthStateChanged(

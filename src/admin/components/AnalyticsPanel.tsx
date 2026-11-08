@@ -28,7 +28,7 @@ export default function AnalyticsPanel() {
     setIsResetting(true);
     try {
       await adminAnalyticsService.resetAnalytics();
-      activityLogger.logAdmin('gm.mpg', 'bi_reset', 'Resetou painel de BI (play events + stats)');
+      activityLogger.logAdmin('mestre', 'bi_reset', 'Resetou painel de BI (play events + stats)');
       await showAlert(t('analytics.resetDone'), '✅ Painel de BI resetado com sucesso!');
     } catch (e) {
       console.error('Falha ao resetar BI', e);

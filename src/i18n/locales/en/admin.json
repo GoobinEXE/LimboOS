@@ -142,7 +142,9 @@
       "reports": "Reports",
       "reportsBlurb": "Overview, BI and full telemetry",
       "log": "Log",
-      "logBlurb": "Full record of events and actions"
+      "logBlurb": "Full record of events and actions",
+      "accounts": "Accounts",
+      "accountsBlurb": "Platform administration: suspend accounts and reset passwords"
     }
   },
   "live": {
@@ -251,7 +253,8 @@
     "protocols": "RPG Protocols",
     "diskRepair": "DiskRepair.exe",
     "diskRepairDesc": "Remote demagnetization",
-    "hint": "Session controls. Persistent hardware auth is under Players → Access."
+    "hint": "Session controls. Persistent hardware auth is under Players → Access.",
+    "pickMission": "Pick the session mission to control Limbo and disk repair."
   },
   "missions": {
     "title": "Command Center",
@@ -262,7 +265,6 @@
     "manage": "Manage",
     "deleteTitle": "Delete mission",
     "deleteConfirmTitle": "Delete Mission",
-    "deleteConfirmBody": "Are you sure you want to delete \"{{name}}\"? References on agents and squads (campaignId / unlockedCampaigns) will not be cleared automatically.",
     "deleteAction": "Delete",
     "deleteFail": "Failed to remove campaign.",
     "badge": {
@@ -287,7 +289,9 @@
       "dados": "Data",
       "vinculos": "Links",
       "inventario": "Inventory",
-      "recursos": "Resources"
+      "recursos": "Resources",
+      "apps": "Mini-apps",
+      "equipe": "Team"
     },
     "modal": {
       "install": "MISSION-INSTALL",
@@ -407,6 +411,25 @@
       "disabled": "Off",
       "dialogueCount_one": "{{count}} dialogue",
       "dialogueCount_other": "{{count}} dialogues"
+    },
+    "delete": {
+      "lead": "Deleting \"{{name}}\" removes the mission from Firestore and undoes the links to it.",
+      "squads_one": "• {{count}} squad loses the mission (active or unlocked).",
+      "squads_other": "• {{count}} squads lose the mission (active or unlocked).",
+      "agents_one": "• {{count}} agent loses the mission (active or unlocked).",
+      "agents_other": "• {{count}} agents lose the mission (active or unlocked).",
+      "content_one": "• {{count}} achievement or NPC stops referencing the mission.",
+      "content_other": "• {{count}} achievements and NPCs stop referencing the mission.",
+      "orphaned_one": "• {{count}} of them only applied to this mission and is left with none, applying nowhere.",
+      "orphaned_other": "• {{count}} of them only applied to this mission and are left with none, applying nowhere.",
+      "intel_one": "• {{count}} intel stays tagged with the mission and is hidden from players until you change its mission in Content.",
+      "intel_other": "• {{count}} intel stay tagged with the mission and are hidden from players until you change their mission in Content.",
+      "noLinks": "Nothing points to this mission."
+    },
+    "empty": {
+      "title": "No missions in this folder",
+      "bodyOwner": "Create the first mission to start setting up the table.",
+      "bodyCogm": "The game master hasn't invited you to any mission in this folder yet."
     }
   },
   "media": {
@@ -567,7 +590,9 @@
       "charCreated": "Character \"{{name}}\" created successfully.",
       "charCreateFail": "Error creating character.",
       "charsLoadFail": "Failed to load characters."
-    }
+    },
+    "invite": "Invite player",
+    "inviteHint": "Players join by invite: open the mission, Team tab, and generate a link."
   },
   "squads": {
     "title": "RPG Squad Management",
@@ -907,5 +932,103 @@
     "orphanTitle": "Deleted mission. Click to remove the link.",
     "noneBound": "No mission",
     "emptyForMission": "Nothing linked to this mission yet."
+  },
+  "workspace": {
+    "eyebrow": "Terminal RM-84 // GM panel",
+    "createTitle": "Create your GM folder",
+    "createBody": "Each GM has their own folder: campaigns, intel, achievements, NPCs and players stay isolated in it. Nobody from another folder can see what is here.",
+    "nameLabel": "Folder name",
+    "namePlaceholder": "E.g. Saturday table",
+    "creating": "Creating...",
+    "createAction": "Create folder",
+    "createFail": "Could not create the folder. Try again.",
+    "inviteHint": "Got an invite to run someone else's campaign? Open the invite link; the campaign shows up here once you accept.",
+    "switch": "Switch folder",
+    "current": "Active folder",
+    "role": {
+      "owner": "Owner",
+      "cogm": "Co-GM"
+    }
+  },
+  "apps": {
+    "body": "Turn on the mini-apps this mission uses. When off, the campaign's players don't see the shortcut and the GM can't open the screen for them.",
+    "saveFail": "Could not save the mini-apps.",
+    "feature": {
+      "bios": "BIOS",
+      "limbo": "Limbo",
+      "win95": "Windows 95",
+      "terminal": "DOS terminal",
+      "mac": "Mac OS",
+      "diskRepair": "Disk repair"
+    },
+    "featureHint": {
+      "bios": "Boot and diagnostics screen.",
+      "limbo": "LIMBO_01 forum and the military seizure.",
+      "win95": "Windows 95 desktop.",
+      "terminal": "DOS shortcut on the player's device.",
+      "mac": "System 7.5 desktop.",
+      "diskRepair": "Repair of the corrupted floppy."
+    }
+  },
+  "team": {
+    "cogmTitle": "Invited GMs",
+    "cogmBody": "A co-GM runs the session, delivers intel and SMS and edits this mission's content. They can't see your other missions, delete the mission or invite anyone.",
+    "noCogm": "No co-GM on this mission",
+    "inviteCogm": "Generate co-GM invite",
+    "playersTitle": "Invite players",
+    "playersBody": "Whoever opens the link joins the table with their own account and gets an agent in this mission. With a squad picked, the agent takes a slot in it.",
+    "squad": "Squad",
+    "noSquad": "No squad",
+    "maxUses": "Uses",
+    "days": "Valid for (days)",
+    "invitePlayers": "Generate player invite",
+    "linkCogm": "Co-GM invite link",
+    "linkPlayers": "Player invite link",
+    "linkLabel": "Invite link",
+    "linkOnce": "The link only shows now. If you lose it, revoke and generate another.",
+    "copy": "Copy",
+    "activeInvites": "Active invites",
+    "noInvites": "No active invites",
+    "kindCogm": "Co-GM",
+    "kindPlayer": "Players",
+    "usage": "{{uses}}/{{max}} uses",
+    "expires": "expires {{date}}",
+    "revoke": "Revoke",
+    "revokeTitle": "Revoke invite?",
+    "revokeBody": "The link stops working. Whoever already joined stays at the table.",
+    "remove": "Remove",
+    "removeTitle": "Remove co-GM?",
+    "removeBody": "{{name}} loses access to this mission.",
+    "toast": {
+      "copied": "Link copied.",
+      "created": "Invite created.",
+      "createFail": "Could not create the invite.",
+      "revokeFail": "Could not revoke the invite.",
+      "removed": "Co-GM removed.",
+      "removeFail": "Could not remove the co-GM."
+    }
+  },
+  "platform": {
+    "title": "Platform accounts",
+    "body": "Account data only. GM folder content never shows here.",
+    "search": "Search by name or e-mail",
+    "suspend": "Suspend",
+    "reactivate": "Reactivate",
+    "suspended": "Suspended",
+    "active": "Active",
+    "newPassword": "New password",
+    "setPassword": "Reset password",
+    "createTitle": "Create Master ID account",
+    "masterId": "Master ID",
+    "password": "Password",
+    "create": "Create account",
+    "loadMore": "Load more",
+    "lastSignIn": "Last sign-in",
+    "toast": {
+      "saved": "Account updated.",
+      "fail": "Operation refused.",
+      "created": "Account created.",
+      "password": "Password changed."
+    }
   }
 }

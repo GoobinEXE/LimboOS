@@ -5,6 +5,7 @@ import { EASE_OUT } from '../lib/motion';
 import { checkTerminalClosed } from '../store/firestore';
 import { activityLogger } from '../services/ActivityLogger';
 import { useLandscapeLayout } from '../player/hooks/useLandscapeLayout';
+import { haptic } from '../lib/native/haptics';
 import {
   matchesLimboIp,
   HELP_TEXT,
@@ -230,7 +231,7 @@ export default function BiosTerminal({
 
   const handleKeyInput = useCallback(
     (key: string) => {
-      if (navigator.vibrate) navigator.vibrate(10);
+      haptic('light');
       if (key === 'Enter') {
         processCommand(currentLine);
       } else if (key === 'Backspace' || key === 'DEL') {

@@ -151,3 +151,52 @@ export function readinessScore(checks: ReadinessCheck[]): { done: number; total:
     total: relevant.length,
   };
 }
+
+/** Tudo que aponta para uma missão: usado para desvincular ao apagá-la. */
+export interface CampaignLinks {
+  /** Esquadrões com a missão ativa (`campaignId`, `active`) ou só liberada (`unlockedCampaigns`). */
+  groups: { id: string; active: boolean }[];
+  /** Agentes com a missão ativa ou liberada. */
+  characters: { uid: string; charId: string; active: boolean }[];
+  /** Conquistas e NPCs do Firestore vinculados à missão (sugestões locais ficam de fora). */
+  achievementIds: string[];
+  npcIds: string[];
+  /** Conquistas e NPCs que só valiam nesta missão e ficam sem nenhuma. */
+  orphanedCount: number;
+  /** Intel marcada com a missão: não é alterada, para não virar global. */
+  intelCount: number;
+}
+
+export function collectCampaignLinks(
+  campaignId: string,
+  sources: {
+    groups: Group[];
+    characters: { uid: string; char: { id: string; campaignId?: string; unlockedCampaigns?: string[] } }[];
+    intel: IntelItem[];
+    /** `null` quando o catálogo ainda é só de sugestões locais. */
+    achievements: AchievementDef[] | null;
+    npcs: NpcContact[] | null;
+  },
+): CampaignLinks {
+  const touches = (c: { campaignId?: string; unlockedCampaigns?: string[] }) =>
+    c.campaignId === campaignId || (c.unlockedCampaigns || []).includes(campaignId);
+  const boundAchievements = (sources.achievements || []).filter((a) =>
+    bindingIncludes(a.campaignIds, campaignId),
+  );
+  const boundNpcs = (sources.npcs || []).filter((n) => bindingIncludes(n.campaignIds, campaignId));
+  const orphanedCount = [...boundAchievements, ...boundNpcs].filter(
+    (r) => r.campaignIds !== 'global' && r.campaignIds.length === 1,
+  ).length;
+  return {
+    groups: sources.groups
+      .filter(touches)
+      .map((g) => ({ id: g.id, active: g.campaignId === campaignId })),
+    characters: sources.characters
+      .filter(({ char }) => touches(char))
+      .map(({ uid, char }) => ({ uid, charId: char.id, active: char.campaignId === campaignId })),
+    achievementIds: boundAchievements.map((a) => a.id),
+    npcIds: boundNpcs.map((n) => n.id),
+    orphanedCount,
+    intelCount: sources.intel.filter((i) => i.campaignId === campaignId).length,
+  };
+}

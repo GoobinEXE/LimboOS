@@ -7,6 +7,7 @@ import { checkMacClosed, firestoreUnlockIntel } from '../store/firestore';
 import { analyticsTracker } from '../services/AnalyticsTracker';
 import { activityLogger } from '../services/ActivityLogger';
 import { useLandscapeLayout } from '../player/hooks/useLandscapeLayout';
+import { haptic } from '../lib/native/haptics';
 const TEXTO_CORROMPIDO = `S̸e̵ ̸o̸n̵d̴a̷ ̶s̵o̵n̵o̶r̶a̷ ̷a̶t̶i̵n̵g̷e̸ ̴∇̸ ̴∞̵ ̵n̷o̵ ̵m̶i̶l̶i̴s̸s̶e̵g̷u̴n̸d̸o̵ ̴d̵o̴ ̷e̶r̵r̵o̸ ̶t̴e̵m̵p̵o̶r̵a̵l̴.̶.̶.̷
 O̵ ̵█̶█̶█̶█̶█̶█̶█̶█̶█̶█̶ ̷n̵ã̷o̵ ̷é̴ ̵l̵i̶n̴h̷a̴.̵ ̶É̸ ̴u̶m̸ ̷l̶o̵o̵p̸ ̷d̵e̴ ̶c̵ó̸d̵i̴g̵o̵.̶
 1̷9̶0̶0̶ ̶▒̶░̶▓̶ ̶E̷R̵R̴O̷ ̸S̷I̸N̸T̸A̶X̵E̴ ̴▓̸░̸▒̸ ̶2̶0̶0̶0̵
@@ -116,7 +117,7 @@ export default function MacOsApp({ uid, characterId, onClose }: MacOsAppProps) {
   }, [uid, characterId, onClose]);
 
   const handleLogin = useCallback(() => {
-    if (navigator.vibrate) navigator.vibrate(20);
+    haptic('medium');
     activityLogger.logAction('macos', 'Entrou no Desktop MacOS');
     setPhase('desktop');
   }, [uid]);

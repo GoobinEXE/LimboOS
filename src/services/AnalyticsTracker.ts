@@ -15,6 +15,7 @@ import { intelRegistry } from '../data/intel_registry';
 import type { Toast } from '../components/ToastNotification';
 import { activityLogger } from './ActivityLogger';
 import { auth } from '../lib/firebase';
+import { haptic } from '../lib/native/haptics';
 import { firebaseAnalytics } from './FirebaseAnalyticsService';
 
 export class AnalyticsTracker {
@@ -77,9 +78,7 @@ export class AnalyticsTracker {
     this.syncLocalChanges();
     this.checkAchievements();
     
-    if (key === 'fidgetClicks' && typeof window !== 'undefined' && window.navigator?.vibrate) {
-      try { window.navigator.vibrate(50); } catch(e) {}
-    }
+    if (key === 'fidgetClicks') haptic('heavy');
   }
 
   /** Seta flag one-shot (0→1) e reavalia conquistas. Idempotente. */

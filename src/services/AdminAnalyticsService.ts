@@ -1,17 +1,17 @@
 import { db } from "../lib/firebase";
-import { 
-  collection, 
-  onSnapshot, 
+import {
+  collection,
+  onSnapshot,
   getDocs,
   getDoc,
-  collectionGroup, 
-  writeBatch, 
-  doc, 
-  query, 
-  orderBy, 
-  limit,
+  collectionGroup,
+  writeBatch,
+  doc,
+  query,
   where,
 } from "firebase/firestore";
+import { getScopedDocs, getTenantScope, isOwnerScope, subscribeScoped, wsDoc } from "../lib/tenantScope";
+import { userService } from "./UserService";
 import { getAllAchievements } from "../data/achievements";
 
 export interface PlayEvent {
@@ -55,20 +55,46 @@ export class AdminAnalyticsService {
     return AdminAnalyticsService.instance;
   }
 
+  /** Agregados da pasta (escritos pela Function aggregatePlayEvent). Só o dono lê. */
   public subscribeToAggregatedAnalytics(callback: (data: any) => void): () => void {
-    return onSnapshot(doc(db, "system", "analytics"), (snap) => {
-      if (snap.exists()) {
-        callback(snap.data());
-      } else {
-        callback(null);
-      }
+    if (!isOwnerScope()) {
+      callback(null);
+      return () => {};
+    }
+    return onSnapshot(wsDoc("stats", "analytics"), (snap) => {
+      callback(snap.exists() ? snap.data() : null);
     }, (err) => console.warn('[AdminAnalyticsService] aggregated analytics listener error:', err));
   }
 
-  /**
-   * Engagement leve: agrega collectionGroups sob demanda (sem listeners permanentes).
-   * Preferir system/analytics quando os campos existirem.
-   */
+  /** stats/main de cada agente da mesa (co-mestre: das campanhas dele). */
+  private async fetchCharacterStats(): Promise<{ uid: string; characterId: string; stats: PlayerStats }[]> {
+    const characters = await new Promise<{ uid: string; char: { id: string } }[]>((resolve) => {
+      const stop = userService.subscribeToAllCharacters((list) => {
+        resolve(list);
+        queueMicrotask(stop);
+      });
+    });
+    const snaps = await Promise.all(
+      characters.slice(0, 300).map(({ uid, char }) =>
+        getDoc(doc(db, "users", uid, "characters", char.id, "stats", "main"))
+          .then((snap) => ({ uid, characterId: char.id, snap }))
+          .catch(() => null),
+      ),
+    );
+    return snaps
+      .filter((x): x is NonNullable<typeof x> => !!x && x.snap.exists())
+      .map(({ uid, characterId, snap }) => ({ uid, characterId, stats: snap.data() as PlayerStats }));
+  }
+
+  /** Conquistas concedidas na pasta (collectionGroup com workspaceId; só o dono). */
+  private async fetchWorkspaceAchievements(): Promise<UserAchievement[]> {
+    const scope = getTenantScope();
+    if (!scope || !isOwnerScope(scope)) return [];
+    const snap = await getDocs(query(collectionGroup(db, "achievements"), where("workspaceId", "==", scope.wsId)));
+    return snap.docs.map((d) => d.data() as UserAchievement);
+  }
+
+  /** Engajamento da mesa, calculado sob demanda a partir dos agentes. */
   public async fetchEngagementSnapshot(): Promise<{
     totalAchievements: number;
     totalScrews: number;
@@ -76,42 +102,15 @@ export class AdminAnalyticsService {
     totalEjects: number;
   }> {
     try {
-      const analyticsSnap = await getDoc(doc(db, 'system', 'analytics'));
-      const agg = analyticsSnap.exists()
-        ? (analyticsSnap.data() as {
-            totalAchievements?: number;
-            totalScrews?: number;
-            totalFidgets?: number;
-            totalEjects?: number;
-          })
-        : undefined;
-      if (
-        agg &&
-        typeof agg.totalScrews === 'number' &&
-        typeof agg.totalFidgets === 'number'
-      ) {
-        return {
-          totalAchievements: agg.totalAchievements ?? 0,
-          totalScrews: agg.totalScrews,
-          totalFidgets: agg.totalFidgets,
-          totalEjects: agg.totalEjects ?? 0,
-        };
-      }
-    } catch {
-      // fallback abaixo
-    }
-
-    try {
-      const [achSnap, statsSnap] = await Promise.all([
-        getDocs(query(collectionGroup(db, 'achievements'), limit(500))),
-        getDocs(query(collectionGroup(db, 'stats'), limit(500))),
+      const [achievements, stats] = await Promise.all([
+        this.fetchWorkspaceAchievements(),
+        this.fetchCharacterStats(),
       ]);
-      const stats = statsSnap.docs.map((d) => d.data() as PlayerStats);
       return {
-        totalAchievements: achSnap.size,
-        totalScrews: stats.reduce((s, x) => s + (x.screwClicks || 0), 0),
-        totalFidgets: stats.reduce((s, x) => s + (x.fidgetClicks || 0), 0),
-        totalEjects: stats.reduce((s, x) => s + (x.ejectWithoutPlay || 0), 0),
+        totalAchievements: achievements.length,
+        totalScrews: stats.reduce((acc, x) => acc + (x.stats.screwClicks || 0), 0),
+        totalFidgets: stats.reduce((acc, x) => acc + (x.stats.fidgetClicks || 0), 0),
+        totalEjects: stats.reduce((acc, x) => acc + (x.stats.ejectWithoutPlay || 0), 0),
       };
     } catch (err) {
       console.warn('[AdminAnalyticsService] fetchEngagementSnapshot:', err);
@@ -119,7 +118,7 @@ export class AdminAnalyticsService {
     }
   }
 
-  /** @deprecated Prefer fetchEngagementSnapshot / subscribeToAggregatedAnalytics — listeners full-collection. */
+  /** Dados brutos para o BI, todos da pasta ativa. */
   public subscribeToRawData(callback: (data: {
     playEvents: PlayEvent[];
     users: UserData[];
@@ -131,105 +130,78 @@ export class AdminAnalyticsService {
     let audios: AudioMetadata[] = [];
     let unlockedAchievements: UserAchievement[] = [];
     let stats: PlayerStats[] = [];
+    let active = true;
 
     const notify = () => {
-      callback({ playEvents: [], users, audios, unlockedAchievements, stats });
+      if (active) callback({ playEvents: [], users, audios, unlockedAchievements, stats });
     };
 
-    const unsubs = [
-      onSnapshot(collection(db, "users"), 
-        (snap) => {
-          users = snap.docs.map(d => d.data() as UserData);
-          notify();
-        },
-        (err) => console.warn('[AdminAnalyticsService] users listener error:', err)
-      ),
-      onSnapshot(
-        query(collection(db, "mediaAssets"), where("type", "==", "audio"), limit(200)),
-        (snap) => {
-          audios = snap.docs.map((d) => {
-              const data = d.data() as { size?: number; originalName?: string; metadata?: { title?: string } };
-              return {
-                id: d.id,
-                size: data.size ?? 0,
-                originalName: data.originalName,
-                title: data.metadata?.title,
-              };
-            });
-          notify();
-        },
-        (err) => console.warn('[AdminAnalyticsService] mediaAssets listener error:', err)
-      ),
-      onSnapshot(query(collectionGroup(db, "achievements"), limit(500)), 
-        (snap) => {
-          unlockedAchievements = snap.docs.map(d => d.data() as UserAchievement);
-          notify();
-        },
-        (err) => console.warn('[AdminAnalyticsService] achievements listener error:', err)
-      ),
-      onSnapshot(query(collectionGroup(db, "stats"), limit(500)), 
-        (snap) => {
-          stats = snap.docs.map(d => d.data() as PlayerStats);
-          notify();
-        },
-        (err) => console.warn('[AdminAnalyticsService] stats listener error:', err)
-      )
-    ];
+    const stopUsers = userService.subscribeToUsers((list) => {
+      users = list.map((u) => ({
+        uid: u.uid,
+        displayName: u.displayName,
+        masterName: u.masterName,
+        createdAt: u.createdAt,
+        lastLogin: u.lastLogin,
+      }));
+      notify();
+    });
+    const stopAudios = subscribeScoped("mediaAssets", "single", [where("type", "==", "audio")], (docs) => {
+      audios = docs.slice(0, 200).map((d) => {
+        const data = d.data() as { size?: number; originalName?: string; metadata?: { title?: string } };
+        return { id: d.id, size: data.size ?? 0, originalName: data.originalName, title: data.metadata?.title };
+      });
+      notify();
+    }, (err) => console.warn('[AdminAnalyticsService] mediaAssets listener error:', err));
 
-    return () => unsubs.forEach(u => u());
+    void Promise.all([this.fetchWorkspaceAchievements(), this.fetchCharacterStats()])
+      .then(([ach, st]) => {
+        unlockedAchievements = ach;
+        stats = st.map((x) => x.stats);
+        notify();
+      })
+      .catch((err) => console.warn('[AdminAnalyticsService] raw data fetch error:', err));
+
+    return () => {
+      active = false;
+      stopUsers();
+      stopAudios();
+    };
   }
 
+  /** Zera o BI da pasta (dono): apaga playEvents e reinicia os stats dos agentes. */
   public async resetAnalytics(): Promise<void> {
-    const [playEventsSnap, usersSnap] = await Promise.all([
-      getDocs(collection(db, 'playEvents')),
-      getDocs(collection(db, 'users'))
+    if (!isOwnerScope()) throw new Error('Só o dono da pasta zera as estatísticas.');
+    const [events, stats] = await Promise.all([
+      getScopedDocs('playEvents', 'single'),
+      this.fetchCharacterStats(),
     ]);
 
-    let batch = writeBatch(db);
-    let count = 0;
+    const empty: PlayerStats = {
+      totalListenTime: 0,
+      screwClicks: 0,
+      fidgetClicks: 0,
+      ejectWithoutPlay: 0,
+      maxVolumeTime: 0,
+      zeroVolumeTime: 0,
+      biosOpened: 0,
+      win95Opened: 0,
+      macosOpened: 0,
+      fullTapeListens: 0,
+      threadsReadCount: 0,
+      archiveOpened: 0,
+      modeSwitches: 0,
+    };
 
-    // Delete play events
-    const deletePromises: Promise<void>[] = [];
-    playEventsSnap.docs.forEach((docSnap) => {
-      batch.delete(docSnap.ref);
-      count++;
-      if (count % 400 === 0) {
-        deletePromises.push(batch.commit());
-        batch = writeBatch(db);
-      }
-    });
-    deletePromises.push(batch.commit());
-
-    // Reset user stats
-    batch = writeBatch(db);
-    count = 0;
-    const statsPromises: Promise<void>[] = [];
-    usersSnap.docs.forEach((userDoc) => {
-      const statsRef = doc(db, 'users', userDoc.id, 'stats', 'main');
-      batch.set(statsRef, {
-        totalListenTime: 0,
-        screwClicks: 0,
-        fidgetClicks: 0,
-        ejectWithoutPlay: 0,
-        maxVolumeTime: 0,
-        zeroVolumeTime: 0,
-        biosOpened: 0,
-        win95Opened: 0,
-        macosOpened: 0,
-        fullTapeListens: 0,
-        threadsReadCount: 0,
-        archiveOpened: 0,
-        modeSwitches: 0,
-      }, { merge: true });
-      count++;
-      if (count % 400 === 0) {
-        statsPromises.push(batch.commit());
-        batch = writeBatch(db);
-      }
-    });
-    statsPromises.push(batch.commit());
-
-    await Promise.all([...deletePromises, ...statsPromises]);
+    const ops: Array<(b: ReturnType<typeof writeBatch>) => void> = [];
+    events.forEach((d) => ops.push((b) => b.delete(d.ref)));
+    stats.forEach(({ uid, characterId }) =>
+      ops.push((b) => b.set(doc(db, 'users', uid, 'characters', characterId, 'stats', 'main'), empty, { merge: true })));
+    for (let i = 0; i < ops.length; i += 400) {
+      const batch = writeBatch(db);
+      ops.slice(i, i + 400).forEach((op) => op(batch));
+      await batch.commit();
+    }
   }
 
   public computeAnalytics(

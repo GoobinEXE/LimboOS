@@ -10,6 +10,17 @@ import { useAppScreenHistory } from '../hooks/useAppScreenHistory';
 import { achievementCatalogService } from '../../services/AchievementCatalogService';
 import { openAdminConsole } from '../../lib/adminAccess';
 import type { PlayerSessionValue, PlayerPlaybackValue } from '../types';
+import { DEFAULT_CAMPAIGN_FEATURES, type CampaignFeatures } from '../../types/workspace';
+import type { AppScreen } from '../../types/player';
+
+/** Telas de mini-app e o recurso da campanha que as libera. */
+const SCREEN_FEATURE: Partial<Record<AppScreen, keyof CampaignFeatures>> = {
+  bios: 'bios',
+  limbo: 'limbo',
+  windows95: 'win95',
+  macos: 'mac',
+  diskRepair: 'diskRepair',
+};
 
 const PlayerSessionContext = createContext<PlayerSessionValue | null>(null);
 const PlayerPlaybackContext = createContext<PlayerPlaybackValue | null>(null);
@@ -31,7 +42,7 @@ function PlayerProvidersInner({ children }: { children: React.ReactNode }) {
   const {
     masterAccount,
     setMasterAccount,
-    playerData,
+    playerData: rawPlayerData,
     setPlayerData,
     localStats,
     screen,
@@ -47,7 +58,26 @@ function PlayerProvidersInner({ children }: { children: React.ReactNode }) {
     handleLogout,
   } = auth;
 
-  const { activeCampaign, isNokiaTheme, deviceCapabilities } = useActiveCampaign(playerData);
+  const { activeCampaign, isNokiaTheme, deviceCapabilities } = useActiveCampaign(rawPlayerData);
+
+  // Mini-apps são ligados por missão: sem o recurso, o atalho some e a tela fecha.
+  const features = useMemo<CampaignFeatures>(
+    () => ({ ...DEFAULT_CAMPAIGN_FEATURES, ...(activeCampaign?.features || {}) }),
+    [activeCampaign?.features]
+  );
+  const playerData = useMemo(
+    () =>
+      rawPlayerData && {
+        ...rawPlayerData,
+        hasTerminalAccess: !!rawPlayerData.hasTerminalAccess && features.terminal,
+        hasMacAccess: !!rawPlayerData.hasMacAccess && features.mac,
+      },
+    [rawPlayerData, features]
+  );
+  useEffect(() => {
+    const feature = SCREEN_FEATURE[screen];
+    if (feature && activeCampaign && !features[feature]) setScreen('player');
+  }, [screen, activeCampaign, features, setScreen]);
 
   const playback = useWalkmanPlayback({
     playerData,

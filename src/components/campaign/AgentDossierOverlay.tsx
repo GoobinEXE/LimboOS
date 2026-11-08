@@ -7,7 +7,7 @@ import { updateCodinome, uploadProfilePhoto } from '../../store/firestore';
 import { AchievementCatalog } from '../achievements/AchievementCatalog';
 import { useAchievementCatalog } from '../../hooks/useAchievementCatalog';
 import type { PlayerData } from '../../types/player';
-import { campaigns } from '../../data/campaigns';
+import { getCampaignById } from '../../data/campaigns';
 import type { AccessLevel } from '../../types/intel';
 import { IntelManager, IntelBase, VisualIntel, TextIntel } from '../../services/IntelEngine';
 import RetroSpinner from '../player/RetroSpinner';
@@ -100,7 +100,7 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager, onUpdat
       statusCfg: { ...statusStyle, label: t(statusStyle.labelKey, { ns: 'common' }) },
       dangerLevel,
       dangerLabel: t(`danger.${DANGER_KEYS[dangerLevel] || 'none'}`, { ns: 'common' }),
-      lastCampaign: campaigns.find(c => c.id === playerData.character.campaignId),
+      lastCampaign: getCampaignById(playerData.character.campaignId),
       earnedIds: new Set(playerData.achievementIds || []),
       embedUrl: extractSpotifyEmbedUrl(playerData.character.spotifyPlaylistUrl || ''),
       initials: currentUsername.split(/[\s\-_]+/).slice(0, 2).map(w => w[0]?.toUpperCase() ?? '').join('')

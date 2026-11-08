@@ -1,5 +1,19 @@
 import { useCallback, useState } from 'react';
-import { setMacStateForUsers, setTerminalStateForUsers } from '../../store/firestore';
+import { userService } from '../../services/UserService';
+
+/**
+ * As flags de hardware ficam nos agentes de cada conta nesta mesa (o mestre não
+ * altera a conta pessoal do jogador).
+ */
+async function setTerminalStateForUsers(uids: string[], force: boolean, grant: boolean): Promise<void> {
+  await Promise.all(uids.map((uid) =>
+    userService.updateMasterAccount(uid, { forceTerminalOpen: force, hasTerminalAccess: grant })));
+}
+
+async function setMacStateForUsers(uids: string[], force: boolean, grant: boolean): Promise<void> {
+  await Promise.all(uids.map((uid) =>
+    userService.updateMasterAccount(uid, { forceMacOpen: force, hasMacAccess: grant })));
+}
 import { activityLogger } from '../../services/ActivityLogger';
 
 export type HardwareKind = 'dos' | 'mac';
@@ -11,7 +25,7 @@ function busyKey(kind: HardwareKind, action: 'push' | 'revoke' | 'grant', uid?: 
 }
 
 /**
- * Ações de hardware DOS/Mac por conta (UID).
+ * Ações de hardware DOS/Mac por conta (UID), aplicadas aos agentes dela na mesa.
  * Push = one-shot force + grant; grant = acesso sem empurrar; revoke = tira acesso e limpa force.
  */
 export function useHardwareAccessActions() {
@@ -43,7 +57,7 @@ export function useHardwareAccessActions() {
       await withBusy(key, async () => {
         activityLogger.logTrace('force_terminal_step', `Empurrando DOS para ${uids.length} conta(s)...`);
         await setTerminalStateForUsers(uids, true, true);
-        activityLogger.logAdmin('gm.mpg', 'force_terminal', `Empurrou DOS para: ${label}`, { uids });
+        activityLogger.logAdmin('mestre', 'force_terminal', `Empurrou DOS para: ${label}`, { uids });
       });
     },
     [withBusy]
@@ -56,7 +70,7 @@ export function useHardwareAccessActions() {
       await withBusy(key, async () => {
         activityLogger.logTrace('force_mac_step', `Empurrando Mac para ${uids.length} conta(s)...`);
         await setMacStateForUsers(uids, true, true);
-        activityLogger.logAdmin('gm.mpg', 'force_mac', `Empurrou Mac para: ${label}`, { uids });
+        activityLogger.logAdmin('mestre', 'force_mac', `Empurrou Mac para: ${label}`, { uids });
       });
     },
     [withBusy]
@@ -70,7 +84,7 @@ export function useHardwareAccessActions() {
       await withBusy(key, async () => {
         await setTerminalStateForUsers(uids, false, grant);
         activityLogger.logAdmin(
-          'gm.mpg',
+          'mestre',
           grant ? 'grant_terminal' : 'revoke_terminal',
           `${grant ? 'Liberou' : 'Revogou'} acesso DOS: ${label}`,
           { uids }
@@ -88,7 +102,7 @@ export function useHardwareAccessActions() {
       await withBusy(key, async () => {
         await setMacStateForUsers(uids, false, grant);
         activityLogger.logAdmin(
-          'gm.mpg',
+          'mestre',
           grant ? 'grant_mac' : 'revoke_mac',
           `${grant ? 'Liberou' : 'Revogou'} acesso Mac: ${label}`,
           { uids }

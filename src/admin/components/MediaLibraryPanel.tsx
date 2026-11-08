@@ -30,6 +30,7 @@ import IntelEditorHost from './intel/IntelEditorHost';
 import IntelQrModal from './intel/IntelQrModal';
 import IntelExportDrawer from './intel/IntelExportDrawer';
 import { useIntelCatalog } from '../hooks/useIntelCatalog';
+import { campaignService } from '../../services/CampaignService';
 
 interface MediaLibraryPanelProps {
   onSelect?: (asset: MediaAsset) => void;
@@ -111,13 +112,12 @@ export default function MediaLibraryPanel({
   }, []);
 
   useEffect(() => {
-    return onSnapshot(
-      collection(db, 'campaigns'),
-      (snap) => {
-        setCampaigns(snap.docs.map((d) => ({ id: d.id, ...d.data() } as Campaign)));
+    return campaignService.subscribeToScopedCampaigns(
+      (list) => {
+        setCampaigns(list);
         setCampaignsReady(true);
       },
-      (err) => console.warn('[MediaLibraryPanel] campaigns listener error:', err),
+      () => setCampaignsReady(true),
     );
   }, []);
 

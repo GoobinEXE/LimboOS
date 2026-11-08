@@ -13,6 +13,9 @@ import MissionDataTab from './MissionDataTab';
 import MissionResourcesTab from './MissionResourcesTab';
 import MissionAccessTab from './MissionAccessTab';
 import MissionInventoryTab from './MissionInventoryTab';
+import MissionAppsTab from './MissionAppsTab';
+import MissionTeamTab from './MissionTeamTab';
+import { useAdminScope } from '../../context/AdminScopeContext';
 import { useIntelCatalog } from '../../hooks/useIntelCatalog';
 import { useAchievementEditor } from '../../hooks/useAchievementEditor';
 import { useNpcContactEditor } from '../../hooks/useNpcContactEditor';
@@ -76,6 +79,7 @@ export default function MissionWorkspace({
   const toast = useToast();
   const { showAlert, showConfirm, modal } = useModal();
   const { campaigns: campaignOptions } = useAdminCampaigns();
+  const { canManage } = useAdminScope();
   const [saving, setSaving] = useState(false);
 
   const isNew = mode === 'new';
@@ -117,9 +121,13 @@ export default function MissionWorkspace({
     );
   }
 
-  const activeSection: MissionSectionId = isNew ? 'dados' : section;
+  // Equipe (convites e co-mestres) é gestão: só o dono da pasta.
+  const visibleSections = MISSION_SECTIONS.filter((s) => s.id !== 'equipe' || canManage);
+  const activeSection: MissionSectionId = isNew
+    ? 'dados'
+    : visibleSections.some((s) => s.id === section) ? section : 'recursos';
 
-  const tabs = MISSION_SECTIONS.map((s) => {
+  const tabs = visibleSections.map((s) => {
     const locked = isNew && s.id !== 'dados';
     return {
       id: s.id,
@@ -267,6 +275,10 @@ export default function MissionWorkspace({
                 );
               case 'inventario':
                 return <MissionInventoryTab campaign={campaign} groups={groups} allCharacters={allCharacters} />;
+              case 'apps':
+                return <MissionAppsTab campaign={campaign} />;
+              case 'equipe':
+                return canManage ? <MissionTeamTab campaign={campaign} groups={groups} /> : null;
             }
           }}
         />

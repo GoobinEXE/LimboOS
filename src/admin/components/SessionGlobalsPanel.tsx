@@ -1,48 +1,59 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { doc, onSnapshot, setDoc } from 'firebase/firestore';
+import { onSnapshot } from 'firebase/firestore';
 import { ShieldBan, ShieldCheck } from 'lucide-react';
-import { db } from '../../lib/firebase';
-import { setLimboMilitarySeizureGlobal } from '../../store/firestore';
+import { campaignStateDoc } from '../../lib/tenantScope';
+import { setDiskRepairAllowed as saveDiskRepairAllowed, setLimboMilitarySeizure } from '../../store/firestore';
 import { activityLogger } from '../../services/ActivityLogger';
 import type { LimboGlobalState } from '../../types/player';
 import { LIMBO_THREAD_COUNT } from '../../components/LimboBoard';
 
 /**
- * Controles globais de sessão (Limbo + DiskRepair) — vivem no Ao Vivo.
+ * Controles de sessão da missão ativa (Limbo + DiskRepair), no Ao Vivo. O estado
+ * vale só para esta campanha: workspaces/{ws}/campaigns/{c}/state/live.
  */
-export default function SessionGlobalsPanel() {
+export default function SessionGlobalsPanel({ campaignId }: { campaignId?: string | null }) {
   const { t } = useTranslation('admin');
   const [limboState, setLimboState] = useState<LimboGlobalState>({ seized: false });
   const [diskRepairAllowed, setDiskRepairAllowed] = useState(false);
 
   useEffect(() => {
-    const unsubLimbo = onSnapshot(doc(db, 'system', 'limboState'), (snap) => {
-      setLimboState(snap.exists() ? (snap.data() as LimboGlobalState) : { seized: false });
-    });
-    const unsubGameEvents = onSnapshot(doc(db, 'system', 'gameEvents'), (snap) => {
-      setDiskRepairAllowed(snap.exists() ? !!snap.data().diskRepairAllowed : false);
-    });
-    return () => {
-      unsubLimbo();
-      unsubGameEvents();
-    };
-  }, []);
+    setLimboState({ seized: false });
+    setDiskRepairAllowed(false);
+    if (!campaignId) return;
+    return onSnapshot(campaignStateDoc(campaignId, 'live'), (snap) => {
+      const data = snap.exists() ? snap.data() : {};
+      setLimboState({ seized: !!data.seized, ...data } as LimboGlobalState);
+      setDiskRepairAllowed(!!data.diskRepairAllowed);
+    }, (err) => console.warn('[SessionGlobalsPanel] state listener error:', err));
+  }, [campaignId]);
+
+  if (!campaignId) {
+    return (
+      <div className="bg-surface-container-low border border-primary/10 p-5 rounded-sm">
+        <p className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-500">
+          {t('sessionGlobals.pickMission')}
+        </p>
+      </div>
+    );
+  }
 
   const toggleLimboMilitary = async () => {
     const next = !limboState.seized;
     activityLogger.logTrace('limbo_military_step', `Limbo USArmy → ${next ? 'ATIVO' : 'INATIVO'}`);
-    await setLimboMilitarySeizureGlobal(next);
-    activityLogger.logAdmin('gm.mpg', 'limbo_military_toggle', `Limbo USArmy ${next ? 'ATIVADO' : 'DESATIVADO'} globalmente`, {
+    await setLimboMilitarySeizure(campaignId, next);
+    activityLogger.logAdmin('mestre', 'limbo_military_toggle', `Limbo USArmy ${next ? 'ATIVADO' : 'DESATIVADO'} na missão`, {
       seized: next,
+      campaignId,
     });
   };
 
   const toggleDiskRepair = async () => {
     const newState = !diskRepairAllowed;
-    await setDoc(doc(db, 'system', 'gameEvents'), { diskRepairAllowed: newState }, { merge: true });
-    activityLogger.logAdmin('gm.mpg', 'disk_repair_toggle', `DiskRepair ${newState ? 'ATIVADO' : 'DESATIVADO'}`, {
+    await saveDiskRepairAllowed(campaignId, newState);
+    activityLogger.logAdmin('mestre', 'disk_repair_toggle', `DiskRepair ${newState ? 'ATIVADO' : 'DESATIVADO'}`, {
       diskRepairAllowed: newState,
+      campaignId,
     });
   };
 

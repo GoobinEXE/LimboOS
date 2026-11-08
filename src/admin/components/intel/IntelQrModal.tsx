@@ -17,7 +17,7 @@ export default function IntelQrModal({ item, onClose, onFeedback }: IntelQrModal
   // Garante qrRedirects/{id} → id para QRs do catálogo (resolve + unlock no player)
   useEffect(() => {
     if (!item?.id) return;
-    void saveQrRedirect(item.id, item.id, 'QR gerado no catálogo').catch((err) => {
+    void saveQrRedirect(item.id, item.id, 'QR gerado no catálogo', item.campaignId ?? null).catch((err) => {
       console.warn('[IntelQrModal] falha ao registrar redirect de identidade:', err);
     });
   }, [item?.id]);

@@ -7,6 +7,7 @@ import { motion } from 'motion/react';
 import { ADMIN_SPRING_INDICATOR } from '../lib/motion';
 import { modKeyLabel } from '../lib/platform';
 import { ADMIN_DESTINATIONS, ADMIN_NAV_GROUPS, type AdminDestinationId } from '../lib/adminNavigation';
+import WorkspaceSwitcher from './WorkspaceSwitcher';
 
 interface SidebarProps {
   activeDest: AdminDestinationId;
@@ -58,6 +59,7 @@ export default function Sidebar({ activeDest, hrefFor, isCollapsed, onToggleColl
           </div>
         )}
       </div>
+      {!isCollapsed && <WorkspaceSwitcher className="px-4 py-3 border-b border-seam" />}
 
       <nav
         aria-label={t('sidebar.navLabel')}

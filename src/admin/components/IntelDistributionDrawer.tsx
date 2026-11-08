@@ -102,7 +102,7 @@ export default function IntelDistributionDrawer({
           campaignId,
         });
         activityLogger.logAdmin(
-          'gm.mpg',
+          'mestre',
           'video_broadcast',
           `Transmitiu vídeo ${intelId} para ${targets.length} agente(s)`,
           { intelId, campaignId, targets: targets.length }
@@ -120,7 +120,7 @@ export default function IntelDistributionDrawer({
         setFeedback(`✓ ${selectedToAdd.size} item(s) vinculados.`);
         if (character) {
           activityLogger.logAdmin(
-            'gm.mpg',
+            'mestre',
             'inventory_add',
             `Adicionou ${selectedToAdd.size} itens para ${character.codinome}`,
             { uid: targets[0]?.uid, charId: character.id, items: [...selectedToAdd] }

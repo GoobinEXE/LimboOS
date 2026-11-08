@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Lock } from 'lucide-react';
-import { campaigns, getCampaignById, resolveCampaignPlatform } from '../../data/campaigns';
+import { getCampaignById, listRegisteredCampaigns, resolveCampaignPlatform } from '../../data/campaigns';
 import {
   groupAchievementsByCategory,
   filterAchievementsForScope,
@@ -159,13 +159,12 @@ export function AchievementCatalog({
     const ids = new Set<string>([
       ...(campaignId ? [campaignId] : []),
       ...(unlockedCampaignIds || []),
-      'last-rewind',
     ]);
-    return campaigns.filter((c) => ids.has(c.id) && c.status !== 'Bloqueada');
+    return listRegisteredCampaigns().filter((c) => ids.has(c.id) && c.status !== 'Bloqueada');
   }, [campaignId, unlockedCampaignIds]);
 
   const [selectedCampaignId, setSelectedCampaignId] = useState(
-    campaignId || selectableCampaigns[0]?.id || 'last-rewind'
+    campaignId || selectableCampaigns[0]?.id || ''
   );
 
   const activeCampaignId = selectedCampaignId || campaignId || 'unscoped';

@@ -167,7 +167,7 @@ export default function SmsDistributionDrawer({
         );
       }
       activityLogger.logAdmin(
-        'gm.mpg',
+        'mestre',
         logAction,
         `${logContext}: ${assignments.length} diálogo(s) para ${ready.length} agente(s)`,
       );

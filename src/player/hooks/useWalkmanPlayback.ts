@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { clearMediaSession, updateMediaSession } from '../../lib/native/mediaSession';
 import type { Dispatch, SetStateAction } from 'react';
 import { audioEngine } from '../../services/AudioEngine';
 import { analyticsTracker } from '../../services/AnalyticsTracker';
@@ -135,6 +136,19 @@ export function useWalkmanPlayback(options: UseWalkmanPlaybackOptions) {
       analyticsTracker.pausePlayback();
     }
   }, [walkmanStatus, currentIntel?.id, addToast]);
+
+  useEffect(() => {
+    if (!(currentIntel instanceof AudioIntel)) {
+      clearMediaSession();
+      return;
+    }
+    updateMediaSession({
+      title: currentIntel.title,
+      playing: walkmanStatus === 'PLAYING',
+      onPlay: () => setWalkmanStatus('PLAYING'),
+      onPause: () => setWalkmanStatus('LOADED'),
+    });
+  }, [currentIntel, walkmanStatus]);
 
   const resetPlayback = useCallback(() => {
     clearPendingTimer();

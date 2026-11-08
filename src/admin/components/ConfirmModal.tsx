@@ -90,7 +90,8 @@ export function ConfirmModal({ state, onConfirm, onCancel }: ConfirmModalProps) 
             </div>
 
             <div className="px-7 py-6">
-              <p id={messageId} className="text-ash-300 text-sm leading-relaxed text-pretty">
+              {/* pre-line: mensagens com várias linhas (ex.: o que perde vínculo ao apagar missão) */}
+              <p id={messageId} className="text-ash-300 text-sm leading-relaxed text-pretty whitespace-pre-line">
                 {state.message}
               </p>
             </div>

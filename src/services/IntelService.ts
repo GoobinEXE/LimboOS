@@ -225,6 +225,7 @@ class IntelService {
             unlockedAt: serverTimestamp(),
             campaignId: options?.campaignId ?? null,
             workspaceId,
+            source: 'admin',
           },
         });
       }

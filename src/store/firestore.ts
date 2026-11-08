@@ -667,6 +667,7 @@ export async function broadcastVideoToCharacters(
         unlockedAt: serverTimestamp(),
         campaignId: options.campaignId || null,
         workspaceId,
+        source: 'admin',
       }, { merge: true });
     }
     batch.set(doc(db, 'users', uid, 'characters', characterId), {

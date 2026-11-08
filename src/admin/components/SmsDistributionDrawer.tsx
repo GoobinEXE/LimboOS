@@ -164,6 +164,7 @@ export default function SmsDistributionDrawer({
           assignment.target.codinome || 'Agente',
           assignment.target.phoneNumber || '(Sem Telefone)',
           assignment.dialogue,
+          assignment.target.uid,
         );
       }
       activityLogger.logAdmin(

@@ -173,6 +173,7 @@ Após alterações de código, rode `npm run lint` no escopo alterado (ou no pro
 - Código que depende de plataforma passa por `src/lib/native/` e carrega plugins com `import()` atrás de `isNative()`, para o bundle web não mudar. Feedback tátil usa `haptic()`, nunca `navigator.vibrate`.
 - Login Google/Apple no app usa `@capacitor-firebase/authentication` com `skipNativeAuth` e `signInWithCredential`; `onAuthStateChanged` do SDK web continua sendo a fonte da sessão.
 - Depois de alterar `src/`, rode `npm run native:sync` antes de testar no Xcode ou Android Studio.
+- **Push:** `src/services/PushService.ts` guarda o aparelho em `users/{uid}/devices/{deviceId}` e as preferências em `users/{uid}.notificationPrefs`. O envio fica em `backend/functions/push.js` e nas Functions `pushOn*`, `adminSendPush`, `schedulePush`, `cancelScheduledPush`, `listPushActivity` e `dispatchScheduledPushes`. Só notificam entregas com `source: 'admin'` (intel, conquista) e mensagens com `notifyUid` (a primeira fala do NPC). `workspaces/{ws}/pushLog` e `scheduledPushes` só são acessados por Functions. Não há emulador de FCM: os testes injetam o envio com `setMessagingForTests`.
 - **Links universais:** só `/convite/*`. `public/well-known/` traz os arquivos, servidos em `/.well-known/` por rewrite no alvo `main` do Hosting; `assetlinks.json` tem só a chave de debug, adicione a de release antes da Play Store.
 
 ## Variáveis de ambiente

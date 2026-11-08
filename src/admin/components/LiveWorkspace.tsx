@@ -420,6 +420,7 @@ export default function LiveWorkspace({
             <DeliverBtn label={t('live.deliver.achievement')} icon="emoji_events" onClick={() => openDeliver('achievements')} disabled={rows.length === 0} />
             <DeliverBtn label={t('live.deliver.sms')} icon="sms" onClick={() => openDeliver('sms')} disabled={rows.length === 0} />
             <DeliverBtn label={t('intel.type.video')} icon="videocam" onClick={() => openDeliver('video')} disabled={rows.length === 0} />
+            <DeliverBtn label={t('live.deliver.push')} icon="notifications" onClick={() => openDeliver('push')} disabled={rows.length === 0} />
 
             <span className="w-px h-5 bg-white/10 mx-1 hidden sm:block" />
 
@@ -701,6 +702,7 @@ export default function LiveWorkspace({
             key={deliverKind}
             kind={deliverKind}
             targets={deliverTargets}
+            groupId={activeSession?.groupId ?? null}
             missionId={
               activeSession?.campaignId ||
               (deliverTargets.length > 0 &&

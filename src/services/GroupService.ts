@@ -344,9 +344,12 @@ export class GroupService {
       npcName: string;
       npcNumber: string;
       messages: { speaker: 'npc' | 'player'; text: string }[];
-    }
+    },
+    /** Conta dona do agente: recebe um push, marcado na primeira fala do NPC. */
+    recipientUid?: string
   ): Promise<void> {
     const baseTime = Date.now();
+    const firstNpcIndex = dialogue.messages.findIndex((m) => m.speaker === 'npc');
     for (let i = 0; i < dialogue.messages.length; i++) {
       const msg = dialogue.messages[i];
       const messageRef = doc(messagesCol(groupId));
@@ -366,6 +369,7 @@ export class GroupService {
         npcId: dialogue.npcId,
       };
       if (dialogue.id) data.dialogueId = dialogue.id;
+      if (recipientUid && i === firstNpcIndex) data.notifyUid = recipientUid;
 
       await setDoc(messageRef, data);
     }

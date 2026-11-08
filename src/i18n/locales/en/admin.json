@@ -187,6 +187,7 @@
       "achievement": "Achievement",
       "sms": "SMS",
       "video": "Video",
+      "push": "Push",
       "dosAll": "DOS → all",
       "macAll": "Mac → all"
     },
@@ -222,7 +223,8 @@
       "intel": "Deliver Intel",
       "achievements": "Grant Achievement",
       "sms": "Distribute NPC SMS",
-      "video": "Broadcast Video"
+      "video": "Broadcast Video",
+      "push": "Push Message"
     },
     "searchAchievement": "SEARCH ACHIEVEMENT...",
     "npcAll": "All NPCs",
@@ -1030,5 +1032,13 @@
       "created": "Account created.",
       "password": "Password changed."
     }
+  },
+  "push": {
+    "target": { "label": "Target", "selected": "Agents ({{n}})", "group": "Session squad", "mission": "Mission", "all": "Whole folder" },
+    "field": { "title": "Title", "body": "Message", "sendAt": "Schedule (empty sends now)" },
+    "action": { "send": "Send now", "schedule": "Schedule" },
+    "pending": "Scheduled",
+    "history": "Recent sends",
+    "toast": { "sent": "Sent to {{sent}} device(s) across {{n}} account(s)", "scheduled": "Reminder scheduled", "fail": "Push failed" }
   }
 }

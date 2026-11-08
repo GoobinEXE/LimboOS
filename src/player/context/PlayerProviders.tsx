@@ -7,6 +7,7 @@ import { usePlayerServicesSync, usePlayerScreenAnalytics } from '../hooks/usePla
 import { useToasts } from '../hooks/useToasts';
 import { useWalkmanPlayback } from '../hooks/useWalkmanPlayback';
 import { useAppScreenHistory } from '../hooks/useAppScreenHistory';
+import { usePushNotifications } from '../hooks/usePushNotifications';
 import { achievementCatalogService } from '../../services/AchievementCatalogService';
 import { openAdminConsole } from '../../lib/adminAccess';
 import type { PlayerSessionValue, PlayerPlaybackValue } from '../types';
@@ -154,6 +155,14 @@ function PlayerProvidersInner({ children }: { children: React.ReactNode }) {
     onOverlayDismiss: dismissHistoryOverlay,
   });
 
+  usePushNotifications({
+    masterAccount,
+    playerData: rawPlayerData,
+    addToast,
+    setScreen,
+    handleCharacterSelect,
+    handleCharacterSwitch,
+  });
   usePlayerServicesSync(auth, addToast);
   usePlayerScreenAnalytics(screen);
 

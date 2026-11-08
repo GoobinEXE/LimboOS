@@ -482,5 +482,25 @@
     "driveD": "CD Drive (D:)",
     "driveA": "Floppy (A:)",
     "recycleEmpty": "The Recycle Bin is empty."
+  },
+  "push": {
+    "prompt": {
+      "title": "Transmission channel",
+      "body": "Authorize the channel to know when the GM sends files, messages or calls the table, even with the terminal closed.",
+      "accept": "Open channel",
+      "later": "Not now"
+    },
+    "prefs": {
+      "title": "Notifications",
+      "intel": "Intel files",
+      "sms": "NPC messages",
+      "achievements": "Achievements",
+      "gm": "GM notices",
+      "reminders": "Session reminders",
+      "on": "ON",
+      "off": "MUTED",
+      "enable": "Allow notifications",
+      "denied": "Notifications are blocked on this device. Allow them in system settings."
+    }
   }
 }

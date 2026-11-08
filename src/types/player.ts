@@ -7,6 +7,15 @@ export type DisplayMode = 'default' | 'title' | 'chapter' | 'type';
 
 // --- Database Models: Master Account ---
 
+/** Canais de push da conta. Ausente ou true = ligado. */
+export interface NotificationPrefs {
+  intel?: boolean;
+  sms?: boolean;
+  achievements?: boolean;
+  gm?: boolean;
+  reminders?: boolean;
+}
+
 export interface MasterAccount {
   uid: string;
   email: string;
@@ -28,6 +37,7 @@ export interface MasterAccount {
   /** Só o admin da plataforma altera. */
   suspended?: boolean;
   notes?: string;
+  notificationPrefs?: NotificationPrefs;
 }
 
 // --- Database Models: Character (Agent) ---

@@ -187,6 +187,7 @@
       "achievement": "Conquista",
       "sms": "SMS",
       "video": "Vídeo",
+      "push": "Push",
       "dosAll": "DOS → todos",
       "macAll": "Mac → todos"
     },
@@ -222,7 +223,8 @@
       "intel": "Entregar Intel",
       "achievements": "Outorgar Conquista",
       "sms": "Distribuir SMS NPC",
-      "video": "Transmitir Vídeo"
+      "video": "Transmitir Vídeo",
+      "push": "Mensagem Push"
     },
     "searchAchievement": "BUSCAR CONQUISTA...",
     "npcAll": "Todos os NPCs",
@@ -1030,5 +1032,13 @@
       "created": "Conta criada.",
       "password": "Senha alterada."
     }
+  },
+  "push": {
+    "target": { "label": "Destino", "selected": "Agentes ({{n}})", "group": "Esquadrão da sessão", "mission": "Missão", "all": "Pasta inteira" },
+    "field": { "title": "Título", "body": "Mensagem", "sendAt": "Agendar (vazio envia agora)" },
+    "action": { "send": "Enviar agora", "schedule": "Agendar" },
+    "pending": "Agendados",
+    "history": "Últimos envios",
+    "toast": { "sent": "Enviado a {{sent}} aparelho(s) de {{n}} conta(s)", "scheduled": "Lembrete agendado", "fail": "Falha no push" }
   }
 }

@@ -11,10 +11,11 @@ import { useAchievementCatalog } from '../../hooks/useAchievementCatalog';
 import IntelDistributionDrawer from './IntelDistributionDrawer';
 import SmsDistributionDrawer, { type SmsTarget } from './SmsDistributionDrawer';
 import DeliverShell from './DeliverShell';
+import PushDeliverDrawer from './PushDeliverDrawer';
 import { useToast } from './ToastProvider';
 import { ADMIN_SPRING } from '../lib/motion';
 
-export type LiveDeliverKind = 'intel' | 'achievements' | 'sms' | 'video';
+export type LiveDeliverKind = 'intel' | 'achievements' | 'sms' | 'video' | 'push';
 
 export interface LiveDeliverTarget {
   uid: string;
@@ -28,6 +29,8 @@ interface LiveDeliverDrawerProps {
   targets: LiveDeliverTarget[];
   /** Missão da sessão (ou dos alvos): filtra os NPCs da distribuição de SMS. */
   missionId?: string | null;
+  /** Esquadrão da sessão ativa: alvo opcional do push. */
+  groupId?: string | null;
   onClose: () => void;
   onSuccess: () => void;
 }
@@ -39,6 +42,7 @@ export default function LiveDeliverDrawer({
   kind,
   targets,
   missionId,
+  groupId,
   onClose,
   onSuccess,
 }: LiveDeliverDrawerProps) {
@@ -48,7 +52,13 @@ export default function LiveDeliverDrawer({
     achievements: t('deliver.kind.achievements'),
     sms: t('deliver.kind.sms'),
     video: t('deliver.kind.video'),
+    push: t('deliver.kind.push'),
   };
+  if (kind === 'push') {
+    return (
+      <PushDeliverDrawer targets={targets} missionId={missionId} groupId={groupId} onClose={onClose} onSuccess={onSuccess} />
+    );
+  }
   if (kind === 'intel' || kind === 'video') {
     const grantTargets: IntelGrantTarget[] = targets.map((target) => ({
       uid: target.uid,

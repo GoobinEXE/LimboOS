@@ -359,6 +359,7 @@ export class UserService {
       unlockedAt: serverTimestamp(),
       campaignId: campaignId ?? null,
       workspaceId: getTenantScope()?.wsId ?? null,
+      source: "admin",
     }, { merge: true });
   }
 
@@ -377,6 +378,7 @@ export class UserService {
       workspaceId: getTenantScope()?.wsId ?? null,
       platform: options?.platform || "walkman",
       unlockedAt: serverTimestamp(),
+      source: "admin",
     });
   }
 

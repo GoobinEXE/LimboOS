@@ -3,6 +3,7 @@ import type { Dispatch, SetStateAction } from 'react';
 import { activityLogger } from '../../services/ActivityLogger';
 import { analyticsTracker } from '../../services/AnalyticsTracker';
 import { playerSyncService } from '../../services/PlayerSyncService';
+import { pushService } from '../../services/PushService';
 import {
   onAuthStateChanged,
   logout,
@@ -134,6 +135,7 @@ export function usePlayerAuth(options: UsePlayerAuthOptions) {
     onPlaybackReset();
     setScreen('login');
 
+    await pushService.detach();
     await logout();
   }, [onPlaybackReset]);
 

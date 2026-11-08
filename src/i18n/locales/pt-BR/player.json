@@ -482,5 +482,25 @@
     "driveD": "Drive CD (D:)",
     "driveA": "Disquete (A:)",
     "recycleEmpty": "A Lixeira está vazia."
+  },
+  "push": {
+    "prompt": {
+      "title": "Canal de transmissão",
+      "body": "Autorize o canal para saber quando o mestre enviar arquivos, mensagens ou chamar a mesa, mesmo com o terminal fechado.",
+      "accept": "Abrir canal",
+      "later": "Agora não"
+    },
+    "prefs": {
+      "title": "Notificações",
+      "intel": "Arquivos de intel",
+      "sms": "Mensagens de NPC",
+      "achievements": "Conquistas",
+      "gm": "Avisos do mestre",
+      "reminders": "Lembretes de sessão",
+      "on": "LIGADO",
+      "off": "MUDO",
+      "enable": "Autorizar notificações",
+      "denied": "Notificações bloqueadas neste aparelho. Libere nos ajustes do sistema."
+    }
   }
 }

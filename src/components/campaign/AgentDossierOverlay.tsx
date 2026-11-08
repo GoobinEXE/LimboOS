@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import NotificationPrefsSection from './NotificationPrefsSection';
 import { motion, AnimatePresence } from 'motion/react';
 import { SPRING_INDICATOR, SPRING_SNAP } from '../../lib/motion';
 import { X, Trophy, Music, Shield, Radio, Camera, Pencil, Check } from 'lucide-react';
@@ -389,6 +390,7 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager, onUpdat
                   </button>
                 )}
               </div>
+              <NotificationPrefsSection />
             </motion.div>
           )}
 

@@ -4,8 +4,10 @@ import { useSwipeable } from 'react-swipeable';
 import { useTranslation } from 'react-i18next';
 import ToastNotification from '../../components/ToastNotification';
 import RetroLoading from '../../components/player/RetroLoading';
+import { isNative } from '../../lib/native/platform';
 
 const EvidenceReader = React.lazy(() => import('../../components/EvidenceReader'));
+const PushPermissionPrompt = React.lazy(() => import('../../components/campaign/PushPermissionPrompt'));
 import NokiaSessionLayout from './NokiaSessionLayout';
 import PlayerScreenRouter from './PlayerScreenRouter';
 import { usePlayerSession } from '../context/PlayerProviders';
@@ -114,6 +116,12 @@ export default function PlayerRootShell() {
           </React.Suspense>
         )}
       </AnimatePresence>
+
+      {isNative() && playerData && screen === 'player' && (
+        <React.Suspense fallback={null}>
+          <PushPermissionPrompt />
+        </React.Suspense>
+      )}
 
       <ToastNotification toasts={playback.toasts} onDismiss={playback.dismissToast} />
     </div>

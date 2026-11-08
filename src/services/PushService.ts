@@ -92,8 +92,11 @@ class PushService {
       }).catch((err) => console.warn('[Push] canal Android:', err));
     }
 
+    // O Android emite token mesmo sem a permissão: só registra quem autorizou.
     await FirebaseMessaging.addListener('tokenReceived', ({ token }) => {
-      void this.saveToken(token).catch((err) => console.warn('[Push] token:', err));
+      void this.getPermission()
+        .then((permission) => (permission === 'granted' ? this.saveToken(token) : undefined))
+        .catch((err) => console.warn('[Push] token:', err));
     });
     await FirebaseMessaging.addListener('notificationReceived', ({ notification }) => {
       this.emitForeground(notification);

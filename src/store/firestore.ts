@@ -675,6 +675,8 @@ export async function broadcastVideoToCharacters(
         intelId,
         requestId,
         triggeredAt: serverTimestamp(),
+        // Com intel liberada, o push da intel já avisa o jogador.
+        notify: !options?.grantIntel,
       },
     }, { merge: true });
   });

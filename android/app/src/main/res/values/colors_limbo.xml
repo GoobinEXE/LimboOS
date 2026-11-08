@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Mesma cor do splash crítico (boot-surface) em index.html -->
+    <color name="limbo_surface">#131210</color>
+    <color name="limbo_accent">#FF8C00</color>
+</resources>

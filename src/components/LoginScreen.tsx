@@ -59,7 +59,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
   };
 
   return (
-    <div className="w-full h-full flex items-center justify-center p-4 overflow-y-auto relative safe-area-pad min-h-0">
+    <div className="w-full h-full flex items-center justify-center pt-[max(1rem,env(safe-area-inset-top))] pr-[max(1rem,env(safe-area-inset-right))] pb-[max(1rem,env(safe-area-inset-bottom))] pl-[max(1rem,env(safe-area-inset-left))] overflow-y-auto relative min-h-0">
       <div className="noise-overlay" />
       <div className="scanlines" />
       <div className="vignette" />
@@ -77,10 +77,10 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
         transition={{ duration: 0.32, ease: EASE_OUT }}
         className="w-full max-w-md relative"
       >
+        <div className="absolute -top-3 right-6 bg-accent px-2 py-0.5 text-[10px] font-display font-bold text-black tracking-widest uppercase z-10 rounded-inset">
+          {t('login.badge')}
+        </div>
         <div className="bg-surface-raised rounded-card border border-border shadow-panel relative overflow-hidden">
-          <div className="absolute -top-3 right-6 bg-accent px-2 py-0.5 text-[10px] font-display font-bold text-black tracking-widest uppercase z-10 rounded-inset">
-            {t('login.badge')}
-          </div>
           <div className="p-8">
             <div className="mb-10 border-l-2 border-accent pl-6">
               <div className="text-protocol text-ash-500 mb-3">{t('login.eyebrow')}</div>
@@ -139,7 +139,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
                 )}
               </AnimatePresence>
 
-              <div className="flex items-center justify-between gap-6 pt-2">
+              <div className="flex flex-col items-stretch gap-4 pt-2 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
                 <p className="text-[9px] font-display text-ash-600 uppercase tracking-widest leading-relaxed">
                   {t('login.hint.register')}
                 </p>

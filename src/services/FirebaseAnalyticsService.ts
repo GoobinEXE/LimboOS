@@ -124,6 +124,19 @@ class FirebaseAnalyticsService {
     this.screenEnteredAt = Date.now();
   }
 
+  /** Eventos recomendados do GA4 para conta e convite. */
+  logLogin(method: 'password' | 'google' | 'apple'): void {
+    this.log('login', { method });
+  }
+
+  logSignUp(method: 'password' | 'google' | 'apple'): void {
+    this.log('sign_up', { method });
+  }
+
+  logJoinGroup(kind: string): void {
+    this.log('join_group', { group_id: kind });
+  }
+
   /**
    * Track loading time for lazy-loaded screens or data fetches.
    */

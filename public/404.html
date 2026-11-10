@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Sinal perdido | LimboOS</title>
+  <meta name="robots" content="noindex" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta name="theme-color" content="#131210" />
+  <style>
+    :root { --surface: #131210; --raised: #1c1b19; --border: #2e2c29; --bone: #ece6da; --ash: #8a847a; --accent: #FF8C00; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; background: var(--surface); color: var(--bone); }
+    body {
+      font-family: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+      display: flex; align-items: center; justify-content: center;
+      padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+      background-image: radial-gradient(120% 90% at 50% 45%, transparent 40%, rgba(0,0,0,.45) 100%);
+    }
+    main { width: 100%; max-width: 420px; background: var(--raised); border: 1px solid var(--border); border-radius: 10px; padding: 32px; }
+    .tag { font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: var(--accent); margin: 0 0 16px; }
+    h1 { font-size: 28px; letter-spacing: .04em; text-transform: uppercase; margin: 0 0 12px; line-height: 1.2; }
+    p { color: var(--ash); font-size: 14px; line-height: 1.6; margin: 0 0 28px; }
+    a { display: block; text-align: center; background: var(--accent); color: #1a0d00; text-decoration: none; font-weight: 700; font-size: 12px; letter-spacing: .2em; text-transform: uppercase; padding: 16px; border-radius: 6px; }
+    a:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
+  </style>
+</head>
+<body>
+  <main>
+    <p class="tag">Erro 404 · Nó desconhecido</p>
+    <h1>Sinal perdido</h1>
+    <p>Este endereço não existe no terminal. O link pode estar incompleto ou o arquivo foi retirado da rede.</p>
+    <a href="/">Voltar ao terminal</a>
+  </main>
+</body>
+</html>

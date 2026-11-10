@@ -1,3 +1,4 @@
+import { firebaseAnalytics } from './FirebaseAnalyticsService';
 import { getDocs, onSnapshot } from 'firebase/firestore';
 import { callFunction } from '../lib/functions';
 import { requireTenantScope, wsCollection } from '../lib/tenantScope';
@@ -69,10 +70,12 @@ class InviteService {
   }
 
   async accept(token: string, codinome?: string): Promise<AcceptedInvite> {
-    return callFunction<Record<string, unknown>, AcceptedInvite>('acceptInvite', {
+    const accepted = await callFunction<Record<string, unknown>, AcceptedInvite>('acceptInvite', {
       token,
       ...(codinome ? { codinome } : {}),
     });
+    firebaseAnalytics.logJoinGroup(accepted.kind);
+    return accepted;
   }
 
   /** Co-mestres da pasta (só o dono lista). */

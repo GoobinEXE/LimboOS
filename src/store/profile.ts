@@ -15,6 +15,7 @@ import i18n from '../i18n';
 import { updateLastLogin, waitForUserDoc } from './firestore';
 import type { MasterAccount } from '../types/player';
 import { isNative } from '../lib/native/platform';
+import { firebaseAnalytics } from '../services/FirebaseAnalyticsService';
 
 function masterIdToEmail(masterId: string): string {
   const slug = masterId.trim().toLowerCase().replace(/[^a-z0-9._-]/g, '_');
@@ -151,6 +152,7 @@ export async function loginOrCreate(
       await firebaseSignOut(auth);
       return { ok: false, error: 'unknown' as const, message: i18n.t('auth.error.suspended', { ns: 'common' }) };
     }
+    firebaseAnalytics.logLogin('password');
     return { ok: true, account };
   } catch (signInErr: unknown) {
     const code = (signInErr as { code?: string }).code ?? '';
@@ -160,6 +162,7 @@ export async function loginOrCreate(
         const credential = await createUserWithEmailAndPassword(auth, email, password);
         user = credential.user;
         const account = await ensureUserProfile(user);
+        firebaseAnalytics.logSignUp('password');
         return { ok: true, account };
       } catch (createErr: unknown) {
         await rollbackAuthOnProfileFailure(user ?? auth.currentUser);
@@ -213,6 +216,7 @@ export async function loginWithProvider(providerName: 'google' | 'apple'): Promi
       return { ok: false, error: 'unknown' as const, message: i18n.t('auth.error.suspended', { ns: 'common' }) };
     }
 
+    firebaseAnalytics.logLogin(providerName);
     return { ok: true, account };
   } catch (err: unknown) {
     await rollbackAuthOnProfileFailure(auth.currentUser);

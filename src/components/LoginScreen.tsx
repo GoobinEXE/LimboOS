@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useTranslation } from 'react-i18next';
-import { Lock, Terminal, Cpu, AlertTriangle, ChevronRight } from 'lucide-react';
+import { Lock, Terminal, Cpu, AlertTriangle, ChevronRight, Info } from 'lucide-react';
+import AboutDialog from './AboutDialog';
 import { loginOrCreate, loginWithProvider } from '../store/profile';
 import type { MasterAccount } from '../types/player';
 import { EASE_OUT, EXIT_FAST } from '../lib/motion';
@@ -15,6 +16,7 @@ import RetroSpinner from './player/RetroSpinner';
 export default function LoginScreen({ onLogin }: LoginScreenProps) {
   const { t } = useTranslation('player');
   const { t: tCommon } = useTranslation('common');
+  const [aboutOpen, setAboutOpen] = useState(false);
   const [masterId, setMasterId] = useState('');
   const [password, setPassword] = useState('');
   const [isLoggingIn, setIsLoggingIn] = useState(false);
@@ -198,12 +200,24 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
                 <div key={i} className={`w-1.5 h-3 rounded-inset ${isLoggingIn ? 'animate-led bg-accent' : 'bg-border-strong'}`} style={{ animationDelay: `${i * 0.1}s` }} />
               ))}
             </div>
-            <div className="text-protocol text-ash-600">{t('login.linkNode')}</div>
+            <div className="flex items-center gap-3">
+              <div className="text-protocol text-ash-600">{t('login.linkNode')}</div>
+              <button
+                type="button"
+                onClick={() => setAboutOpen(true)}
+                aria-label={tCommon('about.openAria')}
+                title={tCommon('about.title')}
+                className="w-7 h-7 -mr-2 flex items-center justify-center rounded-control text-ash-500 hover:text-white hover:bg-white/[0.05] transition-colors"
+              >
+                <Info size={14} />
+              </button>
+            </div>
           </div>
         </div>
       </motion.div>
 
       <BootLogColumn lines={t('login.bootLog', { returnObjects: true }) as string[]} label={t('login.side.masterAccess')} />
+      <AboutDialog open={aboutOpen} onClose={() => setAboutOpen(false)} />
     </div>
   );
 }

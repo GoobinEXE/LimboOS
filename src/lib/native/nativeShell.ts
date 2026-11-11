@@ -3,7 +3,7 @@ import { getPlatform, isNative } from './platform';
 /**
  * Ajustes do shell nativo no boot: status bar clara sobre o fundo escuro e
  * esconder o splash nativo assim que o WebView pinta o splash crítico de index.html
- * (mesma cor #131210, então a troca não pisca). No navegador não faz nada.
+ * (mesma cor #090A0C, então a troca não pisca). No navegador não faz nada.
  */
 export function initNativeShell(): void {
   if (!isNative()) return;

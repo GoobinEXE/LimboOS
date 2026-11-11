@@ -184,5 +184,44 @@
     "switchAccount": "Trocar de conta",
     "accept": "Aceitar convite",
     "acceptFail": "Não foi possível aceitar o convite. Ele pode ter vencido ou já ter sido usado."
+  },
+  "about": {
+    "title": "Sobre o LimboOS",
+    "open": "Sobre",
+    "openAria": "Abrir informações sobre o LimboOS",
+    "tagline": "Terminal dos agentes para campanhas de RPG de mesa",
+    "versionLine": "Versão {{version}}",
+    "section": {
+      "info": "Informações",
+      "links": "Links",
+      "legal": "Legal"
+    },
+    "row": {
+      "version": "Versão",
+      "build": "Build",
+      "commit": "Código",
+      "builtAt": "Compilado em",
+      "platform": "Plataforma",
+      "language": "Idioma"
+    },
+    "platform": {
+      "ios": "iOS",
+      "android": "Android",
+      "web": "Navegador"
+    },
+    "copyInfo": "Copiar informações do app",
+    "copied": "Informações copiadas",
+    "copyFailed": "Não foi possível copiar",
+    "website": "Site oficial",
+    "source": "Código e licença",
+    "licenses": "Licenças de código aberto",
+    "licensesSub": "{{count}} bibliotecas usadas no app",
+    "licensesEmpty": "A lista de licenças não está disponível neste build.",
+    "licenseUnknown": "licença não declarada",
+    "developedBy": "Desenvolvido por",
+    "copyright": "© {{years}} {{holder}}. Todos os direitos reservados.",
+    "licenseNote": "O uso, a cópia e a redistribuição seguem a licença do LimboOS. Bibliotecas de terceiros mantêm as próprias licenças.",
+    "close": "Fechar",
+    "rowSub": "Versão, licenças e créditos"
   }
 }

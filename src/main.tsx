@@ -5,6 +5,7 @@ import App from './App.tsx';
 import './index.css';
 import {applyWebKitLiteClass} from './lib/webkitLite';
 import {initNativeShell} from './lib/native/nativeShell';
+import {detachBootSplash} from './lib/bootSplash';
 
 // Antes do paint React: overlays CSS leves em Safari / iOS WebKit
 applyWebKitLiteClass();
@@ -35,11 +36,16 @@ window.addEventListener('unhandledrejection', (event) => {
 
 
 
+// Splash Dark Room de index.html: sai do #root antes do React e some com fade
+const releaseBootSplash = detachBootSplash();
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <App />
   </StrictMode>,
 );
+
+releaseBootSplash();
 
 // App Capacitor: status bar e splash nativo (no-op no navegador)
 initNativeShell();

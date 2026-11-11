@@ -184,5 +184,44 @@
     "switchAccount": "Switch account",
     "accept": "Accept invite",
     "acceptFail": "Could not accept the invite. It may have expired or already been used."
+  },
+  "about": {
+    "title": "About LimboOS",
+    "open": "About",
+    "openAria": "Open information about LimboOS",
+    "tagline": "Agent terminal for tabletop RPG campaigns",
+    "versionLine": "Version {{version}}",
+    "section": {
+      "info": "Information",
+      "links": "Links",
+      "legal": "Legal"
+    },
+    "row": {
+      "version": "Version",
+      "build": "Build",
+      "commit": "Code",
+      "builtAt": "Built on",
+      "platform": "Platform",
+      "language": "Language"
+    },
+    "platform": {
+      "ios": "iOS",
+      "android": "Android",
+      "web": "Browser"
+    },
+    "copyInfo": "Copy app information",
+    "copied": "Information copied",
+    "copyFailed": "Could not copy",
+    "website": "Official website",
+    "source": "Source and license",
+    "licenses": "Open source licenses",
+    "licensesSub": "{{count}} libraries used in the app",
+    "licensesEmpty": "The license list is not available in this build.",
+    "licenseUnknown": "license not declared",
+    "developedBy": "Developed by",
+    "copyright": "© {{years}} {{holder}}. All rights reserved.",
+    "licenseNote": "Use, copying and redistribution follow the LimboOS license. Third-party libraries keep their own licenses.",
+    "close": "Close",
+    "rowSub": "Version, licenses and credits"
   }
 }

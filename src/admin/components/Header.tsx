@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { User } from 'firebase/auth';
-import { LogOut, Search } from 'lucide-react';
+import { Info, LogOut, Search } from 'lucide-react';
+import AboutDialog from '../../components/AboutDialog';
 import LanguageSelector from '../../components/LanguageSelector';
 import { modKeyLabel } from '../lib/platform';
 import type { AdminCrumb } from '../lib/adminBreadcrumb';
@@ -42,6 +43,8 @@ export default function Header({
   onOpenMenu,
 }: HeaderProps) {
   const { t } = useTranslation('admin');
+  const { t: tCommon } = useTranslation('common');
+  const [aboutOpen, setAboutOpen] = useState(false);
   const mod = modKeyLabel();
 
   return (
@@ -168,6 +171,16 @@ export default function Header({
           </a>
         )}
 
+        <button
+          type="button"
+          onClick={() => setAboutOpen(true)}
+          className="lmb-btn lmb-btn-ghost lmb-btn-icon h-8 min-h-0"
+          title={tCommon('about.title')}
+          aria-label={tCommon('about.openAria')}
+        >
+          <Info size={15} />
+        </button>
+
         {user && (
           <button
             type="button"
@@ -180,6 +193,7 @@ export default function Header({
           </button>
         )}
       </div>
+      <AboutDialog open={aboutOpen} onClose={() => setAboutOpen(false)} />
     </header>
   );
 }

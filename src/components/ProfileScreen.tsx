@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, LogOut, Trophy, Music, Pencil, Check, X, ExternalLink, Image, Map as MapIcon, User, Phone, ChevronRight, IdCard, MonitorCog } from 'lucide-react';
+import { ArrowLeft, LogOut, Trophy, Music, Pencil, Check, X, ExternalLink, Image, Map as MapIcon, User, Phone, ChevronRight, IdCard, MonitorCog, Info } from 'lucide-react';
+import AboutDialog from './AboutDialog';
 import PlayerGallery from './PlayerGallery';
 import { AchievementCatalog } from './achievements/AchievementCatalog';
 import LanguageSelector from './LanguageSelector';
@@ -162,6 +163,7 @@ export default function ProfileScreen({
   const { t: tCommon } = useTranslation('common');
   const { isLandscape } = useLandscapeLayout();
 
+  const [aboutOpen, setAboutOpen] = useState(false);
   const [isEditingSpotify, setIsEditingSpotify] = useState(false);
   const [spotifyInput, setSpotifyInput] = useState(profile.character.spotifyPlaylistUrl || '');
   const [spotifyError, setSpotifyError] = useState('');
@@ -480,6 +482,7 @@ export default function ProfileScreen({
             {onOpenAdmin && (
               <ActionRow onClick={onOpenAdmin} Icon={MonitorCog} title={t('profile.action.console')} sub={t('profile.action.consoleSub')} />
             )}
+            <ActionRow onClick={() => setAboutOpen(true)} Icon={Info} title={tCommon('about.title')} sub={tCommon('about.rowSub')} />
           </div>
 
           <section className="px-4 pt-4 pb-2">
@@ -651,6 +654,7 @@ export default function ProfileScreen({
           </section>
         </div>
       </div>
+      <AboutDialog open={aboutOpen} onClose={() => setAboutOpen(false)} />
     </motion.div>
   );
 }

@@ -31,3 +31,7 @@ service-account.json
 
 # Worktrees de sessões do Claude Code
 .claude/worktrees/
+
+# Gerados por scripts/build-info.mjs
+/public/build-info.json
+/public/licenses.json

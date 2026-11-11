@@ -2,5 +2,7 @@
 <resources>
     <!-- Mesma cor do splash crítico (boot-surface) em index.html -->
     <color name="limbo_surface">#131210</color>
+    <!-- Splash: Preto Fita Magnética da Dark Room, igual ao splash web de index.html -->
+    <color name="dark_room_black">#090A0C</color>
     <color name="limbo_accent">#FF8C00</color>
 </resources>

@@ -69,9 +69,9 @@ export default function MediaFolderSidebar({
   };
 
   return (
-    <aside className="w-full md:w-56 shrink-0 border border-primary/10 bg-black/20 flex flex-col max-h-[70vh] md:max-h-none">
-      <div className="px-3 py-2.5 border-b border-primary/10 flex items-center justify-between gap-2">
-        <p className="text-[9px] font-display font-bold text-ash-500 uppercase tracking-[0.25em]">
+    <aside className="w-full md:w-56 shrink-0 bg-black/20 flex flex-col max-h-[70vh] md:max-h-none">
+      <div className="px-3 py-2.5 flex items-center justify-between gap-2">
+        <p className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.08em]">
           {t('media.foldersTitle')}
         </p>
         {!selectionMode && (
@@ -103,7 +103,7 @@ export default function MediaFolderSidebar({
         />
 
         {campaignFolders.length > 0 && (
-          <p className="px-3 pt-3 pb-1 text-[9px] font-display font-bold text-ash-600 uppercase tracking-[0.3em]">
+          <p className="px-3 pt-3 pb-1 text-[10px] font-display font-bold text-ash-600 uppercase tracking-[0.08em]">
             {t('reports.group.campaigns')}
           </p>
         )}
@@ -119,7 +119,7 @@ export default function MediaFolderSidebar({
         ))}
 
         {(extraFolders.length > 0 || creating) && (
-          <p className="px-3 pt-3 pb-1 text-[9px] font-display font-bold text-ash-600 uppercase tracking-[0.3em]">
+          <p className="px-3 pt-3 pb-1 text-[10px] font-display font-bold text-ash-600 uppercase tracking-[0.08em]">
             Extras
           </p>
         )}
@@ -135,13 +135,13 @@ export default function MediaFolderSidebar({
                 if (e.key === 'Escape') setCreating(false);
               }}
               placeholder="NOME PASTA"
-              className="flex-1 min-w-0 bg-surface-container-lowest border border-primary/20 text-[9px] font-display font-bold uppercase tracking-widest text-bone px-2 py-1.5 outline-none focus:border-primary/50"
+              className="flex-1 min-w-0 bg-surface-container-lowest text-[10px] font-display font-bold uppercase tracking-wider text-bone px-2 py-1.5 outline-none"
             />
             <button
               type="button"
               disabled={busy}
               onClick={() => void submitCreate()}
-              className="px-2 bg-primary/20 text-primary hover:bg-primary hover:text-black text-[9px] font-display font-bold"
+              className="px-2 bg-primary/20 text-primary hover:bg-primary hover:text-black text-[10px] font-display font-bold"
             >
               OK
             </button>
@@ -160,13 +160,13 @@ export default function MediaFolderSidebar({
                     if (e.key === 'Enter') void submitRename(folder);
                     if (e.key === 'Escape') setRenamingId(null);
                   }}
-                  className="flex-1 min-w-0 bg-surface-container-lowest border border-primary/20 text-[9px] font-display font-bold uppercase tracking-widest text-bone px-2 py-1.5 outline-none focus:border-primary/50"
+                  className="flex-1 min-w-0 bg-surface-container-lowest text-[10px] font-display font-bold uppercase tracking-wider text-bone px-2 py-1.5 outline-none"
                 />
                 <button
                   type="button"
                   disabled={busy}
                   onClick={() => void submitRename(folder)}
-                  className="px-2 bg-primary/20 text-primary hover:bg-primary hover:text-black text-[9px] font-display font-bold"
+                  className="px-2 bg-primary/20 text-primary hover:bg-primary hover:text-black text-[10px] font-display font-bold"
                 >
                   OK
                 </button>
@@ -237,15 +237,15 @@ function FolderRow({
       onClick={onClick}
       className={`group w-full flex items-center gap-2 px-3 py-2 text-left transition-colors ${
         active
-          ? 'bg-primary/10 text-primary border-l-2 border-l-primary'
-          : 'text-ash-400 hover:bg-primary/5 hover:text-primary border-l-2 border-l-transparent'
+          ? 'bg-primary/10 text-primary'
+          : 'text-ash-400 hover:bg-primary/5 hover:text-primary border-l-2 border-seam'
       }`}
     >
       <span className="material-symbols-outlined text-base shrink-0">{icon}</span>
-      <span className="flex-1 min-w-0 text-[9px] font-display font-bold uppercase tracking-widest truncate">
+      <span className="flex-1 min-w-0 text-[10px] font-display font-bold uppercase tracking-wider truncate">
         {label}
       </span>
-      <span className="text-[9px] font-display font-bold text-ash-600 tabular-nums">
+      <span className="text-[10px] font-display font-bold text-ash-600 tabular-nums">
         {count}
       </span>
       {actions && (

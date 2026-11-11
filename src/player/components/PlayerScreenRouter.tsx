@@ -119,7 +119,7 @@ export default function PlayerScreenRouter() {
           {...screenMotion}
           className="w-full h-full flex items-center justify-center p-0 sm:p-4"
         >
-          <div className="w-full h-full max-w-130 rounded-none sm:rounded-panel shadow-panel border-0 sm:border border-border-accent relative flex flex-col mx-auto overflow-hidden bg-surface">
+          <div className="w-full h-full max-w-130 rounded-none sm:rounded-panel relative flex flex-col mx-auto overflow-hidden bg-surface">
             <React.Suspense fallback={<RetroLoading message={t('app.loading.dossier')} />}>
               <AgentDossierOverlay
                 onClose={() => goBack('campaignSelection')}

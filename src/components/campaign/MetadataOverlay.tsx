@@ -29,18 +29,18 @@ const DANGER_KEYS = ['none', 'baixo', 'moderado', 'elevado', 'alto', 'critico'] 
 
 const CornerMarks = () => (
   <>
-    <span aria-hidden className="absolute top-2 left-2 w-3 h-3 border-t border-l border-border-accent" />
-    <span aria-hidden className="absolute top-2 right-2 w-3 h-3 border-t border-r border-border-accent" />
-    <span aria-hidden className="absolute bottom-2 left-2 w-3 h-3 border-b border-l border-border-accent" />
-    <span aria-hidden className="absolute bottom-2 right-2 w-3 h-3 border-b border-r border-border-accent" />
+    <span aria-hidden className="absolute top-2 left-2 w-3 h-3" />
+    <span aria-hidden className="absolute top-2 right-2 w-3 h-3" />
+    <span aria-hidden className="absolute bottom-2 left-2 w-3 h-3" />
+    <span aria-hidden className="absolute bottom-2 right-2 w-3 h-3" />
   </>
 );
 
 /** Linha de ficha: rótulo ..... valor (pontilhado tipo formulário datilografado). */
 const Row = ({ label, children }: { label: string; children: React.ReactNode }) => (
   <div className="flex items-baseline gap-2 min-w-0">
-    <span className="text-protocol text-[9px] text-ash-500 shrink-0">{label}</span>
-    <span aria-hidden className="flex-1 border-b border-dotted border-border-strong -translate-y-0.75" />
+    <span className="text-protocol text-[10px] text-ash-500 shrink-0">{label}</span>
+    <span aria-hidden className="flex-1 border-b border-seam -translate-y-0.75" />
     <span className="text-mono-ui text-[11px] text-right min-w-0 truncate">{children}</span>
   </div>
 );
@@ -101,17 +101,17 @@ export const MetadataOverlay = ({ onClose, agent }: MetadataOverlayProps) => {
         role="dialog"
         aria-modal="true"
         aria-label={t('metadata.title')}
-        className="bg-surface-panel border border-border-strong rounded-card shadow-panel w-full max-w-90 relative overflow-hidden"
+        className="bg-surface-panel rounded-card w-full max-w-90 relative overflow-hidden"
         onClick={e => e.stopPropagation()}
       >
         <div className="noise-overlay" />
         <CornerMarks />
         <div aria-hidden className="absolute inset-x-0 top-0 h-0.75 bg-linear-to-r from-accent via-accent-60 to-transparent" />
 
-        <header className="px-7 pt-7 pb-4 border-b border-border-subtle relative z-10">
+        <header className="px-7 pt-7 pb-4 border-b border-seam relative z-10">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-protocol text-[8px] text-primary/60">{t('metadata.title')}</span>
-            <span className="inline-flex items-center gap-1.5 text-protocol text-[8px]">
+            <span className="text-protocol text-[10px] text-primary/60">{t('metadata.title')}</span>
+            <span className="inline-flex items-center gap-1.5 text-protocol text-[10px]">
               <span className={`w-1.5 h-1.5 rounded-full ${statusCfg.dot} animate-led`} />
               <span className={statusCfg.color}>{statusCfg.label}</span>
             </span>
@@ -131,7 +131,7 @@ export const MetadataOverlay = ({ onClose, agent }: MetadataOverlayProps) => {
                       RM-{agentCode}
                     </motion.span>
                   ) : (
-                    <motion.span key="mask" exit={{ opacity: 0, y: -4 }} className="inline-block tracking-widest opacity-60">
+                    <motion.span key="mask" exit={{ opacity: 0, y: -4 }} className="inline-block tracking-wider opacity-60">
                       RM-{maskedCode}
                     </motion.span>
                   )}
@@ -148,8 +148,8 @@ export const MetadataOverlay = ({ onClose, agent }: MetadataOverlayProps) => {
 
           <div className="space-y-2 pt-1">
             <div className="flex items-center justify-between">
-              <span className="text-protocol text-[9px] text-ash-500">{t('danger.label', { ns: 'common' })}</span>
-              <span className={`text-protocol text-[9px] ${dangerLevel >= 4 ? 'text-red-400' : dangerLevel >= 2 ? 'text-primary' : 'text-ash-500'}`}>
+              <span className="text-protocol text-[10px] text-ash-500">{t('danger.label', { ns: 'common' })}</span>
+              <span className={`text-protocol text-[10px] ${dangerLevel >= 4 ? 'text-red-400' : dangerLevel >= 2 ? 'text-primary' : 'text-ash-500'}`}>
                 {dangerLabel}
               </span>
             </div>
@@ -160,14 +160,14 @@ export const MetadataOverlay = ({ onClose, agent }: MetadataOverlayProps) => {
                   className={`h-2 flex-1 rounded-inset transition duration-700 ${
                     i < dangerLevel
                       ? dangerLevel >= 4 ? 'bg-red-500' : 'bg-primary'
-                      : 'bg-surface-sunken border border-border-subtle'
+                      : 'bg-surface-sunken'
                   }`}
                 />
               ))}
             </div>
           </div>
 
-          <p className="pt-4 border-t border-border-subtle text-[9px] leading-relaxed text-ash-600 italic font-sans">
+          <p className="pt-4 border-t border-seam text-[10px] leading-relaxed text-ash-600 italic font-sans">
             "Informação classificada nível OMEGA. Distribuição não autorizada resulta em eliminação imediata."
           </p>
         </div>
@@ -176,7 +176,7 @@ export const MetadataOverlay = ({ onClose, agent }: MetadataOverlayProps) => {
           <button
             type="button"
             onClick={onClose}
-            className="w-full bg-accent-10 hover:bg-accent-20 text-primary border border-border-accent rounded-control py-3.5 text-protocol transition duration-200 active:scale-[0.98]"
+            className="w-full bg-accent-10 hover:bg-accent-20 text-primary rounded-control py-3.5 text-protocol transition duration-200 active:scale-[0.98]"
           >
             {t('metadata.syncExit')}
           </button>

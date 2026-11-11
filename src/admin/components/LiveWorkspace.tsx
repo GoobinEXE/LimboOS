@@ -272,15 +272,15 @@ export default function LiveWorkspace({
       {modal}
 
       {/* Sessão ativa */}
-      <section className="border border-phosphor-500/20 bg-surface-container-low/60 p-4 sm:p-5 space-y-4">
+      <section className="bg-surface-container-low/60 p-4 sm:p-5 space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0">
             <span className="material-symbols-outlined text-phosphor-400 text-xl">event_available</span>
             <div className="min-w-0">
-              <h2 className="font-display font-bold uppercase tracking-widest text-sm text-bone">
+              <h2 className="font-display font-bold uppercase tracking-wider text-sm text-bone">
                 {t('live.session.title')}
               </h2>
-              <p className="text-[9px] font-display uppercase tracking-[0.25em] text-ash-500 truncate">
+              <p className="text-[10px] font-display uppercase tracking-[0.08em] text-ash-500 truncate">
                 {t('live.session.subtitle')}
               </p>
             </div>
@@ -290,7 +290,7 @@ export default function LiveWorkspace({
               <button
                 type="button"
                 onClick={() => nav.go(adminPath.mission(activeSession.campaignId))}
-                className="text-[9px] font-display font-bold uppercase tracking-widest px-3 py-1.5 border border-primary/30 text-primary hover:bg-primary/10"
+                className="text-[10px] font-display font-bold uppercase tracking-wider px-3 py-1.5 text-primary hover:bg-primary/10"
               >
                 {t('live.session.openMission')}
               </button>
@@ -299,7 +299,7 @@ export default function LiveWorkspace({
               <button
                 type="button"
                 onClick={() => nav.go(adminPath.squad(activeSession.groupId))}
-                className="text-[9px] font-display font-bold uppercase tracking-widest px-3 py-1.5 border border-primary/30 text-primary hover:bg-primary/10"
+                className="text-[10px] font-display font-bold uppercase tracking-wider px-3 py-1.5 text-primary hover:bg-primary/10"
               >
                 {t('live.session.openSquad')}
               </button>
@@ -308,7 +308,7 @@ export default function LiveWorkspace({
               <button
                 type="button"
                 onClick={() => onSessionChange(null)}
-                className="text-[9px] font-display font-bold uppercase tracking-widest px-3 py-1.5 border border-border text-ash-500 hover:text-red-400 hover:border-red-500/30"
+                className="text-[10px] font-display font-bold uppercase tracking-wider px-3 py-1.5 text-ash-500 hover:text-red-400"
               >
                 {t('live.session.clear')}
               </button>
@@ -317,13 +317,13 @@ export default function LiveWorkspace({
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <label className="space-y-1.5">
-            <span className="text-[9px] font-display font-bold uppercase tracking-widest text-ash-500">
+            <span className="text-[10px] font-display font-bold uppercase tracking-wider text-ash-500">
               {t('live.session.squad')}
             </span>
             <select
               value={activeSession?.groupId || ''}
               onChange={(e) => handleGroupSelect(e.target.value)}
-              className="w-full bg-black/50 border border-border px-3 py-2.5 text-[10px] font-display font-bold uppercase tracking-widest text-bone outline-none focus:border-phosphor-500/40"
+              className="w-full bg-black/50 px-3 py-2.5 text-[10px] font-display font-bold uppercase tracking-wider text-bone outline-none"
             >
               <option value="">{t('live.session.noneSquad')}</option>
               {groups.map((g) => (
@@ -334,14 +334,14 @@ export default function LiveWorkspace({
             </select>
           </label>
           <label className="space-y-1.5">
-            <span className="text-[9px] font-display font-bold uppercase tracking-widest text-ash-500">
+            <span className="text-[10px] font-display font-bold uppercase tracking-wider text-ash-500">
               {t('live.session.mission')}
             </span>
             <select
               value={activeSession?.campaignId || ''}
               onChange={(e) => handleCampaignSelect(e.target.value)}
               disabled={!activeSession?.groupId}
-              className="w-full bg-black/50 border border-border px-3 py-2.5 text-[10px] font-display font-bold uppercase tracking-widest text-bone outline-none focus:border-phosphor-500/40 disabled:opacity-30"
+              className="w-full bg-black/50 px-3 py-2.5 text-[10px] font-display font-bold uppercase tracking-wider text-bone outline-none disabled:opacity-30"
             >
               <option value="">{t('live.session.noneMission')}</option>
               {campaigns.map((c) => (
@@ -360,7 +360,7 @@ export default function LiveWorkspace({
               onChange={(e) => setSessionOnly(e.target.checked)}
               className="accent-phosphor-500"
             />
-            <span className="text-[9px] font-display font-bold uppercase tracking-widest text-ash-400 group-hover:text-phosphor-400">
+            <span className="text-[10px] font-display font-bold uppercase tracking-wider text-ash-400 group-hover:text-phosphor-400">
               {t('live.session.onlySession')}
             </span>
           </label>
@@ -386,16 +386,16 @@ export default function LiveWorkspace({
       </div>
 
       {/* Presença + Entregar */}
-      <section className="border border-primary/20 bg-surface-container-low/60">
-        <div className="flex flex-col gap-3 px-4 sm:px-6 py-4 border-b border-primary/10 bg-black/20">
+      <section className="bg-surface-container-low/60">
+        <div className="flex flex-col gap-3 px-4 sm:px-6 py-4 bg-black/20">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center gap-3 min-w-0">
               <span className="lmb-led text-phosphor-400 animate-led" aria-hidden />
               <div className="min-w-0">
-                <h2 className="font-display font-bold uppercase tracking-widest text-sm text-bone truncate">
+                <h2 className="font-display font-bold uppercase tracking-wider text-sm text-bone truncate">
                   {t('live.presence.title')}
                 </h2>
-                <p className="text-[9px] font-display uppercase tracking-[0.25em] text-ash-500 truncate">
+                <p className="text-[10px] font-display uppercase tracking-[0.08em] text-ash-500 truncate">
                   {filteringBySession
                     ? t('live.presence.subtitleSession', {
                         n: rows.length,
@@ -413,7 +413,7 @@ export default function LiveWorkspace({
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-[9px] font-display font-bold uppercase tracking-widest text-ash-500 mr-1">
+            <span className="text-[10px] font-display font-bold uppercase tracking-wider text-ash-500 mr-1">
               {t('live.confirm.deliverAction')}
             </span>
             <DeliverBtn label={t('live.deliver.intel')} icon="inventory_2" onClick={() => openDeliver('intel')} disabled={rows.length === 0} />
@@ -435,7 +435,7 @@ export default function LiveWorkspace({
                   toast.error(t('live.toast.dosFail'));
                 }
               }}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary text-black text-[9px] font-display font-bold uppercase tracking-widest hover:bg-primary-container transition-colors disabled:opacity-20"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary text-black text-[10px] font-display font-bold uppercase tracking-wider hover:bg-primary-container transition-colors disabled:opacity-20"
             >
               <span className="material-symbols-outlined text-sm">terminal</span>
               {t('live.deliver.dosAll')}
@@ -451,7 +451,7 @@ export default function LiveWorkspace({
                   toast.error(t('live.toast.macFail'));
                 }
               }}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-ash-200 text-black text-[9px] font-display font-bold uppercase tracking-widest hover:bg-white transition-colors disabled:opacity-20"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-ash-200 text-black text-[10px] font-display font-bold uppercase tracking-wider hover:bg-white transition-colors disabled:opacity-20"
             >
               <span className="material-symbols-outlined text-sm">laptop_mac</span>
               {t('live.deliver.macAll')}
@@ -461,7 +461,7 @@ export default function LiveWorkspace({
 
         {rows.length === 0 ? (
           <div className="px-6 py-10 text-center">
-            <p className="text-[10px] font-display font-bold uppercase tracking-[0.3em] text-ash-600">
+            <p className="text-[10px] font-display font-bold uppercase tracking-[0.08em] text-ash-600">
               {filteringBySession
                 ? t('live.presence.emptySession')
                 : t('live.presence.empty')}
@@ -470,7 +470,7 @@ export default function LiveWorkspace({
               <button
                 type="button"
                 onClick={() => setSessionOnly(false)}
-                className="mt-4 text-[9px] font-display font-bold uppercase tracking-widest text-primary/60 hover:text-primary"
+                className="mt-4 text-[10px] font-display font-bold uppercase tracking-wider text-primary/60 hover:text-primary"
               >
                 {t('live.presence.seeAllOnline')}
               </button>
@@ -478,7 +478,7 @@ export default function LiveWorkspace({
               <button
                 type="button"
                 onClick={() => nav.go(adminPath.mesa('acesso'))}
-                className="mt-4 text-[9px] font-display font-bold uppercase tracking-widest text-primary/60 hover:text-primary"
+                className="mt-4 text-[10px] font-display font-bold uppercase tracking-wider text-primary/60 hover:text-primary"
               >
                 {t('live.presence.openAccess')}
               </button>
@@ -486,21 +486,21 @@ export default function LiveWorkspace({
           </div>
         ) : (
           <>
-            <div className="px-4 sm:px-6 py-2 border-b border-border-subtle bg-black/15 flex items-center justify-between">
+            <div className="px-4 sm:px-6 py-2 border-b border-seam bg-black/15 flex items-center justify-between">
               <button
                 type="button"
                 onClick={selectAll}
-                className="text-[9px] font-display font-bold uppercase tracking-widest text-ash-500 hover:text-primary"
+                className="text-[10px] font-display font-bold uppercase tracking-wider text-ash-500 hover:text-primary"
               >
                 {selectedUids.size === rows.length
                   ? t('live.presence.clearSelection', { n: selectedUids.size })
                   : t('live.presence.selectAll', { n: rows.length })}
               </button>
-              <span className="text-[9px] font-mono text-ash-600 uppercase tracking-widest">
+              <span className="text-[10px] font-mono text-ash-600 uppercase tracking-wider">
                 {selectedUids.size > 0 ? t('live.presence.marked', { n: selectedUids.size }) : t('live.presence.noMark')}
               </span>
             </div>
-            <ul className="divide-y divide-white/5 max-h-[min(60vh,520px)] overflow-y-auto custom-scrollbar">
+            <ul className="divide-y divide-seam max-h-[min(60vh,520px)] overflow-y-auto custom-scrollbar">
               <AnimatePresence mode="popLayout">
               {rows.map((row, index) => {
                 const selected = selectedUids.has(row.uid);
@@ -528,8 +528,8 @@ export default function LiveWorkspace({
                       <button
                         type="button"
                         onClick={() => toggleSelect(row.uid)}
-                        className={`mt-0.5 w-5 h-5 border-2 rounded-sm shrink-0 flex items-center justify-center ${
-                          selected ? 'bg-primary border-primary' : 'border-ash-700 hover:border-ash-500'
+                        className={`mt-0.5 w-5 h-5 rounded-sm shrink-0 flex items-center justify-center ${
+                          selected ? 'bg-accent text-field-ink' : 'bg-surface-container-highest'
                         }`}
                         aria-label="Selecionar"
                       >
@@ -538,13 +538,13 @@ export default function LiveWorkspace({
                         )}
                       </button>
                       <div className="min-w-0">
-                        <p className="text-[11px] font-display font-bold uppercase tracking-widest text-bone truncate">
+                        <p className="text-[11px] font-display font-bold uppercase tracking-wider text-bone truncate">
                           {row.label}
                           {row.agentName ? (
                             <span className="text-primary/80 font-normal"> // {row.agentName}</span>
                           ) : null}
                         </p>
-                        <p className="text-[9px] font-mono text-ash-500 truncate mt-0.5">
+                        <p className="text-[10px] font-mono text-ash-500 truncate mt-0.5">
                           {formatDistanceToNow(row.lastLoginMs, { addSuffix: true, locale: dateLocale })}
                           {row.email ? ` · ${row.email}` : ''}
                         </p>
@@ -552,25 +552,25 @@ export default function LiveWorkspace({
                     </div>
                     <div className="flex flex-wrap items-center gap-2 shrink-0 sm:pl-8">
                       {row.pendingVideo && (
-                        <span className="text-[9px] font-display font-bold uppercase tracking-wider px-2 py-0.5 border border-orange-400/40 text-orange-400/80">
+                        <span className="text-[10px] font-display font-bold uppercase tracking-wider px-2 py-0.5 text-orange-400/80">
                           {t('intel.type.video')}
                         </span>
                       )}
                       {row.forceTerminal ? (
-                        <span className="text-[9px] font-display font-bold uppercase tracking-wider px-2 py-0.5 border border-primary/40 text-primary animate-pulse">
+                        <span className="text-[10px] font-display font-bold uppercase tracking-wider px-2 py-0.5 text-primary animate-pulse">
                           Push pendente
                         </span>
                       ) : row.hasTerminalAccess ? (
-                        <span className="text-[9px] font-display font-bold uppercase tracking-wider px-2 py-0.5 border border-phosphor-500/30 text-phosphor-500/80">
+                        <span className="text-[10px] font-display font-bold uppercase tracking-wider px-2 py-0.5 text-phosphor-500/80">
                           {t('hardware.filter.dos')}
                         </span>
                       ) : null}
                       {row.forceMac ? (
-                        <span className="text-[9px] font-display font-bold uppercase tracking-wider px-2 py-0.5 border border-tube-400/40 text-tube-400 animate-pulse">
+                        <span className="text-[10px] font-display font-bold uppercase tracking-wider px-2 py-0.5 text-tube-400 animate-pulse">
                           Push Mac
                         </span>
                       ) : row.hasMacAccess ? (
-                        <span className="text-[9px] font-display font-bold uppercase tracking-wider px-2 py-0.5 border border-border-strong text-ash-400">
+                        <span className="text-[10px] font-display font-bold uppercase tracking-wider px-2 py-0.5 text-ash-400">
                           {t('hardware.filter.mac')}
                         </span>
                       ) : null}
@@ -578,7 +578,7 @@ export default function LiveWorkspace({
                       <button
                         type="button"
                         onClick={() => openDeliver('intel', [row.uid])}
-                        className="text-[9px] font-display font-bold uppercase tracking-wider px-2 py-1 border border-primary/30 text-primary/80 hover:bg-primary/10"
+                        className="text-[10px] font-display font-bold uppercase tracking-wider px-2 py-1 text-primary/80 hover:bg-primary/10"
                         title="Entregar a este agente"
                       >
                         {t('live.confirm.deliverAction')}
@@ -587,7 +587,7 @@ export default function LiveWorkspace({
                         type="button"
                         disabled={dosBusy}
                         onClick={() => handlePushDos(row)}
-                        className="text-[9px] font-display font-bold uppercase tracking-wider px-2.5 py-1 bg-primary text-black hover:bg-primary-container disabled:opacity-30"
+                        className="text-[10px] font-display font-bold uppercase tracking-wider px-2.5 py-1 bg-primary text-black hover:bg-primary-container disabled:opacity-30"
                       >
                         DOS
                       </button>
@@ -595,7 +595,7 @@ export default function LiveWorkspace({
                         type="button"
                         disabled={macBusy}
                         onClick={() => handlePushMac(row)}
-                        className="text-[9px] font-display font-bold uppercase tracking-wider px-2.5 py-1 bg-ash-200 text-black hover:bg-white disabled:opacity-30"
+                        className="text-[10px] font-display font-bold uppercase tracking-wider px-2.5 py-1 bg-ash-200 text-black hover:bg-white disabled:opacity-30"
                       >
                         Mac
                       </button>
@@ -610,7 +610,7 @@ export default function LiveWorkspace({
                             setMenuUid(null);
                             openDeliver('achievements', [row.uid]);
                           }}
-                          className="w-full text-left px-3 py-2 text-[9px] font-display font-bold uppercase tracking-widest text-ash-400 hover:bg-primary/10 hover:text-primary"
+                          className="w-full text-left px-3 py-2 text-[10px] font-display font-bold uppercase tracking-wider text-ash-400 hover:bg-primary/10 hover:text-primary"
                         >
                           Outorgar conquista
                         </button>
@@ -620,7 +620,7 @@ export default function LiveWorkspace({
                             setMenuUid(null);
                             openDeliver('sms', [row.uid]);
                           }}
-                          className="w-full text-left px-3 py-2 text-[9px] font-display font-bold uppercase tracking-widest text-ash-400 hover:bg-primary/10 hover:text-primary"
+                          className="w-full text-left px-3 py-2 text-[10px] font-display font-bold uppercase tracking-wider text-ash-400 hover:bg-primary/10 hover:text-primary"
                         >
                           Enviar SMS
                         </button>
@@ -636,7 +636,7 @@ export default function LiveWorkspace({
                               toast.error(t('hardware.toast.revokeDosFail'));
                             }
                           }}
-                          className="w-full text-left px-3 py-2 text-[9px] font-display font-bold uppercase tracking-widest text-ash-400 hover:bg-red-500/10 hover:text-red-400 disabled:opacity-20"
+                          className="w-full text-left px-3 py-2 text-[10px] font-display font-bold uppercase tracking-wider text-ash-400 hover:bg-red-500/10 hover:text-red-400 disabled:opacity-20"
                         >
                           Revogar DOS
                         </button>
@@ -652,7 +652,7 @@ export default function LiveWorkspace({
                               toast.error(t('hardware.toast.revokeMacFail'));
                             }
                           }}
-                          className="w-full text-left px-3 py-2 text-[9px] font-display font-bold uppercase tracking-widest text-ash-400 hover:bg-red-500/10 hover:text-red-400 disabled:opacity-20"
+                          className="w-full text-left px-3 py-2 text-[10px] font-display font-bold uppercase tracking-wider text-ash-400 hover:bg-red-500/10 hover:text-red-400 disabled:opacity-20"
                         >
                           Revogar Mac
                         </button>
@@ -681,7 +681,7 @@ export default function LiveWorkspace({
               <button
                 type="button"
                 onClick={() => nav.go(adminPath.system('log'))}
-                className="text-[9px] font-display font-bold uppercase tracking-widest text-primary/70 hover:text-primary shrink-0 transition-colors"
+                className="text-[10px] font-display font-bold uppercase tracking-wider text-primary/70 hover:text-primary shrink-0 transition-colors"
               >
                 {t('live.fullLog')}
               </button>
@@ -799,7 +799,7 @@ function PresenceRowMenu({
         onClick={onToggle}
         aria-expanded={open}
         aria-haspopup="menu"
-        className="text-[9px] font-display font-bold uppercase tracking-wider px-2 py-1 border border-border text-ash-400 hover:text-bone"
+        className="text-[10px] font-display font-bold uppercase tracking-wider px-2 py-1 text-ash-400 hover:text-bone"
       >
         ⋯
       </button>
@@ -815,7 +815,7 @@ function PresenceRowMenu({
                 ? { position: 'fixed', top: coords.top, left: coords.left }
                 : { position: 'fixed', top: -9999, left: -9999, visibility: 'hidden' }
             }
-            className="z-[200] min-w-44 bg-seam border border-border shadow-2xl py-1"
+            className="z-[200] min-w-44 bg-seam py-1"
           >
             {children}
           </div>,
@@ -847,13 +847,13 @@ function MiniStat({
 }) {
   const color =
     accent === 'emerald'
-      ? 'text-phosphor-400 border-phosphor-500/20'
+      ? 'text-phosphor-400'
       : accent === 'red'
-        ? 'text-red-400 border-red-500/30'
-        : 'text-primary border-primary/20';
+        ? 'text-red-400'
+        : 'text-primary';
   return (
-    <div className={`bg-surface-container-low border-l-2 border-y border-r border-y-seam border-r-seam px-4 py-3 ${color}`}>
-      <p className="flex items-center gap-1.5 font-display text-[9px] uppercase font-bold tracking-[0.2em] text-ash-500 mb-1.5">
+    <div className={`bg-surface-container-low border-l-2 border-y border-r border-seam border-seam px-4 py-3 ${color}`}>
+      <p className="flex items-center gap-1.5 font-display text-[10px] uppercase font-bold tracking-[0.08em] text-ash-500 mb-1.5">
         <span className="material-symbols-outlined text-[14px] opacity-70" aria-hidden>{icon}</span>
         {label}
       </p>
@@ -867,7 +867,7 @@ function QuickBtn({ label, icon, onClick }: { label: string; icon: string; onCli
     <button
       type="button"
       onClick={onClick}
-      className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-primary/20 text-[9px] font-display font-bold uppercase tracking-widest text-primary/80 hover:bg-primary/10 transition-colors"
+      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-display font-bold uppercase tracking-wider text-primary/80 hover:bg-primary/10 transition-colors"
     >
       <span className="material-symbols-outlined text-sm">{icon}</span>
       {label}
@@ -891,7 +891,7 @@ function DeliverBtn({
       type="button"
       disabled={disabled}
       onClick={onClick}
-      className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-primary/30 bg-primary/5 text-[9px] font-display font-bold uppercase tracking-widest text-primary hover:bg-primary/15 transition-colors disabled:opacity-20"
+      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/5 text-[10px] font-display font-bold uppercase tracking-wider text-primary hover:bg-primary/15 transition-colors disabled:opacity-20"
     >
       <span className="material-symbols-outlined text-sm">{icon}</span>
       {label}

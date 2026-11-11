@@ -76,12 +76,12 @@ function ToastItem({ toast, onDismiss }: ToastItemProps) {
   }
 
   const colors = {
-    tape: 'border-accent-60',
-    error: 'border-red-500/60',
+    tape: '',
+    error: '',
   };
   const glows = {
-    tape: 'shadow-[0_0_0_1px_rgba(255,140,0,0.12),0_10px_24px_-10px_rgba(0,0,0,0.9),0_0_14px_-6px_rgba(255,140,0,0.5)]',
-    error: 'shadow-[0_0_0_1px_rgba(239,68,68,0.12),0_10px_24px_-10px_rgba(0,0,0,0.9),0_0_14px_-6px_rgba(239,68,68,0.5)]',
+    tape: '',
+    error: '',
   };
   const textColors = {
     tape: 'text-accent',
@@ -100,12 +100,12 @@ function ToastItem({ toast, onDismiss }: ToastItemProps) {
       exit={{ opacity: 0, x: 40, transition: EXIT_FAST }}
       transition={SPRING_TOAST}
       role="status"
-      className={`pointer-events-auto relative overflow-hidden flex items-center gap-3 px-4 py-3 border rounded-card bg-surface-container-low machined-edge min-w-[200px] max-w-[260px] cursor-pointer ${colors[toast.type]} ${glows[toast.type]}`}
+      className={`pointer-events-auto relative overflow-hidden flex items-center gap-3 px-4 py-3 rounded-card bg-surface-container-low min-w-[200px] max-w-[260px] cursor-pointer ${colors[toast.type]} ${glows[toast.type]}`}
       onClick={() => onDismiss(toast.id)}
     >
       <ToastIcon icon={toast.icon} />
       <div className="min-w-0">
-        <p className={`text-[8px] uppercase tracking-[0.25em] opacity-60 truncate ${textColors[toast.type]}`}>
+        <p className={`text-[10px] uppercase tracking-[0.08em] opacity-60 truncate ${textColors[toast.type]}`}>
           {protocolLabels[toast.type]}
         </p>
         <p className={`text-xs font-bold uppercase tracking-wider truncate mt-0.5 ${textColors[toast.type]}`}>
@@ -141,18 +141,18 @@ function AchievementToast({
   const platform = toast.platform || 'global';
   const tierBorder =
     platform === 'nokia'
-      ? 'border-phosphor-400/60'
+      ? ''
       : tier === 'legendary'
-        ? 'border-amber-400/70'
+        ? ''
         : tier === 'rare'
-          ? 'border-yellow-500/55'
-          : 'border-orange-500/45';
+          ? ''
+          : '';
   const tierGlow =
     platform === 'nokia'
-      ? 'shadow-[0_0_28px_rgba(118,212,104,0.35)]'
+      ? ''
       : tier === 'legendary'
-        ? 'shadow-[0_0_32px_rgba(251,191,36,0.45)]'
-        : 'shadow-[0_0_18px_-4px_rgba(255,140,0,0.4)]';
+        ? ''
+        : '';
   const tierLabel =
     tier === 'legendary'
       ? t('achievement.tier.legendaryUpper')
@@ -170,7 +170,7 @@ function AchievementToast({
       exit={{ opacity: 0, x: 40, transition: EXIT_FAST }}
       transition={{ type: 'spring', visualDuration: 0.42, bounce: 0.28 }}
       role="status"
-      className={`pointer-events-auto relative overflow-hidden flex gap-3.5 px-4 py-3.5 border-2 rounded-card bg-surface-container-low machined-edge min-w-[260px] max-w-[300px] cursor-pointer ${tierBorder} ${tierGlow}`}
+      className={`pointer-events-auto relative overflow-hidden flex gap-3.5 px-4 py-3.5 rounded-card bg-surface-container-low min-w-[260px] max-w-[300px] cursor-pointer ${tierBorder} ${tierGlow}`}
       onClick={() => onDismiss(toast.id)}
     >
       <div
@@ -187,10 +187,10 @@ function AchievementToast({
         transition={{ type: 'spring', visualDuration: 0.36, bounce: 0.35, delay: 0.08 }}
         className="relative shrink-0"
       >
-        <ToastIcon icon={toast.icon || '/achievements/ACH-VETERAN.png'} className="w-12 h-12 rounded-inset shadow-[0_0_0_1px_rgba(0,0,0,0.6),0_0_10px_-2px_rgba(251,191,36,0.4)]" />
+        <ToastIcon icon={toast.icon || '/achievements/ACH-VETERAN.png'} className="w-12 h-12 rounded-inset" />
       </motion.div>
       <div className="relative min-w-0 flex-1">
-        <p className={`text-[8px] uppercase tracking-[0.28em] font-bold ${accentMuted}`}>
+        <p className={`text-[10px] uppercase tracking-[0.28em] font-bold ${accentMuted}`}>
           {t('toast.achievement.header')}
         </p>
         <p className={`text-sm font-black uppercase tracking-wide mt-1 leading-tight wrap-break-word ${accentText}`}>
@@ -201,7 +201,7 @@ function AchievementToast({
             {toast.subtitle}
           </p>
         )}
-        <p className={`text-[8px] uppercase tracking-[0.2em] mt-2 font-mono opacity-50 ${accentText}`}>
+        <p className={`text-[10px] uppercase tracking-[0.08em] mt-2 font-mono opacity-50 ${accentText}`}>
           {t('toast.achievement.class', { tier: tierLabel })}
         </p>
       </div>

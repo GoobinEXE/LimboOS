@@ -146,16 +146,16 @@ function AchievementDeliverPane({
 
   return (
     <DeliverShell title={t('deliver.kind.achievements')} targets={targets} onClose={loading ? undefined : onClose}>
-      <div className="px-6 py-3 border-b border-border-subtle">
+      <div className="px-6 py-3 border-b border-seam">
         <input
           type="search"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder={t('deliver.searchAchievement')}
-          className="w-full bg-black/50 border border-border px-4 py-2.5 text-[10px] font-display font-bold uppercase tracking-widest text-bone placeholder:text-ash-600 outline-none focus:border-primary/40"
+          className="w-full bg-black/50 px-4 py-2.5 text-[10px] font-display font-bold uppercase tracking-wider text-bone placeholder:text-ash-600 outline-none"
         />
       </div>
-      <div className="flex-1 overflow-y-auto custom-scrollbar divide-y divide-white/5">
+      <div className="flex-1 overflow-y-auto custom-scrollbar divide-y divide-seam">
         {filtered.map((a) => (
           <button
             key={a.id}
@@ -165,12 +165,12 @@ function AchievementDeliverPane({
               selectedId === a.id ? 'bg-primary/10' : 'hover:bg-white/5'
             }`}
           >
-            <img src={a.icon} alt="" className="w-10 h-10 object-cover rounded-sm border border-border shrink-0" />
+            <img src={a.icon} alt="" className="w-10 h-10 object-cover rounded-sm shrink-0" />
             <div className="min-w-0 flex-1">
-              <p className="text-[11px] font-display font-bold uppercase tracking-widest text-bone truncate">
+              <p className="text-[11px] font-display font-bold uppercase tracking-wider text-bone truncate">
                 {a.title}
               </p>
-              <p className="text-[9px] font-mono text-ash-600 truncate mt-0.5">{a.id}</p>
+              <p className="text-[10px] font-mono text-ash-600 truncate mt-0.5">{a.id}</p>
             </div>
             {selectedId === a.id && (
               <span className="material-symbols-outlined text-primary text-lg">check_circle</span>
@@ -178,17 +178,17 @@ function AchievementDeliverPane({
           </button>
         ))}
         {filtered.length === 0 && (
-          <p className="p-12 text-center text-[10px] font-display font-bold uppercase tracking-widest text-ash-600">
+          <p className="p-12 text-center text-[10px] font-display font-bold uppercase tracking-wider text-ash-600">
             Nenhuma conquista encontrada
           </p>
         )}
       </div>
-      <div className="p-4 border-t border-border-subtle bg-black/30 flex justify-end gap-3">
+      <div className="p-4 border-t border-seam bg-black/30 flex justify-end gap-3">
         <button
           type="button"
           disabled={loading}
           onClick={onClose}
-          className="px-4 py-2 text-[10px] font-display font-bold uppercase tracking-widest text-ash-500 hover:text-bone"
+          className="px-4 py-2 text-[10px] font-display font-bold uppercase tracking-wider text-ash-500 hover:text-bone"
         >
           {t('accounts.cancel')}
         </button>
@@ -199,7 +199,7 @@ function AchievementDeliverPane({
           whileTap={{ scale: 0.97 }}
           animate={loading ? { scale: [1, 0.98, 1] } : { scale: 1 }}
           transition={loading ? { repeat: Infinity, duration: 0.8 } : ADMIN_SPRING}
-          className="px-5 py-2 bg-primary text-black text-[10px] font-display font-black uppercase tracking-widest disabled:opacity-30 flex items-center gap-2"
+          className="px-5 py-2 bg-primary text-black text-[10px] font-display font-black uppercase tracking-wider disabled:opacity-30 flex items-center gap-2"
         >
           {loading ? (
             <>

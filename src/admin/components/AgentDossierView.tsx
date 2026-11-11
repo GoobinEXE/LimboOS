@@ -235,7 +235,7 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
         animate={{ x: 0 }}
         exit={{ x: '100%' }}
         transition={ADMIN_SPRING}
-        className="bg-surface-container-low border-l border-seam w-full max-w-5xl shadow-2xl flex flex-col h-full relative overflow-hidden"
+        className="bg-surface-container-low border-l border-seam w-full max-w-5xl flex flex-col h-full relative overflow-hidden"
       >
         <Screw className="top-4 left-4" /><Screw className="top-4 right-4 -rotate-90" /><Screw className="bottom-4 left-4 -rotate-90" /><Screw className="bottom-4 right-4" />
         <div className="noise-overlay" /><div className="scanlines" />
@@ -243,7 +243,7 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
         {/* Header */}
         <div className="p-8 border-b-4 border-seam flex justify-between items-start bg-black/40 relative z-20">
           <div className="flex gap-8 w-full">
-             <div className="w-28 h-28 bg-black border-4 border-seam rounded-sm flex items-center justify-center overflow-hidden relative group shadow-xl shrink-0">
+             <div className="w-28 h-28 bg-black rounded-sm flex items-center justify-center overflow-hidden relative group shrink-0">
                 {character.profilePhotoUrl ? (
                   <img src={character.profilePhotoUrl} alt={character.codinome} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-500" />
                 ) : (
@@ -256,15 +256,15 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
                   <div className="flex items-center justify-between">
                      <div className="flex items-center gap-4">
                        <h2 className="text-4xl font-black text-bone uppercase tracking-tighter">{character.codinome}</h2>
-                       <span className={`px-3 py-1 rounded-sm text-[10px] font-black uppercase tracking-widest border-2 ${
-                         character.agentStatus === 'vivo' ? 'bg-phosphor-500/10 text-phosphor-500 border-phosphor-500/30' :
-                         character.agentStatus === 'morto' ? 'bg-red-500/10 text-red-500 border-red-500/30' :
-                         'bg-[#333] text-ash-500 border-[#444]'
+                       <span className={`px-3 py-1 rounded-sm text-[10px] font-black uppercase tracking-wider ${
+                         character.agentStatus === 'vivo' ? 'bg-phosphor-500/10 text-phosphor-500' :
+                         character.agentStatus === 'morto' ? 'bg-red-500/10 text-red-500' :
+                         'bg-[#333] text-ash-500'
                        }`}>
                          {character.agentStatus}
                        </span>
                        {character.archived && (
-                         <span className="px-3 py-1 rounded-sm text-[10px] font-black uppercase tracking-widest border-2 bg-yellow-500/10 text-yellow-500 border-yellow-500/30">
+                         <span className="px-3 py-1 rounded-sm text-[10px] font-black uppercase tracking-wider bg-yellow-500/10 text-yellow-500">
                            ARQUIVADO
                          </span>
                        )}
@@ -273,10 +273,10 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
                   </div>
                   
                   <div className="mt-2 flex items-center gap-2">
-                    <span className="text-[10px] font-black text-primary uppercase tracking-widest bg-primary/10 px-2 py-0.5 rounded-sm">
+                    <span className="text-[10px] font-black text-primary uppercase tracking-wider bg-primary/10 px-2 py-0.5 rounded-sm">
                       Mestre: {masterAccount?.displayName || masterAccount?.masterName || masterAccount?.email}
                     </span>
-                    <p className="font-mono text-[9px] text-ash-600 uppercase tracking-widest font-bold">
+                    <p className="font-mono text-[10px] text-ash-600 uppercase tracking-wider font-bold">
                       RM-{character.id} // {(masterAccount?.uid || "").slice(0,8)}
                     </p>
                   </div>
@@ -284,23 +284,23 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
                 
                 <div className="flex flex-wrap gap-8 items-end mt-4">
                    <div className="space-y-2">
-                      <span className="text-[9px] font-black text-ash-500 uppercase tracking-widest block">Nível de Ameaça</span>
+                      <span className="text-[10px] font-black text-ash-500 uppercase tracking-wider block">Nível de Ameaça</span>
                       <div className="flex gap-1.5">
                         {[1,2,3,4,5].map(lv => (
                           <div 
                             key={lv} 
                             onClick={() => setEditingChar(prev => ({ ...prev, dangerLevel: lv }))}
-                            className={`w-6 h-2.5 rounded-sm cursor-pointer transition ${lv <= (editingChar.dangerLevel || 1) ? 'bg-primary shadow-[0_0_8px_rgba(255,140,0,0.4)]' : 'bg-black border border-border-subtle hover:border-primary/20'}`}
+                            className={`w-6 h-2.5 rounded-sm cursor-pointer transition ${lv <= (editingChar.dangerLevel || 1) ? 'bg-primary' : 'bg-black'}`}
                           />
                         ))}
                       </div>
                    </div>
                    <div className="space-y-2">
-                      <span className="text-[9px] font-black text-ash-500 uppercase tracking-widest block">Status Identidade</span>
+                      <span className="text-[10px] font-black text-ash-500 uppercase tracking-wider block">Status Identidade</span>
                       <select 
                         value={editingChar.agentStatus} 
                         onChange={(e) => setEditingChar(prev => ({ ...prev, agentStatus: e.target.value as any }))}
-                        className="bg-black/60 border-2 border-seam text-[10px] font-black text-primary px-4 py-2 outline-none uppercase rounded-sm focus:border-primary"
+                        className="bg-black/60 text-[10px] font-black text-primary px-4 py-2 outline-none uppercase rounded-sm"
                       >
                         <option value="vivo">{t('accounts.status.active')}</option>
                         <option value="morto">ELIMINADO</option>
@@ -311,29 +311,29 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
                       <button 
                         onClick={handleUpdateChar}
                         disabled={saveLoading}
-                        className="bg-primary hover:bg-primary-container text-black px-6 py-2.5 rounded-sm font-black text-[10px] tracking-widest uppercase transition active:scale-[0.97] glow-orange shadow-lg"
+                        className="bg-primary hover:bg-primary-container text-black px-6 py-2.5 rounded-sm font-black text-[10px] tracking-wider uppercase transition active:scale-[0.97]"
                       >
                         {saveLoading ? 'SINC...' : 'SALVAR'}
                       </button>
                       <div className="relative">
                         <button 
                           onClick={() => setIsMenuOpen(!isMenuOpen)}
-                          className="bg-seam text-ash-400 hover:text-bone px-3 py-2.5 rounded-sm transition border-2 border-transparent hover:border-border"
+                          className="bg-seam text-ash-400 hover:text-bone px-3 py-2.5 rounded-sm transition"
                         >
                           <span className="material-symbols-outlined text-sm">more_vert</span>
                         </button>
                         {isMenuOpen && (
                           <>
                             <div className="fixed inset-0 z-40" onClick={() => setIsMenuOpen(false)} />
-                            <div className="absolute top-full right-0 mt-2 bg-black border-2 border-seam shadow-xl rounded-sm w-48 z-50">
-                              <button onClick={() => { setIsMenuOpen(false); handleOpenTransfer(); }} className="w-full text-left px-4 py-3 text-[10px] font-black uppercase tracking-widest text-ash-400 hover:text-bone hover:bg-white/5 transition flex items-center gap-2 border-b border-seam">
+                            <div className="absolute top-full right-0 mt-2 bg-black rounded-sm w-48 z-50">
+                              <button onClick={() => { setIsMenuOpen(false); handleOpenTransfer(); }} className="w-full text-left px-4 py-3 text-[10px] font-black uppercase tracking-wider text-ash-400 hover:text-bone hover:bg-white/5 transition flex items-center gap-2 border-b border-seam">
                                 <span className="material-symbols-outlined text-sm">swap_horiz</span> {t('dossier.transferAction')}
                               </button>
-                              <button onClick={() => { setIsMenuOpen(false); handleArchiveChar(); }} className="w-full text-left px-4 py-3 text-[10px] font-black uppercase tracking-widest text-ash-400 hover:text-yellow-500 hover:bg-yellow-500/10 transition flex items-center gap-2 border-b border-seam">
+                              <button onClick={() => { setIsMenuOpen(false); handleArchiveChar(); }} className="w-full text-left px-4 py-3 text-[10px] font-black uppercase tracking-wider text-ash-400 hover:text-yellow-500 hover:bg-yellow-500/10 transition flex items-center gap-2 border-b border-seam">
                                 <span className="material-symbols-outlined text-sm">{character.archived ? 'unarchive' : 'inventory_2'}</span> 
                                 {character.archived ? 'Desarquivar' : 'Arquivar'}
                               </button>
-                              <button onClick={() => { setIsMenuOpen(false); handleDeleteChar(); }} className="w-full text-left px-4 py-3 text-[10px] font-black uppercase tracking-widest text-ash-500 hover:text-red-500 hover:bg-red-500/10 transition flex items-center gap-2">
+                              <button onClick={() => { setIsMenuOpen(false); handleDeleteChar(); }} className="w-full text-left px-4 py-3 text-[10px] font-black uppercase tracking-wider text-ash-500 hover:text-red-500 hover:bg-red-500/10 transition flex items-center gap-2">
                                 <span className="material-symbols-outlined text-sm">delete_forever</span> {t('squads.confirm.deleteAction')}
                               </button>
                             </div>
@@ -352,18 +352,18 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
           {/* Sidebar / Stats */}
           <div className="w-full lg:w-96 lg:shrink-0 border-r-4 border-seam bg-black/20 p-8 space-y-10 overflow-y-auto overflow-x-hidden custom-scrollbar min-w-0">
              <div>
-                <div className="flex justify-between items-center mb-4 border-b border-border-subtle pb-2">
-                   <h3 className="text-[10px] font-black text-ash-500 uppercase tracking-[0.3em]">Esquadrões Vinculados</h3>
+                <div className="flex justify-between items-center mb-4 border-b border-seam pb-2">
+                   <h3 className="text-[10px] font-black text-ash-500 uppercase tracking-[0.08em]">Esquadrões Vinculados</h3>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {details?.groups && details.groups.length > 0 ? (
                     details.groups.map(g => (
-                      <span key={g.id} className="text-[9px] font-black bg-primary/10 text-primary border border-primary/20 px-3 py-1 rounded-sm uppercase tracking-wider">
+                      <span key={g.id} className="text-[10px] font-black bg-primary/10 text-primary px-3 py-1 rounded-sm uppercase tracking-wider">
                         {g.name}
                       </span>
                     ))
                   ) : (
-                    <span className="text-[9px] font-black text-ash-700 italic uppercase tracking-wider py-1">
+                    <span className="text-[10px] font-black text-ash-700 italic uppercase tracking-wider py-1">
                       Nenhum Esquadrão Vinculado
                     </span>
                   )}
@@ -371,8 +371,8 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
              </div>
 
              <div>
-                <div className="flex flex-wrap justify-between items-center gap-2 mb-4 border-b border-border-subtle pb-2">
-                   <h3 className="text-[10px] font-black text-ash-500 uppercase tracking-[0.3em]">{t('dossier.spotifyTitle')}</h3>
+                <div className="flex flex-wrap justify-between items-center gap-2 mb-4 border-b border-seam pb-2">
+                   <h3 className="text-[10px] font-black text-ash-500 uppercase tracking-[0.08em]">{t('dossier.spotifyTitle')}</h3>
                    {(editingChar.spotifyPlaylistUrl || '').trim() && (
                      <button
                        type="button"
@@ -380,7 +380,7 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
                          setEditingChar((prev) => ({ ...prev, spotifyPlaylistUrl: '' }));
                          setSpotifyError('');
                        }}
-                       className="text-[9px] font-black uppercase tracking-widest text-ash-600 hover:text-red-400 transition-colors shrink-0"
+                       className="text-[10px] font-black uppercase tracking-wider text-ash-600 hover:text-red-400 transition-colors shrink-0"
                      >
                        {t('dossier.spotifyClear')}
                      </button>
@@ -395,16 +395,16 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
                       setSpotifyError('');
                     }}
                     placeholder={t('dossier.spotifyPlaceholder')}
-                    className="w-full bg-black/60 border-2 border-seam text-[10px] font-mono text-ash-300 px-3 py-2.5 outline-none rounded-sm focus:border-primary placeholder:text-ash-600"
+                    className="w-full bg-black/60 text-[10px] font-mono text-ash-300 px-3 py-2.5 outline-none rounded-sm placeholder:text-ash-600"
                   />
-                  <p className="text-[9px] font-bold text-ash-600 uppercase tracking-wider leading-relaxed">
+                  <p className="text-[10px] font-bold text-ash-600 uppercase tracking-wider leading-relaxed">
                     {t('dossier.spotifyHint')}
                   </p>
                   {spotifyError && (
-                    <p className="text-[9px] font-black text-red-400 uppercase tracking-wider">{spotifyError}</p>
+                    <p className="text-[10px] font-black text-red-400 uppercase tracking-wider">{spotifyError}</p>
                   )}
                   {extractSpotifyEmbedUrl(editingChar.spotifyPlaylistUrl || '') && (
-                    <div className="overflow-hidden rounded-sm border border-border-subtle bg-black">
+                    <div className="overflow-hidden rounded-sm bg-black">
                       <iframe
                         src={extractSpotifyEmbedUrl(editingChar.spotifyPlaylistUrl || '')!}
                         width="100%"
@@ -421,7 +421,7 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
              </div>
 
              <div>
-                <h3 className="text-[10px] font-black text-ash-500 uppercase tracking-[0.3em] mb-6 border-b border-border-subtle pb-2">Atividade em Campo</h3>
+                <h3 className="text-[10px] font-black text-ash-500 uppercase tracking-[0.08em] mb-6 border-b border-seam pb-2">Atividade em Campo</h3>
                 <div className="grid grid-cols-2 gap-4">
                    <StatBox label="Tempo Escuta" value={formatSecs(details?.stats?.totalListenTime || 0)} />
                    <StatBox label="Fidget Log" value={details?.stats?.fidgetClicks || 0} />
@@ -431,19 +431,19 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
              </div>
 
              <div>
-                <div className="flex flex-wrap justify-between items-center gap-2 mb-6 border-b border-border-subtle pb-2">
-                   <h3 className="text-[10px] font-black text-ash-500 uppercase tracking-[0.3em]">Medalhas Detectadas</h3>
+                <div className="flex flex-wrap justify-between items-center gap-2 mb-6 border-b border-seam pb-2">
+                   <h3 className="text-[10px] font-black text-ash-500 uppercase tracking-[0.08em]">Medalhas Detectadas</h3>
                    <div className="relative shrink-0">
-                     <button onClick={() => setShowAchievementSelect(!showAchievementSelect)} className="text-[9px] bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 px-2 py-1 rounded-sm uppercase font-black transition">OUTORGAR MEDALHA</button>
+                     <button onClick={() => setShowAchievementSelect(!showAchievementSelect)} className="text-[10px] bg-primary/10 hover:bg-primary/20 text-primary px-2 py-1 rounded-sm uppercase font-black transition">OUTORGAR MEDALHA</button>
                      {showAchievementSelect && (
                        <>
                          <div className="fixed inset-0 z-40" onClick={() => setShowAchievementSelect(false)} />
-                         <div className="absolute top-full right-0 mt-2 bg-black border-2 border-seam shadow-xl rounded-sm w-56 z-50 max-h-64 overflow-y-auto custom-scrollbar">
+                         <div className="absolute top-full right-0 mt-2 bg-black rounded-sm w-56 z-50 max-h-64 overflow-y-auto custom-scrollbar">
                            {achievements.filter(
                              (a) => !isAchievementEarned(details?.achievements || [], a.id, character.campaignId)
                            ).map((a) => (
-                             <button key={a.id} onClick={() => handleGrantAchievement(a.id)} className="w-full text-left px-4 py-3 text-[10px] font-black uppercase tracking-widest text-ash-400 hover:text-bone hover:bg-white/5 transition flex items-center gap-3 border-b border-seam">
-                               <img src={a.icon} alt="" className="w-6 h-6 object-cover rounded-sm border border-border" /> <span className="truncate">{a.title}</span>
+                             <button key={a.id} onClick={() => handleGrantAchievement(a.id)} className="w-full text-left px-4 py-3 text-[10px] font-black uppercase tracking-wider text-ash-400 hover:text-bone hover:bg-white/5 transition flex items-center gap-3 border-b border-seam">
+                               <img src={a.icon} alt="" className="w-6 h-6 object-cover rounded-sm" /> <span className="truncate">{a.title}</span>
                              </button>
                            ))}
                          </div>
@@ -457,9 +457,9 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
                        const { achievementId, campaignId: grantCamp } = parseAchievementGrantId(achId);
                        const achDef = achievements.find(a => a.id === achievementId);
                        return (
-                         <div key={achId} className="flex items-center justify-between p-3 bg-black/40 border border-border-subtle rounded-sm group hover:border-primary/20 transition">
+                         <div key={achId} className="flex items-center justify-between p-3 bg-black/40 rounded-sm group transition">
                             <div className="flex items-center gap-4">
-                              <div className="w-8 h-8 overflow-hidden rounded-full border border-primary/20 shadow-lg">
+                              <div className="w-8 h-8 overflow-hidden rounded-full">
                                  {achDef?.icon ? (
                                    <img src={achDef.icon} alt="" className="w-full h-full object-cover" />
                                  ) : (
@@ -467,8 +467,8 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
                                  )}
                               </div>
                               <div className="min-w-0">
-                                <span className="text-[10px] font-bold text-ash-400 uppercase tracking-widest group-hover:text-primary transition-colors block truncate">{achievementLabel(achievementId)}</span>
-                                <span className="text-[9px] font-mono text-ash-600 uppercase">{grantCamp}</span>
+                                <span className="text-[10px] font-bold text-ash-400 uppercase tracking-wider group-hover:text-primary transition-colors block truncate">{achievementLabel(achievementId)}</span>
+                                <span className="text-[10px] font-mono text-ash-600 uppercase">{grantCamp}</span>
                               </div>
                             </div>
                             <button onClick={() => handleRevokeAchievement(achId)} className="p-1.5 text-ash-800 hover:text-red-500 hover:bg-red-500/10 rounded-sm transition opacity-0 group-hover:opacity-100">
@@ -478,8 +478,8 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
                        );
                      })
                    ) : (
-                     <div className="p-8 text-center border-2 border-dashed border-border-subtle rounded-sm text-ash-500">
-                        <p className="text-[9px] font-black uppercase tracking-widest">Nenhuma Medalha</p>
+                     <div className="p-8 text-center rounded-sm text-ash-500">
+                        <p className="text-[10px] font-black uppercase tracking-wider">Nenhuma Medalha</p>
                      </div>
                    )}
                 </div>
@@ -488,7 +488,7 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
              <div className="pt-6">
                 <button 
                   onClick={() => setShowGrantModal(true)}
-                  className="w-full py-4 bg-primary/5 text-primary border-2 border-primary/20 font-black text-[10px] uppercase tracking-[0.3em] hover:bg-primary hover:text-black transition flex items-center justify-center gap-3 rounded-sm active:scale-[0.97] shadow-lg"
+                  className="w-full py-4 bg-primary/5 text-primary font-black text-[10px] uppercase tracking-[0.08em] hover:bg-primary hover:text-black transition flex items-center justify-center gap-3 rounded-sm active:scale-[0.97]"
                 >
                   <span className="material-symbols-outlined text-sm">add_box</span> LIBERAR INTEL
                 </button>
@@ -500,9 +500,9 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
              <div className="flex justify-between items-center mb-8">
                 <div className="flex items-center gap-3">
                    <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                   <h3 className="text-[11px] font-black text-bone uppercase tracking-[0.3em]">Cofre de Evidências</h3>
+                   <h3 className="text-[11px] font-black text-bone uppercase tracking-[0.08em]">Cofre de Evidências</h3>
                 </div>
-                <span className="text-[10px] font-bold text-ash-600 uppercase tracking-widest">Registros Totais: {details?.intel.length}</span>
+                <span className="text-[10px] font-bold text-ash-600 uppercase tracking-wider">Registros Totais: {details?.intel.length}</span>
              </div>
 
              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -512,10 +512,10 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
                   const type = intel ? intel.type : 'AUDIO';
                   const plays = details?.playCounts.find(pc => pc.tapeId === t.id)?.count || 0;
                   return (
-                    <div key={t.id} className="group relative bg-seam border-4 border-seam p-6 hover:border-primary/30 transition rounded-card shadow-xl overflow-hidden active:scale-98">
-                       <div className="absolute top-0 right-0 w-10 h-10 bg-primary/5 rotate-45 translate-x-5 -translate-y-5 border-b border-primary/10" />
+                    <div key={t.id} className="group relative bg-seam p-6 transition rounded-card overflow-hidden active:scale-98">
+                       <div className="absolute top-0 right-0 w-10 h-10 bg-primary/5 rotate-45 translate-x-5 -translate-y-5" />
                        <div className="flex items-start justify-between mb-4">
-                          <div className={`p-3 rounded-sm bg-black border border-border-subtle text-xs transition group-hover:border-primary/20 ${
+                          <div className={`p-3 rounded-sm bg-black text-xs transition ${
                             type === 'AUDIO' ? 'text-amber-500' :
                             type === 'VISUAL' ? 'text-tube-500' :
                             type === 'TEXT' ? 'text-phosphor-500' : 'text-primary'
@@ -528,9 +528,9 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
                           </div>
                           <div className="flex items-center gap-2">
                             {plays > 0 && (
-                               <div className="bg-black/60 px-2 py-1 rounded-sm border border-border-subtle flex items-center gap-1.5">
+                               <div className="bg-black/60 px-2 py-1 rounded-sm flex items-center gap-1.5">
                                  <div className="w-1 h-1 bg-amber-500 rounded-full animate-pulse" />
-                                 <span className="text-[9px] font-black text-amber-500 uppercase tracking-tighter">Plays: {plays}</span>
+                                 <span className="text-[10px] font-black text-amber-500 uppercase tracking-tighter">Plays: {plays}</span>
                                </div>
                             )}
                             <button 
@@ -542,8 +542,8 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
                           </div>
                        </div>
                        <h4 className="text-[12px] font-black text-bone uppercase truncate mb-1 group-hover:text-primary transition-colors">{label}</h4>
-                       <p className="font-mono text-[9px] text-ash-600 font-bold uppercase truncate mb-4">ID: {t.id}</p>
-                       <div className="flex justify-between items-center text-[9px] font-black text-ash-500 uppercase tracking-widest border-t border-border-subtle pt-4">
+                       <p className="font-mono text-[10px] text-ash-600 font-bold uppercase truncate mb-4">ID: {t.id}</p>
+                       <div className="flex justify-between items-center text-[10px] font-black text-ash-500 uppercase tracking-wider border-t border-seam pt-4">
                           <span className="truncate max-w-[120px]">{intel?.metadata?.npc || allAudios.find((a) => a.id === t.id)?.artist || 'SISTEMA'}</span>
                           <span className="text-primary/40">LVL_{intel?.level || 1}</span>
                        </div>
@@ -552,9 +552,9 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
                 })}
 
                 {details?.intel.length === 0 && (
-                  <div className="col-span-full p-32 text-center border-4 border-dashed border-seam/60 rounded-panel text-ash-500 flex flex-col items-center justify-center">
+                  <div className="col-span-full p-32 text-center rounded-panel text-ash-500 flex flex-col items-center justify-center">
                     <span className="material-symbols-outlined text-6xl mb-4 text-ash-700" aria-hidden>folder_off</span>
-                    <p className="text-[12px] font-black uppercase tracking-[0.4em]">Inventário Inativo</p>
+                    <p className="text-[12px] font-black uppercase tracking-[0.08em]">Inventário Inativo</p>
                   </div>
                 )}
              </div>
@@ -575,14 +575,14 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
         
         {showTransferModal && (
           <div className="fixed inset-0 z-[120] flex items-center justify-center bg-surface-scrim p-4">
-            <div className="bg-seam border-4 border-[#333] p-8 w-full max-w-md rounded-card shadow-2xl relative">
-              <h3 className="font-black text-lg text-bone uppercase tracking-widest mb-6">Transferir Personagem</h3>
-              <p className="text-[10px] text-ash-400 uppercase tracking-widest mb-6 leading-relaxed">Selecione a nova conta mestre que assumirá o controle de {character.codinome}.</p>
+            <div className="bg-seam p-8 w-full max-w-md rounded-card relative">
+              <h3 className="font-black text-lg text-bone uppercase tracking-wider mb-6">Transferir Personagem</h3>
+              <p className="text-[10px] text-ash-400 uppercase tracking-wider mb-6 leading-relaxed">Selecione a nova conta mestre que assumirá o controle de {character.codinome}.</p>
               
               <select 
                 value={transferTarget}
                 onChange={(e) => setTransferTarget(e.target.value)}
-                className="w-full bg-black border-2 border-[#333] text-[11px] font-black text-bone p-4 outline-none uppercase rounded-sm focus:border-primary mb-8"
+                className="w-full bg-black text-[11px] font-black text-bone p-4 outline-none uppercase rounded-sm mb-8"
               >
                 <option value="">-- SELECIONE A CONTA DESTINO --</option>
                 {allAccounts.map(a => (
@@ -591,11 +591,11 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
               </select>
 
               <div className="flex justify-end gap-3">
-                <button onClick={() => setShowTransferModal(false)} className="px-6 py-3 text-[10px] font-black text-ash-500 hover:text-bone uppercase tracking-widest transition-colors">{t('accounts.cancel')}</button>
+                <button onClick={() => setShowTransferModal(false)} className="px-6 py-3 text-[10px] font-black text-ash-500 hover:text-bone uppercase tracking-wider transition-colors">{t('accounts.cancel')}</button>
                 <button 
                   onClick={handleConfirmTransfer} 
                   disabled={!transferTarget || saveLoading}
-                  className="bg-primary text-black px-8 py-3 rounded-sm font-black text-[10px] tracking-widest uppercase hover:bg-primary-container transition active:scale-[0.97] disabled:opacity-50"
+                  className="bg-primary text-black px-8 py-3 rounded-sm font-black text-[10px] tracking-wider uppercase hover:bg-primary-container transition active:scale-[0.97] disabled:opacity-50"
                 >
                   Confirmar Transferência
                 </button>
@@ -613,8 +613,8 @@ export default function AgentDossierView({ uid, character, masterAccount, onClos
 
 function StatBox({ label, value }: { label: string; value: string | number }) {
   return (
-    <div className="bg-black/60 border border-border-subtle p-4 flex flex-col justify-center rounded-sm shadow-inner group hover:border-primary/20 transition">
-      <span className="text-[9px] uppercase tracking-widest text-ash-600 mb-2 font-black">{label}</span>
+    <div className="bg-black/60 p-4 flex flex-col justify-center rounded-sm group transition">
+      <span className="text-[10px] uppercase tracking-wider text-ash-600 mb-2 font-black">{label}</span>
       <span className="font-black text-sm text-ash-300 group-hover:text-primary transition-colors">{value}</span>
     </div>
   );

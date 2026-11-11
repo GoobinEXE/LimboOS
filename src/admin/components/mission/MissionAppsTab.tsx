@@ -43,12 +43,12 @@ export default function MissionAppsTab({ campaign }: { campaign: Campaign }) {
                 aria-checked={on}
                 disabled={saving !== null}
                 onClick={() => void toggle(key)}
-                className={`w-full flex items-center justify-between gap-3 px-4 py-4 border rounded-sm transition text-left ${
-                  on ? 'bg-primary/5 border-primary/40 text-primary' : 'bg-surface-container-lowest border-border-subtle text-ash-500 hover:border-border'
+                className={`w-full flex items-center justify-between gap-3 px-4 py-4 rounded-sm transition text-left ${
+                  on ? 'bg-primary/5 text-primary' : 'bg-surface-container-lowest text-ash-500'
                 }`}
               >
                 <span>
-                  <span className="block text-[11px] font-display font-bold uppercase tracking-widest">{t(`apps.feature.${key}`)}</span>
+                  <span className="block text-[11px] font-display font-bold uppercase tracking-wider">{t(`apps.feature.${key}`)}</span>
                   <span className="block text-[10px] text-ash-500 mt-1 normal-case tracking-normal">{t(`apps.featureHint.${key}`)}</span>
                 </span>
                 <span className="material-symbols-outlined text-2xl shrink-0" aria-hidden>{on ? 'toggle_on' : 'toggle_off'}</span>

@@ -25,13 +25,13 @@ interface LogEntry {
 }
 
 const TYPE_COLORS: Record<string, string> = {
-  navigation: 'text-phosphor-400 bg-phosphor-500/5 border-phosphor-500/10',
-  action:     'text-tube-400 bg-tube-500/5 border-tube-500/10',
-  system:     'text-orange-400 bg-orange-500/5 border-orange-500/10',
-  error:      'text-red-400 bg-red-500/5 border-red-500/10',
-  admin:      'text-primary bg-primary/5 border-primary/10',
-  auth:       'text-yellow-400 bg-yellow-500/5 border-yellow-500/10',
-  trace:      'text-ash-500 bg-white/5 border-border-subtle',
+  navigation: 'text-phosphor-400 bg-phosphor-500/5',
+  action:     'text-tube-400 bg-tube-500/5',
+  system:     'text-orange-400 bg-orange-500/5',
+  error:      'text-red-400 bg-red-500/5',
+  admin:      'text-primary bg-primary/5',
+  auth:       'text-yellow-400 bg-yellow-500/5',
+  trace:      'text-ash-500 bg-white/5',
 };
 
 const TYPE_ICONS: Record<string, string> = {
@@ -93,7 +93,7 @@ const LogRow = React.memo(({
       animate="visible"
       exit="exit"
       transition={{ ...ADMIN_FADE, delay: staggerDelay(index, 0.02, 0.15) }}
-      className="border-b border-border-subtle"
+      className="border-b border-seam"
     >
       <button
         onClick={() => onToggle(entry.id)}
@@ -105,7 +105,7 @@ const LogRow = React.memo(({
           chevron_right
         </span>
         
-        <span className={`text-[9px] font-display font-bold tracking-widest w-16 ${severity.color}`}>
+        <span className={`text-[10px] font-display font-bold tracking-wider w-16 ${severity.color}`}>
           {severity.label}
         </span>
 
@@ -114,7 +114,7 @@ const LogRow = React.memo(({
         </span>
 
         {!compact && (
-          <span className={`text-[9px] font-display font-bold px-2 py-0.5 border rounded-sm shrink-0 flex items-center gap-1.5 ${typeColor}`}>
+          <span className={`text-[10px] font-display font-bold px-2 py-0.5 rounded-sm shrink-0 flex items-center gap-1.5 ${typeColor}`}>
             <span className="material-symbols-outlined text-[10px]">{typeIcon}</span>
             {entry.type.toUpperCase()}
           </span>
@@ -134,23 +134,23 @@ const LogRow = React.memo(({
         </span>
 
         {!compact && (
-          <span className="text-[9px] font-display font-bold text-ash-600 tracking-widest shrink-0 uppercase border border-border-subtle px-2 py-0.5 rounded-sm">
+          <span className="text-[10px] font-display font-bold text-ash-600 tracking-wider shrink-0 uppercase px-2 py-0.5 rounded-sm">
             {entry.category}
           </span>
         )}
       </button>
 
       {isExpanded && (
-        <div className={`${compact ? 'px-10 py-4' : 'px-16 py-6'} bg-black/40 border-t border-border-subtle animate-fade-in`}>
+        <div className={`${compact ? 'px-10 py-4' : 'px-16 py-6'} bg-black/40 border-t border-seam animate-fade-in`}>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-[11px] font-mono mb-6">
             <div className="space-y-1">
-              <p className="text-[9px] font-display font-bold text-ash-600 uppercase tracking-widest">{t('logs.sessionId')}</p>
+              <p className="text-[10px] font-display font-bold text-ash-600 uppercase tracking-wider">{t('logs.sessionId')}</p>
               <p className="text-ash-400 break-all">
                 {masterAccountLabelByUid(entry.uid, users, entry.uid || 'SISTEMA')}
               </p>
             </div>
             <div className="space-y-1">
-              <p className="text-[9px] font-display font-bold text-ash-600 uppercase tracking-widest">{t('logs.agentVector')}</p>
+              <p className="text-[10px] font-display font-bold text-ash-600 uppercase tracking-wider">{t('logs.agentVector')}</p>
               <p className="text-primary/60">
                 {entry.characterId
                   ? characterLabelByKey(entry.uid, entry.characterId, characterMap, t('logs.unidentified'))
@@ -158,14 +158,14 @@ const LogRow = React.memo(({
               </p>
             </div>
             <div className="space-y-1">
-              <p className="text-[9px] font-display font-bold text-ash-600 uppercase tracking-widest">{t('logs.source')}</p>
+              <p className="text-[10px] font-display font-bold text-ash-600 uppercase tracking-wider">{t('logs.source')}</p>
               <p className="text-ash-400 uppercase">{entry.source} // {entry.category}</p>
             </div>
           </div>
           {entry.metadata && Object.keys(entry.metadata).length > 0 && (
             <div className="space-y-2">
-              <p className="text-[9px] font-display font-bold text-ash-600 uppercase tracking-widest">{t('logs.telemetry')}</p>
-              <pre className="text-[10px] font-mono text-primary/40 bg-surface-container-lowest border border-border-subtle p-4 rounded-sm overflow-x-auto max-h-60 shadow-inner">
+              <p className="text-[10px] font-display font-bold text-ash-600 uppercase tracking-wider">{t('logs.telemetry')}</p>
+              <pre className="text-[10px] font-mono text-primary/40 bg-surface-container-lowest p-4 rounded-sm overflow-x-auto max-h-60">
                 {JSON.stringify(entry.metadata, null, 2)}
               </pre>
             </div>
@@ -295,27 +295,27 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
 
   return (
     <div
-      className={`bg-surface-container-low border border-primary/10 flex flex-col font-sans overflow-hidden ${compact ? 'h-[28rem] rounded-card' : 'shadow-2xl'}`}
+      className={`bg-surface-container-low flex flex-col font-sans overflow-hidden ${compact ? 'h-[28rem] rounded-card' : ''}`}
       style={compact ? undefined : { minHeight: '500px', maxHeight: '65vh' }}
     >
       {modal}
       
-      <div className={`flex items-center justify-between ${compact ? 'px-4 py-3' : 'px-8 py-5'} bg-black/40 border-b border-primary/10 shrink-0`}>
+      <div className={`flex items-center justify-between ${compact ? 'px-4 py-3' : 'px-8 py-5'} bg-black/40 shrink-0`}>
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-3">
             <span className="lmb-led text-accent animate-led" aria-hidden />
             {/* No Ao Vivo o título já está no rótulo da seção */}
             {!compact && (
-              <h2 className="font-display font-bold uppercase tracking-[0.3em] text-xs text-primary">
+              <h2 className="font-display font-bold uppercase tracking-[0.08em] text-xs text-primary">
                 Fluxo de Telemetria em Tempo Real
               </h2>
             )}
           </div>
-          <span className="text-[10px] font-display font-bold text-ash-600 tracking-[0.2em] uppercase">
+          <span className="text-[10px] font-display font-bold text-ash-600 tracking-[0.08em] uppercase">
             {filtered.length} de {entries.length} Sinais Captados
           </span>
           {errorCount > 0 && (
-            <div className="text-[9px] font-display font-bold text-red-500 bg-red-500/5 border border-red-500/20 px-3 py-1 rounded-sm flex items-center gap-2 animate-pulse">
+            <div className="text-[10px] font-display font-bold text-red-500 bg-red-500/5 px-3 py-1 rounded-sm flex items-center gap-2 animate-pulse">
               <span className="material-symbols-outlined text-[14px]">report</span>
               {errorCount} ANOMALIAS DETECTADAS
             </div>
@@ -326,7 +326,7 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
             <>
               <button
                 onClick={handleExportJSON}
-                className="px-6 py-2 text-[10px] font-display font-bold uppercase tracking-widest bg-white/5 border border-border-subtle text-ash-500 hover:bg-white/10 hover:text-bone transition flex items-center gap-2 rounded-sm shadow-lg"
+                className="px-6 py-2 text-[10px] font-display font-bold uppercase tracking-wider bg-white/5 text-ash-500 hover:bg-white/10 hover:text-bone transition flex items-center gap-2 rounded-sm"
               >
                 <span className="material-symbols-outlined text-base">download</span>
                 Exportar JSON
@@ -335,10 +335,10 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
               {isOwnerScope() && <button
                 onClick={handleClearLogs}
                 disabled={isClearing}
-                className={`px-6 py-2 text-[10px] font-display font-bold uppercase tracking-widest border transition flex items-center gap-2 rounded-sm shadow-lg ${
+                className={`px-6 py-2 text-[10px] font-display font-bold uppercase tracking-wider transition flex items-center gap-2 rounded-sm ${
                   isClearing
-                    ? 'bg-white/5 text-ash-700 border-border-subtle'
-                    : 'bg-red-500/5 text-red-500/60 border-red-500/10 hover:bg-red-500/10 hover:text-red-500'
+                    ? 'bg-white/5 text-ash-700'
+                    : 'bg-red-500/5 text-red-500/60 hover:bg-red-500/10 hover:text-red-500'
                 }`}
               >
                 <span className="material-symbols-outlined text-base">delete_sweep</span>
@@ -349,16 +349,16 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
         </div>
       </div>
 
-      <div className={`flex items-center bg-black/20 border-b border-border-subtle shrink-0 flex-wrap ${compact ? 'gap-2 px-4 py-2.5' : 'gap-4 px-8 py-4'}`}>
+      <div className={`flex items-center bg-black/20 border-b border-seam shrink-0 flex-wrap ${compact ? 'gap-2 px-4 py-2.5' : 'gap-4 px-8 py-4'}`}>
         <div className={`flex items-center gap-3 ${compact ? '' : 'mr-4'}`}>
           <span className="material-symbols-outlined text-ash-600 text-base" aria-hidden>filter_list</span>
-          <span className={`text-[9px] font-display font-bold text-ash-600 tracking-widest uppercase ${compact ? 'sr-only' : ''}`}>{t('logs.filters')}</span>
+          <span className={`text-[10px] font-display font-bold text-ash-600 tracking-wider uppercase ${compact ? 'sr-only' : ''}`}>{t('logs.filters')}</span>
         </div>
         
         <select
           value={filterSource}
           onChange={(e) => setFilterSource(e.target.value)}
-          className="bg-surface-container-lowest border border-border-subtle text-[10px] font-display font-bold uppercase tracking-widest text-primary px-4 py-2 outline-none rounded-sm transition cursor-pointer shadow-inner"
+          className="bg-surface-container-lowest text-[10px] font-display font-bold uppercase tracking-wider text-primary px-4 py-2 outline-none rounded-sm transition cursor-pointer"
         >
           <option value="all">{t('logs.origin.all')}</option>
           <option value="player">{t('logs.origin.player')}</option>
@@ -368,7 +368,7 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
         <select
           value={filterType}
           onChange={(e) => setFilterType(e.target.value)}
-          className="bg-surface-container-lowest border border-border-subtle text-[10px] font-display font-bold uppercase tracking-widest text-primary px-4 py-2 outline-none rounded-sm transition cursor-pointer shadow-inner"
+          className="bg-surface-container-lowest text-[10px] font-display font-bold uppercase tracking-wider text-primary px-4 py-2 outline-none rounded-sm transition cursor-pointer"
         >
           <option value="all">{t('logs.type.all')}</option>
           <option value="navigation">{t('logs.type.navigation')}</option>
@@ -389,7 +389,7 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
             placeholder={t('logs.search')}
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
-            className="bg-surface-container-lowest border border-border-subtle text-[10px] font-display font-bold uppercase tracking-widest text-bone placeholder:text-ash-600 pl-10 pr-4 py-2.5 w-full focus:border-primary/40 outline-none rounded-sm transition shadow-inner"
+            className="bg-surface-container-lowest text-[10px] font-display font-bold uppercase tracking-wider text-bone placeholder:text-ash-600 pl-10 pr-4 py-2.5 w-full outline-none rounded-sm transition"
           />
         </div>
       </div>
@@ -419,26 +419,26 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
       </div>
 
       {!compact && (
-      <div className="flex items-center justify-between px-8 py-4 bg-black/40 border-t border-border-subtle shrink-0">
+      <div className="flex items-center justify-between px-8 py-4 bg-black/40 border-t border-seam shrink-0">
         <div className="flex items-center gap-3">
            <div className="h-1 w-12 bg-white/5 rounded-full overflow-hidden">
               <div className="h-full bg-primary/20 animate-loading-bar w-1/2" />
            </div>
-           <span className="text-[10px] font-display font-bold text-ash-600 tracking-widest uppercase">
+           <span className="text-[10px] font-display font-bold text-ash-600 tracking-wider uppercase">
              Monitorando Atividade de Grid em Tempo Real
            </span>
         </div>
         
         <div className="flex items-center gap-4">
-          <span className="text-[9px] font-display font-bold text-ash-600 uppercase tracking-widest">{t('logs.density')}</span>
-          <div className="flex bg-black/40 p-1 rounded-sm border border-border-subtle">
+          <span className="text-[10px] font-display font-bold text-ash-600 uppercase tracking-wider">{t('logs.density')}</span>
+          <div className="flex bg-black/40 p-1 rounded-sm">
             {[200, 500, 1000].map((n) => (
               <button
                 key={n}
                 onClick={() => setMaxEntries(n)}
                 className={`px-4 py-1 text-[10px] font-display font-bold tracking-tighter transition rounded-sm ${
                   maxEntries === n
-                    ? 'text-primary bg-primary/10 shadow-lg'
+                    ? 'text-primary bg-primary/10'
                     : 'text-ash-600 hover:text-bone hover:bg-white/5'
                 }`}
               >

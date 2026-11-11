@@ -27,7 +27,7 @@ const STATE_STYLE: Record<ReadinessState, { icon: string; tone: string; bar: str
   ok: { icon: 'check_circle', tone: 'text-phosphor-400', bar: 'bg-phosphor-500' },
   partial: { icon: 'adjust', tone: 'text-amber-400', bar: 'bg-amber-500/80' },
   missing: { icon: 'radio_button_unchecked', tone: 'text-ash-500', bar: 'bg-ash-800' },
-  na: { icon: 'remove', tone: 'text-ash-700', bar: 'bg-transparent border border-border-subtle' },
+  na: { icon: 'remove', tone: 'text-ash-700', bar: 'bg-transparent' },
 };
 
 /**
@@ -133,7 +133,7 @@ export default function MissionResourcesTab({
           </div>
         </div>
 
-        <ul className="border border-seam rounded-inset divide-y divide-border-subtle bg-surface-container-lowest">
+        <ul className="rounded-inset divide-y divide-seam bg-surface-container-lowest">
           {checks.map((check) => {
             const style = STATE_STYLE[check.state];
             const act = action(check);
@@ -181,7 +181,7 @@ export default function MissionResourcesTab({
           {t('missions.resources.kitTitle')}
         </h4>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 border border-seam rounded-inset bg-surface-container-lowest divide-y lg:divide-y-0 lg:divide-x divide-border-subtle">
+        <div className="grid grid-cols-1 lg:grid-cols-3 rounded-inset bg-surface-container-lowest divide-y lg:divide-y-0 lg:divide-x divide-seam">
           <ResourceColumn
             icon="hub"
             title={t('missions.resources.section.intel')}
@@ -318,7 +318,7 @@ function ResourceColumn({
 
       {note && count > 0 && <p className="text-[11px] text-amber-300/80 leading-relaxed">{note}</p>}
 
-      <div className="mt-auto pt-2 flex flex-wrap items-center justify-between gap-2 border-t border-border-subtle">
+      <div className="mt-auto pt-2 flex flex-wrap items-center justify-between gap-2 border-t border-seam">
         <span className="text-[11px] text-ash-500">
           {globalCount > 0 ? t('missions.resources.globalsNote', { count: globalCount }) : ' '}
         </span>

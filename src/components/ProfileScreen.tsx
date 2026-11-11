@@ -30,11 +30,11 @@ interface ProfileScreenProps {
 type AgentStatusKey = 'vivo' | 'morto' | 'desaparecido';
 
 const STATUS_STYLE: Map<AgentStatusKey, { color: string; dot: string; border: string }> = new Map([
-  ['vivo', { color: 'text-phosphor-400', dot: 'bg-phosphor-400', border: 'border-phosphor-500/30' }],
-  ['morto', { color: 'text-red-400', dot: 'bg-red-400', border: 'border-red-500/30' }],
-  ['desaparecido', { color: 'text-yellow-400', dot: 'bg-yellow-400', border: 'border-yellow-500/30' }],
+  ['vivo', { color: 'text-phosphor-400', dot: 'bg-phosphor-400', border: '' }],
+  ['morto', { color: 'text-red-400', dot: 'bg-red-400', border: '' }],
+  ['desaparecido', { color: 'text-yellow-400', dot: 'bg-yellow-400', border: '' }],
 ]);
-const DEFAULT_STATUS_STYLE = { color: 'text-phosphor-400', dot: 'bg-phosphor-400', border: 'border-phosphor-500/30' };
+const DEFAULT_STATUS_STYLE = { color: 'text-phosphor-400', dot: 'bg-phosphor-400', border: '' };
 
 const STATUS_LABEL_KEY: Record<AgentStatusKey, 'ativo' | 'eliminado' | 'desaparecido'> = {
   vivo: 'ativo',
@@ -53,15 +53,6 @@ export function generateRandomUSPhoneNumber(): string {
 
 /* ─── Peças do tema Deck (escuro) ─────────────────────────────── */
 
-const CornerMarks = () => (
-  <>
-    <span aria-hidden className="absolute top-1 left-1 w-2.5 h-2.5 border-t border-l border-border-accent" />
-    <span aria-hidden className="absolute top-1 right-1 w-2.5 h-2.5 border-t border-r border-border-accent" />
-    <span aria-hidden className="absolute bottom-1 left-1 w-2.5 h-2.5 border-b border-l border-border-accent" />
-    <span aria-hidden className="absolute bottom-1 right-1 w-2.5 h-2.5 border-b border-r border-border-accent" />
-  </>
-);
-
 const SectionHeader = ({
   index,
   title,
@@ -75,21 +66,19 @@ const SectionHeader = ({
   tone?: string;
   action?: React.ReactNode;
 }) => (
-  <div className="flex items-center gap-3 mb-3">
-    <span className="text-mono-ui text-[10px] text-ash-600">{index}</span>
-    <h2 className={`text-protocol flex items-center gap-2 ${tone}`}>
-      <Icon size={12} />
+  <div className="flex items-center gap-3 mb-2" data-section={index}>
+    <h2 className={`text-protocol flex items-center gap-2 flex-1 ${tone}`}>
+      <Icon size={13} />
       {title}
     </h2>
-    <span aria-hidden className="flex-1 h-px bg-border-subtle" />
     {action}
   </div>
 );
 
 const Stat = ({ value, label }: { value: React.ReactNode; label: string }) => (
-  <div className="flex-1 flex flex-col items-center py-3 border-r border-border-subtle last:border-r-0">
-    <span className="text-mono-ui text-xl font-semibold text-primary leading-none">{value}</span>
-    <span className="text-protocol text-[8px] text-ash-500 mt-1.5">{label}</span>
+  <div className="flex-1 flex flex-col items-start px-3 py-3 rounded-card bg-surface-raised">
+    <span className="text-display text-2xl text-bone leading-none tabular-nums">{value}</span>
+    <span className="text-protocol text-[10px] text-ash-400 mt-2">{label}</span>
   </div>
 );
 
@@ -107,16 +96,16 @@ const ActionRow = ({
   <button
     type="button"
     onClick={onClick}
-    className="w-full flex items-center gap-3 px-3.5 py-3 rounded-card border border-border bg-surface-raised hover:border-border-accent hover:bg-accent-05 active:scale-[0.99] transition duration-200 group text-left"
+    className="w-full flex items-center gap-3 px-3 py-3 rounded-card bg-surface-raised hover:bg-field-bone focus-visible:bg-field-bone active:scale-[0.99] transition duration-200 group text-left"
   >
-    <div className="w-9 h-9 rounded-control bg-surface-sunken border border-border text-primary flex items-center justify-center shrink-0 group-hover:bg-accent-10 group-hover:border-border-accent transition-colors">
+    <div className="w-9 h-9 rounded-control bg-surface-container-highest text-accent flex items-center justify-center shrink-0 group-hover:bg-field-ink group-focus-visible:bg-field-ink transition-colors">
       <Icon size={15} />
     </div>
     <div className="flex-1 min-w-0">
-      <div className="text-protocol text-white text-[10px]">{title}</div>
-      <div className="text-mono-ui text-[10px] text-ash-500 mt-0.5 truncate">{sub}</div>
+      <div className="text-protocol text-bone group-hover:text-field-ink group-focus-visible:text-field-ink">{title}</div>
+      <div className="text-xs text-ash-400 group-hover:text-ash-700 group-focus-visible:text-ash-700 mt-0.5 truncate">{sub}</div>
     </div>
-    <ChevronRight size={16} className="text-primary/40 group-hover:text-primary group-hover:translate-x-0.5 transition shrink-0" />
+    <ChevronRight size={16} className="text-ash-500 group-hover:text-field-ink group-hover:translate-x-0.5 transition shrink-0" />
   </button>
 );
 
@@ -135,7 +124,7 @@ const NokiaSection = ({
 }) => (
   <section className="border-2 border-lcd-ink p-1.5 shadow-[2px_2px_0px_#111e14] bg-lcd-paper">
     <div className="flex justify-between items-center mb-1.5 pb-1 border-b border-dotted border-lcd-ink/60">
-      <span className="text-[8px] font-black flex items-center gap-1.5">
+      <span className="text-[10px] font-black flex items-center gap-1.5">
         <span className="opacity-50">{index}</span>
         <span>{title}</span>
       </span>
@@ -209,13 +198,13 @@ export default function ProfileScreen({
 
   if (variant === 'nokia') {
     return (
-      <div className="w-full h-full bg-lcd-paper text-lcd-ink flex flex-col p-1 font-mono uppercase text-[10px] select-none tracking-widest relative">
+      <div className="w-full h-full bg-lcd-paper text-lcd-ink flex flex-col p-1 font-mono uppercase text-[10px] select-none tracking-wider relative">
         {/* Header */}
         <div className="flex justify-between items-center border-b-2 border-lcd-ink pb-1 shrink-0 font-bold mb-2">
           <button onClick={onBack} className="hover:bg-lcd-ink hover:text-lcd-paper px-1 active:scale-[0.97] transition">
             {tCommon('actions.backBracket')}
           </button>
-          <span className="text-[8px] flex items-center gap-1">
+          <span className="text-[10px] flex items-center gap-1">
             <span className="w-1.5 h-1.5 bg-lcd-ink animate-led" />
             {t('profile.header.nokia')}
           </span>
@@ -246,9 +235,9 @@ export default function ProfileScreen({
               <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
                 <div className="flex flex-col gap-0.5 min-w-0">
                   <div className="text-[12px] font-black leading-none truncate pr-14">{profile.character.codinome}</div>
-                  <div className="text-[8px] opacity-60 font-bold tracking-tighter">{tCommon('id')}: {agentCode}</div>
+                  <div className="text-[10px] opacity-60 font-bold tracking-tighter">{tCommon('id')}: {agentCode}</div>
                 </div>
-                <div className={`self-start px-1.5 py-0.5 border border-lcd-ink text-[7px] font-black ${profile.character.agentStatus === 'vivo' || !profile.character.agentStatus ? 'bg-lcd-ink text-lcd-paper' : ''}`}>
+                <div className={`self-start px-1.5 py-0.5 border border-lcd-ink text-[10px] font-black ${profile.character.agentStatus === 'vivo' || !profile.character.agentStatus ? 'bg-lcd-ink text-lcd-paper' : ''}`}>
                   {t('profile.statusPrefix', { status: statusCfg.label })}
                 </div>
               </div>
@@ -261,7 +250,7 @@ export default function ProfileScreen({
                 { label: t('profile.stat.imagesUpper'), value: galleryImages.length },
               ].map((s) => (
                 <div key={s.label} className="flex flex-col">
-                  <span className="text-[7px] opacity-60 font-bold tracking-tighter">{s.label}</span>
+                  <span className="text-[10px] opacity-60 font-bold tracking-tighter">{s.label}</span>
                   <span className="text-[14px] font-black leading-none mt-1">{String(s.value).padStart(2, '0')}</span>
                 </div>
               ))}
@@ -269,8 +258,8 @@ export default function ProfileScreen({
 
             <div>
               <div className="flex justify-between items-center mb-1">
-                <span className="text-[7px] opacity-60 font-bold">{tCommon('danger.labelUpper')}</span>
-                <span className="text-[7px] font-black">{dangerLabel}</span>
+                <span className="text-[10px] opacity-60 font-bold">{tCommon('danger.labelUpper')}</span>
+                <span className="text-[10px] font-black">{dangerLabel}</span>
               </div>
               <div className="flex gap-0.5 h-1.5">
                 {Array.from({ length: 5 }).map((_, i) => (
@@ -314,7 +303,7 @@ export default function ProfileScreen({
             title={t('profile.deck.nokia')}
             action={
               onUpdateSpotify && !isEditingSpotify ? (
-                <button onClick={startEditingSpotify} className="hover:bg-lcd-ink hover:text-lcd-paper px-1 active:scale-[0.97] transition text-[8px] border border-lcd-ink">
+                <button onClick={startEditingSpotify} className="hover:bg-lcd-ink hover:text-lcd-paper px-1 active:scale-[0.97] transition text-[10px] border border-lcd-ink">
                   {embedUrl ? t('profile.deck.editShort') : t('profile.deck.linkShort')}
                 </button>
               ) : undefined
@@ -327,13 +316,13 @@ export default function ProfileScreen({
                   value={spotifyInput}
                   onChange={(e) => { setSpotifyInput(e.target.value); setSpotifyError(''); }}
                   placeholder={t('profile.deck.placeholderNokia')}
-                  className="w-full bg-lcd-paper border border-lcd-ink px-1 py-1 text-[9px] text-lcd-ink focus:outline-none placeholder:text-lcd-ink/50"
+                  className="w-full bg-lcd-paper border border-lcd-ink px-1 py-1 text-[10px] text-lcd-ink focus:outline-none placeholder:text-lcd-ink/50"
                   autoFocus
                 />
-                {spotifyError && <p role="alert" className="text-[9px]">{tCommon('error')}: {spotifyError}</p>}
+                {spotifyError && <p role="alert" className="text-[10px]">{tCommon('error')}: {spotifyError}</p>}
                 <div className="flex gap-1 justify-end">
-                  <button onClick={handleCancelEdit} className="border border-lcd-ink px-2 py-0.5 hover:bg-lcd-ink hover:text-lcd-paper active:scale-[0.97] transition text-[8px]">{tCommon('actions.cancelShort')}</button>
-                  <button onClick={handleSaveSpotify} className="border border-lcd-ink px-2 py-0.5 hover:bg-lcd-ink hover:text-lcd-paper active:scale-[0.97] transition font-black text-[8px]">{tCommon('actions.saveShort')}</button>
+                  <button onClick={handleCancelEdit} className="border border-lcd-ink px-2 py-0.5 hover:bg-lcd-ink hover:text-lcd-paper active:scale-[0.97] transition text-[10px]">{tCommon('actions.cancelShort')}</button>
+                  <button onClick={handleSaveSpotify} className="border border-lcd-ink px-2 py-0.5 hover:bg-lcd-ink hover:text-lcd-paper active:scale-[0.97] transition font-black text-[10px]">{tCommon('actions.saveShort')}</button>
                 </div>
               </div>
             ) : embedUrl ? (
@@ -341,7 +330,7 @@ export default function ProfileScreen({
                 <iframe src={embedUrl} width="100%" height="80" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" title={t('profile.deck.iframeTitle')} />
               </div>
             ) : (
-              <div className="text-[8px] text-center border border-dashed border-lcd-ink py-3 opacity-60 font-bold italic">
+              <div className="text-[10px] text-center border border-dashed border-lcd-ink py-3 opacity-60 font-bold italic">
                 {t('profile.deck.noAudioNokia')}
               </div>
             )}
@@ -351,13 +340,13 @@ export default function ProfileScreen({
           <NokiaSection index="02" title={t('profile.contact.nokia')}>
             {profile.character.phoneNumber ? (
               <div className="flex justify-between items-center bg-lcd-ink text-lcd-paper p-1.5">
-                <span className="text-[8px] font-black">{t('profile.contact.line')}</span>
+                <span className="text-[10px] font-black">{t('profile.contact.line')}</span>
                 <span className="text-[10px] font-mono tracking-tighter">{profile.character.phoneNumber}</span>
               </div>
             ) : (
               <button
                 onClick={handleGeneratePhone}
-                className="w-full border-2 border-lcd-ink py-1.5 text-center hover:bg-lcd-ink hover:text-lcd-paper active:scale-[0.97] transition text-[9px] font-black"
+                className="w-full border-2 border-lcd-ink py-1.5 text-center hover:bg-lcd-ink hover:text-lcd-paper active:scale-[0.97] transition text-[10px] font-black"
               >
                 {t('profile.contact.generateNokia')}
               </button>
@@ -370,7 +359,7 @@ export default function ProfileScreen({
           </NokiaSection>
 
           {/* Conquistas */}
-          <NokiaSection index="04" title={t('profile.achievements.nokia')} action={<span className="text-[7px] opacity-60">{profile.achievementIds.length}/{achievements.length}</span>}>
+          <NokiaSection index="04" title={t('profile.achievements.nokia')} action={<span className="text-[10px] opacity-60">{profile.achievementIds.length}/{achievements.length}</span>}>
             <AchievementCatalog
               grantDocIds={profile.achievementIds}
               campaignId={profile.character.campaignId}
@@ -385,7 +374,7 @@ export default function ProfileScreen({
   }
 
   const iconButtonClass =
-    'w-10 h-10 rounded-control border border-border bg-surface-panel flex items-center justify-center active:scale-[0.97] transition duration-200 shrink-0';
+    'w-10 h-10 rounded-control bg-surface-panel flex items-center justify-center active:scale-[0.97] transition duration-200 shrink-0';
 
   return (
     <motion.div
@@ -393,59 +382,57 @@ export default function ProfileScreen({
       animate={{ x: 0, opacity: 1 }}
       exit={{ x: '100%', opacity: 0 }}
       transition={{ type: 'spring', damping: 24, stiffness: 200 }}
-      className={`relative w-full h-full bg-surface-container-high rounded-4xl border-8 border-surface-sunken shadow-panel flex flex-col overflow-hidden z-50 p-2 ${
+      className={`relative w-full h-full bg-surface-container-high rounded-4xl flex flex-col overflow-hidden z-50 p-2 ${
         isLandscape ? 'max-w-none max-h-none' : 'max-w-sm max-h-187.5 lg:max-w-md xl:max-w-lg lg:max-h-205'
       }`}
     >
       {/* Tela do dispositivo */}
-      <div className="relative flex-1 min-h-0 flex flex-col bg-surface rounded-device overflow-hidden shadow-hairline border border-border-subtle">
-        <div aria-hidden className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_80%_40%_at_50%_0%,var(--color-accent-05),transparent_70%)]" />
+      <div className="relative flex-1 min-h-0 flex flex-col bg-surface rounded-device overflow-hidden">
 
         {/* Header */}
-        <header className="relative z-10 flex items-center justify-between px-4 pt-4 pb-3 shrink-0 border-b border-border-subtle bg-surface-raised/95">
+        <header className="relative z-10 flex items-center justify-between px-4 pt-4 pb-3 shrink-0 bg-surface">
           <button
             type="button"
             onClick={onBack}
             aria-label={t('profile.backAria')}
-            className={`${iconButtonClass} text-primary hover:border-border-accent hover:bg-accent-10`}
+            className={`${iconButtonClass} text-bone bg-surface-raised hover:bg-field-bone hover:text-field-ink`}
           >
             <ArrowLeft size={16} />
           </button>
           <div className="flex flex-col items-center gap-0.5 min-w-0">
-            <span className="text-protocol text-[8px] text-ash-500">{t('profile.header.agentFile')}</span>
-            <span className="text-mono-ui text-[10px] text-primary/70">{agentCode}</span>
+            <span className="text-protocol text-[10px] text-ash-400">{t('profile.header.agentFile')}</span>
+            <span className="text-mono-ui text-[11px] text-accent">{agentCode}</span>
           </div>
           <button
             type="button"
             onClick={onLogout}
             aria-label={t('profile.logoutAria')}
-            className={`${iconButtonClass} text-red-400 hover:border-red-500/40 hover:bg-red-500/10`}
+            className={`${iconButtonClass} text-red-300 bg-surface-raised hover:bg-red-600 hover:text-red-50`}
           >
             <LogOut size={15} />
           </button>
         </header>
 
         {/* Identidade */}
-        <section className="relative z-10 px-4 pt-5 pb-4 shrink-0">
+        <section className="relative z-10 mx-3 mt-1 mb-2 p-4 rounded-panel bg-accent text-field-ink shrink-0">
           <div className="flex items-center gap-4">
-            <div className="relative w-20 h-20 rounded-card overflow-hidden border border-border-strong bg-surface-sunken shrink-0 flex items-center justify-center">
+            <div className="relative w-20 h-20 rounded-card overflow-hidden bg-field-ink shrink-0 flex items-center justify-center">
               {profile.character.profilePhotoUrl ? (
                 <img src={profile.character.profilePhotoUrl} alt={tCommon('profileAlt')} className="w-full h-full object-cover" />
               ) : (
-                <span className="text-display text-2xl text-primary">{initials || '?'}</span>
+                <span className="text-display text-2xl text-accent">{initials || '?'}</span>
               )}
               <div aria-hidden className="absolute inset-0 pointer-events-none opacity-30 bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,#00000066_2px,#00000066_3px)]" />
-              <CornerMarks />
             </div>
             <div className="flex-1 min-w-0">
-              <h1 className="text-display text-[22px] text-white uppercase truncate">{profile.character.codinome}</h1>
+              <h1 className="text-display text-2xl uppercase leading-none">{profile.character.codinome}</h1>
               <div className="mt-2 flex items-center gap-2 flex-wrap">
-                <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-inset border bg-surface-raised text-protocol text-[8px] ${statusCfg.border} ${statusCfg.color}`}>
+                <span className="lmb-tag bg-field-ink text-accent">
                   <span className={`w-1.5 h-1.5 rounded-full ${statusCfg.dot} animate-led`} />
                   {statusCfg.label}
                 </span>
-                <span className="text-mono-ui text-[10px] text-ash-500">
-                  {tCommon('nivel')} <span className={dangerLevel >= 4 ? 'text-red-400' : dangerLevel >= 2 ? 'text-primary' : ''}>{dangerLabel}</span>
+                <span className="text-mono-ui text-[11px] text-field-ink/75">
+                  {tCommon('nivel')} <span className="font-semibold text-field-ink">{dangerLabel}</span>
                 </span>
               </div>
               <div className="mt-3 flex gap-1">
@@ -454,8 +441,8 @@ export default function ProfileScreen({
                     key={i}
                     className={`h-1.5 flex-1 rounded-inset transition duration-700 ${
                       i < dangerLevel
-                        ? dangerLevel >= 4 ? 'bg-red-500' : 'bg-primary'
-                        : 'bg-surface-sunken border border-border-subtle'
+                        ? dangerLevel >= 4 ? 'bg-red-700' : 'bg-field-ink'
+                        : 'bg-field-ink/20'
                     }`}
                   />
                 ))}
@@ -465,7 +452,7 @@ export default function ProfileScreen({
         </section>
 
         {/* Leituras */}
-        <div className="relative z-10 mx-4 flex rounded-card border border-border bg-surface-raised shadow-hairline overflow-hidden shrink-0">
+        <div className="relative z-10 mx-3 flex gap-2 shrink-0">
           <Stat value={profile.unlockedIntelIds.length} label={t('profile.stat.proofs')} />
           <Stat value={profile.achievementIds.length} label={t('profile.stat.achievements')} />
           <Stat value={galleryImages.length} label={t('profile.stat.images')} />
@@ -486,8 +473,8 @@ export default function ProfileScreen({
           </div>
 
           <section className="px-4 pt-4 pb-2">
-            <div className="rounded-card border border-border bg-surface-raised/60 p-3">
-              <div className="text-protocol text-[8px] text-ash-500 mb-2">{t('profile.languageSection')}</div>
+            <div className="rounded-card bg-surface-raised/60 p-3">
+              <div className="text-protocol text-[10px] text-ash-500 mb-2">{t('profile.languageSection')}</div>
               <LanguageSelector variant="deck" />
             </div>
           </section>
@@ -504,7 +491,7 @@ export default function ProfileScreen({
                   <button
                     type="button"
                     onClick={startEditingSpotify}
-                    className="flex items-center gap-1 text-protocol text-[8px] text-ash-500 hover:text-[#1DB954] transition-colors"
+                    className="flex items-center gap-1 text-protocol text-[10px] text-ash-500 hover:text-[#1DB954] transition-colors"
                   >
                     <Pencil size={9} />
                     {embedUrl ? t('profile.deck.edit') : t('profile.deck.connect')}
@@ -521,8 +508,8 @@ export default function ProfileScreen({
                   exit={{ opacity: 0, y: -8 }}
                   className="space-y-2"
                 >
-                  <div className="rounded-card border border-border bg-surface-raised p-3">
-                    <label className="text-protocol text-[8px] text-ash-500 block mb-2">
+                  <div className="rounded-card bg-surface-raised p-3">
+                    <label className="text-protocol text-[10px] text-ash-500 block mb-2">
                       {t('profile.deck.label')}
                     </label>
                     <input
@@ -530,11 +517,11 @@ export default function ProfileScreen({
                       value={spotifyInput}
                       onChange={(e) => { setSpotifyInput(e.target.value); setSpotifyError(''); }}
                       placeholder={t('profile.deck.placeholder')}
-                      className="w-full bg-surface-sunken border border-border rounded-control px-3 py-2 text-base text-white placeholder:text-ash-600 focus:border-[#1DB954]/60 focus:outline-none transition-colors font-mono"
+                      className="w-full bg-surface-sunken rounded-control px-3 py-2 text-base text-white placeholder:text-ash-600 focus:outline-none transition-colors font-mono"
                       autoFocus
                     />
                     {spotifyError && <p className="text-red-400 text-[10px] mt-1.5 font-sans">{spotifyError}</p>}
-                    <p className="text-[9px] text-ash-600 mt-2 leading-relaxed font-sans">
+                    <p className="text-[10px] text-ash-600 mt-2 leading-relaxed font-sans">
                       {t('profile.deck.hint')}
                     </p>
                   </div>
@@ -542,14 +529,14 @@ export default function ProfileScreen({
                     <button
                       type="button"
                       onClick={handleCancelEdit}
-                      className="flex items-center gap-1 px-3 py-1.5 rounded-control border border-border bg-surface-raised text-ash-400 text-protocol text-[8px] hover:text-white transition-colors"
+                      className="flex items-center gap-1 px-3 py-1.5 rounded-control bg-surface-raised text-ash-400 text-protocol text-[10px] hover:text-white transition-colors"
                     >
                       <X size={10} /> {tCommon('cancel')}
                     </button>
                     <button
                       type="button"
                       onClick={handleSaveSpotify}
-                      className="flex items-center gap-1 px-3 py-1.5 rounded-control bg-[#1DB954]/15 text-[#1DB954] text-protocol text-[8px] border border-[#1DB954]/30 hover:bg-[#1DB954]/25 transition-colors"
+                      className="flex items-center gap-1 px-3 py-1.5 rounded-control bg-[#1DB954]/15 text-[#1DB954] text-protocol text-[10px] hover:bg-[#1DB954]/25 transition-colors"
                     >
                       <Check size={10} /> {tCommon('save')}
                     </button>
@@ -561,7 +548,7 @@ export default function ProfileScreen({
                   initial={{ opacity: 0, scale: 0.97 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.97 }}
-                  className="rounded-card overflow-hidden border border-border bg-surface-sunken"
+                  className="rounded-card overflow-hidden bg-surface-sunken"
                 >
                   <iframe
                     src={embedUrl}
@@ -580,9 +567,9 @@ export default function ProfileScreen({
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="rounded-card border border-dashed border-border bg-surface-raised/40 p-6 text-center"
+                  className="rounded-card bg-surface-raised/40 p-6 text-center"
                 >
-                  <div className="w-12 h-12 rounded-control bg-surface-sunken border border-border flex items-center justify-center mx-auto mb-3 text-[#1DB954]/60">
+                  <div className="w-12 h-12 rounded-control bg-surface-sunken flex items-center justify-center mx-auto mb-3 text-[#1DB954]/60">
                     <Music size={20} />
                   </div>
                   <p className="text-protocol text-ash-400 mb-1">{t('profile.deck.emptyTitle')}</p>
@@ -591,7 +578,7 @@ export default function ProfileScreen({
                     <button
                       type="button"
                       onClick={() => setIsEditingSpotify(true)}
-                      className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 rounded-control bg-[#1DB954]/15 text-[#1DB954] text-protocol text-[8px] border border-[#1DB954]/25 hover:bg-[#1DB954]/25 transition-colors"
+                      className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 rounded-control bg-[#1DB954]/15 text-[#1DB954] text-protocol text-[10px] hover:bg-[#1DB954]/25 transition-colors"
                     >
                       <ExternalLink size={10} />
                       {t('profile.deck.connectCta')}
@@ -605,11 +592,11 @@ export default function ProfileScreen({
           {/* Linha de contato */}
           <section className="px-4 pt-5 pb-2">
             <SectionHeader index="02" title={t('profile.contact.title')} Icon={Phone} />
-            <div className="rounded-card border border-border bg-surface-raised p-3">
+            <div className="rounded-card bg-surface-raised p-3">
               {profile.character.phoneNumber ? (
                 <div className="flex items-center justify-between gap-3">
                   <span className="text-mono-ui text-sm text-white">{profile.character.phoneNumber}</span>
-                  <span className="inline-flex items-center gap-1.5 text-protocol text-[8px] text-primary">
+                  <span className="inline-flex items-center gap-1.5 text-protocol text-[10px] text-primary">
                     <span className="w-1.5 h-1.5 rounded-full bg-primary animate-led" /> {tCommon('active')}
                   </span>
                 </div>

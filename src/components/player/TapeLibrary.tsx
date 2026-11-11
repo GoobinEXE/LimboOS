@@ -36,22 +36,22 @@ export default React.memo(function TapeLibrary({
 
   return (
     <div
-      className={`${landscape ? 'mt-0' : 'mt-6 mr-19'} flex-1 bg-surface-raised rounded-panel border border-border-strong shadow-[inset_0_2px_10px_rgba(0,0,0,0.55),inset_0_1px_0_rgba(255,255,255,0.03)] overflow-hidden flex flex-col min-h-0`}
+      className={`${landscape ? 'mt-0' : 'mt-6 mr-19'} flex-1 bg-surface-raised rounded-panel overflow-hidden flex flex-col min-h-0`}
     >
       <div
-        className={`${landscape ? 'px-2 py-1.5' : 'p-3'} border-b border-border bg-surface-panel flex items-center justify-between shrink-0`}
+        className={`${landscape ? 'px-2 py-1.5' : 'p-3'} bg-accent text-field-ink flex items-center justify-between shrink-0`}
       >
         <div className="flex items-center gap-2">
           <div
-            className={`${landscape ? 'w-5 h-5' : 'w-6 h-6'} bg-accent rounded-inset shadow-hairline flex items-center justify-center`}
+            className={`${landscape ? 'w-5 h-5' : 'w-6 h-6'} bg-field-ink rounded-inset flex items-center justify-center`}
           >
-            <span className="text-white font-black text-sm italic">R.</span>
+            <span className="text-accent font-black text-sm italic">R.</span>
           </div>
-          <h2 className={`text-accent font-bold tracking-tight ${landscape ? 'text-xs' : 'text-sm'}`}>
+          <h2 className={`font-display font-extrabold uppercase tracking-tight ${landscape ? 'text-xs' : 'text-sm'}`}>
             {t('walkman.library.title')}
           </h2>
         </div>
-        <span className="text-[9px] text-ash-400 font-bold uppercase tracking-widest">
+        <span className="font-mono text-[10px] text-field-ink/70 font-semibold uppercase tracking-wider">
           {displayMode === 'default'
             ? t('walkman.library.sort.original')
             : displayMode === 'title'
@@ -62,13 +62,13 @@ export default React.memo(function TapeLibrary({
         </span>
       </div>
       <div className="flex-1 overflow-y-auto">
-        <style>{`.tape-scroll::-webkit-scrollbar{width:4px}.tape-scroll::-webkit-scrollbar-track{background:var(--color-surface-raised)}.tape-scroll::-webkit-scrollbar-thumb{background:var(--color-accent);border-radius:4px}`}</style>
+        <style>{`.tape-scroll::-webkit-scrollbar{width:4px}.tape-scroll::-webkit-scrollbar-track{background:var(--color-surface-raised)}.tape-scroll::-webkit-scrollbar-thumb{background:var(--color-ash-600);border-radius:2px}`}</style>
         <div className="tape-scroll overflow-y-auto h-full">
           {intelItems.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full p-4 text-center">
               <IntelTypeIcon type="AUDIO" size={28} className="text-ash-600 mb-2" />
-              <p className="text-ash-500 text-xs uppercase tracking-widest">{t('walkman.library.empty')}</p>
-              <p className="text-ash-600 text-[10px] mt-1">
+              <p className="text-ash-400 text-protocol">{t('walkman.library.empty')}</p>
+              <p className="text-ash-500 text-xs mt-1">
                 {t('walkman.library.emptyHint')}
               </p>
             </div>
@@ -80,9 +80,9 @@ export default React.memo(function TapeLibrary({
                 return (
                   <React.Fragment key={item.id}>
                     {showGroupHeader && (
-                      <div className="px-3 py-1.5 bg-surface-sunken border-b border-border sticky top-0 z-10 flex items-center gap-1.5 text-accent-80">
+                      <div className="px-3 py-1.5 bg-surface-panel border-b border-seam sticky top-0 z-10 flex items-center gap-1.5 text-accent">
                         <IntelTypeIcon type={item.type} size={11} />
-                        <span className="text-[9px] font-bold uppercase tracking-widest">
+                        <span className="text-protocol text-[10px]">
                           {item.getTypeLabel()}
                         </span>
                       </div>
@@ -94,15 +94,15 @@ export default React.memo(function TapeLibrary({
                       exit={{ opacity: 0 }}
                       onClick={() => onIntelSelect(item)}
                       aria-current={item.id === currentIntelId ? 'true' : undefined}
-                      className={`w-full text-left p-2 border-b border-border-subtle cursor-pointer transition-colors duration-150 ease-limbo flex justify-between items-center focus-visible:-outline-offset-2 ${item.id === currentIntelId ? 'bg-accent-10 border-border-accent' : 'hover:bg-surface-container active:bg-surface-container-high'}`}
+                      className={`w-full text-left px-3 py-2.5 border-b border-seam cursor-pointer transition-colors duration-150 ease-limbo flex justify-between items-center focus-visible:-outline-offset-2 ${item.id === currentIntelId ? 'bg-field-bone' : 'hover:bg-surface-container active:bg-surface-container-high'}`}
                     >
                       <div className="flex flex-col min-w-0 pr-2">
                         <span
-                          className={`text-xs font-bold truncate ${item.id === currentIntelId ? 'text-accent' : 'text-on-background'}`}
+                          className={`text-[13px] font-bold truncate ${item.id === currentIntelId ? 'text-field-ink' : 'text-on-background'}`}
                         >
                           {item.title}
                         </span>
-                        <span className="text-[10px] text-primary/80 truncate">
+                        <span className={`text-[11px] font-mono truncate ${item.id === currentIntelId ? 'text-ash-700' : 'text-ash-400'}`}>
                           {item.metadata?.chapter}
                         </span>
                       </div>
@@ -111,19 +111,19 @@ export default React.memo(function TapeLibrary({
                           <motion.div
                             animate={{ opacity: [0, 1] }}
                             transition={{ repeat: Infinity, duration: 0.5 }}
-                            className="w-0 h-0 border-t-4 border-t-transparent border-l-[6px] border-l-accent border-b-4 border-b-transparent"
+                            className="w-0 h-0 border-t-4 border-t-transparent border-l-[6px] border-l-field-ink border-b-4 border-b-transparent"
                           />
                         )}
                         <div
                           title={item.getTypeLabel()}
-                          className={`w-8 h-8 rounded-control border flex items-center justify-center shadow-hairline ${
+                          className={`w-8 h-8 rounded-control flex items-center justify-center ${
                             item.type === 'TEXT'
-                              ? 'bg-accent-20 border-border-accent text-accent'
+                              ? 'bg-accent text-field-ink'
                               : item.type === 'VISUAL'
-                                ? 'bg-tube-600/30 border-tube-500 text-tube-200'
+                                ? 'bg-tube-300 text-tube-950'
                                 : item.type === 'META'
-                                  ? 'bg-yellow-600/30 border-yellow-500 text-yellow-300'
-                                  : 'bg-surface-container border-border-strong text-ash-300'
+                                  ? 'bg-yellow-400 text-yellow-950'
+                                  : 'bg-surface-container-highest text-ash-100'
                           }`}
                         >
                           <IntelTypeIcon type={item.type} size={15} />

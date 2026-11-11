@@ -5,6 +5,9 @@ import {defineConfig, loadEnv} from 'vite';
 
 export default defineConfig(({mode}) => {
   const env = loadEnv(mode, '.', '');
+  // Emuladores locais (Auth, Firestore, Functions, Storage) entram na CSP só quando ligados.
+  const emulatorSrc =
+    (env.VITE_USE_EMULATORS ?? process.env.VITE_USE_EMULATORS) === 'true' ? ' http://127.0.0.1:* http://localhost:*' : '';
   return {
     plugins: [react(), tailwindcss()],
     build: {
@@ -46,8 +49,8 @@ export default defineConfig(({mode}) => {
           "font-src 'self' https://fonts.gstatic.com data:",
           "img-src 'self' data: blob: https:",
           "media-src 'self' blob: https:",
-          "frame-src https://open.spotify.com https://accounts.google.com https://apis.google.com https://*.firebaseapp.com",
-          "connect-src 'self' ws: wss: https://apis.google.com https://*.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com https://*.cloudfunctions.net wss://*.firebaseio.com https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firebaseinstallations.googleapis.com https://firebasestorage.googleapis.com https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com",
+          "frame-src https://open.spotify.com https://accounts.google.com https://apis.google.com https://*.firebaseapp.com" + emulatorSrc,
+          "connect-src 'self' ws: wss: https://apis.google.com https://*.googleapis.com https://*.firebaseio.com https://*.firebaseapp.com https://*.cloudfunctions.net wss://*.firebaseio.com https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firebaseinstallations.googleapis.com https://firebasestorage.googleapis.com https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com" + emulatorSrc,
           "frame-ancestors 'none'",
           "base-uri 'self'",
           "form-action 'self'",

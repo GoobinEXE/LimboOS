@@ -70,7 +70,7 @@ export default function AdminSubTabs<T extends string>({
             tabIndex={isActive ? 0 : -1}
             title={tab.title}
             onClick={() => !tab.disabled && onChange(tab.id)}
-            className={`relative flex items-center gap-2 h-10 px-4 text-[10px] font-display font-bold tracking-[0.2em] uppercase rounded-t-inset transition-colors ${
+            className={`relative flex items-center gap-2 h-10 px-4 text-[10px] font-display font-bold tracking-[0.08em] uppercase rounded-t-inset transition-colors ${
               isActive
                 ? 'text-primary'
                 : tab.disabled

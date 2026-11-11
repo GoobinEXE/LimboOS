@@ -63,15 +63,15 @@ export default function Header({
             </button>
           </div>
         )}
-        <div className="hidden lg:flex items-center gap-2 pr-3 border-r border-border-subtle shrink-0">
+        <div className="hidden 2xl:flex items-center gap-2 pr-1 shrink-0">
           <span className="lmb-led text-accent animate-led" aria-hidden />
-          <span className="font-display uppercase font-bold tracking-[0.2em] text-[9px] text-primary hidden lg:inline">
+          <span className="font-display uppercase font-bold tracking-[0.08em] text-[10px] text-primary hidden lg:inline">
             {t('header.statusConnected')}
           </span>
         </div>
 
         <nav aria-label={t('breadcrumb.navLabel')} className="min-w-0 flex-1 max-w-[32rem]">
-          <ol className="flex items-center gap-1.5 min-w-0 text-[10px] font-display uppercase font-bold tracking-[0.2em] leading-4">
+          <ol className="flex items-center gap-1.5 min-w-0 text-[10px] font-display uppercase font-bold tracking-[0.08em] leading-4">
             {breadcrumb.map((crumb, i) => {
               const last = i === breadcrumb.length - 1;
               return (
@@ -103,16 +103,16 @@ export default function Header({
           <button
             type="button"
             onClick={onOpenLive}
-            className="hidden md:flex items-center gap-2 max-w-xs h-7 bg-phosphor-500/5 border border-phosphor-500/25 px-2.5 rounded-inset hover:bg-phosphor-500/10 hover:border-phosphor-500/40 transition-colors truncate"
+            className="hidden md:flex items-center gap-2 max-w-xs h-7 bg-phosphor-950 px-2.5 rounded-control hover:bg-phosphor-900 transition-colors truncate"
             title={t('header.sessionGoLive')}
           >
             <span className="lmb-led text-phosphor-400 animate-led" aria-hidden />
-            <span className="font-display uppercase font-bold tracking-[0.15em] text-[9px] text-phosphor-300 truncate">
+            <span className="font-display uppercase font-bold tracking-[0.15em] text-[10px] text-phosphor-300 truncate">
               {t('header.sessionPrefix')} {sessionLabel}
             </span>
           </button>
         ) : (
-          <span className="text-[9px] font-display uppercase font-bold tracking-[0.24em] text-ash-600 hidden 2xl:inline truncate">
+          <span className="text-[10px] font-display uppercase font-bold tracking-[0.24em] text-ash-600 hidden 2xl:inline truncate">
             {t('header.noSession')}
           </span>
         )}
@@ -123,11 +123,11 @@ export default function Header({
           <button
             type="button"
             onClick={onSpotlight}
-            className="group flex items-center gap-2.5 h-8 pl-2.5 pr-1.5 lg:w-56 bg-surface-sunken border border-border rounded-inset shadow-pressed hover:border-border-strong transition-colors"
+            className="group flex items-center gap-2.5 h-9 pl-3 pr-1.5 lg:w-60 bg-surface-container hover:bg-surface-container-high rounded-control transition-colors"
             title={t('header.searchTitle')}
             aria-label={t('header.searchTitle')}
           >
-            <Search size={14} className="text-ash-500 group-hover:text-primary transition-colors shrink-0" />
+            <Search size={14} className="text-ash-400 group-hover:text-accent transition-colors shrink-0" />
             <span className="flex-1 text-left text-[11px] text-ash-500 group-hover:text-ash-300 hidden lg:inline transition-colors">
               {t('header.search')}
             </span>
@@ -139,17 +139,17 @@ export default function Header({
 
         <LanguageSelector variant="admin" className="hidden sm:flex" />
 
-        <div className="flex items-center gap-3 pl-3 border-l border-border-subtle">
+        <div className="flex items-center gap-2 pl-1">
           <div className="text-right hidden lg:block">
-            <p className="text-[9px] font-display font-bold uppercase tracking-[0.2em] text-ash-500 leading-none">
+            <p className="text-[10px] font-display font-bold uppercase tracking-[0.08em] text-ash-500 leading-none">
               {t('header.operator')}
             </p>
-            <p className="text-xs font-display font-bold text-bone tracking-widest uppercase mt-1 leading-none">
+            <p className="text-xs font-display font-bold text-bone tracking-wider uppercase mt-1 leading-none">
               {user?.email?.split('@')[0] || 'GM.MPG'}
             </p>
           </div>
           <div
-            className="w-8 h-8 border border-accent-40 bg-accent-05 flex items-center justify-center text-primary font-display font-bold text-[10px] tracking-wider rounded-inset"
+            className="w-9 h-9 bg-accent flex items-center justify-center text-field-ink font-display font-extrabold text-[11px] tracking-wide rounded-control"
             aria-hidden
           >
             {operatorInitials(user?.email)}
@@ -160,7 +160,7 @@ export default function Header({
           <a
             href={playAsAgentHref}
             onClick={onPlayAsAgent}
-            className="lmb-btn h-8 min-h-0 px-3"
+            className="lmb-btn lmb-btn-bone h-9 min-h-0 px-3"
             title={t('header.playAsAgentTitle')}
             aria-label={t('header.playAsAgent')}
           >
@@ -174,7 +174,7 @@ export default function Header({
         <button
           type="button"
           onClick={() => setAboutOpen(true)}
-          className="lmb-btn lmb-btn-ghost lmb-btn-icon h-8 min-h-0"
+          className="lmb-btn lmb-btn-ghost lmb-btn-icon h-9 min-h-0"
           title={tCommon('about.title')}
           aria-label={tCommon('about.openAria')}
         >
@@ -185,7 +185,7 @@ export default function Header({
           <button
             type="button"
             onClick={onLogout}
-            className="lmb-btn lmb-btn-danger h-8 min-h-0 px-3"
+            className="lmb-btn lmb-btn-danger h-9 min-h-0 px-3"
             title={t('header.logoutTitle')}
           >
             <span className="hidden lg:inline">{t('header.logout')}</span>

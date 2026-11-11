@@ -145,14 +145,14 @@ export default function CampaignSelection({
   if (loading) return <RetroLoading message={t('campaign.loading')} subMessage={t('campaign.loadingSub')} />;
 
   const iconButtonClass =
-    'w-10 h-10 sm:w-11 sm:h-11 rounded-control border border-border bg-surface-panel text-primary flex items-center justify-center hover:border-border-accent hover:bg-accent-10 active:scale-[0.97] transition duration-200 shrink-0';
+    'w-10 h-10 sm:w-11 sm:h-11 rounded-control bg-surface-panel text-primary flex items-center justify-center hover:bg-accent-10 active:scale-[0.97] transition duration-200 shrink-0';
 
   return (
     <div className="w-full h-full flex flex-col relative overflow-hidden bg-surface">
       <div className="noise-overlay" />
       <div className="scanlines" />
 
-      <header className="flex justify-between items-center min-h-16 sm:min-h-20 pt-[max(0.5rem,env(safe-area-inset-top))] pb-2 sm:py-0 px-4 sm:px-8 relative z-30 border-b border-border bg-surface-raised/95">
+      <header className="flex justify-between items-center min-h-16 sm:min-h-20 pt-[max(0.5rem,env(safe-area-inset-top))] pb-2 sm:py-0 px-4 sm:px-8 relative z-30 border-b border-seam bg-surface-raised/95">
         <div className="flex items-center gap-3 sm:gap-5 min-w-0">
           {canGoBack ? (
             <button type="button" onClick={onBack} className={iconButtonClass} aria-label={t('campaign.backAria')}>
@@ -169,7 +169,7 @@ export default function CampaignSelection({
             </button>
           )}
           <div className="min-w-0">
-            <p className="text-protocol text-[8px] sm:text-[9px] text-primary/60 truncate">
+            <p className="text-protocol text-[10px] sm:text-[10px] text-primary/60 truncate">
               {canGoBack ? t('campaign.eyebrow.back') : t('campaign.eyebrow.default')}
             </p>
             <h1 className="text-display text-lg sm:text-2xl text-bone uppercase truncate mt-0.5">
@@ -238,7 +238,7 @@ export default function CampaignSelection({
               type="button"
               onClick={() => snapTo(currentIndex - 1)}
               aria-label={t('campaign.prevTape')}
-              className="absolute left-3 sm:left-5 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-surface-panel/80 border border-border text-primary hover:border-border-accent hover:bg-accent-10 active:scale-[0.97] transition duration-200 flex items-center justify-center shadow-panel"
+              className="absolute left-3 sm:left-5 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-surface-panel/80 text-primary hover:bg-accent-10 active:scale-[0.97] transition duration-200 flex items-center justify-center"
             >
               <ChevronLeft size={22} />
             </button>
@@ -248,7 +248,7 @@ export default function CampaignSelection({
               type="button"
               onClick={() => snapTo(currentIndex + 1)}
               aria-label={t('campaign.nextTape')}
-              className="absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-surface-panel/80 border border-border text-primary hover:border-border-accent hover:bg-accent-10 active:scale-[0.97] transition duration-200 flex items-center justify-center shadow-panel"
+              className="absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-surface-panel/80 text-primary hover:bg-accent-10 active:scale-[0.97] transition duration-200 flex items-center justify-center"
             >
               <ChevronRight size={22} />
             </button>
@@ -264,12 +264,12 @@ export default function CampaignSelection({
         </div>
       </main>
 
-      <footer className="px-4 sm:px-8 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] flex justify-between items-center bg-surface-raised/80 border-t border-border-subtle relative z-30">
-        <div className="flex items-center gap-2 sm:gap-3 text-protocol text-[8px] sm:text-[10px] text-ash-400 truncate">
+      <footer className="px-4 sm:px-8 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] flex justify-between items-center bg-surface-raised/80 border-t border-seam relative z-30">
+        <div className="flex items-center gap-2 sm:gap-3 text-protocol text-[10px] sm:text-[10px] text-ash-400 truncate">
           <span className="lmb-led text-accent animate-led" aria-hidden />
           {t('campaign.signal')}
         </div>
-        <div className="text-mono-ui text-[8px] sm:text-[10px] text-ash-600 shrink-0 ml-2">
+        <div className="text-mono-ui text-[10px] sm:text-[10px] text-ash-600 shrink-0 ml-2">
           {t('campaign.footerSys')}
         </div>
       </footer>

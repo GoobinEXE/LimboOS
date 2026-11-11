@@ -32,15 +32,15 @@ export default function CampaignBindingPicker({
   };
 
   const chipClass = (active: boolean) =>
-    `inline-flex items-center gap-1.5 h-8 px-3 border rounded-inset text-[11px] font-display font-bold uppercase tracking-[0.12em] transition-colors ${
+    `inline-flex items-center gap-1.5 h-8 px-3 rounded-inset text-[11px] font-display font-bold uppercase tracking-[0.12em] transition-colors ${
       active
-        ? 'border-accent-60 bg-accent-10 text-primary'
-        : 'border-border text-ash-400 hover:text-bone hover:border-border-strong'
+        ? 'bg-accent-10 text-primary'
+        : 'text-ash-400 hover:text-bone'
     }`;
 
   return (
     <fieldset className="space-y-2">
-      <legend className="text-[10px] font-display font-bold uppercase tracking-[0.2em] text-ash-400 mb-2">
+      <legend className="text-[10px] font-display font-bold uppercase tracking-[0.08em] text-ash-400 mb-2">
         {label}
       </legend>
       <div role="radiogroup" className="flex flex-wrap gap-2">
@@ -78,10 +78,10 @@ export default function CampaignBindingPicker({
                 type="button"
                 aria-pressed={on}
                 onClick={() => toggle(c.id)}
-                className={`h-7 px-2.5 border rounded-inset text-[11px] transition-colors ${
+                className={`h-7 px-2.5 rounded-inset text-[11px] transition-colors ${
                   on
-                    ? 'border-accent-60 bg-accent-10 text-primary'
-                    : 'border-border-subtle text-ash-400 hover:text-bone hover:border-border'
+                    ? 'bg-accent-10 text-primary'
+                    : 'text-ash-400 hover:text-bone'
                 }`}
               >
                 {c.name || c.id}
@@ -94,7 +94,7 @@ export default function CampaignBindingPicker({
               type="button"
               onClick={() => toggle(id)}
               title={t('scope.orphanTitle')}
-              className="h-7 px-2.5 border border-red-500/30 bg-red-500/5 rounded-inset text-[11px] text-red-300/90 line-through decoration-red-400/60"
+              className="h-7 px-2.5 bg-red-500/5 rounded-inset text-[11px] text-red-300/90 line-through decoration-red-400/60"
             >
               {id}
             </button>

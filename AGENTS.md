@@ -150,7 +150,6 @@ npm run build        # Build de produção → backend/dist
 npm run preview      # Preview do build
 npm run lint         # Type-check (tsc --noEmit) — não há ESLint separado
 npm run deploy       # Build + Firebase Hosting (main)
-npm run deploy:beta  # Build + Firebase Hosting (staging)
 npm run native:sync  # Build + cap sync (copia o web para ios/ e android/)
 npm run native:ios   # native:sync + abre o Xcode
 npm run native:android # native:sync + abre o Android Studio (Gradle exige JDK 21)
@@ -194,7 +193,7 @@ Nunca commite `.env` com credenciais reais.
 
 - **TypeScript estrito** — tipos em `src/types/`; evite `any` sem necessidade.
 - **Lazy loading** — telas pesadas e mini-apps via `React.lazy`.
-- **Estilo visual** — retro/cyberpunk; fontes: Space Grotesk, Inter, JetBrains Mono; accent `#FF8C00`.
+- **Estilo visual** — campos chapados de 1999 (`DESIGN.md`): blocos se separam por campo de cor, sem contorno, sombra, brilho ou vidro; seleção inverte para osso (`bg-field-bone`) ou âmbar sólido; fontes Archivo (eixo `wdth`, títulos largos) e JetBrains Mono para dados; accent `#FF8C00`. Use `lmb-btn`, `lmb-field`, `lmb-tag` de `src/index.css`. Mini-apps de época e a tela LCD do Nokia mantêm as linhas de época.
 - **Idioma** — UI, lore e comentários em **português (BR)**; identificadores de código em inglês.
 - **Escopo mínimo** — altere só o necessário; não refatore áreas não relacionadas à tarefa.
 - **Testes** — o front não tem suíte; valide com `npm run lint`. Regras e Functions têm testes no emulador (`backend/rules-tests`).
@@ -223,7 +222,7 @@ Nunca commite `.env` com credenciais reais.
 - **Não** adicione README/docs extras sem solicitação — este `AGENTS.md` é o índice para IAs.
 - Respeite o modelo **conta → personagem → intel**; progresso fica em `users/{uid}/characters/{charId}/intel`, e o agente pertence a uma pasta (`workspaceId`).
 - **Não** leia nem grave coleções globais de conteúdo no cliente: use `wsCollection`/`wsDoc` de `src/lib/tenantScope.ts`. Escritas de roster, co-mestres, convites, intel e conquistas do jogador passam pelas Functions.
-- **Não** rode `migrate-to-workspaces.cjs --apply` contra produção ou staging sem o usuário pedir.
+- **Não** rode `migrate-to-workspaces.cjs --apply` contra produção sem o usuário pedir.
 - Mini-apps (`BiosTerminal`, `LimboBoard`, `DiskRepairApp`, etc.) são experiências narrativas — preserve tom e imersão ao editar textos.
 
 ## Fluxo mental do jogador

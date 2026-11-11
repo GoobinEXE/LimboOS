@@ -44,7 +44,7 @@ function NavButton({
       }`}
     >
       <span className="text-[10px] font-black">{icon}</span>
-      <span className={`font-black tracking-tight uppercase ${vertical ? 'text-[8px]' : 'text-[10px]'}`}>{label}</span>
+      <span className={`font-black tracking-tight uppercase ${vertical ? 'text-[10px]' : 'text-[10px]'}`}>{label}</span>
     </button>
   );
 }

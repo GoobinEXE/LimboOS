@@ -241,7 +241,7 @@ function AccessShell({ children }: { children: React.ReactNode }) {
         variants={dialogPop}
         initial="hidden"
         animate="visible"
-        className="relative z-10 max-w-md w-full mx-4 border border-seam bg-surface-container-low rounded-panel shadow-2xl machined-edge p-8 text-center space-y-5"
+        className="relative z-10 max-w-md w-full mx-4 bg-surface-container-low rounded-panel p-8 text-center space-y-5"
       >
         {children}
       </motion.div>
@@ -252,7 +252,7 @@ function AccessShell({ children }: { children: React.ReactNode }) {
 function AccessHeader({ eyebrow, title }: { eyebrow: string; title: string }) {
   return (
     <>
-      <p className="flex items-center justify-center gap-2 text-[10px] font-display font-bold uppercase tracking-[0.32em] text-primary">
+      <p className="flex items-center justify-center gap-2 text-[10px] font-display font-bold uppercase tracking-[0.08em] text-primary">
         <span className="lmb-led text-accent animate-led" aria-hidden />
         {eyebrow}
       </p>
@@ -298,7 +298,7 @@ function CreateWorkspaceScreen({ user, onCreated }: { user: User; onCreated: () 
       <AccessHeader eyebrow={t('workspace.eyebrow')} title={t('workspace.createTitle')} />
       <p className="text-sm text-ash-400 leading-relaxed text-pretty">{t('workspace.createBody')}</p>
       <form onSubmit={handleCreate} className="space-y-3 text-left">
-        <label className="block text-[10px] font-display font-bold uppercase tracking-widest text-ash-500" htmlFor="ws-name">
+        <label className="block text-[10px] font-display font-bold uppercase tracking-wider text-ash-500" htmlFor="ws-name">
           {t('workspace.nameLabel')}
         </label>
         <input
@@ -307,7 +307,7 @@ function CreateWorkspaceScreen({ user, onCreated }: { user: User; onCreated: () 
           onChange={(e) => setName(e.target.value)}
           maxLength={79}
           autoFocus
-          className="w-full bg-black/40 border border-border-subtle rounded-sm px-3 py-2 text-sm text-bone font-mono focus:border-primary outline-none"
+          className="w-full bg-black/40 rounded-sm px-3 py-2 text-sm text-bone font-mono outline-none"
           placeholder={t('workspace.namePlaceholder')}
         />
         {error && <p role="alert" className="text-xs text-red-400">{error}</p>}

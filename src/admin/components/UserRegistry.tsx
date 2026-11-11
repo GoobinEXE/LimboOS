@@ -36,11 +36,11 @@ function getAccountStatus(acc: MasterAccount): 'active' | 'inactive' | 'dormant'
 }
 
 const STATUS_STYLES = new Map<ReturnType<typeof getAccountStatus>, string>([
-  ['active', 'border-phosphor-500/30 text-phosphor-500 bg-phosphor-500/5'],
-  ['inactive', 'border-yellow-500/30 text-yellow-500 bg-yellow-500/5'],
-  ['dormant', 'border-red-500/30 text-red-500 bg-red-500/5'],
-  ['suspended', 'border-red-500/40 text-red-400 bg-red-500/10'],
-  ['unknown', 'border-border-subtle text-ash-600'],
+  ['active', 'text-phosphor-500 bg-phosphor-500/5'],
+  ['inactive', 'text-yellow-500 bg-yellow-500/5'],
+  ['dormant', 'text-red-500 bg-red-500/5'],
+  ['suspended', 'text-red-400 bg-red-500/10'],
+  ['unknown', 'text-ash-600'],
 ]);
 
 const STATUS_KEYS: Record<ReturnType<typeof getAccountStatus>, string> = {
@@ -52,8 +52,8 @@ const STATUS_KEYS: Record<ReturnType<typeof getAccountStatus>, string> = {
 };
 
 function statusBadge(status: ReturnType<typeof getAccountStatus>, label: string) {
-  const cls = STATUS_STYLES.get(status) ?? 'border-border-subtle text-ash-600';
-  return <span className={`text-[9px] font-display font-bold px-2 py-0.5 rounded-sm uppercase tracking-widest border ${cls}`}>{label}</span>;
+  const cls = STATUS_STYLES.get(status) ?? 'text-ash-600';
+  return <span className={`text-[10px] font-display font-bold px-2 py-0.5 rounded-sm uppercase tracking-wider ${cls}`}>{label}</span>;
 }
 
 export default function UserRegistry({
@@ -390,28 +390,27 @@ export default function UserRegistry({
   }, [accounts, allCharacters, searchQuery, sortField, sortDir, showArchived]);
 
   return (
-    <section className="bg-surface-container-low border border-primary/10 relative overflow-hidden shadow-2xl text-ash-400 font-sans">
+    <section className="bg-surface-container-low relative overflow-hidden text-ash-400 font-sans">
       {modal}
       
       {/* Header */}
       {!embedded && (
-      <div className="flex flex-col border-b border-primary/10 bg-black/40">
+      <div className="flex flex-col bg-black/40">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between p-6 gap-6">
           <div className="flex items-center gap-4">
-            <div className="w-1 h-9 bg-accent shrink-0" />
             <div>
-              <h2 className="font-display font-bold uppercase tracking-widest text-lg text-bone">{t('accounts.title')}</h2>
-              <p className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-widest mt-1">{t('accounts.subtitle')}</p>
+              <h2 className="font-display font-bold uppercase tracking-wider text-lg text-bone">{t('accounts.title')}</h2>
+              <p className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-wider mt-1">{t('accounts.subtitle')}</p>
             </div>
           </div>
         </div>
       </div>
       )}
 
-      <div className="flex flex-col border-b border-primary/10 bg-black/20">
+      <div className="flex flex-col bg-black/20">
         <div className="flex flex-col md:flex-row md:items-center justify-between px-6 py-6 gap-6">
           <div className="flex items-center gap-4">
-            <span className="text-[10px] font-display font-bold text-ash-500 tracking-widest uppercase">
+            <span className="text-[10px] font-display font-bold text-ash-500 tracking-wider uppercase">
               {accounts.length} Contas • {allCharacters.filter(c => !c.char.archived).length} Personagens Ativos
             </span>
             <label className="flex items-center gap-2 cursor-pointer group">
@@ -421,10 +420,10 @@ export default function UserRegistry({
                 onChange={(e) => setShowArchived(e.target.checked)}
                 className="peer sr-only"
               />
-              <div className={`w-8 h-4 rounded-full transition relative peer-focus-visible:outline peer-focus-visible:outline-1 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-[var(--focus-ring)] ${showArchived ? 'bg-primary/30 border border-primary' : 'bg-surface-container-lowest border border-border'}`}>
+              <div className={`w-8 h-4 rounded-full transition relative peer-focus-visible:outline peer-focus-visible:outline-1 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-[var(--focus-ring)] ${showArchived ? 'bg-primary/30' : 'bg-surface-container-lowest'}`}>
                 <div className={`absolute top-0.5 w-2.5 h-2.5 rounded-full bg-white transition ${showArchived ? 'left-4.5 bg-primary' : 'left-1 bg-industrial-silver/40'}`} />
               </div>
-              <span className="text-[9px] font-display font-bold text-ash-500 group-hover:text-primary transition-colors uppercase tracking-widest">{t('accounts.includeArchived')}</span>
+              <span className="text-[10px] font-display font-bold text-ash-500 group-hover:text-primary transition-colors uppercase tracking-wider">{t('accounts.includeArchived')}</span>
             </label>
           </div>
           <div className="flex flex-1 max-w-2xl gap-3">
@@ -435,32 +434,32 @@ export default function UserRegistry({
                 placeholder={t('accounts.search')} 
                 value={searchQuery} 
                 onChange={(e) => setSearchQuery(e.target.value)} 
-                className="w-full bg-surface-container-lowest border border-border-subtle text-[11px] font-display font-bold uppercase tracking-[0.2em] text-bone pl-10 pr-3 py-3 focus:border-primary/40 outline-none rounded-sm transition" 
+                className="w-full bg-surface-container-lowest text-[11px] font-display font-bold uppercase tracking-[0.08em] text-bone pl-10 pr-3 py-3 outline-none rounded-sm transition" 
               />
             </div>
             {isAdmin && (
               <div className="flex gap-3">
                 <div className="relative">
-                  <button onClick={() => setShowExportMenu(prev => !prev)} className="flex items-center gap-2 bg-surface-container-lowest border border-border-subtle text-ash-500 hover:text-primary hover:border-primary/20 px-4 py-3 rounded-sm font-display font-bold text-[10px] tracking-widest transition active:scale-[0.97]">
+                  <button onClick={() => setShowExportMenu(prev => !prev)} className="flex items-center gap-2 bg-surface-container-lowest text-ash-500 hover:text-primary px-4 py-3 rounded-sm font-display font-bold text-[10px] tracking-wider transition active:scale-[0.97]">
                     <span className="material-symbols-outlined text-base">download</span> {t('accounts.export')}
                   </button>
                   {showExportMenu && (
-                    <div className="absolute top-full right-0 mt-1 bg-surface-container-low border border-primary/20 shadow-2xl z-50 min-w-35">
-                      <button onClick={() => handleExport('csv')} className="w-full flex items-center gap-3 px-4 py-3 text-[10px] font-display font-bold text-ash-400 hover:text-primary hover:bg-primary/5 transition uppercase tracking-widest">
+                    <div className="absolute top-full right-0 mt-1 bg-surface-container-low z-50 min-w-35">
+                      <button onClick={() => handleExport('csv')} className="w-full flex items-center gap-3 px-4 py-3 text-[10px] font-display font-bold text-ash-400 hover:text-primary hover:bg-primary/5 transition uppercase tracking-wider">
                         <span className="material-symbols-outlined text-sm">table_chart</span> CSV
                       </button>
-                      <button onClick={() => handleExport('json')} className="w-full flex items-center gap-3 px-4 py-3 text-[10px] font-display font-bold text-ash-400 hover:text-primary hover:bg-primary/5 transition uppercase tracking-widest border-t border-border-subtle">
+                      <button onClick={() => handleExport('json')} className="w-full flex items-center gap-3 px-4 py-3 text-[10px] font-display font-bold text-ash-400 hover:text-primary hover:bg-primary/5 transition uppercase tracking-wider border-t border-seam">
                         <span className="material-symbols-outlined text-sm">data_object</span> JSON
                       </button>
                     </div>
                   )}
                 </div>
                 {isPlatformAdmin ? (
-                  <button onClick={() => setShowCreateUser(true)} className="flex items-center gap-3 bg-primary hover:bg-primary-container text-black px-6 py-3 rounded-sm font-display font-bold text-[11px] tracking-widest transition active:scale-[0.97]">
+                  <button onClick={() => setShowCreateUser(true)} className="flex items-center gap-3 bg-primary hover:bg-primary-container text-black px-6 py-3 rounded-sm font-display font-bold text-[11px] tracking-wider transition active:scale-[0.97]">
                     <span className="material-symbols-outlined text-base">person_add</span> {t('accounts.create')}
                   </button>
                 ) : canManage ? (
-                  <Link to={adminPath.missions()} title={t('accounts.inviteHint')} className="flex items-center gap-3 bg-primary hover:bg-primary-container text-black px-6 py-3 rounded-sm font-display font-bold text-[11px] tracking-widest transition active:scale-[0.97]">
+                  <Link to={adminPath.missions()} title={t('accounts.inviteHint')} className="flex items-center gap-3 bg-primary hover:bg-primary-container text-black px-6 py-3 rounded-sm font-display font-bold text-[11px] tracking-wider transition active:scale-[0.97]">
                     <span className="material-symbols-outlined text-base">group_add</span> {t('accounts.invite')}
                   </Link>
                 ) : null}
@@ -472,10 +471,10 @@ export default function UserRegistry({
 
       {/* Accordion Table */}
       <div className="p-6 min-h-150 bg-black/10">
-        <div className="overflow-x-auto bg-surface-container-lowest border border-border-subtle shadow-inner">
+        <div className="overflow-x-auto bg-surface-container-lowest">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-black/40 border-b border-border-subtle text-[10px] font-display font-bold uppercase tracking-widest text-ash-500 whitespace-nowrap">
+              <tr className="bg-black/40 border-b border-seam text-[10px] font-display font-bold uppercase tracking-wider text-ash-500 whitespace-nowrap">
                 <SortHeader label={t('accounts.edit.masterName')} field="masterName" current={sortField} dir={sortDir} onSort={toggleSort} />
                 <th className="px-4 py-3">{t('accounts.col.networkId')}</th>
                 <SortHeader label={t('accounts.col.authority')} field="role" current={sortField} dir={sortDir} onSort={toggleSort} />
@@ -487,22 +486,22 @@ export default function UserRegistry({
               </tr>
             </thead>
               {loading ? (
-                <tbody className="divide-y divide-border-subtle">
+                <tbody className="divide-y divide-seam">
                 <tr>
                   <td colSpan={8} className="p-16 text-center">
                     <RetroSpinner />
-                    <p className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-600 mt-4">
+                    <p className="text-[10px] font-display font-bold uppercase tracking-wider text-ash-600 mt-4">
                       Carregando Contas...
                     </p>
                   </td>
                 </tr>
                 </tbody>
               ) : filteredAccounts.length === 0 ? (
-                <tbody className="divide-y divide-border-subtle">
+                <tbody className="divide-y divide-seam">
                 <tr>
                   <td colSpan={8} className="p-16 text-center text-ash-600">
                     <span className="material-symbols-outlined text-3xl mb-2 opacity-50">group_off</span>
-                    <p className="text-[10px] font-display font-bold uppercase tracking-widest">
+                    <p className="text-[10px] font-display font-bold uppercase tracking-wider">
                       {searchQuery ? t('accounts.empty.search') : t('accounts.empty.none')}
                     </p>
                   </td>
@@ -524,7 +523,7 @@ export default function UserRegistry({
                     animate="visible"
                     exit="exit"
                     transition={{ ...ADMIN_FADE, delay: staggerDelay(index, 0.02, 0.15) }}
-                    className="divide-y divide-border-subtle"
+                    className="divide-y divide-seam"
                   >
                     <tr
                       onClick={() => toggleExpand(acc.uid)}
@@ -546,23 +545,23 @@ export default function UserRegistry({
                               {acc.displayName || acc.masterName || <span className="text-ash-600 italic text-[10px]">{t('accounts.pending')}</span>}
                             </span>
                             {acc.displayName && (
-                              <span className="text-[9px] text-ash-600 font-mono uppercase tracking-tighter">ID: {acc.masterName}</span>
+                              <span className="text-[10px] text-ash-600 font-mono uppercase tracking-tighter">ID: {acc.masterName}</span>
                             )}
                           </div>
                         </div>
                       </td>
                       <td className="px-4 py-3.5">
                         <p className="font-mono text-[11px] text-ash-400 group-hover:text-primary transition-colors">{acc.email || t('accounts.noEmail')}</p>
-                        <p className="font-mono text-[9px] text-ash-600 mt-1 uppercase tracking-tighter">UID: {(acc.uid || "").slice(0, 16)}...</p>
+                        <p className="font-mono text-[10px] text-ash-600 mt-1 uppercase tracking-tighter">UID: {(acc.uid || "").slice(0, 16)}...</p>
                       </td>
                       <td className="px-4 py-3.5">
-                        <span className={`text-[10px] font-display font-bold px-3 py-1 rounded-sm uppercase tracking-widest border ${acc.role === 'admin' ? 'border-primary/30 text-primary bg-primary/5' : 'border-border-subtle text-ash-600'}`}>
+                        <span className={`text-[10px] font-display font-bold px-3 py-1 rounded-sm uppercase tracking-wider ${acc.role === 'admin' ? 'text-primary bg-primary/5' : 'text-ash-600'}`}>
                           {acc.role}
                         </span>
                       </td>
                       <td className="px-4 py-3.5">{statusBadge(status, t(STATUS_KEYS[status]))}</td>
                       <td className="px-4 py-3.5">
-                        <span className="text-[10px] font-display font-bold text-ash-500 bg-black/30 border border-border-subtle px-2 py-0.5 rounded-sm">
+                        <span className="text-[10px] font-display font-bold text-ash-500 bg-black/30 px-2 py-0.5 rounded-sm">
                           {agentCountMap.get(acc.uid) ?? 0}
                         </span>
                       </td>
@@ -579,14 +578,14 @@ export default function UserRegistry({
                     {isExpanded && (
                       <tr>
                         <td colSpan={8} className="p-0 bg-black/20">
-                          <div className="p-6 pl-18 border-l-2 border-primary/30 shadow-inner">
+                          <div className="p-6 pl-18">
                             <div className="flex justify-between items-center mb-6">
-                              <h4 className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-500 flex items-center gap-2">
+                              <h4 className="text-[10px] font-display font-bold uppercase tracking-wider text-ash-500 flex items-center gap-2">
                                 <span className="material-symbols-outlined text-sm">group</span> {t('accounts.linkedChars')}
                               </h4>
                               <button 
                                 onClick={(e) => { e.stopPropagation(); setShowCreateCharacter(acc.uid); }} 
-                                className="flex items-center gap-2 text-[9px] font-display font-bold uppercase tracking-widest text-primary hover:text-black hover:bg-primary transition border border-primary/20 px-4 py-2 rounded-sm active:scale-[0.97]"
+                                className="flex items-center gap-2 text-[10px] font-display font-bold uppercase tracking-wider text-primary hover:text-black hover:bg-primary transition px-4 py-2 rounded-sm active:scale-[0.97]"
                               >
                                 <span className="material-symbols-outlined text-sm">person_add</span> {t('accounts.createChar')}
                               </button>
@@ -597,10 +596,10 @@ export default function UserRegistry({
                                 <div 
                                   key={item.char.id} 
                                   onClick={(e) => { e.stopPropagation(); nav.go(adminPath.agent(item.uid, item.char.id)); }} 
-                                  className={`bg-surface-container-low border border-border-subtle p-4 hover:border-primary/30 transition cursor-pointer flex justify-between items-center group shadow-md ${item.char.archived ? 'opacity-40 hover:opacity-80 grayscale' : ''}`}
+                                  className={`bg-surface-container-low p-4 transition cursor-pointer flex justify-between items-center group ${item.char.archived ? 'opacity-40 hover:opacity-80 grayscale' : ''}`}
                                 >
                                    <div className="flex items-center gap-4">
-                                      <div className={`w-10 h-10 rounded-sm bg-black/40 border border-border-subtle flex items-center justify-center font-display font-bold text-lg ${item.char.agentStatus === 'vivo' ? 'text-phosphor-500' : 'text-red-500'}`}>
+                                      <div className={`w-10 h-10 rounded-sm bg-black/40 flex items-center justify-center font-display font-bold text-lg ${item.char.agentStatus === 'vivo' ? 'text-phosphor-500' : 'text-red-500'}`}>
                                         {(item.char.codinome || "?")[0].toUpperCase()}
                                       </div>
                                       <div>
@@ -608,19 +607,19 @@ export default function UserRegistry({
                                           <p className="font-display font-bold text-xs text-bone uppercase group-hover:text-primary transition-colors">{item.char.codinome}</p>
                                           {item.char.archived && <span className="material-symbols-outlined text-[10px] text-red-400">inventory_2</span>}
                                         </div>
-                                        <p className="font-mono text-[9px] text-ash-500 tracking-wider">ID: {item.char.id}</p>
+                                        <p className="font-mono text-[10px] text-ash-500 tracking-wider">ID: {item.char.id}</p>
                                       </div>
                                    </div>
                                    <div className="flex items-center gap-4 opacity-30 group-hover:opacity-100 transition-opacity">
-                                     <span className="text-[9px] font-display font-bold uppercase tracking-widest text-primary">{t('accounts.dossier')}</span>
+                                     <span className="text-[10px] font-display font-bold uppercase tracking-wider text-primary">{t('accounts.dossier')}</span>
                                      <span className="material-symbols-outlined text-sm text-primary">arrow_forward_ios</span>
                                    </div>
                                 </div>
                               ))}
                               {chars.length === 0 && (
-                                <div className="col-span-full py-8 text-center border border-dashed border-border-subtle rounded-sm flex flex-col items-center justify-center text-ash-600">
+                                <div className="col-span-full py-8 text-center rounded-sm flex flex-col items-center justify-center text-ash-600">
                                   <span className="material-symbols-outlined text-3xl mb-2 opacity-50">person_off</span>
-                                  <p className="text-[10px] font-display font-bold uppercase tracking-widest">{t('accounts.noChars')}</p>
+                                  <p className="text-[10px] font-display font-bold uppercase tracking-wider">{t('accounts.noChars')}</p>
                                 </div>
                               )}
                             </div>
@@ -664,25 +663,25 @@ export default function UserRegistry({
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.95, opacity: 0 }}
             transition={{ duration: 0.18 }}
-            className="bg-surface-container-low border border-primary/30 p-10 w-full max-w-sm rounded-sm shadow-2xl relative"
+            className="bg-surface-container-low p-10 w-full max-w-sm rounded-sm relative"
           >
-            <div className="absolute -top-3 left-6 bg-primary px-2 py-0.5 text-[10px] font-display font-bold text-black tracking-widest uppercase">
+            <div className="absolute -top-3 left-6 bg-primary px-2 py-0.5 text-[10px] font-display font-bold text-black tracking-wider uppercase">
               INSERÇÃO RÁPIDA
             </div>
             
-            <h3 className="font-display font-bold text-xl text-bone uppercase tracking-tighter mb-8 border-b border-border-subtle pb-6 mt-2">
+            <h3 className="font-display font-bold text-xl text-bone uppercase tracking-tighter mb-8 border-b border-seam pb-6 mt-2">
               Novo <span className="text-primary">Personagem</span>
             </h3>
             
             <form onSubmit={handleCreateCharacter} className="space-y-8">
               <div className="group">
-                <label className="block text-[9px] font-display font-bold text-ash-500 uppercase tracking-widest mb-2 group-focus-within:text-primary transition-colors">{t('accounts.codename')}</label>
+                <label className="block text-[10px] font-display font-bold text-ash-500 uppercase tracking-wider mb-2 group-focus-within:text-primary transition-colors">{t('accounts.codename')}</label>
                 <input 
                   type="text" 
                   value={newCharCodinome} 
                   onChange={(e) => setNewCharCodinome(e.target.value)} 
                   placeholder={t('accounts.codenamePlaceholder')} 
-                  className="w-full bg-surface-container-lowest border-none text-bone px-5 py-4 text-[11px] font-display font-bold outline-none uppercase rounded-sm shadow-inner transition" 
+                  className="w-full bg-surface-container-lowest text-bone px-5 py-4 text-[11px] font-display font-bold outline-none uppercase rounded-sm transition" 
                   required 
                   autoFocus
                 />
@@ -690,8 +689,8 @@ export default function UserRegistry({
               </div>
 
               <div className="flex justify-end gap-4">
-                <button type="button" onClick={() => setShowCreateCharacter(null)} className="px-6 py-3 text-[10px] font-display font-bold text-ash-600 hover:text-bone uppercase tracking-widest transition-colors">{t('accounts.cancel')}</button>
-                <button type="submit" disabled={createCharLoading} className="bg-primary text-black px-8 py-3 rounded-sm font-display font-bold text-[10px] tracking-widest uppercase hover:bg-primary-container transition active:scale-[0.97] shadow-lg flex items-center gap-2">
+                <button type="button" onClick={() => setShowCreateCharacter(null)} className="px-6 py-3 text-[10px] font-display font-bold text-ash-600 hover:text-bone uppercase tracking-wider transition-colors">{t('accounts.cancel')}</button>
+                <button type="submit" disabled={createCharLoading} className="bg-primary text-black px-8 py-3 rounded-sm font-display font-bold text-[10px] tracking-wider uppercase hover:bg-primary-container transition active:scale-[0.97] flex items-center gap-2">
                   {createCharLoading ? <RetroSpinner /> : 'CRIAR'}
                 </button>
               </div>
@@ -719,21 +718,21 @@ export default function UserRegistry({
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={ADMIN_SPRING}
-            className="bg-surface-container-low border-l border-seam w-full max-w-2xl shadow-2xl flex flex-col h-full relative overflow-hidden"
+            className="bg-surface-container-low border-l border-seam w-full max-w-2xl flex flex-col h-full relative overflow-hidden"
           >
             <div className="p-8 border-b-4 border-seam flex justify-between items-start bg-black/40 relative z-20 shrink-0">
                <div>
-                 <div className="bg-primary px-2 py-0.5 text-[10px] font-black text-black tracking-widest uppercase inline-block mb-2">{t('accounts.edit.protocol')}</div>
+                 <div className="bg-primary px-2 py-0.5 text-[10px] font-black text-black tracking-wider uppercase inline-block mb-2">{t('accounts.edit.protocol')}</div>
                  <h3 className="font-black text-3xl text-bone uppercase tracking-tighter">Diretrizes da <span className="text-primary">Conta</span></h3>
                </div>
                <button onClick={closeOverlay} aria-label={t('close', { ns: 'common' })} className="text-ash-600 hover:text-bone transition material-symbols-outlined -mt-2">close</button>
             </div>
             
             <div className="flex-1 overflow-y-auto custom-scrollbar p-8 bg-black/40 space-y-10">
-              <div className="bg-seam p-5 border-l-4 border-primary rounded-r-sm shadow-inner group">
-                 <span className="text-[9px] font-black text-ash-500 uppercase tracking-[0.3em] block mb-2 group-hover:text-primary transition-colors">{t('accounts.edit.channel')}</span>
-                 <span className="text-sm font-mono font-bold text-primary tracking-widest">{editingAccount.email}</span>
-                 <p className="font-mono text-[9px] text-ash-600 uppercase tracking-widest font-bold mt-2">
+              <div className="bg-seam p-5 rounded-r-sm group">
+                 <span className="text-[10px] font-black text-ash-500 uppercase tracking-[0.08em] block mb-2 group-hover:text-primary transition-colors">{t('accounts.edit.channel')}</span>
+                 <span className="text-sm font-mono font-bold text-primary tracking-wider">{editingAccount.email}</span>
+                 <p className="font-mono text-[10px] text-ash-600 uppercase tracking-wider font-bold mt-2">
                    UID: {editingAccount.uid}
                  </p>
               </div>
@@ -741,31 +740,31 @@ export default function UserRegistry({
               {/* Nome Mestre + Notas */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="group">
-                  <label className="block text-[9px] font-black text-ash-500 uppercase tracking-[0.3em] mb-2">{t('accounts.edit.masterName')}</label>
+                  <label className="block text-[10px] font-black text-ash-500 uppercase tracking-[0.08em] mb-2">{t('accounts.edit.masterName')}</label>
                   <div className="relative">
                     <input type="text" value={editMasterName} onChange={(e) => setEditMasterName(e.target.value)} placeholder={t('accounts.edit.masterPlaceholder')}
-                      className="w-full bg-black/60 border-2 border-seam text-bone px-4 py-4 text-[11px] font-black outline-none uppercase rounded-sm transition focus:border-primary placeholder:text-ash-600" />
+                      className="w-full bg-black/60 text-bone px-4 py-4 text-[11px] font-black outline-none uppercase rounded-sm transition placeholder:text-ash-600" />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-[9px] font-black text-ash-500 uppercase tracking-[0.3em] mb-2">{t('accounts.edit.notes')}</label>
+                  <label className="block text-[10px] font-black text-ash-500 uppercase tracking-[0.08em] mb-2">{t('accounts.edit.notes')}</label>
                   <textarea value={editNotes} onChange={(e) => setEditNotes(e.target.value)} placeholder="Notas sobre este jogador..." rows={3}
-                    className="w-full bg-black/60 border-2 border-seam text-bone px-4 py-3 text-[11px] font-sans outline-none rounded-sm transition focus:border-primary placeholder:text-ash-600 resize-none custom-scrollbar" />
+                    className="w-full bg-black/60 text-bone px-4 py-3 text-[11px] font-sans outline-none rounded-sm transition placeholder:text-ash-600 resize-none custom-scrollbar" />
                 </div>
               </div>
               <div className="flex justify-end">
-                <button onClick={() => handleSaveAccountDetails(editingAccount.uid)} className="bg-primary hover:bg-primary-container text-black px-8 py-3 rounded-sm font-black text-[10px] tracking-widest uppercase transition active:scale-[0.97] glow-orange shadow-lg">{t('accounts.edit.save')}</button>
+                <button onClick={() => handleSaveAccountDetails(editingAccount.uid)} className="bg-primary hover:bg-primary-container text-black px-8 py-3 rounded-sm font-black text-[10px] tracking-wider uppercase transition active:scale-[0.97]">{t('accounts.edit.save')}</button>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-10 pt-8 border-t border-border-subtle">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-10 pt-8 border-t border-seam">
                  <div className="space-y-4">
-                    <label className="block text-[9px] font-black text-ash-500 uppercase tracking-[0.3em] mb-4">{t('reports.hardware')}</label>
-                    <p className="text-[10px] text-ash-500 font-bold uppercase tracking-widest leading-relaxed">
+                    <label className="block text-[10px] font-black text-ash-500 uppercase tracking-[0.08em] mb-4">{t('reports.hardware')}</label>
+                    <p className="text-[10px] text-ash-500 font-bold uppercase tracking-wider leading-relaxed">
                       {t('accounts.edit.hardwareHint')}
                     </p>
                     <Link
                       to={adminPath.mesa('acesso')}
-                      className="inline-flex items-center gap-2 px-4 py-3 border border-primary/30 text-primary text-[10px] font-black uppercase tracking-widest hover:bg-primary/10 transition-colors"
+                      className="inline-flex items-center gap-2 px-4 py-3 text-primary text-[10px] font-black uppercase tracking-wider hover:bg-primary/10 transition-colors"
                     >
                       <span className="material-symbols-outlined text-base" aria-hidden>lock_open</span>
                       {t('accounts.edit.hardwareLink')}
@@ -775,22 +774,22 @@ export default function UserRegistry({
 
               {/* Suspender conta e trocar senha: só o admin da plataforma (a conta é do jogador). */}
               {isPlatformAdmin && (<>
-              <div className="pt-8 border-t border-border-subtle">
-                <label className="block text-[9px] font-black text-ash-500 uppercase tracking-[0.3em] mb-4">{t('accounts.edit.accessControl')}</label>
+              <div className="pt-8 border-t border-seam">
+                <label className="block text-[10px] font-black text-ash-500 uppercase tracking-[0.08em] mb-4">{t('accounts.edit.accessControl')}</label>
                 <button onClick={() => handleToggleSuspend(editingAccount.uid, !!editingAccount.suspended)}
-                  className={`w-full flex items-center justify-between px-6 py-5 border-2 transition rounded-sm shadow-inner ${editingAccount.suspended ? 'bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20' : 'bg-seam border-transparent text-ash-400 hover:text-bone hover:border-border'}`}>
-                  <span className="text-[10px] font-black uppercase tracking-widest">{editingAccount.suspended ? '⛔ CONTA SUSPENSA — CLIQUE PARA REATIVAR' : 'SUSPENDER CONTA'}</span>
+                  className={`w-full flex items-center justify-between px-6 py-5 transition rounded-sm ${editingAccount.suspended ? 'bg-red-500/10 text-red-400 hover:bg-red-500/20' : 'bg-seam text-ash-400 hover:text-bone'}`}>
+                  <span className="text-[10px] font-black uppercase tracking-wider">{editingAccount.suspended ? '⛔ CONTA SUSPENSA — CLIQUE PARA REATIVAR' : 'SUSPENDER CONTA'}</span>
                   <span className={`material-symbols-outlined text-2xl ${editingAccount.suspended ? 'text-red-400' : 'text-ash-600'}`}>{editingAccount.suspended ? 'lock' : 'lock_open'}</span>
                 </button>
               </div>
 
-              <div className="pt-8 border-t border-border-subtle pb-8">
-                <label className="block text-[9px] font-black text-ash-500 uppercase tracking-[0.3em] mb-4">{t('accounts.edit.resetCreds')}</label>
+              <div className="pt-8 border-t border-seam pb-8">
+                <label className="block text-[10px] font-black text-ash-500 uppercase tracking-[0.08em] mb-4">{t('accounts.edit.resetCreds')}</label>
                 <div className="flex gap-4">
                   <input type="password" value={resetPasswordValue} onChange={(e) => setResetPasswordValue(e.target.value)} placeholder="NOVA SENHA SIGILOSA..."
-                    className="flex-1 bg-black/60 border-2 border-seam text-bone px-4 py-4 text-[11px] font-mono outline-none uppercase rounded-sm transition focus:border-primary placeholder:text-ash-600" />
+                    className="flex-1 bg-black/60 text-bone px-4 py-4 text-[11px] font-mono outline-none uppercase rounded-sm transition placeholder:text-ash-600" />
                   <button onClick={() => handleResetPassword(editingAccount.uid)} disabled={resetPasswordLoading || !resetPasswordValue}
-                    className="bg-seam text-primary hover:bg-primary hover:text-black disabled:opacity-20 disabled:hover:bg-seam disabled:hover:text-primary px-8 py-4 text-[11px] font-black uppercase tracking-widest transition rounded-sm active:scale-[0.97] shadow-lg border-2 border-primary/20 hover:border-primary">{t('accounts.edit.reset')}</button>
+                    className="bg-seam text-primary hover:bg-primary hover:text-black disabled:opacity-20 disabled:hover:bg-seam disabled:hover:text-primary px-8 py-4 text-[11px] font-black uppercase tracking-wider transition rounded-sm active:scale-[0.97]">{t('accounts.edit.reset')}</button>
                 </div>
               </div>
               </>)}
@@ -818,28 +817,28 @@ export default function UserRegistry({
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.95, opacity: 0 }}
             transition={{ duration: 0.18 }}
-            className="bg-surface-container-low border border-phosphor-500/30 p-10 w-full max-w-md rounded-sm shadow-2xl relative overflow-hidden"
+            className="bg-surface-container-low p-10 w-full max-w-md rounded-sm relative overflow-hidden"
           >
-            <div className="absolute -top-3 left-6 bg-phosphor-500 px-2 py-0.5 text-[10px] font-display font-bold text-black tracking-widest uppercase">
+            <div className="absolute -top-3 left-6 bg-phosphor-500 px-2 py-0.5 text-[10px] font-display font-bold text-black tracking-wider uppercase">
               RECRUTAMENTO-SINTÉTICO
             </div>
             
-            <h3 className="font-display font-bold text-2xl text-bone uppercase tracking-tighter mb-10 border-b border-border-subtle pb-8 mt-2">Nova <span className="text-phosphor-500">Conexão Mestra</span></h3>
+            <h3 className="font-display font-bold text-2xl text-bone uppercase tracking-tighter mb-10 border-b border-seam pb-8 mt-2">Nova <span className="text-phosphor-500">Conexão Mestra</span></h3>
             <form onSubmit={handleCreateUser} className="space-y-8">
               <div className="group">
-                <label className="block text-[9px] font-display font-bold text-ash-500 uppercase tracking-widest mb-2 group-focus-within:text-phosphor-500 transition-colors">Identificador Único (ID)</label>
-                <input type="text" value={newUserCodinome} onChange={(e) => setNewUserCodinome(e.target.value)} placeholder="ex: agt_silva" className="w-full bg-surface-container-lowest border-none text-bone px-5 py-4 text-[11px] font-mono outline-none uppercase rounded-sm shadow-inner transition-[width,color,background-color,border-color,opacity,transform,box-shadow]" required />
+                <label className="block text-[10px] font-display font-bold text-ash-500 uppercase tracking-wider mb-2 group-focus-within:text-phosphor-500 transition-colors">Identificador Único (ID)</label>
+                <input type="text" value={newUserCodinome} onChange={(e) => setNewUserCodinome(e.target.value)} placeholder="ex: agt_silva" className="w-full bg-surface-container-lowest text-bone px-5 py-4 text-[11px] font-mono outline-none uppercase rounded-sm transition-[width,color,background-color,border-color,opacity,transform,box-shadow]" required />
                 <div className="h-0.5 w-full bg-phosphor-500 scale-x-0 origin-left transition-transform duration-(--duration-base) ease-limbo group-focus-within:scale-x-100" />
               </div>
               <div className="group">
-                <label className="block text-[9px] font-display font-bold text-ash-500 uppercase tracking-widest mb-2 group-focus-within:text-phosphor-500 transition-colors">{t('accounts.createPassword')}</label>
-                <input type="password" value={newUserPassword} onChange={(e) => setNewUserPassword(e.target.value)} placeholder="••••••" className="w-full bg-surface-container-lowest border-none text-bone px-5 py-4 text-[11px] font-mono outline-none uppercase rounded-sm shadow-inner transition-[width,color,background-color,border-color,opacity,transform,box-shadow]" required minLength={6} />
+                <label className="block text-[10px] font-display font-bold text-ash-500 uppercase tracking-wider mb-2 group-focus-within:text-phosphor-500 transition-colors">{t('accounts.createPassword')}</label>
+                <input type="password" value={newUserPassword} onChange={(e) => setNewUserPassword(e.target.value)} placeholder="••••••" className="w-full bg-surface-container-lowest text-bone px-5 py-4 text-[11px] font-mono outline-none uppercase rounded-sm transition-[width,color,background-color,border-color,opacity,transform,box-shadow]" required minLength={6} />
                 <div className="h-0.5 w-full bg-phosphor-500 scale-x-0 origin-left transition-transform duration-(--duration-base) ease-limbo group-focus-within:scale-x-100" />
               </div>
 
               <div className="pt-10 flex justify-end gap-6 items-center">
-                <button type="button" onClick={() => setShowCreateUser(false)} className="text-[10px] font-display font-bold text-ash-600 hover:text-bone uppercase tracking-widest transition-colors">{t('accounts.abort')}</button>
-                <button type="submit" disabled={createUserLoading} className="bg-phosphor-600 text-black px-12 py-4 rounded-sm font-display font-bold text-[11px] tracking-widest uppercase hover:bg-phosphor-500 transition active:scale-[0.97] shadow-lg flex items-center gap-3">
+                <button type="button" onClick={() => setShowCreateUser(false)} className="text-[10px] font-display font-bold text-ash-600 hover:text-bone uppercase tracking-wider transition-colors">{t('accounts.abort')}</button>
+                <button type="submit" disabled={createUserLoading} className="bg-phosphor-600 text-black px-12 py-4 rounded-sm font-display font-bold text-[11px] tracking-wider uppercase hover:bg-phosphor-500 transition active:scale-[0.97] flex items-center gap-3">
                   {createUserLoading ? <RetroSpinner /> : 'REGISTRAR'}
                 </button>
               </div>
@@ -857,11 +856,11 @@ function ToggleButton({ label, active, onClick }: { label: string; active: boole
   return (
     <button 
       onClick={onClick}
-      className={`w-full flex items-center justify-between px-4 py-4 border transition rounded-sm shadow-inner ${
-        active ? 'bg-primary/5 border-primary/40 text-primary shadow-[0_0_15px_rgba(255,140,0,0.05)]' : 'bg-surface-container-lowest border-border-subtle text-ash-600 hover:border-border'
+      className={`w-full flex items-center justify-between px-4 py-4 transition rounded-sm ${
+        active ? 'bg-primary/5 text-primary' : 'bg-surface-container-lowest text-ash-600'
       }`}
     >
-      <span className="text-[10px] font-display font-bold uppercase tracking-widest">{label}</span>
+      <span className="text-[10px] font-display font-bold uppercase tracking-wider">{label}</span>
       <span className={`material-symbols-outlined text-2xl ${active ? 'text-primary' : 'text-ash-700'}`}>{active ? 'toggle_on' : 'toggle_off'}</span>
     </button>
   );
@@ -877,7 +876,7 @@ function SortHeader({ label, field, current, dir, onSort }: { label: string; fie
       <button
         type="button"
         onClick={() => onSort(field)}
-        className="group flex items-center gap-2 uppercase tracking-widest hover:text-bone transition-colors"
+        className="group flex items-center gap-2 uppercase tracking-wider hover:text-bone transition-colors"
       >
         <span className={isActive ? 'text-primary' : ''}>{label}</span>
         <span className={`material-symbols-outlined text-xs transition-opacity ${isActive ? 'text-primary opacity-100' : 'opacity-0 group-hover:opacity-40 group-focus-visible:opacity-40'}`} aria-hidden>

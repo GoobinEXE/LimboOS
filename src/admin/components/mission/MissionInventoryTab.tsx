@@ -151,7 +151,7 @@ export default function MissionInventoryTab({
     return (
       <div className="flex flex-col items-center justify-center py-24 opacity-50">
         <RetroSpinner />
-        <p className="text-[10px] font-display font-bold text-primary uppercase tracking-widest mt-4 animate-pulse">
+        <p className="text-[10px] font-display font-bold text-primary uppercase tracking-wider mt-4 animate-pulse">
           Analisando Datacrons...
         </p>
       </div>
@@ -163,9 +163,9 @@ export default function MissionInventoryTab({
       {modal}
       <div className="space-y-8">
         {campaignCharacters.length > 0 && (
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-border bg-black/30 p-5 rounded-sm">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-black/30 p-5 rounded-sm">
             <div className="min-w-0">
-              <h4 className="text-[11px] font-display font-bold uppercase tracking-[0.2em] text-primary">
+              <h4 className="text-[11px] font-display font-bold uppercase tracking-[0.08em] text-primary">
                 {t('missions.inventory.broadcastTitle')}
               </h4>
               <p className="text-[11px] text-ash-400 leading-relaxed mt-1">
@@ -180,14 +180,14 @@ export default function MissionInventoryTab({
         )}
 
         {campaignCharacters.length === 0 && (
-          <div className="py-24 text-center border-2 border-dashed border-border-subtle rounded-sm flex flex-col items-center">
+          <div className="py-24 text-center rounded-sm flex flex-col items-center">
             <span className="material-symbols-outlined text-5xl text-ash-700 mb-4" aria-hidden>
               person_off
             </span>
-            <p className="text-[11px] font-display font-bold uppercase tracking-widest text-ash-500">
+            <p className="text-[11px] font-display font-bold uppercase tracking-wider text-ash-500">
               Nenhum Agente Vinculado a Esta Missão
             </p>
-            <p className="text-[9px] text-ash-600 mt-2 uppercase tracking-widest">
+            <p className="text-[10px] text-ash-600 mt-2 uppercase tracking-wider">
               Designe agentes ou esquadrões na aba Vínculos
             </p>
           </div>
@@ -199,12 +199,12 @@ export default function MissionInventoryTab({
           return (
             <div
               key={compositeKey}
-              className="bg-black/40 border border-border-subtle rounded-sm p-6 group hover:border-primary/20 transition shadow-inner"
+              className="bg-black/40 rounded-sm p-6 group transition"
             >
-              <div className="flex justify-between items-center mb-6 border-b border-border-subtle pb-4">
+              <div className="flex justify-between items-center mb-6 border-b border-seam pb-4">
                 <div className="flex items-center gap-4">
                   <div
-                    className={`w-10 h-10 rounded-sm bg-black border border-seam flex items-center justify-center font-black text-sm ${
+                    className={`w-10 h-10 rounded-sm bg-black flex items-center justify-center font-black text-sm ${
                       character.agentStatus === 'vivo' ? 'text-phosphor-500' : 'text-red-500'
                     }`}
                   >
@@ -214,18 +214,18 @@ export default function MissionInventoryTab({
                     <h4 className="font-display font-bold text-sm text-bone uppercase tracking-wider">
                       {character.codinome}
                     </h4>
-                    <p className="text-[9px] font-mono font-bold text-ash-500 uppercase tracking-widest mt-0.5">
+                    <p className="text-[10px] font-mono font-bold text-ash-500 uppercase tracking-wider mt-0.5">
                       Mestre: {account.masterName || account.email}
                     </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="text-[9px] font-display font-bold text-primary/40 uppercase tracking-widest bg-primary/5 px-3 py-1 rounded-sm border border-primary/10">
+                  <span className="text-[10px] font-display font-bold text-primary/40 uppercase tracking-wider bg-primary/5 px-3 py-1 rounded-sm">
                     {items.length} Itens
                   </span>
                   <button
                     onClick={() => setShowGrantModal({ charId: character.id, uid: account.uid })}
-                    className="bg-primary/10 text-primary border border-primary/20 px-4 py-2 rounded-sm font-display font-bold text-[9px] tracking-widest uppercase hover:bg-primary hover:text-black transition active:scale-[0.97] glow-orange flex items-center gap-2"
+                    className="bg-primary/10 text-primary px-4 py-2 rounded-sm font-display font-bold text-[10px] tracking-wider uppercase hover:bg-primary hover:text-black transition active:scale-[0.97] flex items-center gap-2"
                   >
                     <span className="material-symbols-outlined text-sm">add</span> Conceder
                   </button>
@@ -238,11 +238,11 @@ export default function MissionInventoryTab({
                   return (
                     <div
                       key={t.id}
-                      className="bg-surface-container-lowest border border-border-subtle p-4 rounded-sm relative group/item hover:border-primary/30 transition shadow-md"
+                      className="bg-surface-container-lowest p-4 rounded-sm relative group/item transition"
                     >
                       <div className="flex items-start justify-between mb-2">
                         <div
-                          className={`p-1.5 rounded-sm bg-black/40 border border-border-subtle text-[10px] transition group-hover/item:border-primary/20 ${
+                          className={`p-1.5 rounded-sm bg-black/40 text-[10px] transition group-hover/item:border-primary/20 ${
                             intel?.type === 'AUDIO'
                               ? 'text-amber-500'
                               : intel?.type === 'VISUAL'
@@ -264,23 +264,23 @@ export default function MissionInventoryTab({
                         </div>
                         <button
                           onClick={() => handleRevokeIntel(account.uid, character.id, t.id)}
-                          className="text-ash-600 hover:text-red-500 transition-colors bg-black/40 p-1 rounded-sm border border-border-subtle hover:border-red-500/30"
+                          className="text-ash-600 hover:text-red-500 transition-colors bg-black/40 p-1 rounded-sm"
                         >
                           <span className="material-symbols-outlined text-xs">close</span>
                         </button>
                       </div>
-                      <p className="font-display font-bold text-[10px] text-bone uppercase tracking-widest truncate group-hover/item:text-primary transition-colors">
+                      <p className="font-display font-bold text-[10px] text-bone uppercase tracking-wider truncate group-hover/item:text-primary transition-colors">
                         {intelTitleLabel(t.id, Object.entries(remoteIntelTitles).map(([id, title]) => ({ id, title })))}
                       </p>
-                      <p className="text-[9px] font-mono text-ash-500 uppercase mt-1 truncate">
+                      <p className="text-[10px] font-mono text-ash-500 uppercase mt-1 truncate">
                         {intel?.metadata?.npc || 'SISTEMA'}
                       </p>
                     </div>
                   );
                 })}
                 {items.length === 0 && (
-                  <div className="col-span-full py-6 text-center border border-dashed border-border-subtle rounded-sm">
-                    <span className="text-[9px] font-display font-bold uppercase tracking-widest text-ash-500">
+                  <div className="col-span-full py-6 text-center rounded-sm">
+                    <span className="text-[10px] font-display font-bold uppercase tracking-wider text-ash-500">
                       Inventário Vazio
                     </span>
                   </div>

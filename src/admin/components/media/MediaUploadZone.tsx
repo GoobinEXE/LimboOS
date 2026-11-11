@@ -48,17 +48,17 @@ export default function MediaUploadZone({
           <div className="fixed inset-0 bg-surface-scrim z-[200] flex flex-col items-center justify-center gap-6 animate-fade-in" role="status" aria-live="polite">
             <RetroSpinner />
             <div className="space-y-2 text-center">
-              <div className="text-primary font-display font-bold uppercase tracking-[0.4em] animate-pulse text-lg">
+              <div className="text-primary font-display font-bold uppercase tracking-[0.08em] animate-pulse text-lg">
                 Transferindo Dados...
               </div>
-              <div className="w-64 h-1 bg-white/5 rounded-full overflow-hidden border border-primary/10">
+              <div className="w-64 h-1 bg-white/5 rounded-full overflow-hidden">
                 <motion.div
-                  className="h-full bg-primary glow-orange"
+                  className="h-full bg-primary"
                   initial={{ width: 0 }}
                   animate={{ width: `${uploadProgress}%` }}
                 />
               </div>
-              <div className="text-[10px] font-display font-bold text-ash-500 tracking-widest uppercase">
+              <div className="text-[10px] font-display font-bold text-ash-500 tracking-wider uppercase">
                 {Math.round(uploadProgress)}% COMPLETO
               </div>
             </div>
@@ -81,7 +81,7 @@ export default function MediaUploadZone({
             type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={disabled || uploading}
-            className="flex items-center gap-2 bg-primary hover:bg-primary-container text-black px-5 py-2.5 rounded-sm font-display font-bold text-[10px] tracking-widest transition active:scale-[0.97] glow-orange shadow-lg disabled:opacity-40"
+            className="flex items-center gap-2 bg-primary hover:bg-primary-container text-black px-5 py-2.5 rounded-sm font-display font-bold text-[10px] tracking-wider transition active:scale-[0.97] disabled:opacity-40"
           >
             <span className="material-symbols-outlined text-base">
               {uploading ? 'sync' : 'add_circle'}
@@ -106,10 +106,10 @@ export default function MediaUploadZone({
           onClick={() => {
             if (!disabled && !uploading) fileInputRef.current?.click();
           }}
-          className={`relative border-2 border-dashed rounded-sm p-8 text-center transition group overflow-hidden cursor-pointer ${
+          className={`relative rounded-sm p-8 text-center transition group overflow-hidden cursor-pointer ${
             isDragOver
-              ? 'border-primary bg-primary/5'
-              : 'border-primary/10 bg-black/20 hover:border-primary/20 hover:bg-black/40'
+              ? 'bg-primary/5'
+              : 'bg-black/20 hover:bg-black/40'
           } ${disabled || uploading ? 'opacity-50 pointer-events-none' : ''}`}
         >
           <div className="absolute top-2 left-2 opacity-20">
@@ -134,10 +134,10 @@ export default function MediaUploadZone({
               {isDragOver ? 'downloading' : 'cloud_upload'}
             </span>
           </div>
-          <p className="text-ash-400 text-[10px] font-display font-bold uppercase tracking-[0.3em] group-hover:text-ash-300">
+          <p className="text-ash-400 text-[10px] font-display font-bold uppercase tracking-[0.08em] group-hover:text-ash-300">
             {isDragOver ? 'SOLTAR AGORA' : dropHint}
           </p>
-          <p className="text-ash-600 text-[9px] font-display uppercase tracking-widest mt-2">
+          <p className="text-ash-600 text-[10px] font-display uppercase tracking-wider mt-2">
             {dropSubhint}
           </p>
         </div>

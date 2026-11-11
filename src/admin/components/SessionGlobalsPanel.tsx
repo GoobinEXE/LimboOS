@@ -30,8 +30,8 @@ export default function SessionGlobalsPanel({ campaignId }: { campaignId?: strin
 
   if (!campaignId) {
     return (
-      <div className="bg-surface-container-low border border-primary/10 p-5 rounded-sm">
-        <p className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-500">
+      <div className="bg-surface-container-low p-5 rounded-sm">
+        <p className="text-[10px] font-display font-bold uppercase tracking-wider text-ash-500">
           {t('sessionGlobals.pickMission')}
         </p>
       </div>
@@ -60,14 +60,14 @@ export default function SessionGlobalsPanel({ campaignId }: { campaignId?: strin
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div
-        className={`bg-surface-container-low border p-5 rounded-sm flex flex-col gap-4 transition ${
+        className={`bg-surface-container-low p-5 rounded-sm flex flex-col gap-4 transition ${
           limboState.seized
-            ? 'border-red-500/60 shadow-[0_0_24px_rgba(239,68,68,0.15)]'
-            : 'border-primary/10'
+            ? ''
+            : ''
         }`}
       >
         <div className="flex items-center justify-between">
-          <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-500">
+          <h3 className="text-[10px] font-display font-bold uppercase tracking-wider text-ash-500">
             {t('sessionGlobals.limboTitle')}
           </h3>
           {limboState.seized && <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />}
@@ -84,7 +84,7 @@ export default function SessionGlobalsPanel({ campaignId }: { campaignId?: strin
           )}
         </div>
         <p
-          className={`text-[10px] font-mono font-bold uppercase tracking-widest ${
+          className={`text-[10px] font-mono font-bold uppercase tracking-wider ${
             limboState.seized ? 'text-red-500/70' : 'text-phosphor-500/70'
           }`}
         >
@@ -93,8 +93,8 @@ export default function SessionGlobalsPanel({ campaignId }: { campaignId?: strin
             total: LIMBO_THREAD_COUNT,
           })}
         </p>
-        <div className="bg-primary/5 border border-primary/20 p-3 rounded-sm">
-          <p className="text-[9px] font-display font-black text-primary uppercase tracking-widest mb-1">
+        <div className="bg-primary/5 p-3 rounded-sm">
+          <p className="text-[10px] font-display font-black text-primary uppercase tracking-wider mb-1">
             {t('sessionGlobals.ipHint')}
           </p>
           <p className="text-sm font-mono font-black text-bone tracking-wider">212.45.1.1</p>
@@ -102,45 +102,47 @@ export default function SessionGlobalsPanel({ campaignId }: { campaignId?: strin
         <button
           type="button"
           onClick={toggleLimboMilitary}
-          className={`px-5 py-2 border-2 font-display font-black uppercase text-[10px] tracking-widest transition rounded-sm self-start ${
+          className={`px-5 py-2 font-display font-black uppercase text-[10px] tracking-wider transition rounded-sm self-start ${
             limboState.seized
-              ? 'bg-red-600 border-red-400 text-bone'
-              : 'bg-[#333] border-border-subtle text-ash-400 hover:bg-[#444]'
+              ? 'bg-red-600 text-bone'
+              : 'bg-[#333] text-ash-400 hover:bg-[#444]'
           } active:scale-[0.97]`}
         >
           {limboState.seized ? t('sessionGlobals.normalize') : t('sessionGlobals.forceUsarmy')}
         </button>
       </div>
 
-      <div className="bg-surface-container-low border border-primary/10 p-5 rounded-sm flex flex-col gap-4">
-        <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-500">
+      <div className="bg-surface-container-low p-5 rounded-sm flex flex-col gap-4">
+        <h3 className="text-[10px] font-display font-bold uppercase tracking-wider text-ash-500">
           {t('sessionGlobals.protocols')}
         </h3>
-        <div className="flex items-center justify-between p-4 bg-black/40 border border-border-subtle rounded-sm">
+        <div className="flex items-center justify-between p-4 bg-black/40 rounded-sm">
           <div>
             <p className="font-display font-black text-sm text-bone uppercase">{t('sessionGlobals.diskRepair')}</p>
-            <p className="text-[9px] text-ash-600 font-bold uppercase mt-1">{t('sessionGlobals.diskRepairDesc')}</p>
+            <p className="text-[10px] text-ash-600 font-bold uppercase mt-1">{t('sessionGlobals.diskRepairDesc')}</p>
           </div>
           <button
             type="button"
             onClick={toggleDiskRepair}
-            className={`relative w-14 h-7 rounded-full transition border-2 ${
+            className={`relative w-14 h-7 rounded-full transition ${
               diskRepairAllowed
-                ? 'bg-primary/20 border-primary shadow-[0_0_10px_rgba(255,140,0,0.2)]'
-                : 'bg-ash-900 border-ash-800'
+                ? 'bg-accent'
+                : 'bg-surface-container-highest'
             }`}
-            aria-label="Toggle DiskRepair"
+            role="switch"
+            aria-checked={diskRepairAllowed}
+            aria-label={t('sessionGlobals.diskRepair')}
           >
             <div
               className={`absolute top-1 left-1 w-4 h-4 rounded-full transition-transform duration-300 ${
                 diskRepairAllowed
-                  ? 'translate-x-7 bg-primary shadow-[0_0_8px_rgba(255,140,0,0.8)]'
-                  : 'translate-x-0 bg-ash-800'
+                  ? 'translate-x-7 bg-field-ink'
+                  : 'translate-x-0 bg-ash-400'
               }`}
             />
           </button>
         </div>
-        <p className="text-[9px] text-ash-600 font-display font-bold uppercase tracking-wide leading-relaxed">
+        <p className="text-[10px] text-ash-600 font-display font-bold uppercase tracking-wide leading-relaxed">
           {t('sessionGlobals.hint')}
         </p>
       </div>

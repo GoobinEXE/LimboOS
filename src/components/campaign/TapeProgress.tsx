@@ -50,7 +50,7 @@ export const TapeProgress = ({ total, current, onChange }: TapeProgressProps) =>
         aria-valuemax={total - 1}
         aria-valuenow={current}
       >
-        <div className="relative w-full h-2 rounded-full bg-surface-sunken border border-border overflow-hidden shadow-hairline transition-colors group-hover:border-border-strong">
+        <div className="relative w-full h-2 rounded-full bg-surface-sunken overflow-hidden transition-colors">
           {total > 1 && (
             <div aria-hidden className="absolute inset-y-0 left-3 right-3 pointer-events-none">
               {Array.from({ length: total }).map((_, i) => (
@@ -76,7 +76,7 @@ export const TapeProgress = ({ total, current, onChange }: TapeProgressProps) =>
         <span className="text-primary/80">{pad(Math.min(current + 1, Math.max(total, 1)))}</span>
         <span className="opacity-50">/</span>
         <span>{pad(total)}</span>
-        <span className="text-protocol text-[9px] ml-2 text-ash-500">{t('campaign.progressRecords')}</span>
+        <span className="text-protocol text-[10px] ml-2 text-ash-500">{t('campaign.progressRecords')}</span>
       </div>
     </div>
   );

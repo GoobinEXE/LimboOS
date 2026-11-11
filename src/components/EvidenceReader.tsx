@@ -156,7 +156,7 @@ function CorruptedTextRenderer({ text }: { text: string }) {
       </div>
 
       {/* Bottom warning bar */}
-      <div className="mt-4 flex items-center gap-2 text-red-500/60 text-[9px] font-mono uppercase tracking-[0.3em] animate-led">
+      <div className="mt-4 flex items-center gap-2 text-red-500/60 text-[10px] font-mono uppercase tracking-[0.08em] animate-led">
         <span>⚠</span>
         <span>{t('evidence.crcError')}</span>
         <span>⚠</span>
@@ -196,17 +196,17 @@ export default function EvidenceReader({ evidence, onClose }: EvidenceReaderProp
   const isCorrupted = isText && (evidence as TextIntel).isCorrupted();
   
   const scheme = isVisual
-    ? { bg: 'bg-[#0a0a0f]', text: 'text-tube-400', border: 'border-tube-400', accent: 'cyan', selBg: 'selection:bg-tube-400', selText: 'selection:text-[#0a0a0f]', scrollThumb: '#86a5b4' }
+    ? { bg: 'bg-[#0a0a0f]', text: 'text-tube-400', border: '', accent: 'cyan', selBg: 'selection:bg-tube-400', selText: 'selection:text-[#0a0a0f]', scrollThumb: '#86a5b4' }
     : isVideo
-      ? { bg: 'bg-[#0a0a0a]', text: 'text-orange-400', border: 'border-orange-400', accent: 'orange', selBg: 'selection:bg-orange-400', selText: 'selection:text-[#0a0a0a]', scrollThumb: '#fb923c' }
+      ? { bg: 'bg-[#0a0a0a]', text: 'text-orange-400', border: '', accent: 'orange', selBg: 'selection:bg-orange-400', selText: 'selection:text-[#0a0a0a]', scrollThumb: '#fb923c' }
       : isMeta
       // Fósforo branco (P4) para registros de sistema/conquista
-      ? { bg: 'bg-[#0c0b0a]', text: 'text-bone', border: 'border-bone', accent: 'bone', selBg: 'selection:bg-bone', selText: 'selection:text-[#0c0b0a]', scrollThumb: '#e8e0d0' }
+      ? { bg: 'bg-[#0c0b0a]', text: 'text-bone', border: '', accent: 'bone', selBg: 'selection:bg-bone', selText: 'selection:text-[#0c0b0a]', scrollThumb: '#e8e0d0' }
       : isAudio
-        ? { bg: 'bg-[#0d0a00]', text: 'text-amber-400', border: 'border-amber-400', accent: 'amber', selBg: 'selection:bg-amber-400', selText: 'selection:text-[#0d0a00]', scrollThumb: '#f59e0b' }
+        ? { bg: 'bg-[#0d0a00]', text: 'text-amber-400', border: '', accent: 'amber', selBg: 'selection:bg-amber-400', selText: 'selection:text-[#0d0a00]', scrollThumb: '#f59e0b' }
         : isCorrupted
-          ? { bg: 'bg-[#0a0000]', text: 'text-red-500', border: 'border-red-500', accent: 'red', selBg: 'selection:bg-red-500', selText: 'selection:text-black', scrollThumb: '#ef4444' }
-          : { bg: 'bg-[#07110a]', text: 'text-crt', border: 'border-crt', accent: 'green', selBg: 'selection:bg-crt', selText: 'selection:text-[#07110a]', scrollThumb: '#33ff33' };
+          ? { bg: 'bg-[#0a0000]', text: 'text-red-500', border: '', accent: 'red', selBg: 'selection:bg-red-500', selText: 'selection:text-black', scrollThumb: '#ef4444' }
+          : { bg: 'bg-[#07110a]', text: 'text-crt', border: '', accent: 'green', selBg: 'selection:bg-crt', selText: 'selection:text-[#07110a]', scrollThumb: '#33ff33' };
 
   return (
     <motion.div 
@@ -217,7 +217,7 @@ export default function EvidenceReader({ evidence, onClose }: EvidenceReaderProp
       role="dialog"
       aria-modal="true"
       aria-label={evidence.title}
-      className={`absolute inset-0 z-50 flex flex-col ${scheme.bg} ${scheme.text} font-mono p-4 sm:p-6 sm:rounded-panel overflow-hidden border border-current/15 shadow-[0_24px_64px_-24px_rgba(0,0,0,0.9)]`}
+      className={`absolute inset-0 z-50 flex flex-col ${scheme.bg} ${scheme.text} font-mono p-4 sm:p-6 sm:rounded-panel overflow-hidden`}
     >
       {/* Scanline overlay */}
       <div className="absolute inset-0 pointer-events-none z-10" style={{
@@ -228,12 +228,12 @@ export default function EvidenceReader({ evidence, onClose }: EvidenceReaderProp
         background: 'radial-gradient(circle, transparent 70%, rgba(0,0,0,0.3) 100%)'
       }} />
       {/* Faixa de protocolo — enquadramento de documento */}
-      <div className="flex items-center justify-between gap-3 mb-3 shrink-0 text-[9px] uppercase tracking-[0.3em] opacity-70 select-none">
+      <div className="flex items-center justify-between gap-3 mb-3 shrink-0 text-[10px] uppercase tracking-[0.08em] opacity-70 select-none">
         <span className="flex items-center gap-2 whitespace-nowrap">
           <span aria-hidden className="inline-block w-1.5 h-1.5 bg-current animate-led" />
           {t('evidence.registry')}
         </span>
-        <span aria-hidden className="flex-1 border-t border-dashed border-current/40" />
+        <span aria-hidden className="flex-1" />
         <span className="whitespace-nowrap">{t('evidence.archive', { id: evidence.id })}</span>
       </div>
       {/* Header */}
@@ -241,7 +241,7 @@ export default function EvidenceReader({ evidence, onClose }: EvidenceReaderProp
         <div className="flex items-center gap-3">
           <IntelTypeIcon type={evidence.type} size={22} className={scheme.text} />
           <div>
-            <h2 className="text-sm font-bold uppercase tracking-widest">{evidence.title}</h2>
+            <h2 className="text-sm font-bold uppercase tracking-wider">{evidence.title}</h2>
             <p className="text-[10px] opacity-70 italic">
               {isVisual 
                 ? t('evidence.category', { cat: details.category || t('evidence.categoryFallback') })
@@ -260,17 +260,17 @@ export default function EvidenceReader({ evidence, onClose }: EvidenceReaderProp
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <span className={`text-[8px] font-bold uppercase tracking-[0.2em] px-2 py-0.5 border rounded ${
+          <span className={`text-[10px] font-bold uppercase tracking-[0.08em] px-2 py-0.5 rounded ${
             evidence.level >= 3 
-              ? 'border-current/50 bg-current/10' 
-              : 'border-current/30 opacity-80'
+              ? 'bg-current/10' 
+              : 'opacity-80'
           }`}>
             {levelLabel}
           </span>
           <button 
             onClick={onClose}
             aria-label={t('evidence.closeAria')}
-            className={`px-3 py-1 border ${scheme.border} bg-transparent hover:bg-current/15 active:bg-current/25 focus-visible:outline-1 focus-visible:outline-current text-[10px] transition-colors duration-150 uppercase font-bold cursor-pointer`}
+            className={`px-3 py-1 ${scheme.border} bg-transparent hover:bg-current/15 active:bg-current/25 focus-visible:outline-1 focus-visible:outline-current text-[10px] transition-colors duration-150 uppercase font-bold cursor-pointer`}
           >
             {t('evidence.close')}
           </button>
@@ -281,13 +281,13 @@ export default function EvidenceReader({ evidence, onClose }: EvidenceReaderProp
         <style>{`
           .custom-scrollbar::-webkit-scrollbar { width: 4px; }
           .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-          .custom-scrollbar::-webkit-scrollbar-thumb { background: ${scheme.scrollThumb}; border-radius: 2px; }
+          .custom-scrollbar::-webkit-scrollbar-thumb { background: ${scheme.scrollThumb}; 2px; }
         `}</style>
 
         {/* VIDEO: player unificado (deck desktop / evidência) */}
         {isVideo ? (
           <div className="flex flex-col items-center py-4 gap-4">
-            <div className="w-full aspect-video max-h-[55vh] lg:max-h-[68vh] rounded-lg border border-orange-400/30 overflow-hidden bg-black">
+            <div className="w-full aspect-video max-h-[55vh] lg:max-h-[68vh] rounded-lg overflow-hidden bg-black">
               {(evidence as VideoIntel).isYoutube() && (evidence as VideoIntel).youtubeId ? (
                 <iframe
                   title={evidence.title}
@@ -319,14 +319,14 @@ export default function EvidenceReader({ evidence, onClose }: EvidenceReaderProp
               <video
                 src={details.url}
                 controls
-                className="w-full max-h-[50vh] lg:max-h-[68vh] rounded-lg border border-tube-500/30 bg-black"
+                className="w-full max-h-[50vh] lg:max-h-[68vh] rounded-lg bg-black"
                 playsInline
               />
             ) : (
               <img
                 src={details.url}
                 alt={evidence.title}
-                className="w-full max-h-[50vh] lg:max-h-[68vh] object-contain rounded-lg border border-tube-500/30"
+                className="w-full max-h-[50vh] lg:max-h-[68vh] object-contain rounded-lg"
               />
             )}
             {evidence.description && (
@@ -338,7 +338,7 @@ export default function EvidenceReader({ evidence, onClose }: EvidenceReaderProp
         ) : isAudio && details.source ? (
           /* AUDIO: Embedded player */
           <div className="flex flex-col items-center py-8 gap-6">
-            <div className="w-24 h-24 rounded-card bg-amber-400/10 border-2 border-amber-400/30 flex items-center justify-center">
+            <div className="w-24 h-24 rounded-card bg-amber-400/10 flex items-center justify-center">
               <IntelTypeIcon type="AUDIO" size={44} />
             </div>
             <div className="w-full max-w-sm">
@@ -365,12 +365,12 @@ export default function EvidenceReader({ evidence, onClose }: EvidenceReaderProp
             ) : (
               <IntelTypeIcon type="META" size={56} />
             )}
-            <h3 className="text-lg font-bold uppercase tracking-widest">{evidence.title}</h3>
+            <h3 className="text-lg font-bold uppercase tracking-wider">{evidence.title}</h3>
             <p className={`text-sm leading-relaxed max-w-xs opacity-80 ${scheme.selBg} ${scheme.selText}`}>
               {evidence.description}
             </p>
             {details.hint && (
-              <div className="mt-4 p-3 border border-current/30 rounded-card text-[11px] opacity-60">
+              <div className="mt-4 p-3 rounded-card text-[11px] opacity-60">
                 <span className="font-bold uppercase">{t('evidence.hint')} </span>{details.hint}
               </div>
             )}
@@ -387,7 +387,7 @@ export default function EvidenceReader({ evidence, onClose }: EvidenceReaderProp
         )}
       </div>
       {/* Footer with enriched metadata */}
-      <div className={`mt-4 pt-3 border-t ${scheme.border}/30 text-[9px] opacity-75 flex justify-between gap-3 uppercase tracking-[0.15em] shrink-0`}>
+      <div className={`mt-4 pt-3 border-t ${scheme.border}/30 text-[10px] opacity-75 flex justify-between gap-3 uppercase tracking-[0.15em] shrink-0`}>
         <span className="truncate">{t('evidence.sector', { chapter: evidence.metadata.chapter || t('unknown', { ns: 'common' }) })}</span>
         <span className="whitespace-nowrap">{t('evidence.level', { level: levelLabel })}</span>
         <span className="truncate text-right">{details.npc ? t('evidence.npc', { npc: details.npc }) : t('evidence.checksumOk')}</span>

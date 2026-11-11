@@ -20,27 +20,27 @@ export default function LanguageSelector({ variant = 'deck', className }: Langua
 
   const labelCls =
     variant === 'admin'
-      ? 'font-display uppercase font-bold tracking-[0.15em] text-[9px] text-ash-500 hidden xl:inline'
+      ? 'font-display uppercase font-bold tracking-[0.15em] text-[10px] text-ash-500 hidden xl:inline'
       : variant === 'nokia'
-        ? 'font-mono text-[8px] text-lcd-ink/70'
-        : 'font-display uppercase tracking-[0.15em] text-[9px] text-ash-500';
+        ? 'font-mono text-[10px] text-lcd-ink/70'
+        : 'font-display uppercase tracking-[0.15em] text-[10px] text-ash-500';
 
   const btnBase =
     variant === 'admin'
-      ? 'font-display uppercase font-bold tracking-[0.12em] text-[9px] h-8 px-2.5 border -ml-px first:ml-0 first:rounded-l-inset last:rounded-r-inset transition-colors'
+      ? 'font-display uppercase font-bold tracking-[0.12em] text-[10px] h-8 px-2.5 -ml-px first:ml-0 first:rounded-l-inset last:rounded-r-inset transition-colors'
       : variant === 'nokia'
-        ? 'font-mono text-[8px] px-1.5 py-0.5 border transition-colors'
-        : 'font-display uppercase font-bold tracking-[0.12em] text-[9px] px-2 py-0.5 border transition-colors';
+        ? 'font-mono text-[10px] px-1.5 py-0.5 transition-colors'
+        : 'font-display uppercase font-bold tracking-[0.12em] text-[10px] px-2 py-0.5 transition-colors';
 
   const activeCls =
     variant === 'nokia'
       ? 'border-lcd-ink bg-lcd-ink text-lcd-paper'
-      : 'relative z-10 border-accent-60 bg-accent-10 text-primary';
+      : 'relative z-10 bg-accent-10 text-primary';
 
   const idleCls =
     variant === 'nokia'
       ? 'border-lcd-ink/40 text-lcd-ink/60 hover:bg-lcd-ink/10'
-      : 'border-border text-ash-500 hover:text-bone hover:bg-white/[0.03]';
+      : 'text-ash-500 hover:text-bone hover:bg-white/[0.03]';
 
   return (
     <div className={clsx('flex items-center gap-2', className)} role="group" aria-label={t('language.label')}>

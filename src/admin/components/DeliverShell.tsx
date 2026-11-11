@@ -48,7 +48,7 @@ export default function DeliverShell({
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={ADMIN_SPRING}
-              className="bg-surface-container-low border-l border-seam w-full max-w-xl shadow-2xl flex flex-col h-full relative overflow-hidden font-display"
+              className="bg-surface-container-low border-l border-seam w-full max-w-xl flex flex-col h-full relative overflow-hidden font-display"
               onClick={(e) => e.stopPropagation()}
             >
               <Screw className="top-4 left-4" />
@@ -58,8 +58,8 @@ export default function DeliverShell({
 
               <div className="p-6 border-b-4 border-seam bg-black/40 relative z-10 flex justify-between items-start gap-4">
                 <div className="min-w-0">
-                  <h3 className="font-black text-xl text-bone uppercase tracking-widest truncate">{title}</h3>
-                  <p className="text-[10px] text-ash-500 font-bold uppercase tracking-widest mt-1 truncate">
+                  <h3 className="font-black text-xl text-bone uppercase tracking-wider truncate">{title}</h3>
+                  <p className="text-[10px] text-ash-500 font-bold uppercase tracking-wider mt-1 truncate">
                     {subtitle ?? `${targets.length} alvo(s): ${targets.map((t) => t.label).join(', ')}`}
                   </p>
                 </div>

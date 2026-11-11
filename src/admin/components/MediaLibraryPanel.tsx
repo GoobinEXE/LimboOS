@@ -329,16 +329,16 @@ export default function MediaLibraryPanel({
           <div className="flex items-center gap-4">
             {!embedded && (
               <div
-                className={`w-1 h-9 bg-accent shrink-0 ${uploading ? 'animate-pulse' : ''}`}
+                className={`w-2.5 h-2.5 rounded-[1px] bg-accent shrink-0 ${uploading ? 'animate-pulse' : ''}`}
               />
             )}
             <div>
               {!embedded && (
-                <h2 className="font-display font-bold uppercase tracking-widest text-xl text-bone">
+                <h2 className="font-display font-bold uppercase tracking-wider text-xl text-bone">
                   {t('media.title')}
                 </h2>
               )}
-              <p className="text-[10px] font-display font-bold text-ash-500 tracking-[0.2em] uppercase">
+              <p className="text-[10px] font-display font-bold text-ash-500 tracking-[0.08em] uppercase">
                 {t('media.subtitle', {
                   files: filteredAssets.length,
                   folders: folders.length,
@@ -358,7 +358,7 @@ export default function MediaLibraryPanel({
                 placeholder={t('media.search')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="bg-surface-container-lowest border border-primary/10 text-[10px] font-display font-bold uppercase tracking-[0.2em] focus:border-primary/50 w-full placeholder:text-ash-600 text-bone pl-10 pr-4 py-2.5 outline-none rounded-sm transition"
+                className="bg-surface-container-lowest text-[10px] font-display font-bold uppercase tracking-[0.08em] w-full placeholder:text-ash-600 text-bone pl-10 pr-4 py-2.5 outline-none rounded-sm transition"
               />
             </div>
             {showCatalog && (
@@ -366,7 +366,7 @@ export default function MediaLibraryPanel({
                 <button
                   type="button"
                   onClick={() => intel.setShowExport(true)}
-                  className="bg-surface-container-high text-ash-400 px-4 py-2.5 text-[10px] font-display font-bold border border-border-subtle uppercase hover:bg-white/5 transition rounded-sm active:scale-[0.97] flex items-center gap-2"
+                  className="bg-surface-container-high text-ash-400 px-4 py-2.5 text-[10px] font-display font-bold uppercase hover:bg-white/5 transition rounded-sm active:scale-[0.97] flex items-center gap-2"
                 >
                   <span className="material-symbols-outlined text-base">download</span>
                   {t('accounts.export')}
@@ -384,10 +384,10 @@ export default function MediaLibraryPanel({
 
       {showCatalog && intel.feedback && (
         <div
-          className={`p-3 border text-[10px] font-display font-bold uppercase tracking-[0.2em] rounded-sm ${
+          className={`p-3 text-[10px] font-display font-bold uppercase tracking-[0.08em] rounded-sm ${
             intel.feedback.type === 'success'
-              ? 'border-phosphor-500/30 text-phosphor-400 bg-phosphor-500/5'
-              : 'border-red-500/30 text-red-400 bg-red-500/5'
+              ? 'text-phosphor-400 bg-phosphor-500/5'
+              : 'text-red-400 bg-red-500/5'
           }`}
         >
           {intel.feedback.text}
@@ -439,7 +439,7 @@ export default function MediaLibraryPanel({
           />
 
           <div className="flex-1 min-w-0 space-y-4">
-            <div className="flex border-b border-primary/10 overflow-x-auto">
+            <div className="flex overflow-x-auto">
               <FilterTab label={t('hardware.filter.all')} active={filter === 'all'} onClick={() => setFilter('all')} icon="grid_view" />
               <FilterTab label={t('intel.type.audio')} active={filter === 'audio'} onClick={() => setFilter('audio')} icon="audiotrack" />
               <FilterTab label={t('media.filter.images')} active={filter === 'image'} onClick={() => setFilter('image')} icon="image" />
@@ -456,7 +456,7 @@ export default function MediaLibraryPanel({
                   className="flex flex-col items-center justify-center py-20 gap-4"
                 >
                   <div className="w-8 h-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
-                  <p className="text-[10px] font-display font-bold text-primary/40 uppercase tracking-[0.4em]">
+                  <p className="text-[10px] font-display font-bold text-primary/40 uppercase tracking-[0.08em]">
                     {t('media.indexing')}
                   </p>
                 </motion.div>
@@ -466,12 +466,12 @@ export default function MediaLibraryPanel({
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="text-center py-20 border border-primary/5 bg-black/10"
+                  className="text-center py-20 bg-black/10"
                 >
                   <span className="material-symbols-outlined text-4xl text-ash-700 mb-2">
                     folder_off
                   </span>
-                  <p className="text-[10px] font-display font-bold text-ash-600 uppercase tracking-[0.3em]">
+                  <p className="text-[10px] font-display font-bold text-ash-600 uppercase tracking-[0.08em]">
                     {t('media.empty')}
                   </p>
                 </motion.div>
@@ -503,10 +503,10 @@ export default function MediaLibraryPanel({
                           exit={{ opacity: 0, scale: 0.92 }}
                           transition={{ delay: Math.min(index * 0.025, 0.25) }}
                           key={asset.id}
-                          className={`group relative aspect-square bg-surface-container-low border overflow-hidden transition cursor-pointer ${
+                          className={`group relative aspect-square bg-surface-container-low overflow-hidden transition cursor-pointer ${
                             selected
-                              ? 'border-primary ring-2 ring-primary/40 shadow-[0_0_20px_rgba(255,140,0,0.15)]'
-                              : 'border-primary/10 hover:border-primary/50'
+                              ? ''
+                              : ''
                           }`}
                           onClick={() => handleAssetClick(asset)}
                         >
@@ -533,13 +533,13 @@ export default function MediaLibraryPanel({
                           {catalogStatus && !selectionMode && (
                             <div className="absolute top-1 right-1 z-20 flex flex-col items-end gap-0.5">
                               <span
-                                className={`text-[8px] font-display font-bold uppercase tracking-widest px-1 py-0.5 border rounded-sm bg-black/70 ${intelCatalogStatusClass(catalogStatus)}`}
+                                className={`text-[10px] font-display font-bold uppercase tracking-wider px-1 py-0.5 rounded-sm bg-black/70 ${intelCatalogStatusClass(catalogStatus)}`}
                               >
                                 {intelCatalogStatusLabel(catalogStatus)}
                               </span>
                               {intelItem && (
                                 <span
-                                  className={`text-[8px] font-display font-bold uppercase tracking-widest px-1 py-0.5 border rounded-sm bg-black/70 ${accessLevelClass(intelItem.level)}`}
+                                  className={`text-[10px] font-display font-bold uppercase tracking-wider px-1 py-0.5 rounded-sm bg-black/70 ${accessLevelClass(intelItem.level)}`}
                                 >
                                   {accessLevelLabel(intelItem.level)}
                                 </span>
@@ -552,7 +552,7 @@ export default function MediaLibraryPanel({
                               {tags.slice(0, 2).map((tid) => (
                                 <span
                                   key={tid}
-                                  className="px-1 py-0.5 bg-black/70 text-[8px] font-display font-bold text-primary uppercase tracking-wider truncate max-w-18"
+                                  className="px-1 py-0.5 bg-black/70 text-[10px] font-display font-bold text-primary uppercase tracking-wider truncate max-w-18"
                                 >
                                   {folderNameById.get(tid) || '…'}
                                 </span>
@@ -561,10 +561,10 @@ export default function MediaLibraryPanel({
                           )}
 
                           <div className="absolute inset-0 z-10 bg-linear-to-t from-black via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-2 flex flex-col justify-end">
-                            <p className="text-[9px] font-display font-bold text-bone uppercase truncate tracking-widest">
+                            <p className="text-[10px] font-display font-bold text-bone uppercase truncate tracking-wider">
                               {asset.metadata.title || asset.filename}
                             </p>
-                            <p className="text-[9px] font-display text-ash-400 uppercase tracking-widest">
+                            <p className="text-[10px] font-display text-ash-400 uppercase tracking-wider">
                               {formatFileSize(asset.size)}
                             </p>
                           </div>
@@ -730,7 +730,7 @@ function UnifiedIntelCreateButton({
         type="button"
         disabled={uploading}
         onClick={() => setMenuOpen((v) => !v)}
-        className="bg-primary text-black pl-4 pr-3 py-2.5 text-[10px] font-display font-bold border border-primary/20 uppercase hover:bg-primary-container transition rounded-sm active:scale-[0.97] glow-orange shadow-lg flex items-center gap-2 disabled:opacity-40"
+        className="bg-primary text-black pl-4 pr-3 py-2.5 text-[10px] font-display font-bold uppercase hover:bg-primary-container transition rounded-sm active:scale-[0.97] flex items-center gap-2 disabled:opacity-40"
       >
         <span className="material-symbols-outlined text-base">
           {uploading ? 'sync' : 'add_circle'}
@@ -747,7 +747,7 @@ function UnifiedIntelCreateButton({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -4, scale: 0.98 }}
             transition={{ duration: 0.15 }}
-            className="absolute right-0 top-full mt-2 z-50 min-w-[220px] bg-surface-container-low border border-primary/30 shadow-2xl rounded-sm overflow-hidden"
+            className="absolute right-0 top-full mt-2 z-50 min-w-[220px] bg-surface-container-low rounded-sm overflow-hidden"
           >
             <button
               type="button"
@@ -755,14 +755,14 @@ function UnifiedIntelCreateButton({
                 setMenuOpen(false);
                 onCreateBlank();
               }}
-              className="w-full text-left px-4 py-3 flex items-center gap-3 hover:bg-primary/10 transition-colors border-b border-border-subtle"
+              className="w-full text-left px-4 py-3 flex items-center gap-3 hover:bg-primary/10 transition-colors border-b border-seam"
             >
               <span className="material-symbols-outlined text-primary text-base">edit_note</span>
               <span className="flex flex-col">
-                <span className="text-[10px] font-display font-bold uppercase tracking-widest text-bone">
+                <span className="text-[10px] font-display font-bold uppercase tracking-wider text-bone">
                   Entrada em branco
                 </span>
-                <span className="text-[9px] font-display text-ash-500 uppercase tracking-wider">
+                <span className="text-[10px] font-display text-ash-500 uppercase tracking-wider">
                   Texto, meta ou preencher depois
                 </span>
               </span>
@@ -775,10 +775,10 @@ function UnifiedIntelCreateButton({
             >
               <span className="material-symbols-outlined text-primary text-base">upload_file</span>
               <span className="flex flex-col">
-                <span className="text-[10px] font-display font-bold uppercase tracking-widest text-bone">
+                <span className="text-[10px] font-display font-bold uppercase tracking-wider text-bone">
                   {t('media.uploadFile')}
                 </span>
-                <span className="text-[9px] font-display text-ash-500 uppercase tracking-wider">
+                <span className="text-[10px] font-display text-ash-500 uppercase tracking-wider">
                   Áudio, imagem ou vídeo → editor
                 </span>
               </span>
@@ -806,9 +806,9 @@ function FilterTab({
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={`flex flex-1 items-center justify-center gap-2 px-3 2xl:px-6 py-3 text-[10px] font-display font-bold tracking-[0.16em] transition border-r last:border-r-0 border-primary/10 uppercase whitespace-nowrap ${
+      className={`flex flex-1 items-center justify-center gap-2 px-3 2xl:px-6 py-3 text-[10px] font-display font-bold tracking-[0.16em] transition uppercase whitespace-nowrap ${
         active
-          ? 'bg-primary/10 text-primary border-b-2 border-b-primary'
+          ? 'bg-primary/10 text-primary'
           : 'text-ash-400 hover:bg-primary/5 hover:text-primary'
       }`}
     >

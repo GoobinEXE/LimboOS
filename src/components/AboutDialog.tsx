@@ -129,9 +129,9 @@ function AboutPanel({ onClose }: { onClose: () => void }) {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 16 }}
         transition={{ duration: 0.26, ease: EASE_OUT }}
-        className="relative w-full sm:max-w-md max-h-[92dvh] sm:max-h-[86dvh] flex flex-col bg-surface border border-border rounded-t-card sm:rounded-card shadow-panel overflow-hidden pb-[env(safe-area-inset-bottom)]"
+        className="relative w-full sm:max-w-md max-h-[92dvh] sm:max-h-[86dvh] flex flex-col bg-surface rounded-t-card sm:rounded-card overflow-hidden pb-[env(safe-area-inset-bottom)]"
       >
-        <header className="flex items-center justify-between px-5 pt-4 pb-3 border-b border-border-subtle shrink-0">
+        <header className="flex items-center justify-between px-5 pt-4 pb-3 border-b border-seam shrink-0">
           <h2 id="about-title" className="text-protocol text-ash-400">
             {t('about.title')}
           </h2>
@@ -140,7 +140,7 @@ function AboutPanel({ onClose }: { onClose: () => void }) {
             type="button"
             onClick={onClose}
             aria-label={t('about.close')}
-            className="w-9 h-9 rounded-control border border-border bg-surface-panel flex items-center justify-center text-ash-400 hover:text-white hover:border-border-strong transition-colors"
+            className="w-9 h-9 rounded-control bg-surface-panel flex items-center justify-center text-ash-400 hover:text-white transition-colors"
           >
             <X size={16} />
           </button>
@@ -154,7 +154,7 @@ function AboutPanel({ onClose }: { onClose: () => void }) {
               alt=""
               width={88}
               height={88}
-              className="w-[88px] h-[88px] rounded-[22%] border border-border-subtle shadow-panel"
+              className="w-[88px] h-[88px] rounded-[22%]"
             />
             <h3 className="mt-4 text-display text-2xl text-white tracking-wide">{APP_NAME}</h3>
             <p className="mt-1 text-mono-ui text-[11px] text-ash-500 tabular-nums">
@@ -165,8 +165,8 @@ function AboutPanel({ onClose }: { onClose: () => void }) {
 
           {/* Informações do build */}
           <section className="px-5 pb-4">
-            <h4 className="text-protocol text-[8px] text-ash-500 mb-2">{t('about.section.info')}</h4>
-            <dl className="rounded-card border border-border bg-surface-raised divide-y divide-border-subtle">
+            <h4 className="text-protocol text-[10px] text-ash-500 mb-2">{t('about.section.info')}</h4>
+            <dl className="rounded-card bg-surface-raised divide-y divide-seam">
               {rows.map(([label, value]) => (
                 <div key={label} className="flex items-baseline justify-between gap-4 px-4 py-2.5">
                   <dt className="text-xs text-ash-500">{label}</dt>
@@ -179,7 +179,7 @@ function AboutPanel({ onClose }: { onClose: () => void }) {
               onClick={copyInfo}
               disabled={!info}
               aria-live="polite"
-              className="mt-2 w-full flex items-center justify-center gap-2 h-10 rounded-control border border-border bg-surface-panel text-xs text-ash-300 hover:text-white hover:border-border-strong disabled:opacity-50 transition-colors"
+              className="mt-2 w-full flex items-center justify-center gap-2 h-10 rounded-control bg-surface-panel text-xs text-ash-300 hover:text-white disabled:opacity-50 transition-colors"
             >
               {copyState === 'done' ? <Check size={14} className="text-phosphor-400" /> : <Copy size={14} />}
               {copyState === 'done' ? t('about.copied') : copyState === 'error' ? t('about.copyFailed') : t('about.copyInfo')}
@@ -188,8 +188,8 @@ function AboutPanel({ onClose }: { onClose: () => void }) {
 
           {/* Links */}
           <section className="px-5 pb-4">
-            <h4 className="text-protocol text-[8px] text-ash-500 mb-2">{t('about.section.links')}</h4>
-            <div className="rounded-card border border-border bg-surface-raised divide-y divide-border-subtle overflow-hidden">
+            <h4 className="text-protocol text-[10px] text-ash-500 mb-2">{t('about.section.links')}</h4>
+            <div className="rounded-card bg-surface-raised divide-y divide-seam overflow-hidden">
               <LinkRow href={WEBSITE_URL} label={t('about.website')} hint={WEBSITE_URL.replace('https://', '')} />
               <LinkRow href={`${SOURCE_URL}/blob/main/LICENSE`} label={t('about.source')} hint="GitHub" />
               <button
@@ -246,8 +246,8 @@ function AboutPanel({ onClose }: { onClose: () => void }) {
           </section>
 
           {/* Estúdio e legal: logo da Dark Room só sobre Preto Fita Magnética */}
-          <section className="mt-2 px-6 pt-7 pb-8 bg-[#090A0C] border-t border-border-subtle flex flex-col items-center text-center">
-            <span className="text-mono-ui text-[9px] tracking-[0.3em] uppercase text-[#8F9397]">
+          <section className="mt-2 px-6 pt-7 pb-8 bg-[#090A0C] border-t border-seam flex flex-col items-center text-center">
+            <span className="text-mono-ui text-[10px] tracking-[0.08em] uppercase text-[#8F9397]">
               {t('about.developedBy')}
             </span>
             <DarkRoomLogo className="mt-4 w-36 h-auto" />

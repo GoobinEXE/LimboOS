@@ -104,12 +104,12 @@ export default function MissionWorkspace({
       );
     }
     return (
-      <div className="py-24 text-center border-2 border-dashed border-border-subtle rounded-sm flex flex-col items-center gap-4">
+      <div className="py-24 text-center rounded-sm flex flex-col items-center gap-4">
         <span className="material-symbols-outlined text-5xl text-ash-700" aria-hidden>
           travel_explore
         </span>
         <div>
-          <p className="text-[11px] font-display font-bold uppercase tracking-widest text-ash-400">
+          <p className="text-[11px] font-display font-bold uppercase tracking-wider text-ash-400">
             {t('missions.page.notFound')}
           </p>
           <p className="text-[12px] text-ash-500 mt-2">{t('missions.page.notFoundBody')}</p>
@@ -200,27 +200,21 @@ export default function MissionWorkspace({
         <button
           type="button"
           onClick={backToList}
-          className="inline-flex items-center gap-1.5 text-[10px] font-display font-bold uppercase tracking-[0.2em] text-ash-500 hover:text-bone transition-colors"
+          className="inline-flex items-center gap-1.5 text-[10px] font-display font-bold uppercase tracking-[0.08em] text-ash-500 hover:text-bone transition-colors"
         >
           <span className="material-symbols-outlined text-base" aria-hidden>
             arrow_back
           </span>
           {t('missions.page.back')}
         </button>
-        <div className="flex items-center gap-4 min-w-0">
-          <span className="w-1 self-stretch bg-accent shrink-0" aria-hidden />
-          <div className="min-w-0">
-            <span className="inline-block mb-1.5 bg-primary px-1.5 py-px text-[9px] font-display font-bold text-black tracking-widest uppercase">
-              {isNew ? t('missions.modal.install') : t('missions.modal.commandBadge')}
-            </span>
-            <h2 className="font-display font-bold text-xl text-bone uppercase tracking-tight truncate">
-              {editing.name || t('missions.modal.newTitle')}
-            </h2>
-            <p className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-widest mt-0.5">
-              {t('missions.modal.commandSubtitle')}
-              {dirty && <span className="text-amber-400"> · {t('missions.page.unsaved')}</span>}
-            </p>
-          </div>
+        <div className="bg-accent text-field-ink rounded-panel px-6 py-5 flex flex-wrap items-end justify-between gap-x-6 gap-y-2 min-w-0">
+          <h2 className="text-display text-3xl uppercase truncate min-w-0">
+            {editing.name || t('missions.modal.newTitle')}
+          </h2>
+          <p className="text-protocol text-[10px] text-field-ink/70">
+            {isNew ? t('missions.modal.install') : t('missions.modal.commandSubtitle')}
+            {dirty && <span className="ml-2 lmb-tag bg-field-ink text-accent">{t('missions.page.unsaved')}</span>}
+          </p>
         </div>
       </header>
 
@@ -232,7 +226,7 @@ export default function MissionWorkspace({
         ariaLabel={editing.name || t('missions.modal.newTitle')}
       />
 
-      <div className="bg-surface-container-low border border-seam rounded-panel p-5 sm:p-8">
+      <div className="bg-surface-container-low rounded-panel p-5 sm:p-8">
         <AdminSectionPanels
           active={activeSection}
           render={(s) => {

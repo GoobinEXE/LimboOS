@@ -75,24 +75,12 @@ function WalkmanShell({
       exit={{ opacity: 0, scale: 0.97, y: -6 }}
       transition={{ duration: 0.32, ease: LIMBO_EASE }}
       layout
-      className={`relative w-full h-full bg-linear-to-b from-surface-container-highest via-surface-container-high to-surface-container shadow-panel flex overflow-hidden z-10 ${
+      className={`relative w-full h-full bg-surface-container flex overflow-hidden z-10 ${
         isLandscape
-          ? 'max-w-none max-h-none flex-row rounded-2xl border-4 border-surface-sunken p-1.5 gap-1.5'
-          : 'max-w-sm max-h-187.5 lg:max-w-md xl:max-w-lg lg:max-h-205 flex-col rounded-4xl border-8 border-surface-sunken p-3 sm:p-4'
+          ? 'max-w-none max-h-none flex-row rounded-2xl p-1.5 gap-1.5'
+          : 'max-w-sm max-h-187.5 lg:max-w-md xl:max-w-lg lg:max-h-205 flex-col rounded-4xl p-3 sm:p-4'
       }`}
     >
-      <div
-        aria-hidden
-        className={`absolute inset-0 shadow-hairline ring-1 ring-inset ring-border-subtle pointer-events-none -z-10 ${
-          isLandscape ? 'rounded-xl' : 'rounded-[24px]'
-        }`}
-      />
-      <div
-        aria-hidden
-        className={`absolute inset-0 bg-radial-[at_30%_0%] from-white/5 via-transparent to-transparent pointer-events-none -z-10 ${
-          isLandscape ? 'rounded-xl' : 'rounded-[24px]'
-        }`}
-      />
 
       {!landscapeScan && (
         <>
@@ -114,7 +102,7 @@ function WalkmanShell({
             className="absolute inset-0 z-40 flex flex-col bg-surface-sunken rounded-xl overflow-hidden"
           >
             <div className="absolute top-2 left-3 z-50 pointer-events-none">
-              <span className="text-[9px] font-black uppercase tracking-[0.25em] text-accent/80">
+              <span className="text-protocol text-[10px] text-accent">
                 {t('nokia.scannerActive')}
               </span>
             </div>
@@ -122,7 +110,7 @@ function WalkmanShell({
               fallback={
                 <div className="w-full h-full flex flex-col items-center justify-center gap-2">
                   <RetroSpinner size="sm" />
-                  <p className="text-accent text-[9px] font-bold uppercase tracking-widest animate-led">
+                  <p className="text-accent text-[10px] font-bold uppercase tracking-wider animate-led">
                     {t('walkman.visor.startingScanner')}
                   </p>
                 </div>

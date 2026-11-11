@@ -42,18 +42,17 @@ export default function Sidebar({ activeDest, hrefFor, isCollapsed, onToggleColl
       {/* Marca: mesma altura do Header para alinhar a linha de horizonte */}
       <div
         className={clsx(
-          'h-14 border-b border-seam flex items-center shrink-0',
+          'h-14 bg-accent text-field-ink flex items-center shrink-0',
           isCollapsed ? 'justify-center' : 'px-6'
         )}
       >
         {isCollapsed ? (
-          <span className="font-display font-bold text-sm leading-none tracking-tight text-bone">
+          <span className="font-display font-extrabold text-sm leading-none tracking-tight">
             {t('sidebar.brandCollapsed')}
           </span>
         ) : (
           <div className="flex items-baseline gap-2 whitespace-nowrap">
-            <span className="w-1.5 h-4 bg-accent self-center" aria-hidden />
-            <span className="text-lg font-bold tracking-tight text-bone font-display leading-none">
+            <span className="text-lg font-extrabold tracking-tight font-display leading-none uppercase">
               {t('sidebar.brand')}
             </span>
           </div>
@@ -71,13 +70,13 @@ export default function Sidebar({ activeDest, hrefFor, isCollapsed, onToggleColl
         {groups.map((group) => (
           <div key={group.title}>
             {isCollapsed ? (
-              <div className="h-px bg-border-subtle mx-3 mb-3" aria-hidden />
+              <div className="h-0.5 rounded-full bg-surface-container-highest mx-4 mb-3" aria-hidden />
             ) : (
-              <h3 className="px-3 mb-2 text-[9px] font-display font-bold text-ash-500 uppercase tracking-[0.32em] whitespace-nowrap">
+              <h3 className="px-3 mb-2 text-protocol text-[10px] text-ash-500 whitespace-nowrap">
                 {group.title}
               </h3>
             )}
-            <ul className="space-y-px">
+            <ul className="space-y-1">
               {group.items.map((item) => {
                 const isActive = activeDest === item.id;
                 return (
@@ -87,27 +86,25 @@ export default function Sidebar({ activeDest, hrefFor, isCollapsed, onToggleColl
                       aria-current={isActive ? 'page' : undefined}
                       title={isCollapsed ? `${item.label} (${mod}${item.shortcut})` : undefined}
                       className={clsx(
-                        'w-full h-10 flex items-center text-left relative group rounded-inset transition-colors',
+                        'w-full h-10 flex items-center text-left relative group rounded-control transition-colors',
                         isCollapsed ? 'justify-center' : 'px-3 gap-3',
                         isActive
-                          ? 'text-primary'
-                          : 'text-ash-400 hover:text-bone hover:bg-white/[0.03]'
+                          ? 'text-field-ink'
+                          : 'text-ash-300 hover:text-bone hover:bg-surface-container-high'
                       )}
                     >
                       {isActive && (
                         <motion.span
                           layoutId="admin-sidebar-indicator"
-                          className="absolute inset-0 rounded-inset bg-accent-05"
+                          className="absolute inset-0 rounded-control bg-accent"
                           transition={ADMIN_SPRING_INDICATOR}
-                        >
-                          <span className="absolute left-0 top-2 bottom-2 w-0.5 bg-accent" />
-                        </motion.span>
+                        />
                       )}
                       <span
                         className={clsx(
                           'material-symbols-outlined relative z-10 transition-colors',
                           isCollapsed ? 'text-xl' : 'text-[18px]',
-                          isActive ? 'text-accent' : 'text-ash-600 group-hover:text-ash-300'
+                          isActive ? 'text-field-ink' : 'text-ash-500 group-hover:text-ash-200'
                         )}
                         aria-hidden
                       >
@@ -115,13 +112,13 @@ export default function Sidebar({ activeDest, hrefFor, isCollapsed, onToggleColl
                       </span>
                       {!isCollapsed && (
                         <>
-                          <span className="relative z-10 flex-1 font-display uppercase font-bold tracking-[0.18em] text-[10px] whitespace-nowrap overflow-hidden">
+                          <span className="relative z-10 flex-1 font-display uppercase font-bold tracking-[0.06em] text-[11px] whitespace-nowrap overflow-hidden">
                             {item.label}
                           </span>
                           <kbd
                             className={clsx(
-                              'relative z-10 text-[9px] text-ash-600 transition-opacity',
-                              isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+                              'relative z-10 font-mono text-[10px] transition-opacity',
+                              isActive ? 'opacity-100 text-field-ink/60' : 'opacity-0 group-hover:opacity-100 text-ash-500'
                             )}
                           >
                             {mod}
@@ -138,12 +135,12 @@ export default function Sidebar({ activeDest, hrefFor, isCollapsed, onToggleColl
         ))}
       </nav>
 
-      <div className="border-t border-seam shrink-0">
+      <div className="shrink-0">
         <button
           type="button"
           onClick={onToggleCollapse}
           className={clsx(
-            'w-full h-11 flex items-center gap-3 text-ash-500 hover:text-bone hover:bg-white/[0.03] transition-colors group',
+            'w-full h-11 flex items-center gap-3 text-ash-400 hover:text-bone hover:bg-surface-container-high transition-colors group',
             isCollapsed ? 'justify-center' : 'px-6'
           )}
           title={`${isCollapsed ? t('sidebar.expandTitle') : t('sidebar.collapseTitle')} (${mod}\\)`}
@@ -154,10 +151,10 @@ export default function Sidebar({ activeDest, hrefFor, isCollapsed, onToggleColl
           ) : (
             <>
               <ChevronLeft size={16} />
-              <span className="flex-1 text-left font-display uppercase font-bold tracking-[0.2em] text-[9px] whitespace-nowrap">
+              <span className="flex-1 text-left text-protocol text-[10px] whitespace-nowrap">
                 {t('sidebar.collapse')}
               </span>
-              <kbd className="text-[9px] text-ash-600">{mod}\</kbd>
+              <kbd className="text-[10px] text-ash-600">{mod}\</kbd>
             </>
           )}
         </button>
@@ -165,7 +162,7 @@ export default function Sidebar({ activeDest, hrefFor, isCollapsed, onToggleColl
 
       <div
         className={clsx(
-          'border-t border-seam bg-surface-container-lowest shrink-0 flex items-center h-11',
+          'bg-surface-container shrink-0 flex items-center h-11',
           isCollapsed ? 'justify-center' : 'px-6 gap-3'
         )}
         title={isCollapsed ? t('sidebar.statusOnlineTitle') : undefined}
@@ -173,10 +170,10 @@ export default function Sidebar({ activeDest, hrefFor, isCollapsed, onToggleColl
         <span className="lmb-led text-phosphor-400 animate-led" aria-hidden />
         {!isCollapsed && (
           <div className="min-w-0">
-            <p className="text-[9px] text-ash-500 font-display font-bold tracking-[0.2em] uppercase leading-none">
+            <p className="text-[10px] text-ash-500 font-display font-bold tracking-[0.08em] uppercase leading-none">
               {t('sidebar.statusLabel')}
             </p>
-            <p className="text-[9px] text-phosphor-400 font-display font-bold tracking-widest uppercase mt-1 leading-none">
+            <p className="text-[10px] text-phosphor-400 font-display font-bold tracking-wider uppercase mt-1 leading-none">
               {t('sidebar.statusOnline')}
             </p>
           </div>

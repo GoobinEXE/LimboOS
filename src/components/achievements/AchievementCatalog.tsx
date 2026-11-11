@@ -13,16 +13,16 @@ import {
 import { useAchievementCatalog } from '../../hooks/useAchievementCatalog';
 
 function platformBorder(platform: PlayerPlatform, earned: boolean): string {
-  if (!earned) return 'border-border-subtle';
-  if (platform === 'nokia') return 'border-phosphor-500/45';
-  if (platform === 'walkman') return 'border-orange-500/45';
-  return 'border-amber-400/45';
+  if (!earned) return '';
+  if (platform === 'nokia') return '';
+  if (platform === 'walkman') return '';
+  return '';
 }
 
 function TierBadge({ tier }: { tier: AchievementTier }) {
   const { t } = useTranslation('common');
   return (
-    <span className="text-[9px] uppercase tracking-widest text-amber-500/80 font-mono shrink-0">
+    <span className="text-[10px] uppercase tracking-wider text-amber-500/80 font-mono shrink-0">
       {t(`achievement.tier.${tier}`)}
     </span>
   );
@@ -45,7 +45,7 @@ function AchievementIcon({
     <img
       src={ach.icon}
       alt=""
-      className={`${dim} rounded-md object-cover border border-border-subtle shrink-0`}
+      className={`${dim} rounded-md object-cover shrink-0`}
     />
   );
 }
@@ -73,7 +73,7 @@ function AchievementCard({
 
   return (
     <div
-      className={`relative rounded-card p-3 border flex flex-col gap-1.5 transition-colors ${
+      className={`relative rounded-card p-3 flex flex-col gap-1.5 transition-colors ${
         earned
           ? `bg-accent-05 ${platformBorder(ach.primaryPlatform, true)}`
           : `bg-surface-raised ${platformBorder(ach.primaryPlatform, false)} opacity-75`
@@ -90,11 +90,11 @@ function AchievementCard({
       >
         {title}
       </p>
-      <p className="text-[9px] text-ash-500 leading-snug wrap-break-word min-w-0 font-sans">
+      <p className="text-[10px] text-ash-500 leading-snug wrap-break-word min-w-0 font-sans">
         {description}
       </p>
       {earned && (
-        <p className="text-[9px] uppercase tracking-widest text-ash-500 font-mono">
+        <p className="text-[10px] uppercase tracking-wider text-ash-500 font-mono">
           {t(`achievement.platform.${ach.primaryPlatform}`)}
           {campaignLabel ? ` · ${campaignLabel}` : ''}
         </p>
@@ -116,7 +116,7 @@ function NokiaAchievementRow({
   const title = earned || revealed ? ach.title : t('achievement.lockedNokia');
   return (
     <div
-      className={`p-1.5 border border-lcd-ink flex gap-2 items-center ${!earned ? 'opacity-40 border-dashed' : ''}`}
+      className={`p-1.5 border border-lcd-ink flex gap-2 items-center ${!earned ? 'opacity-40' : ''}`}
     >
       <span className="text-[11px] shrink-0 font-black">{earned ? '[X]' : '[ ]'}</span>
       {earned ? (
@@ -125,14 +125,14 @@ function NokiaAchievementRow({
         <span className="w-5 h-5 shrink-0 border border-dashed border-lcd-ink" />
       )}
       <div className="leading-tight truncate min-w-0">
-        <div className="font-black truncate text-[9px] tracking-tighter flex items-center gap-1.5">
+        <div className="font-black truncate text-[10px] tracking-tighter flex items-center gap-1.5">
           <span className="truncate">{title}</span>
           {earned && (
             <span className="text-[6px] opacity-50 shrink-0 uppercase">{t(`achievement.tier.${ach.tier}`)}</span>
           )}
         </div>
         {earned && (
-          <div className="text-[7px] truncate opacity-60 mt-0.5 lowercase tracking-tight">{ach.description}</div>
+          <div className="text-[10px] truncate opacity-60 mt-0.5 lowercase tracking-tight">{ach.description}</div>
         )}
       </div>
     </div>
@@ -202,10 +202,10 @@ export function AchievementCatalog({
               key={c.id}
               type="button"
               onClick={() => setSelectedCampaignId(c.id)}
-              className={`text-[8px] uppercase tracking-widest px-2 py-1 border rounded-sm transition-colors ${
+              className={`text-[10px] uppercase tracking-wider px-2 py-1 rounded-sm transition-colors ${
                 activeCampaignId === c.id
-                  ? 'border-accent text-accent bg-accent-05'
-                  : 'border-border-subtle text-ash-400 hover:text-industrial-silver'
+                  ? 'text-accent bg-accent-05'
+                  : 'text-ash-400 hover:text-industrial-silver'
               }`}
             >
               {c.name}
@@ -215,11 +215,11 @@ export function AchievementCatalog({
       )}
 
       <div className="flex items-center justify-between gap-2 px-0.5">
-        <span className={`text-protocol text-[8px] uppercase tracking-[0.2em] ${platformChrome}`}>
+        <span className={`text-protocol text-[10px] uppercase tracking-[0.08em] ${platformChrome}`}>
           {t(`achievement.platform.${platform === 'nokia' ? 'nokia' : platform === 'walkman' ? 'walkman' : 'global'}`)}
           {campaign ? ` · ${campaign.year}` : ''}
         </span>
-        <span className="text-mono-ui text-[9px] text-ash-500">
+        <span className="text-mono-ui text-[10px] text-ash-500">
           {earnedCount}/{scoped.length}
           {variant === 'deck' ? ` · ${t('achievement.raresCount', { count: rareEarned })}` : ''}
         </span>
@@ -229,7 +229,7 @@ export function AchievementCatalog({
         <div className="space-y-3">
           {groups.map((group) => (
             <div key={group.category} className="space-y-1">
-              <div className="text-[7px] font-black uppercase tracking-[0.2em] opacity-50 border-b border-lcd-ink pb-0.5">
+              <div className="text-[10px] font-black uppercase tracking-[0.08em] opacity-50 border-b border-lcd-ink pb-0.5">
                 {t(`achievement.category.${group.category}`)}
               </div>
               {group.items.map((ach) => (
@@ -248,11 +248,11 @@ export function AchievementCatalog({
           {groups.map((group) => (
             <div key={group.category} className="space-y-2">
               <div className="flex items-center gap-2 px-0.5">
-                <span className="text-protocol text-[8px] text-ash-500 uppercase tracking-[0.2em]">
+                <span className="text-protocol text-[10px] text-ash-500 uppercase tracking-[0.08em]">
                   {t(`achievement.category.${group.category}`)}
                 </span>
                 <span aria-hidden className="flex-1 h-px bg-border-subtle" />
-                <span className="text-mono-ui text-[9px] text-ash-600">
+                <span className="text-mono-ui text-[10px] text-ash-600">
                   {group.items.filter((a) => isAchievementEarned(grantDocIds, a.id, activeCampaignId)).length}/
                   {group.items.length}
                 </span>

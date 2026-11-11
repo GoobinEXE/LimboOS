@@ -62,7 +62,7 @@ export function ConfirmModal({ state, onConfirm, onCancel }: ConfirmModalProps) 
             aria-modal="true"
             aria-labelledby={titleId}
             aria-describedby={messageId}
-            className="relative w-full max-w-md bg-surface-container-low border border-seam rounded-panel shadow-2xl machined-edge overflow-hidden"
+            className="relative w-full max-w-md bg-surface-container-low rounded-panel overflow-hidden"
           >
             <Screw size="xs" className="top-2.5 left-2.5" />
             <Screw size="xs" className="top-2.5 right-2.5 -rotate-90" />
@@ -72,7 +72,7 @@ export function ConfirmModal({ state, onConfirm, onCancel }: ConfirmModalProps) 
             {/* Placa de identificação */}
             <div
               className={`relative flex items-center gap-3 px-7 h-14 border-b ${
-                isDanger ? 'border-red-500/20 bg-red-500/[0.04]' : 'border-seam bg-surface-container-lowest'
+                isDanger ? 'bg-red-500/[0.04]' : 'bg-surface-container-lowest'
               }`}
             >
               <span

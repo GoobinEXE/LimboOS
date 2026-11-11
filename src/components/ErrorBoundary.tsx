@@ -33,16 +33,16 @@ class ErrorBoundary extends React.Component<Props, State> {
         <div className="min-h-screen bg-surface-sunken flex items-center justify-center p-6" role="alert">
           <div className="max-w-md w-full">
             {/* Placa de advertência da bancada (hero: WARNING / SYSTEM INSTABILITY) */}
-            <div className="border-2 border-[#d9ad3c] bg-[#d9ad3c] text-[#14110a] px-5 py-3 rounded-inset shadow-xl">
+            <div className="bg-[#d9ad3c] text-[#14110a] px-5 py-3 rounded-inset">
               <p className="font-display font-bold text-2xl tracking-[0.08em] uppercase leading-none">
                 {i18n.t('errorBoundary.title', { ns: 'common' })}
               </p>
             </div>
-            <div className="mt-3 border border-border bg-surface-container-lowest rounded-inset p-5 font-mono shadow-panel">
+            <div className="mt-3 bg-surface-container-lowest rounded-inset p-5 font-mono">
               <p className="text-sm text-ash-300 leading-relaxed mb-4">
                 {i18n.t('errorBoundary.body', { ns: 'common' })}
               </p>
-              <pre className="bg-surface-sunken p-3 rounded-inset border border-red-500/20 text-[11px] text-red-300/90 whitespace-pre-wrap break-words overflow-auto max-h-32 mb-5">
+              <pre className="bg-surface-sunken p-3 rounded-inset text-[11px] text-red-300/90 whitespace-pre-wrap break-words overflow-auto max-h-32 mb-5">
                 {this.state.error?.message}
               </pre>
               <button

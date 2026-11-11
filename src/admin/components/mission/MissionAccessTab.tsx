@@ -88,7 +88,7 @@ export default function MissionAccessTab({
     <div className="space-y-8">
       <div className="flex items-center gap-3">
         <div className="h-px flex-1 bg-white/5" />
-        <span className="text-[9px] font-display font-bold text-ash-600 uppercase tracking-[0.3em]">
+        <span className="text-[10px] font-display font-bold text-ash-600 uppercase tracking-[0.08em]">
           Vínculos de Rede
         </span>
         <div className="h-px flex-1 bg-white/5" />
@@ -96,11 +96,11 @@ export default function MissionAccessTab({
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <p className="text-[9px] text-ash-600 font-display font-bold uppercase tracking-widest">
+          <p className="text-[10px] text-ash-600 font-display font-bold uppercase tracking-wider">
             Autorizar Missão para Esquadrão
           </p>
           <select
-            className="w-full bg-surface-container-lowest border border-border-subtle text-[10px] font-display font-bold text-primary p-3 outline-none rounded-sm focus:border-primary/40 transition appearance-none cursor-pointer shadow-inner"
+            className="w-full bg-surface-container-lowest text-[10px] font-display font-bold text-primary p-3 outline-none rounded-sm transition appearance-none cursor-pointer"
             onChange={(e) => e.target.value && handleUnlockForGroup(e.target.value, true)}
             value=""
           >
@@ -115,11 +115,11 @@ export default function MissionAccessTab({
           </select>
         </div>
         <div className="space-y-2">
-          <p className="text-[9px] text-ash-600 font-display font-bold uppercase tracking-widest">
+          <p className="text-[10px] text-ash-600 font-display font-bold uppercase tracking-wider">
             Autorizar Missão para Agente
           </p>
           <select
-            className="w-full bg-surface-container-lowest border border-border-subtle text-[10px] font-display font-bold text-primary p-3 outline-none rounded-sm focus:border-primary/40 transition appearance-none cursor-pointer shadow-inner"
+            className="w-full bg-surface-container-lowest text-[10px] font-display font-bold text-primary p-3 outline-none rounded-sm transition appearance-none cursor-pointer"
             onChange={(e) => {
               if (!e.target.value) return;
               const [uid, charId] = e.target.value.split('|');
@@ -143,7 +143,7 @@ export default function MissionAccessTab({
       </div>
 
       <div className="space-y-4">
-        <p className="text-[9px] text-ash-600 font-display font-bold uppercase tracking-widest border-b border-border-subtle pb-2">
+        <p className="text-[10px] text-ash-600 font-display font-bold uppercase tracking-wider border-b border-seam pb-2">
           Acessos Autorizados (Quem tem acesso)
         </p>
         <div className="flex flex-wrap gap-2">
@@ -152,9 +152,9 @@ export default function MissionAccessTab({
             .map((g) => (
               <div
                 key={g.id}
-                className="flex items-center gap-2 bg-primary/5 border border-primary/20 rounded-sm pr-1"
+                className="flex items-center gap-2 bg-primary/5 rounded-sm pr-1"
               >
-                <span className="text-[9px] font-display font-bold text-primary/80 px-2 py-1 uppercase tracking-wider">
+                <span className="text-[10px] font-display font-bold text-primary/80 px-2 py-1 uppercase tracking-wider">
                   ESQ: {g.name}
                 </span>
                 <button
@@ -170,9 +170,9 @@ export default function MissionAccessTab({
             .map((c) => (
               <div
                 key={c.character.id}
-                className="flex items-center gap-2 bg-white/5 border border-border rounded-sm pr-1"
+                className="flex items-center gap-2 bg-white/5 rounded-sm pr-1"
               >
-                <span className="text-[9px] font-display font-bold text-ash-400 px-2 py-1 uppercase tracking-wider">
+                <span className="text-[10px] font-display font-bold text-ash-400 px-2 py-1 uppercase tracking-wider">
                   AGT: {c.character.codinome}
                 </span>
                 <button
@@ -189,7 +189,7 @@ export default function MissionAccessTab({
             allCharacters.filter((c) =>
               (c.character.unlockedCampaigns || []).includes(campaign.id)
             ).length === 0 && (
-              <p className="text-[9px] text-ash-600 uppercase tracking-widest">
+              <p className="text-[10px] text-ash-600 uppercase tracking-wider">
                 Nenhum acesso autorizado
               </p>
             )}
@@ -197,12 +197,12 @@ export default function MissionAccessTab({
       </div>
 
       <div className="space-y-4">
-        <p className="text-[9px] text-phosphor-500/50 font-display font-bold uppercase tracking-widest border-b border-phosphor-500/10 pb-2">
+        <p className="text-[10px] text-phosphor-500/50 font-display font-bold uppercase tracking-wider pb-2">
           Missão Ativa (Em Campo)
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <select
-            className="w-full bg-phosphor-500/5 border border-phosphor-500/20 text-[10px] font-display font-bold text-phosphor-500 p-3 outline-none rounded-sm focus:border-phosphor-500/40 transition appearance-none cursor-pointer"
+            className="w-full bg-phosphor-500/5 text-[10px] font-display font-bold text-phosphor-500 p-3 outline-none rounded-sm transition appearance-none cursor-pointer"
             onChange={(e) => e.target.value && handleAssignGroup(e.target.value)}
             value=""
           >
@@ -216,7 +216,7 @@ export default function MissionAccessTab({
               ))}
           </select>
           <select
-            className="w-full bg-phosphor-500/5 border border-phosphor-500/20 text-[10px] font-display font-bold text-phosphor-500 p-3 outline-none rounded-sm focus:border-phosphor-500/40 transition appearance-none cursor-pointer"
+            className="w-full bg-phosphor-500/5 text-[10px] font-display font-bold text-phosphor-500 p-3 outline-none rounded-sm transition appearance-none cursor-pointer"
             onChange={(e) => {
               if (!e.target.value) return;
               const [uid, charId] = e.target.value.split('|');
@@ -243,9 +243,9 @@ export default function MissionAccessTab({
             .map((g) => (
               <div
                 key={g.id}
-                className="flex items-center gap-1 bg-phosphor-500/10 text-phosphor-500 border border-phosphor-500/30 rounded-sm pr-1 animate-pulse"
+                className="flex items-center gap-1 bg-phosphor-500/10 text-phosphor-500 rounded-sm pr-1 animate-pulse"
               >
-                <span className="text-[9px] font-display font-bold px-3 py-1 uppercase tracking-wider">
+                <span className="text-[10px] font-display font-bold px-3 py-1 uppercase tracking-wider">
                   OPERANDO: {g.name}
                 </span>
                 <button
@@ -262,9 +262,9 @@ export default function MissionAccessTab({
             .map((c) => (
               <div
                 key={c.character.id}
-                className="flex items-center gap-1 bg-phosphor-500/10 text-phosphor-500 border border-phosphor-500/30 rounded-sm pr-1 animate-pulse"
+                className="flex items-center gap-1 bg-phosphor-500/10 text-phosphor-500 rounded-sm pr-1 animate-pulse"
               >
-                <span className="text-[9px] font-display font-bold px-3 py-1 uppercase tracking-wider">
+                <span className="text-[10px] font-display font-bold px-3 py-1 uppercase tracking-wider">
                   OPERANDO: {c.character.codinome}
                 </span>
                 <button

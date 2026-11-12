@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { analyticsTracker } from '../../services/AnalyticsTracker';
 import { activityLogger } from '../../services/ActivityLogger';
 import type { WalkmanStatus } from '../../types/player';
+import { walkmanSfx } from '../../services/WalkmanSfx';
 
 // Tecla física: filete claro no topo, sombra projetada; pressionada afunda (translate + inset)
 const KEYCAP =
@@ -47,6 +48,7 @@ export default React.memo(function BottomControls({
   const appCount = (terminalAccess ? 1 : 0) + (macAccess ? 1 : 0);
 
   const handleAppClick = () => {
+    if (appCount > 0) walkmanSfx.button();
     analyticsTracker.incrementStat('fidgetClicks');
     if (appCount > 1) {
       if (!showMenu) activityLogger.logAction('menu', 'Aberto seletor de sistemas');
@@ -103,6 +105,7 @@ export default React.memo(function BottomControls({
         onClick={() => { 
           analyticsTracker.incrementStat('fidgetClicks');
           if (hasTape && onRewind && !isRewinding) {
+            walkmanSfx.rewind(1500);
             activityLogger.logAction('player', 'Retroceder fita');
             onRewind();
           }
@@ -118,6 +121,7 @@ export default React.memo(function BottomControls({
         analyticsTracker.incrementStat('fidgetClicks');
         if (hasTape) {
           const nextPlaying = !isPlaying;
+          if (nextPlaying) walkmanSfx.keyPress(); else walkmanSfx.keyRelease();
           activityLogger.logAction('player', nextPlaying ? 'Iniciado Play' : 'Pausado');
           setIsPlaying(nextPlaying);
         }

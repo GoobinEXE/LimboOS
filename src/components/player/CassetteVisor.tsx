@@ -8,6 +8,7 @@ import { IntelBase, AudioIntel } from '../../services/IntelEngine';
 import type { WalkmanStatus } from '../../types/player';
 import Screw from './Screw';
 import RetroSpinner from './RetroSpinner';
+import { walkmanSfx } from '../../services/WalkmanSfx';
 
 export default React.memo(function CassetteVisor({
   currentIntel, 
@@ -35,6 +36,12 @@ export default React.memo(function CassetteVisor({
   const isLoading = status === 'LOADING';
   const isScanning = status === 'SCANNING';
   const hasTape = !!currentIntel && (status === 'LOADED' || status === 'PLAYING' || status === 'REWINDING');
+  // Fita encaixando: só na transição vazio → com fita (não toca ao montar a tela)
+  const hadTape = React.useRef(hasTape);
+  React.useEffect(() => {
+    if (hasTape && !hadTape.current) walkmanSfx.insert();
+    hadTape.current = hasTape;
+  }, [hasTape]);
 
   const shellSize = fluid
     ? 'mt-0 w-full h-full min-h-0 max-h-full max-w-none'
@@ -65,11 +72,11 @@ export default React.memo(function CassetteVisor({
             initial={{ y: -28, opacity: 0 }}
             animate={{ y: 0, opacity: 1, transition: SPRING_MECHANICAL }}
             exit={{ y: -18, opacity: 0, transition: EXIT_FAST }}
-            onClick={onEject}
+            onClick={() => { walkmanSfx.eject(); onEject(); }}
             role="button"
             tabIndex={0}
             aria-label={t('walkman.visor.eject')}
-            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onEject(); } }}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); walkmanSfx.eject(); onEject(); } }}
             className="w-full h-full flex flex-col items-center cursor-pointer group rounded-card">
       
             <div className={`mt-4 w-full max-w-70 bg-[#f4f1ea] rounded-md shadow-[0_2px_6px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.6)] relative flex flex-col p-3 border-t-12 border-accent transition-transform duration-300 ease-limbo group-hover:scale-[1.01] ${
@@ -124,7 +131,7 @@ export default React.memo(function CassetteVisor({
                 />
               </React.Suspense>
             ) : (
-              <button type="button" onClick={!isLoading ? onScanClick : undefined} disabled={isLoading} aria-busy={isLoading}
+              <button type="button" onClick={!isLoading ? () => { walkmanSfx.button(); onScanClick(); } : undefined} disabled={isLoading} aria-busy={isLoading}
                 className={`w-full max-w-70 h-32.5 border-2 border-dashed rounded-card flex flex-col items-center justify-center gap-3 transition duration-200 ease-limbo active:scale-[0.98] ${isLoading ? 'border-border-accent cursor-default' : 'border-border-strong hover:bg-accent-05 hover:border-border-accent cursor-pointer group'}`}>
                 {isLoading ? (
                   <div className="flex flex-col items-center gap-2">

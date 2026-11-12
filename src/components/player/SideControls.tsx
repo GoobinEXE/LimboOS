@@ -6,6 +6,7 @@ import { User } from 'lucide-react';
 import { analyticsTracker } from '../../services/AnalyticsTracker';
 import { activityLogger } from '../../services/ActivityLogger';
 import { haptic } from '../../lib/native/haptics';
+import { walkmanSfx } from '../../services/WalkmanSfx';
 export default React.memo(function SideControls({ volume, setVolume, onModeChange, onProfileOpen, onCharacterSwitch, landscape }: {
   volume: number; setVolume: (v: number) => void;
   onModeChange: (dir: 'up' | 'down') => void; onProfileOpen: () => void;
@@ -52,6 +53,7 @@ export default React.memo(function SideControls({ volume, setVolume, onModeChang
 
   // Teclado: Enter/Espaço geram click sem pointerup; nudge do seletor emula o arraste
   const nudgeMode = (dir: 'up' | 'down') => {
+    walkmanSfx.tick();
     onModeChange(dir);
     activityLogger.logAction('player', `Alterado modo de exibição (${dir === 'up' ? 'Cima' : 'Baixo'})`);
     analyticsTracker.incrementStat('fidgetClicks');
@@ -75,6 +77,7 @@ export default React.memo(function SideControls({ volume, setVolume, onModeChang
     if (longPressTimer.current) {
       clearTimeout(longPressTimer.current);
       longPressTimer.current = null;
+      walkmanSfx.button();
       onProfileOpen();
     }
   };
@@ -131,12 +134,14 @@ export default React.memo(function SideControls({ volume, setVolume, onModeChang
               if (firedRef.current) return; 
               const delta = Math.max(-20, Math.min(20, me.clientY - startY));
               if (delta <= -18) {
+                walkmanSfx.tick();
                 onModeChange('up');
                 activityLogger.logAction('player', 'Alterado modo de exibição (Cima)');
                 analyticsTracker.incrementStat('fidgetClicks');
                 firedRef.current = true;
                 animate(dragY, 0, SPRING_MECHANICAL);
               } else if (delta >= 18) {
+                walkmanSfx.tick();
                 onModeChange('down');
                 activityLogger.logAction('player', 'Alterado modo de exibição (Baixo)');
                 analyticsTracker.incrementStat('fidgetClicks');

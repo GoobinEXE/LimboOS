@@ -130,28 +130,23 @@ export default function TerminalPanel({ embedded = false }: TerminalPanelProps) 
       {!embedded && (
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-4">
-            <h2 className="font-bold uppercase tracking-wider text-lg text-bone">{t('hardware.title')}</h2>
+            <div className="w-1 h-9 bg-accent shrink-0" />
+            <h2 className="font-bold uppercase tracking-widest text-lg text-bone">{t('hardware.title')}</h2>
           </div>
-          <p className="text-[10px] font-bold uppercase tracking-wider text-ash-500 pl-6">
-            {t('hardware.subtitle')}
-          </p>
         </div>
       )}
 
       {embedded && (
-        <p className="text-[10px] font-bold uppercase tracking-wider text-ash-500">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-ash-500">
           {t('hardware.embeddedHint')}
         </p>
       )}
 
-      <div className="bg-surface-container-low rounded-sm overflow-hidden">
-        <div className="p-5 bg-black/30 space-y-4">
+      <div className="bg-surface-container-low rounded-sm shadow-xl overflow-hidden">
+        <div className="p-5 border-b border-primary/10 bg-black/30 space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <h3 className="text-[11px] font-bold uppercase tracking-wider text-bone">{t('hardware.authTitle')}</h3>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-ash-500 mt-1">
-                {t('hardware.authSubtitle')}
-              </p>
+              <h3 className="text-[11px] font-bold uppercase tracking-widest text-bone">{t('hardware.authTitle')}</h3>
             </div>
             {selectedList.length > 0 && (
               <div className="flex flex-wrap gap-2">
@@ -167,7 +162,7 @@ export default function TerminalPanel({ embedded = false }: TerminalPanelProps) 
                       toast.error(t('hardware.toast.revokeDosFail'));
                     }
                   }}
-                  className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider bg-[#333] text-ash-300 hover:bg-[#444] disabled:opacity-30"
+                  className="px-3 py-1.5 text-[10px] font-black uppercase tracking-widest bg-[#333] text-ash-300 hover:bg-[#444] disabled:opacity-30"
                 >
                   {t('hardware.revokeDos')}
                 </button>
@@ -183,7 +178,7 @@ export default function TerminalPanel({ embedded = false }: TerminalPanelProps) 
                       toast.error(t('hardware.toast.revokeMacFail'));
                     }
                   }}
-                  className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider bg-[#333] text-ash-300 hover:bg-[#444] disabled:opacity-30"
+                  className="px-3 py-1.5 text-[10px] font-black uppercase tracking-widest bg-[#333] text-ash-300 hover:bg-[#444] disabled:opacity-30"
                 >
                   {t('hardware.revokeMac')}
                 </button>
@@ -197,7 +192,7 @@ export default function TerminalPanel({ embedded = false }: TerminalPanelProps) 
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={t('hardware.search')}
-              className="flex-1 bg-black/50 px-4 py-2.5 text-xs font-bold uppercase tracking-wide text-bone placeholder:text-ash-600 focus:outline-none"
+              className="flex-1 bg-black/50 px-4 py-2.5 text-xs font-bold uppercase tracking-wide text-bone placeholder:text-ash-600 focus:outline-none focus:bg-accent-10"
             />
             <div className="flex flex-wrap gap-1.5">
               {(
@@ -213,7 +208,7 @@ export default function TerminalPanel({ embedded = false }: TerminalPanelProps) 
                   key={id}
                   type="button"
                   onClick={() => setFilter(id)}
-                  className={`px-3 py-2 text-[10px] font-black uppercase tracking-wider transition-colors ${
+                  className={`px-3 py-2 text-[10px] font-black uppercase tracking-widest transition-colors ${
                     filter === id
                       ? 'bg-primary/15 text-primary'
                       : 'text-ash-600 hover:text-ash-300'
@@ -226,22 +221,22 @@ export default function TerminalPanel({ embedded = false }: TerminalPanelProps) 
           </div>
         </div>
 
-        <div className="px-5 py-2 border-b border-seam bg-black/20 flex items-center justify-between gap-3">
+        <div className="px-5 py-2 border-b border-border-subtle bg-black/20 flex items-center justify-between gap-3">
           <button
             type="button"
             onClick={selectFiltered}
-            className="text-[10px] font-black uppercase tracking-wider text-ash-500 hover:text-primary"
+            className="text-[10px] font-black uppercase tracking-widest text-ash-500 hover:text-primary"
           >
             {selectedUids.size > 0 ? t('hardware.clearSelection', { n: selectedUids.size }) : t('hardware.selectFiltered', { n: filtered.length })}
           </button>
-          <span className="text-[10px] font-mono text-ash-700 uppercase tracking-wider">
+          <span className="text-[10px] font-mono text-ash-700 uppercase tracking-widest">
             {t('hardware.count', { n: filtered.length })}
           </span>
         </div>
 
-        <ul className="divide-y divide-seam max-h-[560px] overflow-y-auto">
+        <ul className="divide-y divide-white/5 max-h-[560px] overflow-y-auto">
           {filtered.length === 0 ? (
-            <li className="p-12 text-center text-ash-600 text-[10px] font-black uppercase tracking-wider">
+            <li className="p-12 text-center text-ash-600 text-[10px] font-black uppercase tracking-widest">
               {t('hardware.empty')}
             </li>
           ) : (
@@ -268,7 +263,7 @@ export default function TerminalPanel({ embedded = false }: TerminalPanelProps) 
                       type="button"
                       onClick={() => toggleSelect(row.uid)}
                       className={`mt-0.5 w-5 h-5 rounded-sm shrink-0 flex items-center justify-center transition ${
-                        selected ? 'bg-accent text-field-ink' : 'bg-surface-container-highest'
+                        selected ? 'bg-primary' : 'bg-surface-container-highest'
                       }`}
                       aria-label="Selecionar conta"
                     >
@@ -281,17 +276,17 @@ export default function TerminalPanel({ embedded = false }: TerminalPanelProps) 
                       <div className="flex flex-wrap items-center gap-2">
                         <p className="text-xs font-black uppercase text-ash-100 tracking-wide">{row.label}</p>
                         {row.isOnline && (
-                          <span className="text-[10px] font-black uppercase tracking-wider text-phosphor-500 px-1.5 py-0.5">
+                          <span className="text-[10px] font-black uppercase tracking-widest text-phosphor-500 px-1.5 py-0.5">
                             {t('hardware.filter.online')}
                           </span>
                         )}
                         {row.forceTerminalOpen && (
-                          <span className="text-[10px] font-black uppercase tracking-wider text-primary animate-pulse">
+                          <span className="text-[10px] font-black uppercase tracking-widest text-primary animate-pulse">
                             Push DOS pendente
                           </span>
                         )}
                         {row.forceMacOpen && (
-                          <span className="text-[10px] font-black uppercase tracking-wider text-tube-400 animate-pulse">
+                          <span className="text-[10px] font-black uppercase tracking-widest text-tube-400 animate-pulse">
                             Push Mac pendente
                           </span>
                         )}
@@ -355,7 +350,7 @@ export default function TerminalPanel({ embedded = false }: TerminalPanelProps) 
                             toast.error(t('live.toast.dosFail'));
                           }
                         }}
-                        className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider bg-primary text-black hover:bg-primary-container disabled:opacity-30"
+                        className="px-3 py-1.5 text-[10px] font-black uppercase tracking-widest bg-primary text-black hover:bg-primary-container disabled:opacity-30"
                       >
                         Empurrar DOS
                       </button>
@@ -370,7 +365,7 @@ export default function TerminalPanel({ embedded = false }: TerminalPanelProps) 
                             toast.error(t('live.toast.macFail'));
                           }
                         }}
-                        className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider bg-ash-200 text-black hover:bg-white disabled:opacity-30"
+                        className="px-3 py-1.5 text-[10px] font-black uppercase tracking-widest bg-ash-200 text-black hover:bg-white disabled:opacity-30"
                       >
                         Empurrar Mac
                       </button>
@@ -401,8 +396,8 @@ function GrantToggle({
 }) {
   const on =
     accent === 'cyan'
-      ? 'bg-tube-500/20'
-      : 'bg-phosphor-500/20';
+      ? 'bg-tube-500/20 border-tube-500/40'
+      : 'bg-phosphor-500/20 border-phosphor-500/40';
   const knob = accent === 'cyan' ? 'bg-tube-400' : 'bg-phosphor-400';
 
   return (
@@ -424,7 +419,7 @@ function GrantToggle({
         />
       </span>
       <span
-        className={`text-[10px] font-black uppercase tracking-wider ${
+        className={`text-[10px] font-black uppercase tracking-widest ${
           active ? (accent === 'cyan' ? 'text-tube-400' : 'text-phosphor-400') : 'text-ash-600'
         }`}
       >

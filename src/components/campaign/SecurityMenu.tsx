@@ -14,39 +14,35 @@ interface SecurityMenuProps {
 interface ActionBtnProps {
   onClick?: () => void;
   icon: LucideIcon;
-  index: string;
   title: string;
-  sub: string;
   tone?: 'accent' | 'danger';
 }
 
-const ActionBtn = ({ onClick, icon: Icon, index, title, sub, tone = 'accent' }: ActionBtnProps) => {
+const ActionBtn = ({ onClick, icon: Icon, title, tone = 'accent' }: ActionBtnProps) => {
   const isDanger = tone === 'danger';
   return (
     <button
       type="button"
       onClick={onClick}
-      className={`w-full flex items-center gap-5 p-5 rounded-card bg-surface-raised transition duration-200 group text-left active:scale-[0.99] ${
+      className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-card bg-surface-raised transition duration-200 group text-left active:scale-[0.99] ${
         isDanger
           ? 'hover:bg-red-500/5'
           : 'hover:bg-accent-05'
       }`}
     >
       <div
-        className={`w-14 h-14 rounded-control flex items-center justify-center shrink-0 transition-colors duration-200 ${
+        className={`w-11 h-11 rounded-control flex items-center justify-center shrink-0 transition-colors duration-200 ${
           isDanger
-            ? 'bg-red-950/30 text-red-400'
+            ? 'bg-red-950/30 text-red-400 group-hover:bg-red-500/10'
             : 'bg-surface-sunken text-primary group-hover:bg-accent-10'
         }`}
       >
-        <Icon size={26} />
+        <Icon size={20} />
       </div>
       <div className="flex-1 min-w-0">
-        <span className={`text-mono-ui text-[10px] ${isDanger ? 'text-red-400/60' : 'text-primary/50'}`}>{index}</span>
-        <h3 className={`text-display text-lg uppercase mt-0.5 truncate transition-colors ${isDanger ? 'text-red-400' : 'text-white group-hover:text-primary'}`}>
+        <h3 className={`text-display text-lg uppercase truncate transition-colors ${isDanger ? 'text-red-400' : 'text-white group-hover:text-primary'}`}>
           {title}
         </h3>
-        <p className="text-protocol text-[10px] text-ash-500 mt-1 truncate group-hover:text-ash-400 transition-colors">{sub}</p>
       </div>
       <ChevronRight
         size={20}
@@ -84,19 +80,18 @@ export const SecurityMenu = ({ onClose, onLogout, onShowProfile, onChangeCharact
       animate={{ y: 0 }}
       exit={{ y: '-100%' }}
       transition={SPRING_DRAWER}
-      className="absolute inset-0 lg:inset-auto lg:top-20 lg:left-6 lg:w-[32rem] lg:max-h-[calc(100%-7rem)] lg:rounded-panel z-100 bg-surface/98 flex flex-col overflow-hidden touch-none"
+      className="absolute inset-0 lg:inset-auto lg:top-20 lg:left-6 lg:w-[32rem] lg:max-h-[calc(100%-7rem)] lg:rounded-panel z-100 bg-surface/98 flex flex-col border-b shadow-2xl overflow-hidden touch-none"
     >
       <div className="noise-overlay" />
       <div className="scanlines" />
       <div className="absolute inset-x-0 top-0 h-64 pointer-events-none bg-linear-to-b from-accent-05 to-transparent z-10" />
 
-      <header className="px-6 sm:px-8 pt-[max(1.5rem,env(safe-area-inset-top))] pb-6 border-b border-seam flex justify-between items-center bg-surface-raised/60 relative z-20">
+      <header className="px-6 sm:px-8 pt-[max(1.5rem,env(safe-area-inset-top))] pb-6 border-b border-border flex justify-between items-center bg-surface-raised/60 relative z-20">
         <div className="flex items-center gap-4 min-w-0">
           <div className="w-14 h-14 rounded-control bg-accent-10 flex items-center justify-center text-primary shrink-0">
             <ShieldAlert size={28} />
           </div>
           <div className="min-w-0">
-            <p className="text-protocol text-[10px] text-primary/60">{t('security.eyebrow')}</p>
             <h2 className="text-display text-2xl text-white uppercase mt-0.5 truncate">
               {t('security.title')} <span className="text-primary">{t('security.titleAccent')}</span>
             </h2>
@@ -113,12 +108,12 @@ export const SecurityMenu = ({ onClose, onLogout, onShowProfile, onChangeCharact
       </header>
 
       <div className="flex-1 px-6 sm:px-8 py-6 space-y-3 relative z-20 overflow-y-auto custom-scrollbar">
-        <ActionBtn index="01" onClick={onShowProfile} icon={User} title={t('security.dossier')} sub={t('security.dossierSub')} />
-        <ActionBtn index="02" onClick={onChangeCharacter} icon={Users} title={t('security.switchAgent')} sub={t('security.switchAgentSub')} />
-        <ActionBtn index="03" onClick={onLogout} icon={LogOut} title={t('security.logout')} sub={t('security.logoutSub')} tone="danger" />
+        <ActionBtn onClick={onShowProfile} icon={User} title={t('security.dossier')} />
+        <ActionBtn onClick={onChangeCharacter} icon={Users} title={t('security.switchAgent')} />
+        <ActionBtn onClick={onLogout} icon={LogOut} title={t('security.logout')} tone="danger" />
       </div>
 
-      <footer className="px-6 sm:px-8 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] border-t border-seam bg-surface-raised/40 relative z-20">
+      <footer className="px-6 sm:px-8 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] border-t border-border-subtle bg-surface-raised/40 relative z-20">
         <div className="flex justify-between items-center text-mono-ui text-[10px] text-ash-600">
           <span>{t('brand.smileCopyright', { ns: 'common' })}</span>
           <span>{t('security.grid')}</span>

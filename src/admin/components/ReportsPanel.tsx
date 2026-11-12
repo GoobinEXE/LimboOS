@@ -123,12 +123,12 @@ function OperationalPanorama({
         <button
           type="button"
           onClick={goAcesso}
-          className="bg-surface-container-low p-5 text-left transition"
+          className="bg-surface-container-low p-5 text-left transition hover:bg-accent-10"
         >
-          <p className="font-display text-[10px] uppercase font-bold tracking-[0.08em] text-ash-400 mb-2">
+          <p className="font-display text-[10px] uppercase font-bold tracking-[0.2em] text-ash-400 mb-2">
             {t('reports.hardware')}
           </p>
-          <p className="text-sm font-display font-bold text-primary uppercase tracking-wider">{t('reports.openAccess')}</p>
+          <p className="text-sm font-display font-bold text-primary uppercase tracking-widest">{t('reports.openAccess')}</p>
         </button>
       </MetricGroup>
     </div>
@@ -139,7 +139,7 @@ function SectionDivider({ title }: { title: string }) {
   return (
     <div className="flex items-center gap-3 mb-6">
       <div className="h-px flex-1 bg-linear-to-r from-transparent to-primary/20" />
-      <h3 className="text-ash-500 font-display text-[10px] uppercase font-bold tracking-[0.08em]">{title}</h3>
+      <h3 className="text-ash-500 font-display text-[10px] uppercase font-bold tracking-[0.3em]">{title}</h3>
       <div className="h-px flex-1 bg-linear-to-l from-transparent to-primary/20" />
     </div>
   );
@@ -148,7 +148,7 @@ function SectionDivider({ title }: { title: string }) {
 function MetricGroup({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="space-y-3">
-      <p className="font-display text-[10px] uppercase font-bold tracking-[0.08em] text-ash-600">{title}</p>
+      <p className="font-display text-[10px] uppercase font-bold tracking-[0.25em] text-ash-600">{title}</p>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-4">{children}</div>
     </div>
   );
@@ -168,9 +168,9 @@ function StatCard({
   onClick?: () => void;
 }) {
   const colorMap: Record<string, string> = {
-    primary: 'text-primary',
-    secondary: 'text-secondary',
-    tertiary: 'text-tertiary',
+    primary: 'text-primary border-primary/20',
+    secondary: 'text-secondary border-secondary/20',
+    tertiary: 'text-tertiary border-tertiary/20',
   };
   const iconColorMap: Record<string, string> = {
     primary: 'text-primary/20',
@@ -178,7 +178,7 @@ function StatCard({
     tertiary: 'text-tertiary/20',
   };
   const className = `bg-surface-container-low p-5 relative overflow-hidden group transition hover:bg-surface-container-high ${
-    onClick ? 'cursor-pointer hover:border-primary/40 active:scale-[0.98]' : ''
+    onClick ? 'cursor-pointer active:scale-[0.98] hover:bg-accent-10' : ''
   } ${colorMap[color] ?? colorMap.primary}`;
 
   const content = (
@@ -188,7 +188,7 @@ function StatCard({
           arrow_forward
         </span>
       )}
-      <p className="flex items-center gap-1.5 font-display text-[10px] uppercase font-bold tracking-[0.08em] text-ash-400 mb-2">
+      <p className="flex items-center gap-1.5 font-display text-[10px] uppercase font-bold tracking-[0.2em] text-ash-400 mb-2">
         <span className={`material-symbols-outlined text-[14px] ${iconColorMap[color] ?? iconColorMap.primary}`} aria-hidden>{icon}</span>
         {label}
       </p>
@@ -220,8 +220,8 @@ function StatusCard({
   onClick?: () => void;
 }) {
   const className = `bg-surface-container-low p-5 relative overflow-hidden group transition hover:bg-surface-container-high ${
-    onClick ? 'cursor-pointer hover:border-primary/40 active:scale-[0.98]' : ''
-  } ${active ? 'text-red-400' : 'text-phosphor-400'}`;
+    onClick ? 'cursor-pointer active:scale-[0.98] hover:bg-accent-10' : ''
+  } ${active ? 'text-red-400 bg-red-500/10' : 'text-phosphor-400'}`;
 
   const content = (
     <>
@@ -230,7 +230,7 @@ function StatusCard({
           arrow_forward
         </span>
       )}
-      <p className="flex items-center gap-1.5 font-display text-[10px] uppercase font-bold tracking-[0.08em] text-ash-400 mb-2">
+      <p className="flex items-center gap-1.5 font-display text-[10px] uppercase font-bold tracking-[0.2em] text-ash-400 mb-2">
         <span className={`material-symbols-outlined text-[14px] ${active ? 'text-red-400' : 'text-phosphor-400'}`} aria-hidden>
           {icon}
         </span>

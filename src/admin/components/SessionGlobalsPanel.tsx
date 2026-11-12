@@ -31,7 +31,7 @@ export default function SessionGlobalsPanel({ campaignId }: { campaignId?: strin
   if (!campaignId) {
     return (
       <div className="bg-surface-container-low p-5 rounded-sm">
-        <p className="text-[10px] font-display font-bold uppercase tracking-wider text-ash-500">
+        <p className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-500">
           {t('sessionGlobals.pickMission')}
         </p>
       </div>
@@ -62,12 +62,12 @@ export default function SessionGlobalsPanel({ campaignId }: { campaignId?: strin
       <div
         className={`bg-surface-container-low p-5 rounded-sm flex flex-col gap-4 transition ${
           limboState.seized
-            ? ''
-            : ''
+            ? 'shadow-[0_0_24px_rgba(239,68,68,0.15)] bg-red-500/10'
+            : 'bg-accent-10'
         }`}
       >
         <div className="flex items-center justify-between">
-          <h3 className="text-[10px] font-display font-bold uppercase tracking-wider text-ash-500">
+          <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-500">
             {t('sessionGlobals.limboTitle')}
           </h3>
           {limboState.seized && <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />}
@@ -84,7 +84,7 @@ export default function SessionGlobalsPanel({ campaignId }: { campaignId?: strin
           )}
         </div>
         <p
-          className={`text-[10px] font-mono font-bold uppercase tracking-wider ${
+          className={`text-[10px] font-mono font-bold uppercase tracking-widest ${
             limboState.seized ? 'text-red-500/70' : 'text-phosphor-500/70'
           }`}
         >
@@ -94,7 +94,7 @@ export default function SessionGlobalsPanel({ campaignId }: { campaignId?: strin
           })}
         </p>
         <div className="bg-primary/5 p-3 rounded-sm">
-          <p className="text-[10px] font-display font-black text-primary uppercase tracking-wider mb-1">
+          <p className="text-[10px] font-display font-black text-primary uppercase tracking-widest mb-1">
             {t('sessionGlobals.ipHint')}
           </p>
           <p className="text-sm font-mono font-black text-bone tracking-wider">212.45.1.1</p>
@@ -102,7 +102,7 @@ export default function SessionGlobalsPanel({ campaignId }: { campaignId?: strin
         <button
           type="button"
           onClick={toggleLimboMilitary}
-          className={`px-5 py-2 font-display font-black uppercase text-[10px] tracking-wider transition rounded-sm self-start ${
+          className={`px-5 py-2 font-display font-black uppercase text-[10px] tracking-widest transition rounded-sm self-start ${
             limboState.seized
               ? 'bg-red-600 text-bone'
               : 'bg-[#333] text-ash-400 hover:bg-[#444]'
@@ -113,31 +113,28 @@ export default function SessionGlobalsPanel({ campaignId }: { campaignId?: strin
       </div>
 
       <div className="bg-surface-container-low p-5 rounded-sm flex flex-col gap-4">
-        <h3 className="text-[10px] font-display font-bold uppercase tracking-wider text-ash-500">
+        <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-500">
           {t('sessionGlobals.protocols')}
         </h3>
         <div className="flex items-center justify-between p-4 bg-black/40 rounded-sm">
           <div>
             <p className="font-display font-black text-sm text-bone uppercase">{t('sessionGlobals.diskRepair')}</p>
-            <p className="text-[10px] text-ash-600 font-bold uppercase mt-1">{t('sessionGlobals.diskRepairDesc')}</p>
           </div>
           <button
             type="button"
             onClick={toggleDiskRepair}
             className={`relative w-14 h-7 rounded-full transition ${
               diskRepairAllowed
-                ? 'bg-accent'
-                : 'bg-surface-container-highest'
+                ? 'bg-primary/20 shadow-[0_0_10px_rgba(255,140,0,0.2)]'
+                : 'bg-ash-900'
             }`}
-            role="switch"
-            aria-checked={diskRepairAllowed}
-            aria-label={t('sessionGlobals.diskRepair')}
+            aria-label="Toggle DiskRepair"
           >
             <div
               className={`absolute top-1 left-1 w-4 h-4 rounded-full transition-transform duration-300 ${
                 diskRepairAllowed
-                  ? 'translate-x-7 bg-field-ink'
-                  : 'translate-x-0 bg-ash-400'
+                  ? 'translate-x-7 bg-primary shadow-[0_0_8px_rgba(255,140,0,0.8)]'
+                  : 'translate-x-0 bg-ash-800'
               }`}
             />
           </button>

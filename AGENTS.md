@@ -193,7 +193,7 @@ Nunca commite `.env` com credenciais reais.
 
 - **TypeScript estrito** — tipos em `src/types/`; evite `any` sem necessidade.
 - **Lazy loading** — telas pesadas e mini-apps via `React.lazy`.
-- **Estilo visual** — campos chapados de 1999 (`DESIGN.md`): blocos se separam por campo de cor, sem contorno, sombra, brilho ou vidro; seleção inverte para osso (`bg-field-bone`) ou âmbar sólido; fontes Archivo (eixo `wdth`, títulos largos) e JetBrains Mono para dados; accent `#FF8C00`. Use `lmb-btn`, `lmb-field`, `lmb-tag` de `src/index.css`. Mini-apps de época e a tela LCD do Nokia mantêm as linhas de época.
+- **Estilo visual** — bancada escura de 1999 (`DESIGN.md`): sem contorno de quatro lados em botões e blocos (separação por tom, relevo e `shadow-hairline`), sem slogans, subtítulos ou numeração de itens; fontes Space Grotesk, Inter e JetBrains Mono; accent `#FF8C00`. O walkman, a tela LCD do Nokia e os mini-apps de época mantêm seus contornos e texturas.
 - **Idioma** — UI, lore e comentários em **português (BR)**; identificadores de código em inglês.
 - **Escopo mínimo** — altere só o necessário; não refatore áreas não relacionadas à tarefa.
 - **Testes** — o front não tem suíte; valide com `npm run lint`. Regras e Functions têm testes no emulador (`backend/rules-tests`).

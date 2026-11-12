@@ -34,13 +34,9 @@ export default function MesaPanel({ route, locationKey, isAdmin }: MesaPanelProp
     <div className="space-y-6">
       <header className="flex items-end justify-between gap-4">
         <div className="flex items-center gap-4 min-w-0">
+          <span className="w-1 h-9 bg-accent shrink-0" aria-hidden />
           <div className="min-w-0">
             <h2 className="font-display font-bold uppercase tracking-[0.18em] text-xl text-bone leading-none">{t('mesa.title')}</h2>
-            {current.blurbKey && (
-              <p className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.08em] mt-2 truncate">
-                {t(current.blurbKey)}
-              </p>
-            )}
           </div>
         </div>
       </header>

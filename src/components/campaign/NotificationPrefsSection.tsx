@@ -43,7 +43,7 @@ export default function NotificationPrefsSection() {
           {t('push.prefs.enable')}
         </button>
       )}
-      <div className="rounded-card bg-surface-raised divide-y divide-seam">
+      <div className="rounded-card bg-surface-raised divide-y divide-border-subtle">
         {CATEGORIES.map((category) => {
           const enabled = prefs[category] !== false;
           return (

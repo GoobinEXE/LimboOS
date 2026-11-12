@@ -24,19 +24,19 @@ const AUTO_DISMISS_MS = 4000;
 
 const TOAST_STYLES: Record<ToastType, { frame: string; text: string; bar: string; icon: string }> = {
   success: {
-    frame: '',
+    frame: 'border-phosphor-500/30',
     text: 'text-phosphor-300',
     bar: 'bg-phosphor-400',
     icon: 'check_circle',
   },
   error: {
-    frame: '',
+    frame: 'border-red-500/35',
     text: 'text-red-300',
     bar: 'bg-red-400',
     icon: 'error',
   },
   info: {
-    frame: '',
+    frame: 'border-accent-40',
     text: 'text-primary',
     bar: 'bg-accent',
     icon: 'info',
@@ -121,7 +121,7 @@ function AdminToast({ toast, onDismiss }: { toast: Toast; onDismiss: (id: string
       onPointerEnter={() => setHovered(true)}
       onPointerLeave={() => setHovered(false)}
       onClick={() => onDismiss(toast.id)}
-      className={`pointer-events-auto relative overflow-hidden w-full flex items-center gap-3 pl-4 pr-5 py-3.5 text-left bg-surface-container-low ${style.frame} rounded-inset font-display`}
+      className={`pointer-events-auto relative overflow-hidden w-full flex items-center gap-3 pl-4 pr-5 py-3.5 text-left bg-surface-container-low ${style.frame} rounded-inset shadow-xl machined-edge font-display`}
     >
       <span className={`material-symbols-outlined text-[18px] shrink-0 ${style.text}`} aria-hidden>
         {style.icon}

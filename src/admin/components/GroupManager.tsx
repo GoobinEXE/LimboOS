@@ -277,12 +277,12 @@ export default function GroupManager({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
            <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-           <h3 className="text-ash-600 font-black text-[10px] uppercase tracking-[0.08em]">{t('squads.title')}</h3>
+           <h3 className="text-ash-600 font-black text-[10px] uppercase tracking-[0.3em]">{t('squads.title')}</h3>
         </div>
         {!isCreating && (
           <button 
             onClick={() => setIsCreating(true)}
-            className="flex items-center gap-2 bg-primary/10 text-primary px-6 py-2 rounded-sm font-black text-[10px] tracking-wider hover:bg-primary/20 transition active:scale-[0.97] uppercase"
+            className="flex items-center gap-2 bg-primary/10 text-primary px-6 py-2 rounded-sm font-black text-[10px] tracking-widest hover:bg-primary/20 transition active:scale-[0.97] glow-orange uppercase"
           >
             <span className="material-symbols-outlined text-sm">group_add</span>
             NOVO ESQUADRÃO
@@ -294,7 +294,7 @@ export default function GroupManager({
         <div className="flex justify-end">
           <button 
             onClick={() => setIsCreating(true)}
-            className="flex items-center gap-2 bg-primary/10 text-primary px-6 py-2 rounded-sm font-black text-[10px] tracking-wider hover:bg-primary/20 transition active:scale-[0.97] uppercase"
+            className="flex items-center gap-2 bg-primary/10 text-primary px-6 py-2 rounded-sm font-black text-[10px] tracking-widest hover:bg-primary/20 transition active:scale-[0.97] glow-orange uppercase"
           >
             <span className="material-symbols-outlined text-sm">group_add</span>
             NOVO ESQUADRÃO
@@ -303,55 +303,55 @@ export default function GroupManager({
       )}
 
       {isCreating ? (
-        <div className="bg-seam p-8 rounded-card relative overflow-hidden">
+        <div className="bg-seam p-8 rounded-card shadow-2xl relative overflow-hidden">
           <div className="noise-overlay" /><div className="scanlines" />
           <form onSubmit={editingGroup ? handleUpdateGroup : handleCreateGroup} className="space-y-8 relative z-10">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
               {/* Coluna 1: Info Básica */}
               <div className="space-y-6">
                 <div>
-                  <label className="block font-black text-[10px] text-ash-500 mb-3 uppercase tracking-wider">{t('squads.idLabel')}</label>
+                  <label className="block font-black text-[10px] text-ash-500 mb-3 uppercase tracking-widest">{t('squads.idLabel')}</label>
                   <input 
                     type="text" 
                     value={groupName}
                     onChange={(e) => setGroupName(e.target.value)}
                     placeholder={t('squads.idPlaceholder')}
-                    className="w-full bg-black/60 text-bone px-4 py-3 text-[11px] font-bold outline-none rounded-sm uppercase transition"
+                    className="w-full bg-black/60 text-bone px-4 py-3 text-[11px] font-bold outline-none rounded-sm uppercase transition focus:bg-accent-10"
                     required
                   />
                 </div>
 
                 <div className="bg-primary/5 rounded-sm p-4">
-                  <p className="text-[10px] font-black text-primary/70 uppercase tracking-wider leading-relaxed">
+                  <p className="text-[10px] font-black text-primary/70 uppercase tracking-widest leading-relaxed">
                     Após criar o esquadrão, use o botão de missões no card para autorizar e designar missões.
                   </p>
                 </div>
 
-                <div className="pt-4 border-t border-seam">
-                  <label className="block font-black text-[10px] text-ash-500 mb-3 uppercase tracking-wider">{t('squads.sessions')}</label>
+                <div className="pt-4 border-t border-border-subtle">
+                  <label className="block font-black text-[10px] text-ash-500 mb-3 uppercase tracking-widest">{t('squads.sessions')}</label>
                   <div className="flex gap-2 mb-4">
                     <input 
                       type="date" 
                       value={sessionDate}
                       onChange={(e) => setSessionDate(e.target.value)}
-                      className="flex-1 bg-black/60 text-bone px-4 py-3 text-[10px] font-bold outline-none rounded-sm"
+                      className="flex-1 bg-black/60 text-bone px-4 py-3 text-[10px] font-bold outline-none rounded-sm focus:bg-accent-10"
                     />
                     <button 
                       type="button"
                       onClick={addSession}
-                      className="bg-[#333] hover:bg-[#444] text-bone px-6 py-2 text-[10px] font-black uppercase tracking-wider transition rounded-sm"
+                      className="bg-[#333] hover:bg-[#444] text-bone px-6 py-2 text-[10px] font-black uppercase tracking-widest transition rounded-sm"
                     >
                       ADD DATA
                     </button>
                   </div>
                   <div className="flex flex-wrap gap-2 min-h-10 bg-black/40 p-3 rounded-sm">
                     {sessions.map(date => (
-                      <span key={date} className="bg-black text-primary px-3 py-1.5 rounded-sm text-[10px] font-mono font-black flex items-center gap-3">
+                      <span key={date} className="bg-black text-primary px-3 py-1.5 rounded-sm text-[10px] font-mono font-black flex items-center gap-3 shadow-lg">
                         {date}
                         <button type="button" onClick={() => removeSession(date)} className="text-ash-600 hover:text-red-500 transition-colors">×</button>
                       </span>
                     ))}
-                    {sessions.length === 0 && <p className="text-ash-800 text-[10px] font-black uppercase tracking-wider italic pt-1">{t('squads.noSessions')}</p>}
+                    {sessions.length === 0 && <p className="text-ash-800 text-[10px] font-black uppercase tracking-widest italic pt-1">{t('squads.noSessions')}</p>}
                   </div>
                 </div>
               </div>
@@ -361,7 +361,7 @@ export default function GroupManager({
                 {/* Membros Atuais */}
                 <div>
                   <div className="flex justify-between items-center mb-3">
-                    <label className="block font-black text-[10px] text-ash-500 uppercase tracking-wider">Membros do Esquadrão ({selectedCharacters.length})</label>
+                    <label className="block font-black text-[10px] text-ash-500 uppercase tracking-widest">Membros do Esquadrão ({selectedCharacters.length})</label>
                   </div>
                   <div className="bg-black/40 h-36 overflow-y-auto p-3 space-y-2 custom-scrollbar rounded-sm">
                     {squadMembers.map(item => {
@@ -398,7 +398,7 @@ export default function GroupManager({
                     {selectedCharacters.length === 0 && (
                       <div className="h-full flex flex-col items-center justify-center text-ash-700 py-8 opacity-40">
                         <span className="material-symbols-outlined text-2xl mb-1">group_off</span>
-                        <p className="text-[10px] font-black uppercase tracking-wider">{t('squads.noSelected')}</p>
+                        <p className="text-[10px] font-black uppercase tracking-widest">{t('squads.noSelected')}</p>
                       </div>
                     )}
                   </div>
@@ -407,10 +407,10 @@ export default function GroupManager({
                 {/* Agentes Disponíveis para Seleção */}
                 <div>
                   <div className="flex justify-between items-center mb-3">
-                     <label className="block font-black text-[10px] text-ash-500 uppercase tracking-wider">{t('squads.available')}</label>
+                     <label className="block font-black text-[10px] text-ash-500 uppercase tracking-widest">{t('squads.available')}</label>
                      <label className="flex items-center gap-2 cursor-pointer group">
                        <input type="checkbox" checked={showArchived} onChange={(e) => setShowArchived(e.target.checked)} className="hidden" />
-                       <span className={`text-[10px] font-black uppercase tracking-wider transition-colors ${showArchived ? 'text-primary' : 'text-ash-600 group-hover:text-ash-400'}`}>{t('squads.includeArchived')}</span>
+                       <span className={`text-[10px] font-black uppercase tracking-widest transition-colors ${showArchived ? 'text-primary' : 'text-ash-600 group-hover:text-ash-400'}`}>{t('squads.includeArchived')}</span>
                      </label>
                   </div>
 
@@ -422,7 +422,7 @@ export default function GroupManager({
                       value={agentSearchQuery}
                       onChange={(e) => setAgentSearchQuery(e.target.value)}
                       onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAgentSearch())}
-                      className="w-full bg-black/40 text-bone px-10 py-2.5 text-[10px] font-bold outline-none rounded-sm uppercase transition"
+                      className="w-full bg-black/40 text-bone px-10 py-2.5 text-[10px] font-bold outline-none rounded-sm uppercase transition shadow-inner focus:bg-accent-10"
                     />
                   </div>
 
@@ -454,7 +454,7 @@ export default function GroupManager({
                       );
                     })}
                     {availableAgents.length === 0 && (
-                      <p className="text-ash-600 text-[10px] font-black uppercase tracking-wider text-center py-8">{t('squads.noneAvailable')}</p>
+                      <p className="text-ash-600 text-[10px] font-black uppercase tracking-widest text-center py-8">{t('squads.noneAvailable')}</p>
                     )}
                   </div>
                 </div>
@@ -462,10 +462,10 @@ export default function GroupManager({
             </div>
 
             <div className="flex justify-end gap-6 pt-8 border-t-4 border-seam">
-              <button type="button" onClick={resetForm} className="px-8 py-3 text-[10px] font-black text-ash-600 hover:text-bone uppercase tracking-wider transition-colors">{t('squads.abort')}</button>
+              <button type="button" onClick={resetForm} className="px-8 py-3 text-[10px] font-black text-ash-600 hover:text-bone uppercase tracking-widest transition-colors">{t('squads.abort')}</button>
               <button 
                 type="submit" 
-                className="bg-primary hover:bg-primary-container text-black px-12 py-3 rounded-sm font-black text-[10px] tracking-wider uppercase transition active:scale-[0.97]"
+                className="bg-primary hover:bg-primary-container text-black px-12 py-3 rounded-sm font-black text-[10px] tracking-widest uppercase transition active:scale-[0.97] glow-orange shadow-lg"
               >
                 {editingGroup ? t('squads.sync') : 'CONFIRMAR REGISTRO'}
               </button>
@@ -495,14 +495,14 @@ export default function GroupManager({
                 animate="visible"
                 exit="exit"
                 transition={{ ...ADMIN_FADE, delay: staggerDelay(index) }}
-                className="bg-seam p-6 group transition-colors rounded-card relative overflow-hidden"
+                className="bg-seam p-6 group transition-colors rounded-card shadow-xl relative overflow-hidden hover:bg-accent-10"
               >
-                <div className="absolute top-0 right-0 w-12 h-12 bg-primary/5 rotate-45 translate-x-6 -translate-y-6" />
+                <div className="absolute top-0 right-0 w-12 h-12 bg-primary/5 rotate-45 translate-x-6 -translate-y-6 border-b border-primary/10" />
                 <div className="flex justify-between items-start mb-6">
                   <div>
                     <h4 className="font-black text-bone text-base uppercase tracking-tighter group-hover:text-primary transition-colors">{group.name}</h4>
                     <div className="flex flex-wrap items-center gap-3 mt-2">
-                      <div className="flex items-center gap-1.5 bg-black/40 px-2 py-1 rounded-sm">
+                      <div className="flex items-center gap-1.5 bg-black/40 px-2 py-1 rounded-sm shadow-inner">
                          <div className="flex gap-1.5">
                             {([
                               ['alive', aliveCount, 'bg-phosphor-500', 'text-phosphor-400'],
@@ -521,9 +521,9 @@ export default function GroupManager({
                             ))}
                          </div>
                       </div>
-                      <div className="flex items-center gap-1.5 bg-black/40 px-2 py-0.5 rounded-sm">
+                      <div className="flex items-center gap-1.5 bg-black/40 px-2 py-0.5 rounded-sm shadow-inner">
                          <div className="w-1 h-1 bg-primary rounded-full animate-pulse" />
-                         <p className="text-[10px] font-black text-ash-500 uppercase tracking-wider">
+                         <p className="text-[10px] font-black text-ash-500 uppercase tracking-widest">
                            {slots.length} AGENTES
                          </p>
                       </div>
@@ -532,7 +532,7 @@ export default function GroupManager({
                         <Link
                           to={adminPath.mission(group.campaignId, 'vinculos')}
                           title={t('squads.missionChips.editInMission')}
-                          className="text-[10px] font-black bg-phosphor-500/10 text-phosphor-500 px-2 py-1 rounded-sm uppercase tracking-wider flex items-center gap-1 hover:bg-phosphor-500/20 transition-colors"
+                          className="text-[10px] font-black bg-phosphor-500/10 text-phosphor-500 px-2 py-1 rounded-sm uppercase tracking-widest flex items-center gap-1 hover:bg-phosphor-500/20 transition-colors"
                         >
                           <span className="material-symbols-outlined text-[10px]" aria-hidden>rocket_launch</span>
                           <span className="sr-only">{t('squads.missionChips.inField')}: </span>
@@ -551,7 +551,7 @@ export default function GroupManager({
                                 key={campaignId}
                                 to={adminPath.mission(campaignId, 'vinculos')}
                                 title={t('squads.missionChips.editInMission')}
-                                className="flex items-center gap-1.5 bg-black/40 px-2 py-1 rounded-sm text-[10px] font-black text-ash-400 uppercase tracking-wider hover:text-bone transition-colors"
+                                className="flex items-center gap-1.5 bg-black/40 px-2 py-1 rounded-sm text-[10px] font-black text-ash-400 uppercase tracking-widest hover:text-bone transition-colors"
                               >
                                 <span className="material-symbols-outlined text-[10px] text-ash-500" aria-hidden>vpn_key</span>
                                 <span className="sr-only">{t('squads.missionChips.authorized')}: </span>
@@ -562,7 +562,7 @@ export default function GroupManager({
                               <button
                                 type="button"
                                 onClick={() => setExpandedMissionChips((prev) => new Set(prev).add(group.id))}
-                                className="text-[10px] font-black text-ash-500 uppercase tracking-wider px-2 py-1 rounded-sm hover:text-bone"
+                                className="text-[10px] font-black text-ash-500 uppercase tracking-widest px-2 py-1 rounded-sm hover:text-bone"
                               >
                                 {t('squads.missionChips.more', { n: authorized.length - visible.length })}
                               </button>
@@ -591,7 +591,7 @@ export default function GroupManager({
                 <div className="space-y-6">
                   <div className="flex flex-wrap gap-1.5">
                     {group.sessions?.slice(0, 4).map(date => (
-                      <span key={date} className="text-[10px] font-mono bg-black text-ash-600 px-2 py-1 rounded-sm font-bold tracking-wider uppercase">
+                      <span key={date} className="text-[10px] font-mono bg-black text-ash-600 px-2 py-1 rounded-sm font-bold tracking-widest uppercase shadow-sm">
                         {date}
                       </span>
                     ))}
@@ -604,7 +604,7 @@ export default function GroupManager({
                       if (!item) return null;
                       return (
                         <div key={`${slot.uid}_${slot.characterId}`} className="group/member flex items-center gap-2 bg-black/40 px-2 py-1.5 rounded-sm min-w-30 relative">
-                           <div className={`w-2 h-2 rounded-full ${item.char.agentStatus === 'vivo' ? 'bg-phosphor-500' : item.char.agentStatus === 'morto' ? 'bg-red-500' : 'bg-yellow-500'}`} />
+                           <div className={`w-2 h-2 rounded-full ${item.char.agentStatus === 'vivo' ? 'bg-phosphor-500 shadow-[0_0_5px_rgba(86,185,75,0.5)]' : item.char.agentStatus === 'morto' ? 'bg-red-500' : 'bg-yellow-500'}`} />
                            <div className="min-w-0 flex-1">
                              <p className="font-black text-[10px] text-ash-300 uppercase truncate pr-4">{item.char.codinome}</p>
                              <p className="font-mono text-[10px] text-ash-500 truncate">{masterAccountLabelByUid(slot.uid, users, '???')}</p>
@@ -615,19 +615,19 @@ export default function GroupManager({
                         </div>
                       );
                     })}
-                    <button onClick={() => { setQuickAddGroup(quickAddGroup === group.id ? null : group.id); setQuickAddSearch(""); }} className={`flex items-center justify-center w-8 h-8 rounded-sm transition ${quickAddGroup === group.id ? 'bg-primary text-black' : 'bg-primary/10 text-primary hover:bg-primary/20'}`}>
+                    <button onClick={() => { setQuickAddGroup(quickAddGroup === group.id ? null : group.id); setQuickAddSearch(""); }} className={`flex items-center justify-center w-8 h-8 rounded-sm transition ${quickAddGroup === group.id ? 'bg-primary text-black border-primary' : 'bg-primary/10 text-primary hover:bg-primary/20'}`}>
                       <span className="material-symbols-outlined text-[16px]">{quickAddGroup === group.id ? 'close' : 'person_add'}</span>
                     </button>
                   </div>
 
                   {quickAddGroup === group.id && (
-                    <div className="mt-4 p-4 bg-black/60 rounded-sm">
+                    <div className="mt-4 p-4 bg-black/60 rounded-sm shadow-xl">
                       <input 
                         type="text" 
                         placeholder={t('squads.searchAdd')}
                         value={quickAddSearch}
                         onChange={(e) => setQuickAddSearch(e.target.value)}
-                        className="w-full bg-black text-bone px-3 py-2 text-[10px] font-bold outline-none rounded-sm uppercase transition-[height,color,background-color,border-color,opacity,transform,box-shadow] mb-2"
+                        className="w-full bg-black text-bone px-3 py-2 text-[10px] font-bold outline-none rounded-sm uppercase transition-[height,color,background-color,border-color,opacity,transform,box-shadow] mb-2 focus:bg-accent-10"
                         autoFocus
                       />
                       <div className="max-h-32 overflow-y-auto space-y-1 custom-scrollbar">
@@ -664,7 +664,7 @@ export default function GroupManager({
           {groups.length === 0 && (
             <div className="col-span-full py-24 text-center rounded-panel flex flex-col items-center justify-center">
               <span className="material-symbols-outlined text-6xl text-ash-700 mb-4" aria-hidden>groups_2</span>
-              <p className="text-ash-500 font-black text-sm uppercase tracking-[0.08em]">{t('squads.empty')}</p>
+              <p className="text-ash-500 font-black text-sm uppercase tracking-[0.4em]">{t('squads.empty')}</p>
             </div>
           )}
         </div>

@@ -63,7 +63,7 @@ export default function AdminNavDrawer({ open, onClose, activeDest, hrefFor }: A
               <div className="flex-1 overflow-y-auto custom-scrollbar px-3 py-5 space-y-6">
                 {ADMIN_NAV_GROUPS.map((group) => (
                   <div key={group.id}>
-                    <h3 className="px-3 mb-2 text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.08em]">
+                    <h3 className="px-3 mb-2 text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.32em]">
                       {t(group.labelKey)}
                     </h3>
                     <ul className="space-y-px">

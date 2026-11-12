@@ -27,6 +27,6 @@ export const AnalogLogo = memo(() => (
         <path d="M2 12l10 5 10-5" />
       </svg>
     </div>
-    <span className="uppercase tracking-wider"><span className="text-primary">RM</span>-LINK</span>
+    <span className="uppercase tracking-widest"><span className="text-primary">RM</span>-LINK</span>
   </div>
 ));

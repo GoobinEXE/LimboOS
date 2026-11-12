@@ -12,17 +12,19 @@ const config: CapacitorConfig = {
   appId: 'com.limboos.limboOs',
   appName: 'LimboOS',
   webDir: 'backend/dist',
-  backgroundColor: '#131210',
+  // Mesma cor da abertura (#090A0C): o WebView não mostra um quadro vazio
+  // de outra cor entre a tela nativa e a logo web.
+  backgroundColor: '#090A0C',
   ios: {
     contentInset: 'never',
-    backgroundColor: '#131210',
+    backgroundColor: '#090A0C',
   },
   android: {
-    backgroundColor: '#131210',
+    backgroundColor: '#090A0C',
   },
   plugins: {
     SplashScreen: {
-      launchShowDuration: 0,
+      launchShowDuration: 4000,
       launchAutoHide: false,
       backgroundColor: '#090A0C',
       showSpinner: false,

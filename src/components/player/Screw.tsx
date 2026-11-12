@@ -41,7 +41,7 @@ export default function Screw({ className = '', innerClassName = '', onClick, si
 
   const outer = className.includes('w-')
     ? className
-    : `${sizeMap[size]} rounded-full bg-radial-[at_35%_30%] from-surface-container-high to-surface-sunken ${className}`;
+    : `${sizeMap[size]} rounded-full bg-radial-[at_35%_30%] from-surface-container-high to-surface-sunken border border-border-strong shadow-[inset_0_1px_2px_#000000aa,0_1px_0_#ffffff14] ${className}`;
   const inner = innerClassName || `${innerSizeMap[size]} bg-surface-container-highest rotate-45`;
 
   return (

@@ -195,13 +195,13 @@ export default function QrScanner({ onDetected, onCancel }: QrScannerProps) {
             textAlign: 'center',
           }}
         >
-          <p className="text-accent text-[11px] font-bold uppercase tracking-wider leading-relaxed">
+          <p className="text-accent text-[11px] font-bold uppercase tracking-widest leading-relaxed">
             {error}
           </p>
           <button
             type="button"
             onClick={() => setRetryToken((n) => n + 1)}
-            className="px-4 py-2 text-[10px] font-bold uppercase tracking-wider rounded-sm text-accent hover:bg-accent/10"
+            className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest rounded-sm text-accent hover:bg-accent/10"
           >
             {t('qr.retry')}
           </button>

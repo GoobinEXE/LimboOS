@@ -78,14 +78,14 @@ export default function IntelCatalogPane({
       transition={SPRING_SNAP}
       className="flex flex-col min-h-0 h-full bg-surface-container-low overflow-hidden"
     >
-      <div className="px-4 py-3 bg-black/30 flex items-center justify-between gap-2 shrink-0">
+      <div className="px-4 py-3 border-b border-primary/10 bg-black/30 flex items-center justify-between gap-2 shrink-0">
         <div className="flex items-center gap-2 min-w-0">
           <span className="material-symbols-outlined text-primary text-base">hub</span>
           <div className="min-w-0">
-            <p className="font-display font-bold text-[11px] text-bone uppercase tracking-wider truncate">
+            <p className="font-display font-bold text-[11px] text-bone uppercase tracking-widest truncate">
               Catálogo Intel
             </p>
-            <p className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.08em]">
+            <p className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.2em]">
               {items.length} visíveis
               {isLoading ? ' · sync…' : ''}
             </p>
@@ -93,7 +93,7 @@ export default function IntelCatalogPane({
         </div>
       </div>
 
-      <div className="p-3 space-y-2 shrink-0">
+      <div className="p-3 space-y-2 border-b border-primary/5 shrink-0">
         {onCampaignScope && (
           <CampaignScopeSelect value={campaignScope} onChange={onCampaignScope} campaigns={campaigns} />
         )}
@@ -103,7 +103,7 @@ export default function IntelCatalogPane({
               key={key}
               type="button"
               onClick={() => onStatusFilter(key)}
-              className={`px-2.5 py-1 text-[10px] font-display font-bold uppercase tracking-wider transition rounded-sm ${
+              className={`px-2.5 py-1 text-[10px] font-display font-bold uppercase tracking-widest transition rounded-sm ${
                 statusFilter === key
                   ? 'text-amber-400 bg-amber-500/10'
                   : 'text-ash-600 hover:text-ash-400'
@@ -122,14 +122,14 @@ export default function IntelCatalogPane({
             value={search}
             onChange={(e) => onSearch(e.target.value)}
             placeholder="BUSCAR INTEL…"
-            className="w-full bg-surface-container-lowest text-[10px] font-display font-bold uppercase tracking-[0.15em] pl-8 pr-3 py-2 text-bone outline-none rounded-sm"
+            className="w-full bg-surface-container-lowest text-[10px] font-display font-bold uppercase tracking-[0.15em] pl-8 pr-3 py-2 text-bone outline-none rounded-sm focus:bg-accent-10"
           />
         </div>
         <div className="flex flex-wrap gap-1">
           <button
             type="button"
             onClick={() => onFilterType('ALL')}
-            className={`px-2 py-1 text-[10px] font-display font-bold uppercase tracking-wider rounded-sm ${
+            className={`px-2 py-1 text-[10px] font-display font-bold uppercase tracking-widest rounded-sm ${
               filterType === 'ALL'
                 ? 'text-primary bg-primary/10'
                 : 'text-ash-600'
@@ -143,7 +143,7 @@ export default function IntelCatalogPane({
               type="button"
               onClick={() => onFilterType(t.value)}
               title={t.label}
-              className={`px-2 py-1 text-[10px] font-display font-bold uppercase tracking-wider rounded-sm flex items-center gap-1 ${
+              className={`px-2 py-1 text-[10px] font-display font-bold uppercase tracking-widest rounded-sm flex items-center gap-1 ${
                 filterType === t.value
                   ? 'text-primary bg-primary/10'
                   : 'text-ash-600'
@@ -163,7 +163,7 @@ export default function IntelCatalogPane({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="p-10 text-center text-ash-600 text-[10px] font-display font-bold uppercase tracking-[0.08em]"
+              className="p-10 text-center text-ash-600 text-[10px] font-display font-bold uppercase tracking-[0.3em]"
             >
               Nenhum sinal de intel
             </motion.div>
@@ -184,10 +184,10 @@ export default function IntelCatalogPane({
                   ref={(el) => {
                     rowRefs.current[item.id] = el;
                   }}
-                  className={`px-3 py-3 border-b border-seam group transition-colors ${
+                  className={`px-3 py-3 border-b border-border-subtle group transition-colors ${
                     focused
-                      ? 'bg-primary/10'
-                      : 'hover:bg-white/5 border-l-2 border-seam'
+                      ? 'bg-primary/10 border-l-primary'
+                      : 'hover:bg-white/5 border-l-transparent'
                   }`}
                 >
                   <div className="flex items-start gap-2">
@@ -203,17 +203,17 @@ export default function IntelCatalogPane({
                       </p>
                       <div className="flex flex-wrap gap-1 mt-1.5">
                         <span
-                          className={`text-[10px] font-display font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-sm ${intelCatalogStatusClass(catalogStatus)}`}
+                          className={`text-[10px] font-display font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-sm ${intelCatalogStatusClass(catalogStatus)}`}
                         >
                           {intelCatalogStatusLabel(catalogStatus)}
                         </span>
                         <span
-                          className={`text-[10px] font-display font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-sm ${accessLevelClass(item.level)}`}
+                          className={`text-[10px] font-display font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-sm ${accessLevelClass(item.level)}`}
                         >
                           {accessLevelLabel(item.level)}
                         </span>
                         {item.campaignId && campaignScope === 'all' && (
-                          <span className="text-[10px] font-display font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-sm text-primary/80 truncate max-w-[10rem]">
+                          <span className="text-[10px] font-display font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-sm text-primary/80 truncate max-w-[10rem] bg-accent-10">
                             {campaigns.find((c) => c.id === item.campaignId)?.name || item.campaignId}
                           </span>
                         )}
@@ -227,7 +227,7 @@ export default function IntelCatalogPane({
                         <button
                           type="button"
                           onClick={() => onEdit(item)}
-                          className="mt-1.5 text-[10px] font-display font-bold uppercase tracking-wider text-primary hover:text-primary-container"
+                          className="mt-1.5 text-[10px] font-display font-bold uppercase tracking-widest text-primary hover:text-primary-container"
                         >
                           Completar metadados →
                         </button>

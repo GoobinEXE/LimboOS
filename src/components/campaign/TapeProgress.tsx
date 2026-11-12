@@ -50,7 +50,7 @@ export const TapeProgress = ({ total, current, onChange }: TapeProgressProps) =>
         aria-valuemax={total - 1}
         aria-valuenow={current}
       >
-        <div className="relative w-full h-2 rounded-full bg-surface-sunken overflow-hidden transition-colors">
+        <div className="relative w-full h-2 rounded-full bg-surface-sunken overflow-hidden shadow-hairline transition-colors">
           {total > 1 && (
             <div aria-hidden className="absolute inset-y-0 left-3 right-3 pointer-events-none">
               {Array.from({ length: total }).map((_, i) => (

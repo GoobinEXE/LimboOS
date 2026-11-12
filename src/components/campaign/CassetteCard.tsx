@@ -26,14 +26,14 @@ const pad = (n: number) => String(n).padStart(2, '0');
 const Screw = ({ className }: { className: string }) => (
   <span
     aria-hidden
-    className={`absolute w-1.5 h-1.5 rounded-full bg-surface-sunken ${className}`}
+    className={`absolute w-1.5 h-1.5 rounded-full bg-surface-sunken shadow-[inset_0_1px_1px_#000,0_1px_0_#ffffff14] ${className}`}
   />
 );
 
 /** Bobina da fita — gira apenas no cartucho ativo. */
 const Reel = ({ spinning, reverse = false }: { spinning: boolean; reverse?: boolean }) => (
   <div
-    className={`relative w-8 h-8 rounded-full bg-surface-panel flex items-center justify-center shrink-0 animate-[spin_6s_linear_infinite] ${
+    className={`relative w-8 h-8 rounded-full bg-surface-panel flex items-center justify-center shrink-0 shadow-hairline animate-[spin_6s_linear_infinite] ${
       spinning ? '' : '[animation-play-state:paused]'
     } ${reverse ? '[animation-direction:reverse]' : ''}`}
   >
@@ -101,18 +101,18 @@ export const CassetteCard = memo(({ campaign, onSelect, index, dragX, cardWidth,
       {/* Moldura do encaixe ativo: aro fino em vez de halo borrado */}
       <motion.div
         aria-hidden
-        className="absolute -inset-1.5 rounded-panel pointer-events-none"
+        className="absolute -inset-1.5 rounded-panel pointer-events-none bg-accent-10"
         initial={false}
         animate={{ opacity: isActive && !isLocked ? 1 : 0 }}
         transition={{ duration: 0.5, ease: EASE_OUT }}
       />
 
       <div
-        className={`relative w-full h-full flex flex-col rounded-card bg-surface-panel overflow-hidden transition-colors duration-300 ${
+        className={`relative w-full h-full flex flex-col rounded-card bg-surface-panel shadow-panel overflow-hidden transition-colors duration-300 ${
           isActive ? '' : ''
         }`}
       >
-        <div aria-hidden className="absolute inset-0 rounded-card pointer-events-none z-20" />
+        <div aria-hidden className="absolute inset-0 rounded-card shadow-hairline pointer-events-none z-20" />
         <Screw className="top-2 left-2" />
         <Screw className="top-2 right-2" />
         <Screw className="bottom-2 left-2" />
@@ -170,7 +170,7 @@ export const CassetteCard = memo(({ campaign, onSelect, index, dragX, cardWidth,
           <div aria-hidden className="absolute inset-0 pointer-events-none bg-linear-to-t from-black/85 via-black/10 to-transparent" />
 
           {/* Janela das bobinas */}
-          <div className="absolute bottom-3 inset-x-4 h-12 rounded-full bg-black/80 flex items-center px-2">
+          <div className="absolute bottom-3 inset-x-4 h-12 rounded-full bg-black/80 flex items-center px-2 shadow-hairline">
             <Reel spinning={isActive && !isLocked} />
             <div className="flex-1 mx-3 h-0.75 rounded-full bg-industrial-silver/15 relative overflow-hidden">
               <div className="absolute inset-y-0 left-0 w-2/5 rounded-full bg-industrial-silver/50" />
@@ -183,7 +183,6 @@ export const CassetteCard = memo(({ campaign, onSelect, index, dragX, cardWidth,
               <div className="-rotate-6 text-red-400 text-protocol px-3 py-1.5 rounded-inset bg-red-950/40">
                 {t('cassette.denied')}
               </div>
-              <span className="text-mono-ui text-[10px] text-red-400/60 uppercase">{t('cassette.deniedSub')}</span>
             </div>
           )}
         </div>
@@ -191,7 +190,7 @@ export const CassetteCard = memo(({ campaign, onSelect, index, dragX, cardWidth,
         {/* Descrição */}
         <div className={`mx-5 mt-3 shrink-0 relative overflow-hidden transition-[height] duration-300 ease-limbo ${isExpanded ? 'h-24' : 'h-10'}`}>
           <p
-            className={`h-full text-[10.5px] leading-relaxed text-ash-400 font-sans pl-3 custom-scrollbar ${
+            className={`h-full text-[10.5px] leading-relaxed text-ash-400 font-sans border-l border-border-accent pl-3 custom-scrollbar ${
               isExpanded ? 'overflow-y-auto' : 'line-clamp-2'
             }`}
           >
@@ -200,7 +199,7 @@ export const CassetteCard = memo(({ campaign, onSelect, index, dragX, cardWidth,
         </div>
 
         {/* Especificações */}
-        <div className="mx-5 mt-3 grid grid-cols-3 gap-3 border-t border-seam pt-3 shrink-0">
+        <div className="mx-5 mt-3 grid grid-cols-3 gap-3 border-t border-border-subtle pt-3 shrink-0">
           <Spec label={t('cassette.spec.system')} value={campaign.rpgSystem} />
           <Spec label={t('cassette.spec.sector')} value={campaign.location} />
           <Spec label={t('cassette.spec.year')} value={campaign.year} />

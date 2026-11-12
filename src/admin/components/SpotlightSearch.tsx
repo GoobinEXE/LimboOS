@@ -141,7 +141,7 @@ export default function SpotlightSearch({ open, onClose, items, onNavigate }: Sp
         role="dialog"
         aria-modal="true"
         aria-label={t('spotlight.placeholder')}
-        className="w-full max-w-xl bg-surface-container-low rounded-card overflow-hidden"
+        className="w-full max-w-xl bg-surface-container-low rounded-card shadow-2xl machined-edge overflow-hidden"
         onKeyDown={handleKeyDown}
       >
         {/* Campo de busca */}
@@ -168,13 +168,13 @@ export default function SpotlightSearch({ open, onClose, items, onNavigate }: Sp
           {filtered.length === 0 ? (
             <div className="py-14 text-center">
               <span className="material-symbols-outlined text-3xl text-ash-700 block mb-3" aria-hidden>search_off</span>
-              <p className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.08em]">{t('spotlight.empty')}</p>
+              <p className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.3em]">{t('spotlight.empty')}</p>
             </div>
           ) : (
             Object.entries(grouped).map(([cat, catItems]: [string, SearchableItem[]]) => (
               <div key={cat} role="group" aria-label={categoryLabel[cat] || cat}>
                 <div className="px-5 pt-3 pb-1.5">
-                  <span className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.08em]">{categoryLabel[cat] || cat}</span>
+                  <span className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.3em]">{categoryLabel[cat] || cat}</span>
                 </div>
                 {catItems.map((item) => {
                   const globalIdx = filtered.indexOf(item);
@@ -213,10 +213,10 @@ export default function SpotlightSearch({ open, onClose, items, onNavigate }: Sp
         {/* Rodapé de dicas */}
         <div className="px-5 py-2.5 border-t border-seam bg-surface-container-lowest flex items-center justify-between gap-3 flex-wrap">
           <div className="flex gap-4 flex-wrap">
-            <span className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-wider">{t('spotlight.hint.navigate')}</span>
-            <span className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-wider">{t('spotlight.hint.select')}</span>
-            <span className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-wider">{t('spotlight.hint.shortcut')}</span>
-            <span className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-wider">{t('spotlight.hint.tabs')}</span>
+            <span className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-widest">{t('spotlight.hint.navigate')}</span>
+            <span className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-widest">{t('spotlight.hint.select')}</span>
+            <span className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-widest">{t('spotlight.hint.shortcut')}</span>
+            <span className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-widest">{t('spotlight.hint.tabs')}</span>
           </div>
           <span className="text-[10px] font-mono text-ash-600 tabular-nums">
             {t('spotlight.resultsCount', { n: filtered.length })}

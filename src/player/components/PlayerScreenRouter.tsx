@@ -71,7 +71,7 @@ export default function PlayerScreenRouter() {
           {...screenMotion}
           className="w-full h-full flex items-center justify-center"
         >
-          <React.Suspense fallback={<RetroLoading message={t('app.loading.terminal')} />}>
+          <React.Suspense fallback={<RetroLoading fullScreen message={t('app.loading.terminal')} />}>
             <LoginScreen onLogin={handleLogin} />
           </React.Suspense>
         </motion.div>
@@ -81,7 +81,7 @@ export default function PlayerScreenRouter() {
           {...screenMotion}
           className="w-full h-full flex items-center justify-center"
         >
-          <React.Suspense fallback={<RetroLoading message={t('app.loading.agents')} />}>
+          <React.Suspense fallback={<RetroLoading fullScreen message={t('app.loading.agents')} />}>
             <CharacterSelectionScreen
               account={masterAccount}
               onSelect={handleCharacterSelect}
@@ -91,7 +91,7 @@ export default function PlayerScreenRouter() {
           </React.Suspense>
         </motion.div>
       ) : playerData === null ? (
-        <RetroLoading message={t('app.loading.sync')} subMessage={t('app.loading.syncSub')} />
+        <RetroLoading fullScreen message={t('app.loading.sync')} />
       ) : screen === 'profile' ? (
         <motion.div
           key="profile"
@@ -119,7 +119,7 @@ export default function PlayerScreenRouter() {
           {...screenMotion}
           className="w-full h-full flex items-center justify-center p-0 sm:p-4"
         >
-          <div className="w-full h-full max-w-130 rounded-none sm:rounded-panel relative flex flex-col mx-auto overflow-hidden bg-surface">
+          <div className="w-full h-full max-w-130 rounded-none sm:rounded-panel shadow-panel relative flex flex-col mx-auto overflow-hidden bg-surface">
             <React.Suspense fallback={<RetroLoading message={t('app.loading.dossier')} />}>
               <AgentDossierOverlay
                 onClose={() => goBack('campaignSelection')}
@@ -136,7 +136,7 @@ export default function PlayerScreenRouter() {
           {...screenMotion}
           className="w-full h-full flex items-center justify-center p-0 sm:p-4"
         >
-          <React.Suspense fallback={<RetroLoading message={t('app.loading.mission')} />}>
+          <React.Suspense fallback={<RetroLoading fullScreen message={t('app.loading.mission')} />}>
             <CampaignSelection
               onSelect={async (c) => {
                 await selectCampaign(c);
@@ -180,7 +180,7 @@ export default function PlayerScreenRouter() {
           />
         </React.Suspense>
       ) : (
-        <React.Suspense fallback={<RetroLoading message={t('app.loading.initSystem')} />}>
+        <React.Suspense fallback={<RetroLoading fullScreen message={t('app.loading.initSystem')} />}>
           <MiniAppsOverlay
             screen={screen}
             playerData={playerData}

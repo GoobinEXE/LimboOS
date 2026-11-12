@@ -5,7 +5,6 @@ import { diskRepairService } from '../services/DiskRepairService';
 import { intelRegistry } from '../data/intel_registry';
 import { useLandscapeLayout } from '../player/hooks/useLandscapeLayout';
 
-import RetroLoading from './player/RetroLoading';
 
 interface DiskRepairAppProps {
   uid: string;
@@ -68,10 +67,12 @@ export default function DiskRepairApp({ uid, characterId = '', onClose, onBackTo
 
         {(phase === 'loading' || phase === 'repairing') && (
           <div className={compact ? 'min-h-[120px]' : 'min-h-[200px]'}>
-            <RetroLoading 
-              message={phase === 'loading' ? t('diskRepair.reading') : t('diskRepair.demagnetizing')} 
-              subMessage={t('diskRepair.progressSub', { pct: Math.round(progress) })}
-            />
+            <div role="status" aria-live="polite" className="h-full flex flex-col items-center justify-center gap-2 text-center">
+              <p className="text-sm font-bold uppercase">
+                {phase === 'loading' ? t('diskRepair.reading') : t('diskRepair.demagnetizing')}
+              </p>
+              <p className="text-xs">{t('diskRepair.progressSub', { pct: Math.round(progress) })}</p>
+            </div>
           </div>
         )}
 

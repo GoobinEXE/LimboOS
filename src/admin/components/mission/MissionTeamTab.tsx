@@ -14,9 +14,9 @@ interface MissionTeamTabProps {
 }
 
 const SECTION_LABEL =
-  'text-[10px] text-primary/60 font-display font-bold uppercase tracking-wider pb-2';
+  'text-[10px] text-primary/60 font-display font-bold uppercase tracking-widest border-b border-primary/10 pb-2';
 const FIELD =
-  'w-full bg-black/40 text-[11px] font-mono text-bone p-3 outline-none rounded-sm transition';
+  'w-full bg-black/40 text-[11px] font-mono text-bone p-3 outline-none rounded-sm transition focus:bg-accent-10';
 
 function formatDate(iso: string | null | undefined, locale: string): string {
   if (!iso) return '—';
@@ -133,7 +133,7 @@ export default function MissionTeamTab({ campaign, groups }: MissionTeamTabProps
         <p id="team-cogm" className={SECTION_LABEL}>{t('team.cogmTitle')}</p>
         <p className="text-[11px] text-ash-500 leading-relaxed max-w-prose">{t('team.cogmBody')}</p>
         {campaignMembers.length === 0 ? (
-          <p className="text-[10px] text-ash-600 uppercase tracking-wider">{t('team.noCogm')}</p>
+          <p className="text-[10px] text-ash-600 uppercase tracking-widest">{t('team.noCogm')}</p>
         ) : (
           <ul className="space-y-2">
             {campaignMembers.map((m) => (
@@ -163,7 +163,7 @@ export default function MissionTeamTab({ campaign, groups }: MissionTeamTabProps
         <p className="text-[11px] text-ash-500 leading-relaxed max-w-prose">{t('team.playersBody')}</p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <label className="space-y-1">
-            <span className="block text-[10px] font-display font-bold uppercase tracking-wider text-ash-500">{t('team.squad')}</span>
+            <span className="block text-[10px] font-display font-bold uppercase tracking-widest text-ash-500">{t('team.squad')}</span>
             <select value={squadId} onChange={(e) => setSquadId(e.target.value)} className={FIELD}>
               <option value="">{t('team.noSquad')}</option>
               {squads.map((g) => (
@@ -172,7 +172,7 @@ export default function MissionTeamTab({ campaign, groups }: MissionTeamTabProps
             </select>
           </label>
           <label className="space-y-1">
-            <span className="block text-[10px] font-display font-bold uppercase tracking-wider text-ash-500">{t('team.maxUses')}</span>
+            <span className="block text-[10px] font-display font-bold uppercase tracking-widest text-ash-500">{t('team.maxUses')}</span>
             <input
               type="number"
               min={1}
@@ -183,7 +183,7 @@ export default function MissionTeamTab({ campaign, groups }: MissionTeamTabProps
             />
           </label>
           <label className="space-y-1">
-            <span className="block text-[10px] font-display font-bold uppercase tracking-wider text-ash-500">{t('team.days')}</span>
+            <span className="block text-[10px] font-display font-bold uppercase tracking-widest text-ash-500">{t('team.days')}</span>
             <input
               type="number"
               min={1}
@@ -206,7 +206,7 @@ export default function MissionTeamTab({ campaign, groups }: MissionTeamTabProps
 
       {lastLink && (
         <div className="bg-primary/5 rounded-sm p-4 space-y-2" role="status">
-          <p className="text-[10px] font-display font-bold uppercase tracking-wider text-primary">
+          <p className="text-[10px] font-display font-bold uppercase tracking-widest text-primary">
             {lastLink.kind === 'cogm' ? t('team.linkCogm') : t('team.linkPlayers')}
           </p>
           <div className="flex flex-col sm:flex-row gap-2">
@@ -222,7 +222,7 @@ export default function MissionTeamTab({ campaign, groups }: MissionTeamTabProps
         {invites === null ? (
           <RetroSpinner />
         ) : activeInvites.length === 0 ? (
-          <p className="text-[10px] text-ash-600 uppercase tracking-wider">{t('team.noInvites')}</p>
+          <p className="text-[10px] text-ash-600 uppercase tracking-widest">{t('team.noInvites')}</p>
         ) : (
           <ul className="space-y-2">
             {activeInvites.map((inv) => (

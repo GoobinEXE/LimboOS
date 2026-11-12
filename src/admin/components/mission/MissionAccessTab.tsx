@@ -88,7 +88,7 @@ export default function MissionAccessTab({
     <div className="space-y-8">
       <div className="flex items-center gap-3">
         <div className="h-px flex-1 bg-white/5" />
-        <span className="text-[10px] font-display font-bold text-ash-600 uppercase tracking-[0.08em]">
+        <span className="text-[10px] font-display font-bold text-ash-600 uppercase tracking-[0.3em]">
           Vínculos de Rede
         </span>
         <div className="h-px flex-1 bg-white/5" />
@@ -96,11 +96,11 @@ export default function MissionAccessTab({
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <p className="text-[10px] text-ash-600 font-display font-bold uppercase tracking-wider">
+          <p className="text-[10px] text-ash-600 font-display font-bold uppercase tracking-widest">
             Autorizar Missão para Esquadrão
           </p>
           <select
-            className="w-full bg-surface-container-lowest text-[10px] font-display font-bold text-primary p-3 outline-none rounded-sm transition appearance-none cursor-pointer"
+            className="w-full bg-surface-container-lowest text-[10px] font-display font-bold text-primary p-3 outline-none rounded-sm transition appearance-none cursor-pointer shadow-inner focus:bg-accent-10"
             onChange={(e) => e.target.value && handleUnlockForGroup(e.target.value, true)}
             value=""
           >
@@ -115,11 +115,11 @@ export default function MissionAccessTab({
           </select>
         </div>
         <div className="space-y-2">
-          <p className="text-[10px] text-ash-600 font-display font-bold uppercase tracking-wider">
+          <p className="text-[10px] text-ash-600 font-display font-bold uppercase tracking-widest">
             Autorizar Missão para Agente
           </p>
           <select
-            className="w-full bg-surface-container-lowest text-[10px] font-display font-bold text-primary p-3 outline-none rounded-sm transition appearance-none cursor-pointer"
+            className="w-full bg-surface-container-lowest text-[10px] font-display font-bold text-primary p-3 outline-none rounded-sm transition appearance-none cursor-pointer shadow-inner focus:bg-accent-10"
             onChange={(e) => {
               if (!e.target.value) return;
               const [uid, charId] = e.target.value.split('|');
@@ -143,7 +143,7 @@ export default function MissionAccessTab({
       </div>
 
       <div className="space-y-4">
-        <p className="text-[10px] text-ash-600 font-display font-bold uppercase tracking-wider border-b border-seam pb-2">
+        <p className="text-[10px] text-ash-600 font-display font-bold uppercase tracking-widest border-b border-border-subtle pb-2">
           Acessos Autorizados (Quem tem acesso)
         </p>
         <div className="flex flex-wrap gap-2">
@@ -189,7 +189,7 @@ export default function MissionAccessTab({
             allCharacters.filter((c) =>
               (c.character.unlockedCampaigns || []).includes(campaign.id)
             ).length === 0 && (
-              <p className="text-[10px] text-ash-600 uppercase tracking-wider">
+              <p className="text-[10px] text-ash-600 uppercase tracking-widest">
                 Nenhum acesso autorizado
               </p>
             )}
@@ -197,7 +197,7 @@ export default function MissionAccessTab({
       </div>
 
       <div className="space-y-4">
-        <p className="text-[10px] text-phosphor-500/50 font-display font-bold uppercase tracking-wider pb-2">
+        <p className="text-[10px] text-phosphor-500/50 font-display font-bold uppercase tracking-widest border-b border-phosphor-500/10 pb-2">
           Missão Ativa (Em Campo)
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

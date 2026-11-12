@@ -156,7 +156,7 @@ function CorruptedTextRenderer({ text }: { text: string }) {
       </div>
 
       {/* Bottom warning bar */}
-      <div className="mt-4 flex items-center gap-2 text-red-500/60 text-[10px] font-mono uppercase tracking-[0.08em] animate-led">
+      <div className="mt-4 flex items-center gap-2 text-red-500/60 text-[10px] font-mono uppercase tracking-[0.3em] animate-led">
         <span>⚠</span>
         <span>{t('evidence.crcError')}</span>
         <span>⚠</span>
@@ -196,17 +196,17 @@ export default function EvidenceReader({ evidence, onClose }: EvidenceReaderProp
   const isCorrupted = isText && (evidence as TextIntel).isCorrupted();
   
   const scheme = isVisual
-    ? { bg: 'bg-[#0a0a0f]', text: 'text-tube-400', border: '', accent: 'cyan', selBg: 'selection:bg-tube-400', selText: 'selection:text-[#0a0a0f]', scrollThumb: '#86a5b4' }
+    ? { bg: 'bg-[#0a0a0f]', text: 'text-tube-400', border: 'border-tube-400', accent: 'cyan', selBg: 'selection:bg-tube-400', selText: 'selection:text-[#0a0a0f]', scrollThumb: '#86a5b4' }
     : isVideo
-      ? { bg: 'bg-[#0a0a0a]', text: 'text-orange-400', border: '', accent: 'orange', selBg: 'selection:bg-orange-400', selText: 'selection:text-[#0a0a0a]', scrollThumb: '#fb923c' }
+      ? { bg: 'bg-[#0a0a0a]', text: 'text-orange-400', border: 'border-orange-400', accent: 'orange', selBg: 'selection:bg-orange-400', selText: 'selection:text-[#0a0a0a]', scrollThumb: '#fb923c' }
       : isMeta
       // Fósforo branco (P4) para registros de sistema/conquista
-      ? { bg: 'bg-[#0c0b0a]', text: 'text-bone', border: '', accent: 'bone', selBg: 'selection:bg-bone', selText: 'selection:text-[#0c0b0a]', scrollThumb: '#e8e0d0' }
+      ? { bg: 'bg-[#0c0b0a]', text: 'text-bone', border: 'border-bone', accent: 'bone', selBg: 'selection:bg-bone', selText: 'selection:text-[#0c0b0a]', scrollThumb: '#e8e0d0' }
       : isAudio
-        ? { bg: 'bg-[#0d0a00]', text: 'text-amber-400', border: '', accent: 'amber', selBg: 'selection:bg-amber-400', selText: 'selection:text-[#0d0a00]', scrollThumb: '#f59e0b' }
+        ? { bg: 'bg-[#0d0a00]', text: 'text-amber-400', border: 'border-amber-400', accent: 'amber', selBg: 'selection:bg-amber-400', selText: 'selection:text-[#0d0a00]', scrollThumb: '#f59e0b' }
         : isCorrupted
-          ? { bg: 'bg-[#0a0000]', text: 'text-red-500', border: '', accent: 'red', selBg: 'selection:bg-red-500', selText: 'selection:text-black', scrollThumb: '#ef4444' }
-          : { bg: 'bg-[#07110a]', text: 'text-crt', border: '', accent: 'green', selBg: 'selection:bg-crt', selText: 'selection:text-[#07110a]', scrollThumb: '#33ff33' };
+          ? { bg: 'bg-[#0a0000]', text: 'text-red-500', border: 'border-red-500', accent: 'red', selBg: 'selection:bg-red-500', selText: 'selection:text-black', scrollThumb: '#ef4444' }
+          : { bg: 'bg-[#07110a]', text: 'text-crt', border: 'border-crt', accent: 'green', selBg: 'selection:bg-crt', selText: 'selection:text-[#07110a]', scrollThumb: '#33ff33' };
 
   return (
     <motion.div 
@@ -217,7 +217,7 @@ export default function EvidenceReader({ evidence, onClose }: EvidenceReaderProp
       role="dialog"
       aria-modal="true"
       aria-label={evidence.title}
-      className={`absolute inset-0 z-50 flex flex-col ${scheme.bg} ${scheme.text} font-mono p-4 sm:p-6 sm:rounded-panel overflow-hidden`}
+      className={`absolute inset-0 z-50 flex flex-col ${scheme.bg} ${scheme.text} font-mono p-4 sm:p-6 sm:rounded-panel overflow-hidden shadow-[0_24px_64px_-24px_rgba(0,0,0,0.9)]`}
     >
       {/* Scanline overlay */}
       <div className="absolute inset-0 pointer-events-none z-10" style={{
@@ -228,12 +228,12 @@ export default function EvidenceReader({ evidence, onClose }: EvidenceReaderProp
         background: 'radial-gradient(circle, transparent 70%, rgba(0,0,0,0.3) 100%)'
       }} />
       {/* Faixa de protocolo — enquadramento de documento */}
-      <div className="flex items-center justify-between gap-3 mb-3 shrink-0 text-[10px] uppercase tracking-[0.08em] opacity-70 select-none">
+      <div className="flex items-center justify-between gap-3 mb-3 shrink-0 text-[10px] uppercase tracking-[0.3em] opacity-70 select-none">
         <span className="flex items-center gap-2 whitespace-nowrap">
           <span aria-hidden className="inline-block w-1.5 h-1.5 bg-current animate-led" />
           {t('evidence.registry')}
         </span>
-        <span aria-hidden className="flex-1" />
+        <span aria-hidden className="flex-1 border-t border-dashed border-current/40" />
         <span className="whitespace-nowrap">{t('evidence.archive', { id: evidence.id })}</span>
       </div>
       {/* Header */}
@@ -241,7 +241,7 @@ export default function EvidenceReader({ evidence, onClose }: EvidenceReaderProp
         <div className="flex items-center gap-3">
           <IntelTypeIcon type={evidence.type} size={22} className={scheme.text} />
           <div>
-            <h2 className="text-sm font-bold uppercase tracking-wider">{evidence.title}</h2>
+            <h2 className="text-sm font-bold uppercase tracking-widest">{evidence.title}</h2>
             <p className="text-[10px] opacity-70 italic">
               {isVisual 
                 ? t('evidence.category', { cat: details.category || t('evidence.categoryFallback') })
@@ -260,7 +260,7 @@ export default function EvidenceReader({ evidence, onClose }: EvidenceReaderProp
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <span className={`text-[10px] font-bold uppercase tracking-[0.08em] px-2 py-0.5 rounded ${
+          <span className={`text-[10px] font-bold uppercase tracking-[0.2em] px-2 py-0.5 rounded ${
             evidence.level >= 3 
               ? 'bg-current/10' 
               : 'opacity-80'
@@ -281,7 +281,7 @@ export default function EvidenceReader({ evidence, onClose }: EvidenceReaderProp
         <style>{`
           .custom-scrollbar::-webkit-scrollbar { width: 4px; }
           .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-          .custom-scrollbar::-webkit-scrollbar-thumb { background: ${scheme.scrollThumb}; 2px; }
+          .custom-scrollbar::-webkit-scrollbar-thumb { background: ${scheme.scrollThumb}; border-radius: 2px; }
         `}</style>
 
         {/* VIDEO: player unificado (deck desktop / evidência) */}
@@ -365,7 +365,7 @@ export default function EvidenceReader({ evidence, onClose }: EvidenceReaderProp
             ) : (
               <IntelTypeIcon type="META" size={56} />
             )}
-            <h3 className="text-lg font-bold uppercase tracking-wider">{evidence.title}</h3>
+            <h3 className="text-lg font-bold uppercase tracking-widest">{evidence.title}</h3>
             <p className={`text-sm leading-relaxed max-w-xs opacity-80 ${scheme.selBg} ${scheme.selText}`}>
               {evidence.description}
             </p>

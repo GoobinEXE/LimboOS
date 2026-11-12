@@ -75,7 +75,6 @@ export default function PlayerRootShell() {
       <RetroLoading
         fullScreen
         message={t('app.loading.authenticating')}
-        subMessage={t('app.loading.authenticatingSub')}
       />
     );
   }

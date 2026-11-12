@@ -133,7 +133,7 @@ export default function MissionResourcesTab({
           </div>
         </div>
 
-        <ul className="rounded-inset divide-y divide-seam bg-surface-container-lowest">
+        <ul className="rounded-inset divide-y divide-border-subtle bg-surface-container-lowest">
           {checks.map((check) => {
             const style = STATE_STYLE[check.state];
             const act = action(check);
@@ -181,7 +181,7 @@ export default function MissionResourcesTab({
           {t('missions.resources.kitTitle')}
         </h4>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 rounded-inset bg-surface-container-lowest divide-y lg:divide-y-0 lg:divide-x divide-seam">
+        <div className="grid grid-cols-1 lg:grid-cols-3 rounded-inset bg-surface-container-lowest divide-y lg:divide-y-0 lg:divide-x divide-border-subtle">
           <ResourceColumn
             icon="hub"
             title={t('missions.resources.section.intel')}
@@ -318,7 +318,7 @@ function ResourceColumn({
 
       {note && count > 0 && <p className="text-[11px] text-amber-300/80 leading-relaxed">{note}</p>}
 
-      <div className="mt-auto pt-2 flex flex-wrap items-center justify-between gap-2 border-t border-seam">
+      <div className="mt-auto pt-2 flex flex-wrap items-center justify-between gap-2 border-t border-border-subtle">
         <span className="text-[11px] text-ash-500">
           {globalCount > 0 ? t('missions.resources.globalsNote', { count: globalCount }) : ' '}
         </span>

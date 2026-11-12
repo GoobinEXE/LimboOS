@@ -535,7 +535,7 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
                 >
                   <div className="flex flex-col items-center gap-4">
                     <RetroSpinner size="md" />
-                    <p className="text-[10px] font-display font-bold text-primary uppercase tracking-[0.08em]">
+                    <p className="text-[10px] font-display font-bold text-primary uppercase tracking-[0.32em]">
                       {t('loading.data')}
                     </p>
                   </div>
@@ -604,13 +604,7 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
           </div>
         </main>
 
-        <footer className="h-8 border-t border-seam bg-surface-container-lowest hidden lg:flex items-center justify-between gap-6 px-4 sm:px-6 shrink-0">
-          <div className="flex items-center gap-2.5 min-w-0">
-            <span className="lmb-led text-accent animate-led" aria-hidden />
-            <span className="text-[10px] font-display font-bold uppercase tracking-[0.08em] text-ash-500 truncate">
-              {t('footer.realtimeSync')}
-            </span>
-          </div>
+        <footer className="h-8 border-t border-seam bg-surface-container-lowest hidden lg:flex items-center justify-end gap-6 px-4 sm:px-6 shrink-0">
           <div className="hidden lg:flex items-center gap-4 text-[10px] text-ash-500" aria-hidden>
             <span className="flex items-center gap-1.5">
               <kbd className="lmb-kbd">{modKey}K</kbd>
@@ -625,9 +619,6 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
               {t('footer.shortcutMenu')}
             </span>
           </div>
-          <span className="text-[10px] font-display font-bold uppercase tracking-[0.08em] text-ash-600 hidden md:inline truncate">
-            {t('footer.systemId')}
-          </span>
         </footer>
       </div>
 

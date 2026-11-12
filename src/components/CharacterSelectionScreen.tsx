@@ -108,239 +108,229 @@ export default function CharacterSelectionScreen({ account, onSelect, onLogout, 
   };
 
   if (loading) {
-    return <RetroLoading message={t('character.loading')} subMessage={t('character.loadingSub')} />;
+    return <RetroLoading fullScreen message={t('character.loading')} />;
   }
 
-  const statusChip = (status: CharacterData['agentStatus']) =>
-    status === 'vivo'
-      ? 'bg-phosphor-500 text-phosphor-950'
-      : status === 'morto'
-        ? 'bg-red-600 text-red-50'
-        : 'bg-yellow-500 text-yellow-950';
-
-  const initials = (name: string) =>
-    name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join('').toUpperCase() || '?';
-
   return (
-    <div className="w-full h-full flex flex-col items-center relative overflow-y-auto bg-surface safe-area-pad [--safe-pad:1rem] min-h-0">
+    <div className="w-full h-full flex flex-col items-center justify-center p-4 relative overflow-y-auto bg-surface-sunken safe-area-pad [--safe-pad:1rem] min-h-0">
       <div className="noise-overlay" />
       <div className="scanlines" />
 
-      <motion.div initial={{ opacity: 0, transform: 'translateY(12px)' }} animate={{ opacity: 1, transform: 'translateY(0px)' }} transition={{ duration: 0.3, ease: EASE_OUT }} className="w-full max-w-2xl xl:max-w-3xl z-10 my-auto py-4">
-        <header className="bg-accent text-field-ink rounded-panel p-5 sm:p-7 mb-2">
-          <div className="flex items-start justify-between gap-4">
-            <h1 className="text-display text-[2.25rem] sm:text-5xl uppercase leading-[0.92]">
-              {t('character.title')} {t('character.titleAccent')}
+      <motion.div initial={{ opacity: 0, transform: 'translateY(12px)' }} animate={{ opacity: 1, transform: 'translateY(0px)' }} transition={{ duration: 0.3, ease: EASE_OUT }} className="w-full max-w-2xl xl:max-w-3xl z-10">
+        <header className="mb-8 border-b border-border-accent pb-6 flex flex-wrap justify-between items-end gap-4">
+          <div>
+            <h1 className="text-display text-4xl text-bone uppercase">
+              {t('character.title')} <span className="text-accent">{t('character.titleAccent')}</span>
             </h1>
-            <div className="flex items-center gap-1.5 shrink-0">
-              {onOpenAdmin && (
-                <button onClick={onOpenAdmin} className="bg-field-ink/10 hover:bg-field-ink hover:text-accent text-field-ink w-10 h-10 rounded-control flex items-center justify-center transition-colors duration-(--duration-fast) active:scale-[0.97]" title={t('character.consoleTitle')} aria-label={t('character.consoleTitle')}>
-                  <MonitorCog size={17} />
-                </button>
-              )}
-              <button onClick={onLogout} className="bg-field-ink/10 hover:bg-field-ink hover:text-accent text-field-ink w-10 h-10 rounded-control flex items-center justify-center transition-colors duration-(--duration-fast) active:scale-[0.97]" title={t('character.logoutTitle')} aria-label={t('character.logoutTitle')}>
-                <LogOut size={17} />
-              </button>
-            </div>
           </div>
-          <div className="mt-5 flex flex-wrap items-end justify-between gap-3">
-            <p className="text-mono-ui text-field-ink/75">
-              {t('character.operator', { name: account.displayName || account.masterName || account.email, count: characters.length })}
-            </p>
-            <button onClick={() => setIsCreating(true)} className="bg-field-ink text-accent hover:bg-surface-container-high h-10 px-4 rounded-control text-protocol transition-colors duration-(--duration-fast) flex items-center gap-2 active:scale-[0.97]">
-              <UserPlus size={15} /> {t('character.recruit')}
+          <div className="flex items-center gap-3">
+            {onOpenAdmin && (
+              <button onClick={onOpenAdmin} className="bg-surface-raised hover:bg-accent/10 text-ash-300 hover:text-accent w-10 h-10 rounded-control flex items-center justify-center transition-colors duration-(--duration-fast) active:scale-[0.97]" title={t('character.consoleTitle')} aria-label={t('character.consoleTitle')}>
+                <MonitorCog size={16} />
+              </button>
+            )}
+            <button onClick={onLogout} className="bg-error/10 hover:bg-error/20 text-error w-10 h-10 rounded-control flex items-center justify-center transition-colors duration-(--duration-fast) active:scale-[0.97]" title={t('character.logoutTitle')} aria-label={t('character.logoutTitle')}>
+              <LogOut size={16} />
+            </button>
+            <button onClick={() => setIsCreating(true)} className="bg-accent/10 hover:bg-accent/20 text-accent px-4 py-2 rounded-control text-protocol transition-colors duration-(--duration-fast) flex items-center gap-2 group active:scale-[0.97]">
+              <UserPlus size={14} /> {t('character.recruit')}
             </button>
           </div>
         </header>
 
         {errorMsg && (
-          <div role="alert" className="mb-2 bg-red-700 text-red-50 rounded-panel p-4 flex items-center gap-3">
+          <div role="alert" className="mb-4 bg-error-container/30 rounded-control p-3 flex items-center gap-3 text-error">
             <AlertCircle size={18} />
             <span className="text-protocol">{errorMsg}</span>
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <AnimatePresence mode="popLayout">
             {characters.map((char, i) => (
               <motion.button key={char.id} type="button" initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: staggerDelay(i, 0.05, 0.3), duration: 0.24, ease: EASE_OUT }}
                 onClick={() => handleSelect(char)}
                 disabled={Boolean(selectedCharId) && selectedCharId !== char.id}
                 aria-busy={selectedCharId === char.id}
-                className={`w-full text-left rounded-panel p-4 cursor-pointer transition-colors duration-(--duration-fast) group relative overflow-hidden active:scale-[0.99] disabled:opacity-40 disabled:cursor-wait hover:bg-field-bone focus-visible:bg-field-bone ${selectedCharId === char.id ? 'bg-field-bone' : 'bg-surface-raised'}`}
+                className="w-full text-left bg-surface-raised hover:bg-surface-panel rounded-card p-5 cursor-pointer transition-colors duration-(--duration-fast) group relative overflow-hidden shadow-hairline active:scale-[0.99] disabled:opacity-50 disabled:cursor-wait"
               >
-                <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 rounded-card overflow-hidden bg-accent text-field-ink group-hover:bg-field-ink group-hover:text-accent group-focus-visible:bg-field-ink group-focus-visible:text-accent flex items-center justify-center shrink-0 transition-colors duration-(--duration-fast)">
+                <div className="flex items-center gap-4 relative z-10">
+                  <div className={`w-16 h-16 rounded-card overflow-hidden bg-surface-panel ${char.agentStatus === 'morto' ? 'bg-red-500/10' : ''} flex items-center justify-center`}>
                     {char.profilePhotoUrl ? (
                       <img src={char.profilePhotoUrl} alt={char.codinome} className="w-full h-full object-cover" />
                     ) : (
-                      <span className="text-display text-lg" aria-hidden>{initials(char.codinome)}</span>
+                      <User size={32} className="text-ash-600" />
                     )}
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className={`text-display text-xl uppercase transition-colors duration-(--duration-fast) group-hover:text-field-ink group-focus-visible:text-field-ink ${selectedCharId === char.id ? 'text-field-ink' : 'text-bone'}`}>
+                  <div className="flex-1">
+                    <h3 className="text-display text-xl text-bone uppercase group-hover:text-accent transition-colors duration-(--duration-fast)">
                       {char.codinome}
                     </h3>
-                    <div className="flex items-center gap-2 mt-1.5">
-                      <span className={`lmb-tag ${statusChip(char.agentStatus)}`}>{char.agentStatus}</span>
-                      {char.agentId && <span className="text-mono-ui text-ash-400 group-hover:text-ash-700 group-focus-visible:text-ash-700">RM-{char.agentId}</span>}
+                    <div className="flex items-center gap-3 mt-1">
+                      <div className="flex items-center gap-1.5">
+                        <span className={`lmb-led ${char.agentStatus === 'vivo' ? 'text-phosphor-400 animate-led' : char.agentStatus === 'morto' ? 'text-red-500' : 'text-yellow-500'}`} aria-hidden />
+                        <span className={`text-protocol ${char.agentStatus === 'vivo' ? 'text-phosphor-500' : char.agentStatus === 'morto' ? 'text-red-500' : 'text-yellow-500'}`}>
+                          {char.agentStatus}
+                        </span>
+                      </div>
+                      {char.agentId && <span className="text-mono-ui text-ash-500">RM-{char.agentId}</span>}
                     </div>
-                    <p className="text-mono-ui text-ash-500 group-hover:text-ash-600 group-focus-visible:text-ash-600 mt-1 truncate">
+                    <p className="text-mono-ui text-ash-500 mt-1 truncate">
                       {char.workspaceId ? t('character.mesa', { name: mesaName(char.workspaceId) || '—' }) : t('character.noMesa')}
                     </p>
                   </div>
-                  <div className="flex flex-col items-end gap-3 self-stretch justify-between">
-                    <div className="flex gap-0.5" aria-label={`${char.dangerLevel}/5`}>
-                      {Array.from({ length: 5 }).map((_, idx) => (
-                        <div key={idx} className={`w-1.5 h-3.5 rounded-[1px] ${idx < char.dangerLevel ? 'bg-accent group-hover:bg-field-ink' : 'bg-surface-container-highest group-hover:bg-ash-300'}`} />
-                      ))}
-                    </div>
-                    {selectedCharId === char.id ? (
-                      <RetroSpinner size="sm" className="text-field-ink" />
-                    ) : (
-                      <ChevronRight size={20} className="text-ash-500 group-hover:text-field-ink transition duration-(--duration-fast) group-hover:translate-x-0.5" />
-                    )}
-                  </div>
+                  {selectedCharId === char.id ? (
+                    <RetroSpinner size="sm" className="text-accent" />
+                  ) : (
+                    <ChevronRight size={20} className="text-ash-600 group-hover:text-accent transition duration-(--duration-fast) group-hover:translate-x-0.5" />
+                  )}
                 </div>
 
+                {/* Status-specific overlays */}
                 {char.agentStatus === 'morto' && (
-                  <Skull className="absolute right-12 -bottom-5 w-16 h-16 rotate-12 text-red-600/10 pointer-events-none" aria-hidden />
+                  <div className="absolute inset-0 bg-red-950/10 pointer-events-none flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Skull className="text-red-500/20 w-24 h-24 rotate-12" />
+                  </div>
                 )}
+                
+                {/* Danger Level indicator */}
+                <div className="absolute top-2 right-2 flex gap-0.5">
+                  {Array.from({ length: 5 }).map((_, idx) => (
+                    <div key={idx} className={`w-1 h-3 rounded-inset ${idx < char.dangerLevel ? 'bg-accent/40' : 'bg-border-subtle'}`} />
+                  ))}
+                </div>
               </motion.button>
             ))}
           </AnimatePresence>
 
           {characters.length === 0 && !isCreating && (
-            <div className="col-span-full py-12 flex flex-col items-center justify-center rounded-panel bg-surface-raised text-ash-400">
-              <Search size={40} className="mb-4 text-ash-500" />
+            <div className="col-span-full py-12 flex flex-col items-center justify-center rounded-panel opacity-40">
+              <Search size={48} className="mb-4" />
               <p className="text-protocol">{t('character.empty')}</p>
             </div>
           )}
         </div>
 
-        <form onSubmit={openInvite} className="mt-2 bg-surface-raised rounded-panel p-2 flex flex-col sm:flex-row gap-2" aria-label={t('character.invite.label')}>
+        <form onSubmit={openInvite} className="mt-6 flex flex-col sm:flex-row gap-2" aria-label={t('character.invite.label')}>
           <input
             type="text"
             value={inviteInput}
             onChange={(e) => setInviteInput(e.target.value)}
             placeholder={t('character.invite.placeholder')}
-            aria-label={t('character.invite.label')}
             autoComplete="off"
             spellCheck={false}
-            className="lmb-field flex-1 font-mono h-11"
+            className="focus-bare flex-1 bg-surface-raised shadow-pressed rounded-control py-3 px-4 text-bone font-mono text-sm outline-none placeholder:text-ash-600"
           />
-          <button type="submit" disabled={!parseInviteToken(inviteInput)} className="lmb-btn lmb-btn-bone h-11">
+          <button type="submit" disabled={!parseInviteToken(inviteInput)} className="bg-accent/10 hover:bg-accent/20 text-accent px-4 py-3 rounded-control text-protocol transition-colors duration-(--duration-fast) disabled:opacity-40">
             {t('character.invite.submit')}
           </button>
         </form>
-
-        <footer className="mt-6 flex justify-between items-center gap-4 text-ash-600 pointer-events-none">
-          <div className="text-protocol">{tCommon('brand.smileIndustries')}</div>
-          <div className="text-mono-ui">{t('character.footer.grid', { id: account?.uid ? account.uid.slice(0, 8) : '--------' })}</div>
-        </footer>
+        <div>
+        </div>
       </motion.div>
 
-      {/* Novo agente */}
+      {/* Create New Character Modal */}
       <AnimatePresence>
         {isCreating && (
           <motion.div variants={overlayFade} initial="hidden" animate="visible" exit="exit" className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-surface-scrim"
             onMouseDown={(e) => { if (e.target === e.currentTarget && !creating) setIsCreating(false); }}
             onKeyDown={(e) => { if (e.key === 'Escape' && !creating) setIsCreating(false); }}
           >
-            <motion.div role="dialog" aria-modal="true" aria-labelledby="create-agent-title" variants={dialogPop} initial="hidden" animate="visible" exit="exit" className="w-full max-w-md bg-surface-raised rounded-panel overflow-hidden">
-              <div className="bg-accent text-field-ink px-6 py-5">
-                <div className="text-protocol text-field-ink/70">{t('character.create.badge')}</div>
-                <h2 id="create-agent-title" className="text-display text-3xl uppercase mt-1">
-                  {t('character.create.title')} {t('character.create.titleAccent')}
-                </h2>
-              </div>
-              <div className="p-6">
+            <motion.div role="dialog" aria-modal="true" variants={dialogPop} initial="hidden" animate="visible" exit="exit" className="w-full max-w-md bg-surface-raised rounded-card p-8 shadow-2xl machined-edge relative">
+              <h2 className="text-display text-2xl text-bone uppercase mb-6">
+                {t('character.create.title')} <span className="text-accent">{t('character.create.titleAccent')}</span>
+              </h2>
               {mesas.length === 0 ? (
                 <div className="space-y-6">
-                  <p className="text-ash-300 leading-relaxed">{t('character.create.needInvite')}</p>
-                  <button type="button" onClick={() => setIsCreating(false)} className="lmb-btn w-full h-12">
+                  <p className="text-protocol text-ash-300 leading-relaxed">{t('character.create.needInvite')}</p>
+                  <button type="button" onClick={() => setIsCreating(false)} className="w-full py-4 text-protocol text-ash-400 hover:text-white transition-colors duration-(--duration-fast)">
                     {tCommon('cancel')}
                   </button>
                 </div>
               ) : (
-              <form onSubmit={handleCreate} className="space-y-5">
+              <form onSubmit={handleCreate} className="space-y-6">
                 {mesas.length > 1 && (
                   <label className="block">
-                    <span className="lmb-eyebrow mb-2">{t('character.create.mesaLabel')}</span>
-                    <select value={newWsId} onChange={(e) => setNewWsId(e.target.value)} className="lmb-field h-12">
+                    <span className="text-protocol text-ash-400 mb-2 block">{t('character.create.mesaLabel')}</span>
+                    <select value={newWsId} onChange={(e) => setNewWsId(e.target.value)}
+                      className="w-full bg-surface-sunken rounded-control py-3 px-4 text-bone outline-none">
                       {mesas.map((m) => (
                         <option key={m.wsId} value={m.wsId}>{m.workspaceName || m.wsId}</option>
                       ))}
                     </select>
                   </label>
                 )}
-                <label className="block">
-                  <span className="lmb-eyebrow mb-2">{t('character.create.label')}</span>
+                <div className="group">
+                  <label className="text-protocol text-ash-400 group-focus-within:text-accent transition-colors duration-(--duration-fast) mb-2 block">
+                    {t('character.create.label')}
+                  </label>
                   <div className="relative">
-                    <Shield size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-ash-500 pointer-events-none" />
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-ash-500 group-focus-within:text-accent transition-colors duration-(--duration-fast)">
+                      <Shield size={16} />
+                    </div>
                     <input type="text" autoFocus required value={newCodinome} onChange={e => setNewCodinome(e.target.value)}
                       placeholder={t('character.create.placeholder')}
                       autoComplete="off" spellCheck={false}
-                      className="lmb-field h-12 pl-11 uppercase tracking-wide" />
+                      className="focus-bare w-full bg-surface-sunken rounded-control py-4 pl-12 pr-4 text-bone shadow-pressed font-sans text-base tracking-wide focus:ring-0 placeholder:text-ash-600 outline-none uppercase transition-colors duration-(--duration-fast)" />
+                    <div className="absolute bottom-0 left-4 right-4 h-px bg-accent scale-x-0 origin-left transition-transform duration-(--duration-base) ease-limbo group-focus-within:scale-x-100" />
                   </div>
-                </label>
-
-                <div className="bg-surface-panel rounded-card p-4 flex gap-3">
-                  <AlertCircle size={18} className="text-accent shrink-0 mt-0.5" />
-                  <p className="text-sm text-ash-200 leading-relaxed">
+                </div>
+                
+                <div className="bg-accent-05 border-accent/30 rounded-inset p-4 flex gap-3">
+                  <AlertCircle size={18} className="text-accent shrink-0" />
+                  <p className="text-protocol text-ash-300 leading-relaxed">
                     {t('character.create.warning')}
                   </p>
                 </div>
 
-                <div className="flex gap-2">
-                  <button type="button" onClick={() => setIsCreating(false)} className="lmb-btn lmb-btn-ghost flex-1 h-12">
+                <div className="flex gap-4">
+                  <button type="button" onClick={() => setIsCreating(false)} className="flex-1 py-4 text-protocol text-ash-400 hover:text-white transition-colors duration-(--duration-fast)">
                     {tCommon('cancel')}
                   </button>
-                  <button type="submit" disabled={creating} className="lmb-btn lmb-btn-primary flex-2 h-12">
+                  <button type="submit" disabled={creating} className="flex-2 bg-accent hover:bg-primary text-[#1a0d00] active:scale-[0.97] font-display font-bold text-xs uppercase tracking-[0.2em] py-4 px-8 rounded-control transition duration-(--duration-fast) flex items-center justify-center gap-3 disabled:opacity-50">
                     {creating ? <RetroSpinner size="sm" /> : t('character.create.submit')}
                   </button>
                 </div>
               </form>
               )}
-              </div>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Nome do mestre (obrigatório) */}
+      {/* Mandatory Master Name Modal */}
       <AnimatePresence>
         {showMasterNamePrompt && (
-          <motion.div variants={overlayFade} initial="hidden" animate="visible" exit="exit" className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-surface-scrim">
-            <motion.div role="dialog" aria-modal="true" aria-labelledby="master-name-title" variants={dialogPop} initial="hidden" animate="visible" exit="exit" className="w-full max-w-md bg-surface-raised rounded-panel overflow-hidden">
-              <div className="bg-accent text-field-ink px-6 py-5">
-                <div className="text-protocol text-field-ink/70">{t('character.master.badge')}</div>
-                <h2 id="master-name-title" className="text-display text-3xl uppercase mt-1">
-                  {t('character.master.title')} {t('character.master.titleAccent')}
-                </h2>
-              </div>
-              <div className="p-6">
-              <p className="text-ash-300 mb-6 leading-relaxed">
+          <motion.div variants={overlayFade} initial="hidden" animate="visible" exit="exit" className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-surface-sunken/95">
+            <motion.div role="dialog" aria-modal="true" variants={dialogPop} initial="hidden" animate="visible" exit="exit" className="w-full max-w-md bg-surface-raised rounded-card p-8 shadow-2xl machined-edge relative">
+              <h2 className="text-display text-2xl text-bone uppercase mb-4 mt-2">
+                {t('character.master.title')} <span className="text-accent">{t('character.master.titleAccent')}</span>
+              </h2>
+              <p className="text-mono-ui text-ash-300 mb-8 leading-relaxed">
                 {t('character.master.body')}
               </p>
-
-              <form onSubmit={handleSaveMasterName} className="space-y-5">
-                <label className="block">
-                  <span className="lmb-eyebrow mb-2">{t('character.master.label')}</span>
+              
+              <form onSubmit={handleSaveMasterName} className="space-y-6">
+                <div className="group">
+                  <label className="text-protocol text-ash-400 group-focus-within:text-accent transition-colors duration-(--duration-fast) mb-2 block">
+                    {t('character.master.label')}
+                  </label>
                   <div className="relative">
-                    <User size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-ash-500 pointer-events-none" />
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-ash-500 group-focus-within:text-accent transition-colors duration-(--duration-fast)">
+                      <User size={16} />
+                    </div>
                     <input type="text" autoFocus required value={newMasterName} onChange={e => setNewMasterName(e.target.value)}
                       placeholder={t('character.master.placeholder')}
                       autoComplete="name"
-                      className="lmb-field h-12 pl-11" />
+                      className="focus-bare w-full bg-surface-sunken rounded-control py-4 pl-12 pr-4 text-bone shadow-pressed font-sans text-base tracking-wide focus:ring-0 placeholder:text-ash-600 outline-none transition-colors duration-(--duration-fast)" />
+                    <div className="absolute bottom-0 left-4 right-4 h-px bg-accent scale-x-0 origin-left transition-transform duration-(--duration-base) ease-limbo group-focus-within:scale-x-100" />
                   </div>
-                </label>
+                </div>
 
-                <button type="submit" disabled={savingMasterName} className="lmb-btn lmb-btn-primary w-full h-12">
+                <button type="submit" disabled={savingMasterName} className="w-full bg-accent hover:bg-primary text-[#1a0d00] active:scale-[0.97] font-display font-bold text-xs uppercase tracking-[0.2em] py-4 rounded-control transition duration-(--duration-fast) flex items-center justify-center gap-3 disabled:opacity-50">
                   {savingMasterName ? <RetroSpinner size="sm" /> : t('character.master.submit')}
                 </button>
               </form>
-              </div>
             </motion.div>
           </motion.div>
         )}

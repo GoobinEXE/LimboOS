@@ -47,10 +47,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://firestore.googleapis.com">
     <link rel="preconnect" href="https://identitytoolkit.googleapis.com">
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..900&family=JetBrains+Mono:wght@400;600;700&display=swap" />
-    <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'"/>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'"/>
     <noscript>
-      <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet"/>
+      <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
     </noscript>
     <style>
       /* Splash crítico com a assinatura Dark Room. Substrato Preto Fita Magnética (#090A0C),
@@ -58,7 +58,7 @@
          src/lib/bootSplash.ts tira o bloco de #root antes do React e faz o fade de saída. */
       #initial-loader { position: fixed; inset: 0; background: #090A0C; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px; z-index: 9999; transition: opacity 360ms cubic-bezier(0.22, 1, 0.36, 1); padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom); }
       #initial-loader.is-leaving { opacity: 0; pointer-events: none; }
-      #initial-loader .dr-logo { width: min(56vw, 260px); height: auto; animation: dr-in 700ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+      #initial-loader .dr-logo { width: min(56vw, 260px); height: auto; }
       #initial-loader .dr-boot { display: flex; flex-direction: column; align-items: center; gap: 12px; animation: dr-in 700ms 200ms cubic-bezier(0.22, 1, 0.36, 1) both; }
       #initial-loader .dr-bar { position: relative; width: 96px; height: 1px; background: #24262B; overflow: hidden; }
       #initial-loader .dr-bar::after { content: ""; position: absolute; inset: 0; width: 32%; background: #8F9397; animation: dr-scan 1.3s linear infinite; }
@@ -66,7 +66,7 @@
       @keyframes dr-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
       @keyframes dr-scan { from { transform: translateX(-100%); } to { transform: translateX(320%); } }
       @media (prefers-reduced-motion: reduce) {
-        #initial-loader, #initial-loader .dr-logo, #initial-loader .dr-boot { animation: none; transition: none; }
+        #initial-loader, #initial-loader .dr-boot { animation: none; transition: none; }
         #initial-loader .dr-bar::after { animation: none; width: 100%; opacity: 0.4; }
       }
     </style>

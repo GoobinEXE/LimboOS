@@ -13,16 +13,16 @@ import {
 import { useAchievementCatalog } from '../../hooks/useAchievementCatalog';
 
 function platformBorder(platform: PlayerPlatform, earned: boolean): string {
-  if (!earned) return '';
-  if (platform === 'nokia') return '';
-  if (platform === 'walkman') return '';
-  return '';
+  if (!earned) return 'border-border-subtle';
+  if (platform === 'nokia') return 'border-phosphor-500/45';
+  if (platform === 'walkman') return 'border-orange-500/45';
+  return 'border-amber-400/45';
 }
 
 function TierBadge({ tier }: { tier: AchievementTier }) {
   const { t } = useTranslation('common');
   return (
-    <span className="text-[10px] uppercase tracking-wider text-amber-500/80 font-mono shrink-0">
+    <span className="text-[10px] uppercase tracking-widest text-amber-500/80 font-mono shrink-0">
       {t(`achievement.tier.${tier}`)}
     </span>
   );
@@ -94,7 +94,7 @@ function AchievementCard({
         {description}
       </p>
       {earned && (
-        <p className="text-[10px] uppercase tracking-wider text-ash-500 font-mono">
+        <p className="text-[10px] uppercase tracking-widest text-ash-500 font-mono">
           {t(`achievement.platform.${ach.primaryPlatform}`)}
           {campaignLabel ? ` · ${campaignLabel}` : ''}
         </p>
@@ -202,7 +202,7 @@ export function AchievementCatalog({
               key={c.id}
               type="button"
               onClick={() => setSelectedCampaignId(c.id)}
-              className={`text-[10px] uppercase tracking-wider px-2 py-1 rounded-sm transition-colors ${
+              className={`text-[10px] uppercase tracking-widest px-2 py-1 rounded-sm transition-colors ${
                 activeCampaignId === c.id
                   ? 'text-accent bg-accent-05'
                   : 'text-ash-400 hover:text-industrial-silver'
@@ -215,7 +215,7 @@ export function AchievementCatalog({
       )}
 
       <div className="flex items-center justify-between gap-2 px-0.5">
-        <span className={`text-protocol text-[10px] uppercase tracking-[0.08em] ${platformChrome}`}>
+        <span className={`text-protocol text-[10px] uppercase tracking-[0.2em] ${platformChrome}`}>
           {t(`achievement.platform.${platform === 'nokia' ? 'nokia' : platform === 'walkman' ? 'walkman' : 'global'}`)}
           {campaign ? ` · ${campaign.year}` : ''}
         </span>
@@ -229,7 +229,7 @@ export function AchievementCatalog({
         <div className="space-y-3">
           {groups.map((group) => (
             <div key={group.category} className="space-y-1">
-              <div className="text-[10px] font-black uppercase tracking-[0.08em] opacity-50 border-b border-lcd-ink pb-0.5">
+              <div className="text-[7px] font-black uppercase tracking-[0.2em] opacity-50 border-b border-lcd-ink pb-0.5">
                 {t(`achievement.category.${group.category}`)}
               </div>
               {group.items.map((ach) => (
@@ -248,7 +248,7 @@ export function AchievementCatalog({
           {groups.map((group) => (
             <div key={group.category} className="space-y-2">
               <div className="flex items-center gap-2 px-0.5">
-                <span className="text-protocol text-[10px] text-ash-500 uppercase tracking-[0.08em]">
+                <span className="text-protocol text-[10px] text-ash-500 uppercase tracking-[0.2em]">
                   {t(`achievement.category.${group.category}`)}
                 </span>
                 <span aria-hidden className="flex-1 h-px bg-border-subtle" />

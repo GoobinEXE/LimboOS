@@ -6,7 +6,7 @@ import CampaignBindingPicker from './CampaignBindingPicker';
 
 export const npcFieldClass =
   'w-full bg-black/50 text-[11px] font-bold uppercase px-3 py-2.5 text-bone outline-none rounded-sm';
-export const npcLabelClass = 'text-[10px] font-black uppercase tracking-wider text-ash-500 mb-1.5 block';
+export const npcLabelClass = 'text-[10px] font-black uppercase tracking-widest text-ash-500 mb-1.5 block';
 
 const fieldClass = npcFieldClass;
 const labelClass = npcLabelClass;
@@ -46,9 +46,9 @@ export default function NpcContactEditorModal({
         if (e.target === e.currentTarget && !saving) onClose();
       }}
     >
-      <div className="bg-seam w-full max-w-lg rounded-card overflow-hidden">
-        <div className="px-6 py-4 border-b border-seam flex justify-between items-center bg-black/40">
-          <h3 className="text-xs font-black uppercase tracking-[0.08em] text-bone">
+      <div className="bg-seam w-full max-w-lg rounded-card shadow-2xl overflow-hidden">
+        <div className="px-6 py-4 border-b border-border flex justify-between items-center bg-black/40">
+          <h3 className="text-xs font-black uppercase tracking-[0.2em] text-bone">
             {isEdit ? t('npcSms.editContact') : t('npcSms.createContact')}
           </h3>
           <button type="button" onClick={() => !saving && onClose()} className="material-symbols-outlined text-ash-500">
@@ -69,7 +69,7 @@ export default function NpcContactEditorModal({
                   <span className="material-symbols-outlined text-ash-600">person</span>
                 )}
               </div>
-              <label className="block cursor-pointer text-[10px] font-black uppercase tracking-wider text-secondary px-2 py-1.5 text-center rounded-sm">
+              <label className="block cursor-pointer text-[10px] font-black uppercase tracking-widest text-secondary px-2 py-1.5 text-center rounded-sm">
                 {t('npcSms.avatar')}
                 <input
                   type="file"
@@ -110,7 +110,7 @@ export default function NpcContactEditorModal({
                   onChange={(e) => onChange({ ...contact, number: e.target.value })}
                 />
               </div>
-              <label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-wider text-ash-400">
+              <label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-ash-400">
                 <input
                   type="checkbox"
                   checked={contact.enabled}
@@ -122,7 +122,7 @@ export default function NpcContactEditorModal({
               </label>
             </div>
           </div>
-          <div className="border-t border-seam pt-4">
+          <div className="border-t border-border-subtle pt-4">
             <CampaignBindingPicker
               label={t('npcSms.campaigns')}
               hint={t('npcSms.campaignsGlobalHint')}
@@ -132,12 +132,12 @@ export default function NpcContactEditorModal({
             />
           </div>
         </div>
-        <div className="px-6 py-4 border-t border-seam flex gap-3 bg-black/40">
+        <div className="px-6 py-4 border-t border-border flex gap-3 bg-black/40">
           <button
             type="button"
             disabled={saving}
             onClick={() => onClose()}
-            className="flex-1 px-4 py-3 text-[10px] font-black uppercase tracking-wider text-ash-500 bg-[#333] rounded-sm"
+            className="flex-1 px-4 py-3 text-[10px] font-black uppercase tracking-widest text-ash-500 bg-[#333] rounded-sm"
           >
             {t('npcSms.cancel')}
           </button>
@@ -145,7 +145,7 @@ export default function NpcContactEditorModal({
             type="button"
             disabled={saving}
             onClick={onSave}
-            className="flex-1 px-4 py-3 text-[10px] font-black uppercase tracking-wider bg-primary text-black rounded-sm disabled:opacity-40"
+            className="flex-1 px-4 py-3 text-[10px] font-black uppercase tracking-widest bg-primary text-black rounded-sm disabled:opacity-40"
           >
             {saving ? '…' : t('npcSms.save')}
           </button>

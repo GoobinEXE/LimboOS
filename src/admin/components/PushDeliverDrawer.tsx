@@ -26,8 +26,8 @@ interface PushDeliverDrawerProps {
   onSuccess: () => void;
 }
 
-const fieldClass = 'w-full bg-black/40 px-3 py-2 text-sm text-bone font-mono outline-none';
-const labelClass = 'block text-[10px] font-display font-bold uppercase tracking-wider text-ash-500 mb-1';
+const fieldClass = 'w-full bg-black/40 px-3 py-2 text-sm text-bone font-mono outline-none focus:bg-accent-10';
+const labelClass = 'block text-[10px] font-display font-bold uppercase tracking-widest text-ash-500 mb-1';
 
 /** Mensagem do mestre para os aparelhos dos jogadores, na hora ou agendada. */
 export default function PushDeliverDrawer({ targets, missionId, groupId, onClose, onSuccess }: PushDeliverDrawerProps) {
@@ -112,7 +112,7 @@ export default function PushDeliverDrawer({ targets, missionId, groupId, onClose
                 type="button"
                 aria-pressed={mode === m.id}
                 onClick={() => setMode(m.id)}
-                className={`px-3 py-2 text-[10px] font-display font-bold uppercase tracking-wider ${
+                className={`px-3 py-2 text-[10px] font-display font-bold uppercase tracking-widest ${
                   mode === m.id ? 'text-primary bg-primary/10' : 'text-ash-500'
                 }`}
               >
@@ -144,7 +144,7 @@ export default function PushDeliverDrawer({ targets, missionId, groupId, onClose
                   <span className="min-w-0 text-[11px] text-bone truncate">
                     {item.sendAt ? new Date(item.sendAt).toLocaleString() : ''} · {item.title}
                   </span>
-                  <button type="button" onClick={() => cancel(item.id)} className="text-[10px] font-display font-bold uppercase tracking-wider text-ash-500 hover:text-bone shrink-0">
+                  <button type="button" onClick={() => cancel(item.id)} className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-500 hover:text-bone shrink-0">
                     {t('accounts.cancel')}
                   </button>
                 </li>
@@ -167,15 +167,15 @@ export default function PushDeliverDrawer({ targets, missionId, groupId, onClose
           </div>
         )}
       </div>
-      <div className="p-4 border-t border-seam bg-black/30 flex justify-end gap-3">
-        <button type="button" disabled={loading} onClick={onClose} className="px-4 py-2 text-[10px] font-display font-bold uppercase tracking-wider text-ash-500 hover:text-bone">
+      <div className="p-4 border-t border-border-subtle bg-black/30 flex justify-end gap-3">
+        <button type="button" disabled={loading} onClick={onClose} className="px-4 py-2 text-[10px] font-display font-bold uppercase tracking-widest text-ash-500 hover:text-bone">
           {t('accounts.cancel')}
         </button>
         <button
           type="button"
           disabled={loading || !title.trim() || !body.trim() || !buildTarget()}
           onClick={submit}
-          className="px-5 py-2 bg-primary text-black text-[10px] font-display font-black uppercase tracking-wider disabled:opacity-30"
+          className="px-5 py-2 bg-primary text-black text-[10px] font-display font-black uppercase tracking-widest disabled:opacity-30"
         >
           {sendAt ? t('push.action.schedule') : t('push.action.send')}
         </button>

@@ -1,45 +1,27 @@
 # Design
 
-Direção: **campos chapados de 1999**. A bancada escura da arte de referência (`docs/readme/`) virou um sistema de campos de cor sólidos: carvão quente, âmbar da fenda, osso do letreiro e fósforo de CRT. A fonte única dos tokens é `src/index.css` (`@theme`).
+Direção: **bancada escura de 1999, sem contorno**. É o visual original do LimboOS (carvão quente, âmbar da fenda, fósforo de CRT, brilho curto e relevo de aparelho), com botões e blocos separados por tom e relevo em vez de linha. A fonte única dos tokens é `src/index.css` (`@theme`).
 
 ## Regras
 
-- **Separação por campo, nunca por contorno.** Blocos, botões e cartões não têm borda, sombra, brilho, vidro fosco nem gradiente decorativo. Os tokens `--color-border*` são transparentes e `--shadow-*` valem `none`, para classes antigas não desenharem nada.
-- **Junta (`border-seam`).** Divisórias de um lado só (linhas de lista, cabeçalho de painel) usam a cor do fundo da página: aparecem como um corte entre dois campos iguais.
-- **Seleção inverte.** Item ativo ou em hover vira campo osso (`bg-field-bone` + `text-field-ink`) ou âmbar sólido (`bg-accent` + `text-field-ink`). Nada de tinta âmbar translúcida como estado ativo.
-- **Cabeçalho de tela em campo âmbar.** Seleção de agente, login, identidade do perfil, missão no admin e a marca da barra lateral abrem com um bloco âmbar e título em tinta.
-- **Foco de teclado:** contorno âmbar de 2 px com recuo de 2 px. É a única linha que o sistema desenha.
-- **Exceções de época:** a tela LCD do Nokia (`lcd-ink`/`lcd-paper`) e os mini-apps (BIOS, Limbo Board, Disk Repair, Win95, Mac OS, terminal) mantêm suas linhas e relevos.
-
-## Cor
-
-| Papel | Token | Valor |
-|---|---|---|
-| Fundo da página | `surface` | `#131210` |
-| Campo afundado (entrada) | `surface-sunken` | `#0b0a09` |
-| Cartão | `surface-raised` | `#1f1c19` |
-| Cartão sobre cartão | `surface-panel` | `#2a2622` |
-| Degraus de controle | `surface-container` → `-highest` | `#25221e` → `#3a3631` |
-| Âmbar (ação, cabeçalho) | `accent` | `#ff8c00` |
-| Osso (seleção, ação secundária) | `field-bone` | `#e8e0d0` |
-| Tinta sobre âmbar/osso | `field-ink` | `#141210` |
-| Status | `phosphor-500`, `yellow-500`, `red-600` | etiquetas sólidas |
+- **Sem contorno de quatro lados.** Botões, cartões, campos e painéis não têm `border` em volta. A separação vem do degrau de tom (`surface-sunken` → `surface-raised` → `surface-panel`), de `shadow-hairline`/`shadow-panel` e do fundo do estado (`bg-accent-10` no ativo).
+- **Divisórias de um lado continuam.** `border-b`/`border-t` em listas, cabeçalhos e rodapés de painel, e a linha de aba ativa, ficam como estavam.
+- **Sem slogan, subtítulo ou numeração.** Título de tela, de seção ou de item de menu fica sozinho: nada de linha de apoio embaixo ("Trocar a realidade ativa"), rótulo acima ("Terminal RM-84 · Registro de agentes"), índice ("01", "02") ou rodapé de efeito ("Sincronização em tempo real", "Grid online"). Texto que ensina a usar um campo ou explica um estado vazio continua.
+- **Walkman intocado.** `WalkmanShell`, `CassetteVisor`, `TapeLibrary`, `SideControls`, `BottomControls` e `Screw` mantêm textura, relevo e contornos de aparelho.
+- **Exceções de época:** a tela LCD do Nokia (`lcd-ink`/`lcd-paper`) e os mini-apps (BIOS, Limbo Board, Disk Repair, Win95, Mac OS, terminal) mantêm suas linhas.
+- **Foco de teclado:** contorno âmbar de 1 px; é a única linha que todo controle pode desenhar.
 
 ## Tipografia
 
-- **Archivo** variável (eixo `wdth` 75–125). Títulos com `.text-display` (peso 820, largura 118%), rótulos com `.text-protocol` (650, 108%, caixa alta, tracking 0.07em). `font-display`/`font-headline` saem a 116% de largura.
-- **JetBrains Mono** só para dados: códigos RM, horários, contagens, IDs.
-- Piso de 10 px para qualquer texto de interface.
-- Web carrega do Google Fonts (`index.html`); o app nativo embarca `@fontsource-variable/archivo` e `@fontsource/jetbrains-mono` (`src/lib/native/fonts.ts`).
+Space Grotesk (títulos e rótulos), Inter (texto) e JetBrains Mono (dados). Piso de 10 px fora do walkman e dos sistemas de época.
 
 ## Componentes base (`src/index.css`)
 
-- `lmb-btn` (carvão), `lmb-btn-primary`/`lmb-btn-solid` (âmbar), `lmb-btn-bone`, `lmb-btn-danger`, `lmb-btn-ghost`, `lmb-btn-icon`. Altura mínima 40 px, `:active` afunda por escala.
-- `lmb-field`: campo preenchido; o foco acende uma faixa âmbar de 2 px na base.
-- `lmb-tag`: etiqueta chapada em mono para status, nível e contagem.
-- `lmb-eyebrow`: rótulo de grupo dentro de formulários e listas, nunca acima de título.
-- `lmb-kbd`, `lmb-led`.
+- `lmb-btn` (tom de carcaça com filete de luz), `lmb-btn-primary` (âmbar translúcido), `lmb-btn-solid` (âmbar), `lmb-btn-danger`, `lmb-btn-ghost`, `lmb-btn-icon`.
+- `lmb-field`: campo afundado; o foco acende uma faixa âmbar de 2 px na base.
+- `lmb-kbd`, `lmb-led`, `lmb-eyebrow` (rótulo de grupo dentro de formulário, nunca acima de título).
 
-## Forma e movimento
+## Carregamento e abertura
 
-Raios curtos: 2 px (inset), 3 px (controle), 4 px (cartão), 6 px (painel). Aparelhos (walkman, perfil) mantêm 24 px. Durações e curvas em `:root` (`--duration-*`, `--easing-*`), espelhadas em `src/lib/motion.ts`.
+- Abertura: tela nativa com a logo Dark Room em `#090A0C` (`ios/App/App/Assets.xcassets/Splash.imageset`, `android/app/src/main/res/drawable*/splash.png`), a mesma logo estática no HTML (`#initial-loader` em `index.html`) e o splash nativo só some depois que o JS roda. O WebView também usa `#090A0C`, para não aparecer um quadro de outra cor.
+- `RetroLoading` (`src/components/player/RetroLoading.tsx`): carretel girando, uma linha de mensagem e barra de progresso, sempre centrado. `fullScreen` cobre a viewport (telas inteiras); sem ele, cobre o contêiner posicionado mais próximo (dentro do aparelho). Não tem submensagem.

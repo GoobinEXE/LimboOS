@@ -33,7 +33,7 @@ export default function CampaignScopeSelect({
         value={value}
         onChange={(e) => onChange(e.target.value as CampaignScope)}
         className={`lmb-field pl-9 pr-3 text-[12px] truncate ${
-          value !== 'all' ? 'text-primary' : ''
+          value !== 'all' ? 'border-accent-60 text-primary' : ''
         }`}
       >
         <option value="all">{t('scope.all')}</option>

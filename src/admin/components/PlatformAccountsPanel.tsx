@@ -17,7 +17,7 @@ interface PlatformAccount {
 }
 
 const FIELD =
-  'bg-black/40 text-[11px] font-mono text-bone px-3 py-2 outline-none rounded-sm transition';
+  'bg-black/40 text-[11px] font-mono text-bone px-3 py-2 outline-none rounded-sm transition focus:bg-accent-10';
 
 /**
  * Sistema → Contas (só com o claim platformAdmin). Mostra dados de conta vindos
@@ -124,11 +124,11 @@ export default function PlatformAccountsPanel() {
 
       <form onSubmit={createAccount} className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-end" aria-label={t('platform.createTitle')}>
         <label className="flex-1 space-y-1">
-          <span className="block text-[10px] font-display font-bold uppercase tracking-wider text-ash-500">{t('platform.masterId')}</span>
+          <span className="block text-[10px] font-display font-bold uppercase tracking-widest text-ash-500">{t('platform.masterId')}</span>
           <input value={newMasterId} onChange={(e) => setNewMasterId(e.target.value)} className={`${FIELD} w-full`} />
         </label>
         <label className="flex-1 space-y-1">
-          <span className="block text-[10px] font-display font-bold uppercase tracking-wider text-ash-500">{t('platform.password')}</span>
+          <span className="block text-[10px] font-display font-bold uppercase tracking-widest text-ash-500">{t('platform.password')}</span>
           <input type="password" minLength={6} value={newPassword} onChange={(e) => setNewPassword(e.target.value)} className={`${FIELD} w-full`} />
         </label>
         <button type="submit" disabled={creating || !newMasterId.trim() || newPassword.length < 6} className="lmb-btn lmb-btn-primary">
@@ -156,7 +156,7 @@ export default function PlatformAccountsPanel() {
                 {acc.email || acc.uid} · {t('platform.lastSignIn')}: {fmt(acc.lastSignIn)}
               </p>
             </div>
-            <span className={`text-[10px] font-display font-bold uppercase tracking-wider px-2 py-0.5 rounded-sm self-start lg:self-auto ${acc.suspended ? 'text-red-400' : 'text-phosphor-500'}`}>
+            <span className={`text-[10px] font-display font-bold uppercase tracking-widest px-2 py-0.5 rounded-sm self-start lg:self-auto ${acc.suspended ? 'text-red-400 bg-red-500/10' : 'text-phosphor-500'}`}>
               {acc.suspended ? t('platform.suspended') : t('platform.active')}
             </span>
             <div className="flex gap-2">

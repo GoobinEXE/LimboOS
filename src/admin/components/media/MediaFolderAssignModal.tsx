@@ -67,23 +67,23 @@ export default function MediaFolderAssignModal({
               initial={{ opacity: 0, scale: 0.95, y: 12 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 12 }}
-              className="relative w-full max-w-md bg-surface-container-low overflow-hidden"
+              className="relative w-full max-w-md bg-surface-container-low shadow-2xl overflow-hidden"
             >
               <div className="absolute top-2 left-2"><Screw size="xs" /></div>
               <div className="absolute top-2 right-2"><Screw size="xs" /></div>
 
-              <div className="px-6 py-4 bg-black/20">
-                <p className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.08em]">
+              <div className="px-6 py-4 border-b border-primary/10 bg-black/20">
+                <p className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.25em]">
                   Atribuir pastas
                 </p>
-                <h3 className="font-display font-bold text-bone uppercase tracking-wider text-sm truncate mt-1">
+                <h3 className="font-display font-bold text-bone uppercase tracking-widest text-sm truncate mt-1">
                   {assetTitle}
                 </h3>
               </div>
 
               <div className="max-h-72 overflow-y-auto custom-scrollbar p-2">
                 {folders.length === 0 ? (
-                  <p className="px-4 py-8 text-center text-[10px] font-display font-bold text-ash-600 uppercase tracking-wider">
+                  <p className="px-4 py-8 text-center text-[10px] font-display font-bold text-ash-600 uppercase tracking-widest">
                     Nenhuma pasta disponível
                   </p>
                 ) : (
@@ -106,7 +106,7 @@ export default function MediaFolderAssignModal({
                         <span className="material-symbols-outlined text-base opacity-50">
                           {folder.campaignId ? 'flag' : 'folder'}
                         </span>
-                        <span className="flex-1 text-[10px] font-display font-bold uppercase tracking-wider truncate">
+                        <span className="flex-1 text-[10px] font-display font-bold uppercase tracking-widest truncate">
                           {folder.name}
                         </span>
                       </button>
@@ -115,11 +115,11 @@ export default function MediaFolderAssignModal({
                 )}
               </div>
 
-              <div className="px-6 py-4 bg-black/20 flex justify-end gap-3">
+              <div className="px-6 py-4 border-t border-primary/10 bg-black/20 flex justify-end gap-3">
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-4 py-2 text-[10px] font-display font-bold text-ash-500 hover:text-bone uppercase tracking-wider"
+                  className="px-4 py-2 text-[10px] font-display font-bold text-ash-500 hover:text-bone uppercase tracking-widest"
                 >
                   {t('accounts.cancel')}
                 </button>
@@ -127,7 +127,7 @@ export default function MediaFolderAssignModal({
                   type="button"
                   disabled={saving}
                   onClick={() => void handleSave()}
-                  className="px-5 py-2 bg-primary text-black text-[10px] font-display font-bold uppercase tracking-wider hover:bg-primary-container disabled:opacity-50"
+                  className="px-5 py-2 bg-primary text-black text-[10px] font-display font-bold uppercase tracking-widest hover:bg-primary-container disabled:opacity-50"
                 >
                   {saving ? 'Salvando…' : 'Salvar'}
                 </button>

@@ -48,7 +48,7 @@ export default function MissionAppsTab({ campaign }: { campaign: Campaign }) {
                 }`}
               >
                 <span>
-                  <span className="block text-[11px] font-display font-bold uppercase tracking-wider">{t(`apps.feature.${key}`)}</span>
+                  <span className="block text-[11px] font-display font-bold uppercase tracking-widest">{t(`apps.feature.${key}`)}</span>
                   <span className="block text-[10px] text-ash-500 mt-1 normal-case tracking-normal">{t(`apps.featureHint.${key}`)}</span>
                 </span>
                 <span className="material-symbols-outlined text-2xl shrink-0" aria-hidden>{on ? 'toggle_on' : 'toggle_off'}</span>

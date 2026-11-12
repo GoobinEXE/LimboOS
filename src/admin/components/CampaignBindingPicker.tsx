@@ -40,7 +40,7 @@ export default function CampaignBindingPicker({
 
   return (
     <fieldset className="space-y-2">
-      <legend className="text-[10px] font-display font-bold uppercase tracking-[0.08em] text-ash-400 mb-2">
+      <legend className="text-[10px] font-display font-bold uppercase tracking-[0.2em] text-ash-400 mb-2">
         {label}
       </legend>
       <div role="radiogroup" className="flex flex-wrap gap-2">

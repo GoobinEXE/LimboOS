@@ -30,11 +30,11 @@ interface ProfileScreenProps {
 type AgentStatusKey = 'vivo' | 'morto' | 'desaparecido';
 
 const STATUS_STYLE: Map<AgentStatusKey, { color: string; dot: string; border: string }> = new Map([
-  ['vivo', { color: 'text-phosphor-400', dot: 'bg-phosphor-400', border: '' }],
-  ['morto', { color: 'text-red-400', dot: 'bg-red-400', border: '' }],
-  ['desaparecido', { color: 'text-yellow-400', dot: 'bg-yellow-400', border: '' }],
+  ['vivo', { color: 'text-phosphor-400', dot: 'bg-phosphor-400', border: 'border-phosphor-500/30' }],
+  ['morto', { color: 'text-red-400', dot: 'bg-red-400', border: 'border-red-500/30' }],
+  ['desaparecido', { color: 'text-yellow-400', dot: 'bg-yellow-400', border: 'border-yellow-500/30' }],
 ]);
-const DEFAULT_STATUS_STYLE = { color: 'text-phosphor-400', dot: 'bg-phosphor-400', border: '' };
+const DEFAULT_STATUS_STYLE = { color: 'text-phosphor-400', dot: 'bg-phosphor-400', border: 'border-phosphor-500/30' };
 
 const STATUS_LABEL_KEY: Record<AgentStatusKey, 'ativo' | 'eliminado' | 'desaparecido'> = {
   vivo: 'ativo',
@@ -53,32 +53,41 @@ export function generateRandomUSPhoneNumber(): string {
 
 /* ─── Peças do tema Deck (escuro) ─────────────────────────────── */
 
+const CornerMarks = () => (
+  <>
+    <span aria-hidden className="absolute top-1 left-1 w-2.5 h-2.5 border-t border-l border-border-accent" />
+    <span aria-hidden className="absolute top-1 right-1 w-2.5 h-2.5 border-t border-r border-border-accent" />
+    <span aria-hidden className="absolute bottom-1 left-1 w-2.5 h-2.5 border-b border-l border-border-accent" />
+    <span aria-hidden className="absolute bottom-1 right-1 w-2.5 h-2.5 border-b border-r border-border-accent" />
+  </>
+);
+
 const SectionHeader = ({
-  index,
   title,
   Icon,
   tone = 'text-primary',
   action,
 }: {
-  index: string;
+  index?: string;
   title: string;
   Icon: React.FC<{ size?: number; className?: string }>;
   tone?: string;
   action?: React.ReactNode;
 }) => (
-  <div className="flex items-center gap-3 mb-2" data-section={index}>
-    <h2 className={`text-protocol flex items-center gap-2 flex-1 ${tone}`}>
-      <Icon size={13} />
+  <div className="flex items-center gap-3 mb-3">
+    <h2 className={`text-protocol flex items-center gap-2 ${tone}`}>
+      <Icon size={12} />
       {title}
     </h2>
+    <span aria-hidden className="flex-1 h-px bg-border-subtle" />
     {action}
   </div>
 );
 
 const Stat = ({ value, label }: { value: React.ReactNode; label: string }) => (
-  <div className="flex-1 flex flex-col items-start px-3 py-3 rounded-card bg-surface-raised">
-    <span className="text-display text-2xl text-bone leading-none tabular-nums">{value}</span>
-    <span className="text-protocol text-[10px] text-ash-400 mt-2">{label}</span>
+  <div className="flex-1 flex flex-col items-center py-3 border-r border-border-subtle last:border-r-0">
+    <span className="text-mono-ui text-xl font-semibold text-primary leading-none">{value}</span>
+    <span className="text-protocol text-[10px] text-ash-500 mt-1.5">{label}</span>
   </div>
 );
 
@@ -86,26 +95,23 @@ const ActionRow = ({
   onClick,
   Icon,
   title,
-  sub,
 }: {
   onClick?: () => void;
   Icon: React.FC<{ size?: number; className?: string }>;
   title: string;
-  sub: string;
 }) => (
   <button
     type="button"
     onClick={onClick}
-    className="w-full flex items-center gap-3 px-3 py-3 rounded-card bg-surface-raised hover:bg-field-bone focus-visible:bg-field-bone active:scale-[0.99] transition duration-200 group text-left"
+    className="w-full flex items-center gap-3 px-3.5 py-3 rounded-card bg-surface-raised hover:bg-accent-05 active:scale-[0.99] transition duration-200 group text-left"
   >
-    <div className="w-9 h-9 rounded-control bg-surface-container-highest text-accent flex items-center justify-center shrink-0 group-hover:bg-field-ink group-focus-visible:bg-field-ink transition-colors">
+    <div className="w-9 h-9 rounded-control bg-surface-sunken text-primary flex items-center justify-center shrink-0 group-hover:bg-accent-10 transition-colors">
       <Icon size={15} />
     </div>
     <div className="flex-1 min-w-0">
-      <div className="text-protocol text-bone group-hover:text-field-ink group-focus-visible:text-field-ink">{title}</div>
-      <div className="text-xs text-ash-400 group-hover:text-ash-700 group-focus-visible:text-ash-700 mt-0.5 truncate">{sub}</div>
+      <div className="text-protocol text-white text-[11px]">{title}</div>
     </div>
-    <ChevronRight size={16} className="text-ash-500 group-hover:text-field-ink group-hover:translate-x-0.5 transition shrink-0" />
+    <ChevronRight size={16} className="text-primary/40 group-hover:text-primary group-hover:translate-x-0.5 transition shrink-0" />
   </button>
 );
 
@@ -117,7 +123,7 @@ const NokiaSection = ({
   action,
   children,
 }: {
-  index: string;
+  index?: string;
   title: string;
   action?: React.ReactNode;
   children: React.ReactNode;
@@ -125,7 +131,6 @@ const NokiaSection = ({
   <section className="border-2 border-lcd-ink p-1.5 shadow-[2px_2px_0px_#111e14] bg-lcd-paper">
     <div className="flex justify-between items-center mb-1.5 pb-1 border-b border-dotted border-lcd-ink/60">
       <span className="text-[10px] font-black flex items-center gap-1.5">
-        <span className="opacity-50">{index}</span>
         <span>{title}</span>
       </span>
       {action}
@@ -198,7 +203,7 @@ export default function ProfileScreen({
 
   if (variant === 'nokia') {
     return (
-      <div className="w-full h-full bg-lcd-paper text-lcd-ink flex flex-col p-1 font-mono uppercase text-[10px] select-none tracking-wider relative">
+      <div className="w-full h-full bg-lcd-paper text-lcd-ink flex flex-col p-1 font-mono uppercase text-[10px] select-none tracking-widest relative">
         {/* Header */}
         <div className="flex justify-between items-center border-b-2 border-lcd-ink pb-1 shrink-0 font-bold mb-2">
           <button onClick={onBack} className="hover:bg-lcd-ink hover:text-lcd-paper px-1 active:scale-[0.97] transition">
@@ -237,7 +242,7 @@ export default function ProfileScreen({
                   <div className="text-[12px] font-black leading-none truncate pr-14">{profile.character.codinome}</div>
                   <div className="text-[10px] opacity-60 font-bold tracking-tighter">{tCommon('id')}: {agentCode}</div>
                 </div>
-                <div className={`self-start px-1.5 py-0.5 border border-lcd-ink text-[10px] font-black ${profile.character.agentStatus === 'vivo' || !profile.character.agentStatus ? 'bg-lcd-ink text-lcd-paper' : ''}`}>
+                <div className={`self-start px-1.5 py-0.5 border border-lcd-ink text-[7px] font-black ${profile.character.agentStatus === 'vivo' || !profile.character.agentStatus ? 'bg-lcd-ink text-lcd-paper' : ''}`}>
                   {t('profile.statusPrefix', { status: statusCfg.label })}
                 </div>
               </div>
@@ -293,17 +298,17 @@ export default function ProfileScreen({
             )}
           </div>
 
-          <NokiaSection index="00" title={t('profile.languageSection')}>
+          <NokiaSection  title={t('profile.languageSection')}>
             <LanguageSelector variant="nokia" />
           </NokiaSection>
 
           {/* Deck */}
           <NokiaSection
-            index="01"
+            
             title={t('profile.deck.nokia')}
             action={
               onUpdateSpotify && !isEditingSpotify ? (
-                <button onClick={startEditingSpotify} className="hover:bg-lcd-ink hover:text-lcd-paper px-1 active:scale-[0.97] transition text-[10px] border border-lcd-ink">
+                <button onClick={startEditingSpotify} className="hover:bg-lcd-ink hover:text-lcd-paper px-1 active:scale-[0.97] transition text-[8px] border border-lcd-ink">
                   {embedUrl ? t('profile.deck.editShort') : t('profile.deck.linkShort')}
                 </button>
               ) : undefined
@@ -316,13 +321,13 @@ export default function ProfileScreen({
                   value={spotifyInput}
                   onChange={(e) => { setSpotifyInput(e.target.value); setSpotifyError(''); }}
                   placeholder={t('profile.deck.placeholderNokia')}
-                  className="w-full bg-lcd-paper border border-lcd-ink px-1 py-1 text-[10px] text-lcd-ink focus:outline-none placeholder:text-lcd-ink/50"
+                  className="w-full bg-lcd-paper border border-lcd-ink px-1 py-1 text-[9px] text-lcd-ink focus:outline-none placeholder:text-lcd-ink/50"
                   autoFocus
                 />
                 {spotifyError && <p role="alert" className="text-[10px]">{tCommon('error')}: {spotifyError}</p>}
                 <div className="flex gap-1 justify-end">
-                  <button onClick={handleCancelEdit} className="border border-lcd-ink px-2 py-0.5 hover:bg-lcd-ink hover:text-lcd-paper active:scale-[0.97] transition text-[10px]">{tCommon('actions.cancelShort')}</button>
-                  <button onClick={handleSaveSpotify} className="border border-lcd-ink px-2 py-0.5 hover:bg-lcd-ink hover:text-lcd-paper active:scale-[0.97] transition font-black text-[10px]">{tCommon('actions.saveShort')}</button>
+                  <button onClick={handleCancelEdit} className="border border-lcd-ink px-2 py-0.5 hover:bg-lcd-ink hover:text-lcd-paper active:scale-[0.97] transition text-[8px]">{tCommon('actions.cancelShort')}</button>
+                  <button onClick={handleSaveSpotify} className="border border-lcd-ink px-2 py-0.5 hover:bg-lcd-ink hover:text-lcd-paper active:scale-[0.97] transition font-black text-[8px]">{tCommon('actions.saveShort')}</button>
                 </div>
               </div>
             ) : embedUrl ? (
@@ -330,14 +335,14 @@ export default function ProfileScreen({
                 <iframe src={embedUrl} width="100%" height="80" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" title={t('profile.deck.iframeTitle')} />
               </div>
             ) : (
-              <div className="text-[10px] text-center border border-dashed border-lcd-ink py-3 opacity-60 font-bold italic">
+              <div className="text-[8px] text-center border border-dashed border-lcd-ink py-3 opacity-60 font-bold italic">
                 {t('profile.deck.noAudioNokia')}
               </div>
             )}
           </NokiaSection>
 
           {/* Handset */}
-          <NokiaSection index="02" title={t('profile.contact.nokia')}>
+          <NokiaSection  title={t('profile.contact.nokia')}>
             {profile.character.phoneNumber ? (
               <div className="flex justify-between items-center bg-lcd-ink text-lcd-paper p-1.5">
                 <span className="text-[10px] font-black">{t('profile.contact.line')}</span>
@@ -346,7 +351,7 @@ export default function ProfileScreen({
             ) : (
               <button
                 onClick={handleGeneratePhone}
-                className="w-full border-2 border-lcd-ink py-1.5 text-center hover:bg-lcd-ink hover:text-lcd-paper active:scale-[0.97] transition text-[10px] font-black"
+                className="w-full border-2 border-lcd-ink py-1.5 text-center hover:bg-lcd-ink hover:text-lcd-paper active:scale-[0.97] transition text-[9px] font-black"
               >
                 {t('profile.contact.generateNokia')}
               </button>
@@ -354,12 +359,12 @@ export default function ProfileScreen({
           </NokiaSection>
 
           {/* Galeria */}
-          <NokiaSection index="03" title={t('profile.gallery.nokia')}>
+          <NokiaSection  title={t('profile.gallery.nokia')}>
             <PlayerGallery images={galleryImages} variant="nokia" />
           </NokiaSection>
 
           {/* Conquistas */}
-          <NokiaSection index="04" title={t('profile.achievements.nokia')} action={<span className="text-[10px] opacity-60">{profile.achievementIds.length}/{achievements.length}</span>}>
+          <NokiaSection  title={t('profile.achievements.nokia')} action={<span className="text-[10px] opacity-60">{profile.achievementIds.length}/{achievements.length}</span>}>
             <AchievementCatalog
               grantDocIds={profile.achievementIds}
               campaignId={profile.character.campaignId}
@@ -382,57 +387,59 @@ export default function ProfileScreen({
       animate={{ x: 0, opacity: 1 }}
       exit={{ x: '100%', opacity: 0 }}
       transition={{ type: 'spring', damping: 24, stiffness: 200 }}
-      className={`relative w-full h-full bg-surface-container-high rounded-4xl flex flex-col overflow-hidden z-50 p-2 ${
+      className={`relative w-full h-full bg-surface-container-high rounded-4xl shadow-panel flex flex-col overflow-hidden z-50 p-2 ${
         isLandscape ? 'max-w-none max-h-none' : 'max-w-sm max-h-187.5 lg:max-w-md xl:max-w-lg lg:max-h-205'
       }`}
     >
       {/* Tela do dispositivo */}
-      <div className="relative flex-1 min-h-0 flex flex-col bg-surface rounded-device overflow-hidden">
+      <div className="relative flex-1 min-h-0 flex flex-col bg-surface rounded-device overflow-hidden shadow-hairline">
+        <div aria-hidden className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_80%_40%_at_50%_0%,var(--color-accent-05),transparent_70%)]" />
 
         {/* Header */}
-        <header className="relative z-10 flex items-center justify-between px-4 pt-4 pb-3 shrink-0 bg-surface">
+        <header className="relative z-10 flex items-center justify-between px-4 pt-4 pb-3 shrink-0 border-b border-border-subtle bg-surface-raised/95">
           <button
             type="button"
             onClick={onBack}
             aria-label={t('profile.backAria')}
-            className={`${iconButtonClass} text-bone bg-surface-raised hover:bg-field-bone hover:text-field-ink`}
+            className={`${iconButtonClass} text-primary hover:border-border-accent hover:bg-accent-10`}
           >
             <ArrowLeft size={16} />
           </button>
           <div className="flex flex-col items-center gap-0.5 min-w-0">
-            <span className="text-protocol text-[10px] text-ash-400">{t('profile.header.agentFile')}</span>
-            <span className="text-mono-ui text-[11px] text-accent">{agentCode}</span>
+            <span className="text-protocol text-[10px] text-ash-500">{t('profile.header.agentFile')}</span>
+            <span className="text-mono-ui text-[10px] text-primary/70">{agentCode}</span>
           </div>
           <button
             type="button"
             onClick={onLogout}
             aria-label={t('profile.logoutAria')}
-            className={`${iconButtonClass} text-red-300 bg-surface-raised hover:bg-red-600 hover:text-red-50`}
+            className={`${iconButtonClass} text-red-400 hover:border-red-500/40 hover:bg-red-500/10`}
           >
             <LogOut size={15} />
           </button>
         </header>
 
         {/* Identidade */}
-        <section className="relative z-10 mx-3 mt-1 mb-2 p-4 rounded-panel bg-accent text-field-ink shrink-0">
+        <section className="relative z-10 px-4 pt-5 pb-4 shrink-0">
           <div className="flex items-center gap-4">
-            <div className="relative w-20 h-20 rounded-card overflow-hidden bg-field-ink shrink-0 flex items-center justify-center">
+            <div className="relative w-20 h-20 rounded-card overflow-hidden bg-surface-sunken shrink-0 flex items-center justify-center">
               {profile.character.profilePhotoUrl ? (
                 <img src={profile.character.profilePhotoUrl} alt={tCommon('profileAlt')} className="w-full h-full object-cover" />
               ) : (
-                <span className="text-display text-2xl text-accent">{initials || '?'}</span>
+                <span className="text-display text-2xl text-primary">{initials || '?'}</span>
               )}
               <div aria-hidden className="absolute inset-0 pointer-events-none opacity-30 bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,#00000066_2px,#00000066_3px)]" />
+              <CornerMarks />
             </div>
             <div className="flex-1 min-w-0">
-              <h1 className="text-display text-2xl uppercase leading-none">{profile.character.codinome}</h1>
+              <h1 className="text-display text-[22px] text-white uppercase truncate">{profile.character.codinome}</h1>
               <div className="mt-2 flex items-center gap-2 flex-wrap">
-                <span className="lmb-tag bg-field-ink text-accent">
+                <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-inset bg-surface-raised text-protocol text-[10px] ${statusCfg.border} ${statusCfg.color}`}>
                   <span className={`w-1.5 h-1.5 rounded-full ${statusCfg.dot} animate-led`} />
                   {statusCfg.label}
                 </span>
-                <span className="text-mono-ui text-[11px] text-field-ink/75">
-                  {tCommon('nivel')} <span className="font-semibold text-field-ink">{dangerLabel}</span>
+                <span className="text-mono-ui text-[10px] text-ash-500">
+                  {tCommon('nivel')} <span className={dangerLevel >= 4 ? 'text-red-400' : dangerLevel >= 2 ? 'text-primary' : ''}>{dangerLabel}</span>
                 </span>
               </div>
               <div className="mt-3 flex gap-1">
@@ -441,8 +448,8 @@ export default function ProfileScreen({
                     key={i}
                     className={`h-1.5 flex-1 rounded-inset transition duration-700 ${
                       i < dangerLevel
-                        ? dangerLevel >= 4 ? 'bg-red-700' : 'bg-field-ink'
-                        : 'bg-field-ink/20'
+                        ? dangerLevel >= 4 ? 'bg-red-500' : 'bg-primary'
+                        : 'bg-surface-sunken'
                     }`}
                   />
                 ))}
@@ -452,7 +459,7 @@ export default function ProfileScreen({
         </section>
 
         {/* Leituras */}
-        <div className="relative z-10 mx-3 flex gap-2 shrink-0">
+        <div className="relative z-10 mx-4 flex rounded-card bg-surface-raised shadow-hairline overflow-hidden shrink-0">
           <Stat value={profile.unlockedIntelIds.length} label={t('profile.stat.proofs')} />
           <Stat value={profile.achievementIds.length} label={t('profile.stat.achievements')} />
           <Stat value={galleryImages.length} label={t('profile.stat.images')} />
@@ -461,15 +468,15 @@ export default function ProfileScreen({
         <div className="relative z-10 flex-1 overflow-y-auto min-h-0 custom-scrollbar">
           {/* Ações */}
           <div className="px-4 pt-4 pb-2 space-y-2">
-            <ActionRow onClick={onChangeMission} Icon={MapIcon} title={t('profile.action.mission')} sub={t('profile.action.missionSub')} />
-            <ActionRow onClick={onChangeCharacter} Icon={User} title={t('profile.action.agent')} sub={t('profile.action.agentSub')} />
+            <ActionRow onClick={onChangeMission} Icon={MapIcon} title={t('profile.action.mission')} />
+            <ActionRow onClick={onChangeCharacter} Icon={User} title={t('profile.action.agent')} />
             {onOpenDossier && (
-              <ActionRow onClick={onOpenDossier} Icon={IdCard} title={t('profile.action.dossier')} sub={t('profile.action.dossierSub')} />
+              <ActionRow onClick={onOpenDossier} Icon={IdCard} title={t('profile.action.dossier')} />
             )}
             {onOpenAdmin && (
-              <ActionRow onClick={onOpenAdmin} Icon={MonitorCog} title={t('profile.action.console')} sub={t('profile.action.consoleSub')} />
+              <ActionRow onClick={onOpenAdmin} Icon={MonitorCog} title={t('profile.action.console')} />
             )}
-            <ActionRow onClick={() => setAboutOpen(true)} Icon={Info} title={tCommon('about.title')} sub={tCommon('about.rowSub')} />
+            <ActionRow onClick={() => setAboutOpen(true)} Icon={Info} title={tCommon('about.title')} />
           </div>
 
           <section className="px-4 pt-4 pb-2">
@@ -482,7 +489,7 @@ export default function ProfileScreen({
           {/* Deck */}
           <section className="px-4 pt-5 pb-2">
             <SectionHeader
-              index="01"
+              
               title={t('profile.deck.title')}
               Icon={Music}
               tone="text-[#1DB954]"
@@ -591,7 +598,7 @@ export default function ProfileScreen({
 
           {/* Linha de contato */}
           <section className="px-4 pt-5 pb-2">
-            <SectionHeader index="02" title={t('profile.contact.title')} Icon={Phone} />
+            <SectionHeader  title={t('profile.contact.title')} Icon={Phone} />
             <div className="rounded-card bg-surface-raised p-3">
               {profile.character.phoneNumber ? (
                 <div className="flex items-center justify-between gap-3">
@@ -619,14 +626,14 @@ export default function ProfileScreen({
 
           {/* Galeria */}
           <section className="px-4 pt-5 pb-2">
-            <SectionHeader index="03" title={t('profile.gallery.title')} Icon={Image} />
+            <SectionHeader  title={t('profile.gallery.title')} Icon={Image} />
             <PlayerGallery images={galleryImages} />
           </section>
 
           {/* Conquistas */}
           <section className="px-4 pt-5 pb-6">
             <SectionHeader
-              index="04"
+              
               title={t('profile.achievements.title')}
               Icon={Trophy}
               action={<span className="text-mono-ui text-[10px] text-ash-500">{profile.achievementIds.length}/{achievements.length}</span>}

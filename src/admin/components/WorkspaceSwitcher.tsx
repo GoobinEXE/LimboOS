@@ -14,7 +14,7 @@ export default function WorkspaceSwitcher({ className = '' }: { className?: stri
 
   if (options.length <= 1) {
     return (
-      <p className={`text-[10px] font-display font-bold uppercase tracking-wider text-ash-500 truncate ${className}`} title={t('workspace.current')}>
+      <p className={`text-[10px] font-display font-bold uppercase tracking-widest text-ash-500 truncate ${className}`} title={t('workspace.current')}>
         {label(scope.workspaceName || '', scope.role === 'owner' ? 'owner' : 'cogm')}
       </p>
     );
@@ -26,7 +26,7 @@ export default function WorkspaceSwitcher({ className = '' }: { className?: stri
       <select
         value={scope.wsId}
         onChange={(e) => switchWorkspace(e.target.value)}
-        className="w-full bg-black/40 text-[10px] font-display font-bold uppercase tracking-wider text-bone px-2 py-1.5 rounded-sm outline-none"
+        className="w-full bg-black/40 text-[10px] font-display font-bold uppercase tracking-widest text-bone px-2 py-1.5 rounded-sm outline-none focus:bg-accent-10"
       >
         {options.map((o) => (
           <option key={o.wsId} value={o.wsId}>{label(o.name, o.role)}</option>

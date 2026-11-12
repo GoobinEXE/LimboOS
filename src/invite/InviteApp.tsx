@@ -42,7 +42,7 @@ export default function InviteApp() {
   }, [token]);
 
   if (user === undefined || preview === null) {
-    return <RetroLoading fullScreen message={t('invite.loading')} subMessage={t('invite.loadingSub')} />;
+    return <RetroLoading fullScreen message={t('invite.loading')} />;
   }
 
   if (preview.valid && !user) {
@@ -89,11 +89,8 @@ export default function InviteApp() {
         variants={dialogPop}
         initial="hidden"
         animate="visible"
-        className="relative z-10 max-w-md w-full mx-4 bg-surface-container-low rounded-panel p-8 space-y-5"
+        className="relative z-10 max-w-md w-full mx-4 bg-surface-container-low rounded-panel shadow-2xl machined-edge p-8 space-y-5"
       >
-        <p className="text-[10px] font-display font-bold uppercase tracking-[0.08em] text-primary text-center">
-          {t('invite.eyebrow')}
-        </p>
         {!preview.valid ? (
           <>
             <h1 className="font-display text-2xl font-bold text-bone uppercase tracking-tight text-center">
@@ -114,13 +111,13 @@ export default function InviteApp() {
             </p>
             {preview.kind === 'player' && (
               <label className="block space-y-2">
-                <span className="text-[10px] font-display font-bold uppercase tracking-wider text-ash-500">{t('invite.codinome')}</span>
+                <span className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-500">{t('invite.codinome')}</span>
                 <input
                   value={codinome}
                   onChange={(e) => setCodinome(e.target.value)}
                   maxLength={60}
                   placeholder={t('invite.codinomePlaceholder')}
-                  className="w-full bg-black/40 rounded-sm px-3 py-2 text-sm text-bone font-mono uppercase outline-none"
+                  className="w-full bg-black/40 rounded-sm px-3 py-2 text-sm text-bone font-mono uppercase outline-none focus:bg-accent-10"
                 />
                 <span className="block text-[10px] text-ash-500">{t('invite.codinomeHint')}</span>
               </label>

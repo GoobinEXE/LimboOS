@@ -21,7 +21,6 @@ function AppRoutes() {
         <RetroLoading
           fullScreen
           message={t('loadingSystem')}
-          subMessage={t('loadingSystemSub')}
         />
       }
     >

@@ -64,14 +64,16 @@ export default function Header({
           </div>
         )}
 
-        <nav aria-label={t('breadcrumb.navLabel')} className="min-w-0 flex-1 max-w-[32rem]">
+        {/* A trilha ocupa a própria largura e corta em vez de vazar por baixo do
+            selo da sessão; os níveis de cima encolhem antes da página atual. */}
+        <nav aria-label={t('breadcrumb.navLabel')} className="min-w-0 lg:shrink-0 max-w-[32rem] overflow-hidden">
           <ol className="flex items-center gap-1.5 min-w-0 text-[10px] font-display uppercase font-bold tracking-[0.2em] leading-4">
             {breadcrumb.map((crumb, i) => {
               const last = i === breadcrumb.length - 1;
               return (
                 <li
                   key={`${i}-${crumb.label}`}
-                  className={`flex items-center gap-1.5 min-w-0 ${last ? '' : 'hidden md:flex shrink-0'}`}
+                  className={`flex items-center gap-1.5 ${last ? 'min-w-0 lg:shrink-0 max-w-[14rem]' : 'hidden md:flex lg:hidden 2xl:flex min-w-0'}`}
                 >
                   {crumb.to ? (
                     <Link to={crumb.to} className="text-ash-500 hover:text-bone transition-colors truncate max-w-[12rem]">
@@ -83,7 +85,7 @@ export default function Header({
                     </span>
                   )}
                   {!last && (
-                    <span className="text-ash-700" aria-hidden>
+                    <span className="text-ash-700 shrink-0" aria-hidden>
                       ›
                     </span>
                   )}
@@ -97,7 +99,7 @@ export default function Header({
           <button
             type="button"
             onClick={onOpenLive}
-            className="hidden md:flex items-center gap-2 max-w-xs h-7 bg-phosphor-500/5 px-2.5 rounded-inset hover:bg-phosphor-500/10 transition-colors truncate"
+            className="hidden md:flex lg:hidden xl:flex items-center gap-2 max-w-xs min-w-7 shrink-[20] h-7 bg-phosphor-500/5 px-2.5 rounded-inset hover:bg-phosphor-500/10 transition-colors truncate"
             title={t('header.sessionGoLive')}
           >
             <span className="lmb-led text-phosphor-400 animate-led" aria-hidden />

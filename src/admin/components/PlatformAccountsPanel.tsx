@@ -119,7 +119,7 @@ export default function PlatformAccountsPanel() {
     <div className="space-y-6">
       <div className="space-y-1">
         <h3 className="font-display font-bold uppercase tracking-[0.18em] text-sm text-bone">{t('platform.title')}</h3>
-        <p className="text-[11px] text-ash-500">{t('platform.body')}</p>
+        <p className="text-xs leading-relaxed text-ash-500">{t('platform.body')}</p>
       </div>
 
       <form onSubmit={createAccount} className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-end" aria-label={t('platform.createTitle')}>

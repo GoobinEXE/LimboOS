@@ -125,7 +125,7 @@ export default function AnalyticsPanel() {
       </motion.div>
 
       <motion.div variants={staggerItem} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <ClickableSection onClick={goContent} className="bg-surface-container-low p-6 shadow-xl group transition hover:bg-accent-10">
+        <ClickableSection onClick={goContent} className="bg-surface-container-low p-6 machined-edge group transition hover:bg-accent-10">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               <span className="material-symbols-outlined text-secondary text-base">cloud_done</span>
@@ -133,12 +133,12 @@ export default function AnalyticsPanel() {
             </div>
             <span className="text-[10px] font-display font-bold text-ash-400">{(analytics.totalStorageSize / (1024 * 1024)).toFixed(1)} MB / 5 GB</span>
           </div>
-          <div className="h-2 w-full bg-black/40 rounded-full overflow-hidden">
-            <div className="h-full bg-secondary shadow-[0_0_10px_rgba(198,198,198,0.2)] transition-[width,color,background-color,border-color,opacity,transform,box-shadow] duration-1000" style={{ width: `${Math.min(analytics.storagePercentage, 100)}%` }} />
+          <div className="h-2 w-full bg-surface-sunken rounded-inset overflow-hidden">
+            <div className="h-full bg-secondary transition-[width,color,background-color,border-color,opacity,transform,box-shadow] duration-1000" style={{ width: `${Math.min(analytics.storagePercentage, 100)}%` }} />
           </div>
         </ClickableSection>
 
-        <section className="bg-surface-container-low p-6 shadow-xl group transition hover:bg-accent-10">
+        <section className="bg-surface-container-low p-6 machined-edge group transition hover:bg-accent-10">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               <span className="material-symbols-outlined text-primary text-base">check_circle</span>
@@ -146,14 +146,14 @@ export default function AnalyticsPanel() {
             </div>
             <span className="text-[10px] font-display font-bold text-ash-400">{displayAnalytics.completionRate.toFixed(1)}% Concluído</span>
           </div>
-          <div className="h-2 w-full bg-black/40 rounded-full overflow-hidden">
-            <div className="h-full bg-primary shadow-[0_0_10px_rgba(255,140,0,0.2)] transition-[width,color,background-color,border-color,opacity,transform,box-shadow] duration-1000" style={{ width: `${displayAnalytics.completionRate}%` }} />
+          <div className="h-2 w-full bg-surface-sunken rounded-inset overflow-hidden">
+            <div className="h-full bg-primary transition-[width,color,background-color,border-color,opacity,transform,box-shadow] duration-1000" style={{ width: `${displayAnalytics.completionRate}%` }} />
           </div>
         </section>
       </motion.div>
 
       <motion.div variants={staggerItem} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <section className="bg-surface-container-low p-6 shadow-xl lg:col-span-2">
+        <section className="bg-surface-container-low p-6 machined-edge lg:col-span-2">
           <div className="flex items-center gap-3 mb-8">
             <span className="material-symbols-outlined text-primary text-base">timeline</span>
             <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-500">Atividade Temporal (30d)</h3>
@@ -161,10 +161,10 @@ export default function AnalyticsPanel() {
           <div className="flex items-end gap-1 h-40">
             {displayAnalytics.dailyPlaysSorted.map(([date, count]: [string, any]) => (
               <div key={date} className="flex-1 flex flex-col items-center group relative">
-                <div className="absolute -top-10 bg-surface-container-high text-primary text-[10px] font-display font-bold px-3 py-1.5 rounded-sm opacity-0 group-hover:opacity-100 transition-[opacity,transform] duration-(--duration-fast) whitespace-nowrap z-20 shadow-xl scale-[0.97] group-hover:scale-100 translate-y-1 group-hover:translate-y-0 origin-bottom pointer-events-none">
+                <div className="absolute -top-9 bg-surface-container-high text-primary text-[10px] font-mono px-2.5 py-1 rounded-inset opacity-0 group-hover:opacity-100 transition-opacity duration-(--duration-instant) whitespace-nowrap z-20 machined-edge pointer-events-none">
                   {date.split('-').slice(1).reverse().join('/')} : {count} plays
                 </div>
-                <div className="w-full bg-primary/20 group-hover:bg-primary transition-[height,color,background-color,border-color,opacity,transform,box-shadow] rounded-t-sm" style={{ height: `${(count / displayAnalytics.maxDailyPlays) * 100}%`, minHeight: count > 0 ? '4px' : '1px' }}></div>
+                <div className="w-full bg-primary/20 group-hover:bg-primary transition-[height,color,background-color,border-color,opacity,transform,box-shadow] rounded-t-inset" style={{ height: `${(count / displayAnalytics.maxDailyPlays) * 100}%`, minHeight: count > 0 ? '4px' : '1px' }}></div>
               </div>
             ))}
           </div>
@@ -174,7 +174,7 @@ export default function AnalyticsPanel() {
           </div>
         </section>
 
-        <section className="bg-surface-container-low p-6 shadow-xl">
+        <section className="bg-surface-container-low p-6 machined-edge">
           <div className="flex items-center gap-3 mb-8">
             <span className="material-symbols-outlined text-primary text-base">schedule</span>
             <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-500">{t('analytics.peakHours')}</h3>
@@ -182,7 +182,7 @@ export default function AnalyticsPanel() {
           <div className="grid grid-cols-6 gap-3">
             {analytics.peakHours.map(({ hour, count }) => (
               <div key={hour} className="flex flex-col items-center group relative">
-                <div className="absolute -top-10 bg-surface-container-high text-primary text-[10px] font-display font-bold px-3 py-1.5 rounded-sm opacity-0 group-hover:opacity-100 transition-[opacity,transform] duration-(--duration-fast) whitespace-nowrap z-20 shadow-xl scale-[0.97] group-hover:scale-100 origin-bottom pointer-events-none">
+                <div className="absolute -top-9 bg-surface-container-high text-primary text-[10px] font-mono px-2.5 py-1 rounded-inset opacity-0 group-hover:opacity-100 transition-opacity duration-(--duration-instant) whitespace-nowrap z-20 machined-edge pointer-events-none">
                   {hour}h: {count} eventos
                 </div>
                 <div className="w-full aspect-square rounded-sm transition-colors shadow-inner group-hover:bg-accent-10" style={{ backgroundColor: count === 0 ? 'rgba(255,255,255,0.02)' : `rgba(255, 183, 125, ${0.1 + (count / analytics.maxHourCount) * 0.9})`, boxShadow: count > 0 ? `0 0 15px rgba(255, 183, 125, ${(count / analytics.maxHourCount) * 0.3})` : 'none' }} />
@@ -285,7 +285,7 @@ export default function AnalyticsPanel() {
         </ClickableSection>
 
         <div className="space-y-6">
-          <ClickableSection onClick={goAccounts} className="bg-surface-container-low p-6 shadow-xl">
+          <ClickableSection onClick={goAccounts} className="bg-surface-container-low p-6 machined-edge">
             <div className="flex items-center gap-3 mb-8">
               <span className="material-symbols-outlined text-primary text-base">group_add</span>
               <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-500">Crescimento de Rede (Semanal)</h3>
@@ -296,10 +296,10 @@ export default function AnalyticsPanel() {
                   const maxWeekly = Math.max(...analytics.weeklyGrowth.values(), 1);
                   return (
                     <div key={week} className="flex-1 flex flex-col items-center group relative">
-                      <div className="absolute -top-10 bg-surface-container-high text-secondary text-[10px] font-display font-bold px-3 py-1.5 rounded-sm opacity-0 group-hover:opacity-100 transition-[opacity,transform] duration-(--duration-fast) whitespace-nowrap z-20 shadow-xl scale-[0.97] group-hover:scale-100 origin-bottom pointer-events-none">
+                      <div className="absolute -top-9 bg-surface-container-high text-secondary text-[10px] font-mono px-2.5 py-1 rounded-inset opacity-0 group-hover:opacity-100 transition-opacity duration-(--duration-instant) whitespace-nowrap z-20 machined-edge pointer-events-none">
                         Semana {week.slice(5)}: +{count} agentes
                       </div>
-                      <div className="w-full bg-secondary/20 group-hover:bg-secondary transition-[height,color,background-color,border-color,opacity,transform,box-shadow] rounded-t-sm" style={{ height: `${((count as number) / maxWeekly) * 100}%`, minHeight: '4px' }}></div>
+                      <div className="w-full bg-secondary/20 group-hover:bg-secondary transition-[height,color,background-color,border-color,opacity,transform,box-shadow] rounded-t-inset" style={{ height: `${((count as number) / maxWeekly) * 100}%`, minHeight: '4px' }}></div>
                     </div>
                   );
                 })}
@@ -307,7 +307,7 @@ export default function AnalyticsPanel() {
             )}
           </ClickableSection>
 
-          <section className="bg-surface-container-low p-6 shadow-xl">
+          <section className="bg-surface-container-low p-6 machined-edge">
             <div className="flex items-center gap-3 mb-6">
               <span className="material-symbols-outlined text-primary text-base">analytics</span>
               <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-500">{t('analytics.engagement')}</h3>
@@ -338,8 +338,8 @@ function KPICard({
   color: string;
   onClick?: () => void;
 }) {
-  const className = `bg-surface-container-low p-5 shadow-xl relative overflow-hidden group transition ${
-    onClick ? 'cursor-pointer active:scale-[0.98] hover:bg-accent-10' : 'hover:bg-accent-10'
+  const className = `bg-surface-container-low p-5 machined-edge relative overflow-hidden group transition ${
+    onClick ? 'cursor-pointer active:translate-y-px hover:bg-accent-10' : 'hover:bg-accent-10'
   }`;
 
   const content = (

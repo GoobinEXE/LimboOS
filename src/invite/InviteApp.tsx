@@ -119,10 +119,10 @@ export default function InviteApp() {
                   placeholder={t('invite.codinomePlaceholder')}
                   className="w-full bg-black/40 rounded-sm px-3 py-2 text-sm text-bone font-mono uppercase outline-none focus:bg-accent-10"
                 />
-                <span className="block text-[10px] text-ash-500">{t('invite.codinomeHint')}</span>
+                <span className="block text-xs leading-relaxed text-ash-500">{t('invite.codinomeHint')}</span>
               </label>
             )}
-            <p className="text-[11px] text-ash-500 text-center">
+            <p className="text-xs leading-relaxed text-ash-500 text-center">
               {t('invite.signedAs', { name: user?.displayName || user?.email || '' })}{' '}
               <button type="button" onClick={() => void logout()} className="underline hover:text-bone">{t('invite.switchAccount')}</button>
             </p>

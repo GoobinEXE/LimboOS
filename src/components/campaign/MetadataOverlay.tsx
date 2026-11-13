@@ -167,7 +167,7 @@ export const MetadataOverlay = ({ onClose, agent }: MetadataOverlayProps) => {
             </div>
           </div>
 
-          <p className="pt-4 border-t border-border-subtle text-[10px] leading-relaxed text-ash-600 italic font-sans">
+          <p className="pt-4 border-t border-border-subtle text-xs leading-relaxed text-ash-500 italic font-sans">
             "Informação classificada nível OMEGA. Distribuição não autorizada resulta em eliminação imediata."
           </p>
         </div>

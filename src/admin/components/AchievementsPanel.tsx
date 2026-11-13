@@ -161,14 +161,14 @@ export default function AchievementsPanel({
       {modal}
       {!embedded && (
         <div className="flex items-center gap-4">
-          <div className="w-2 h-8 bg-secondary rounded-full animate-pulse shadow-[0_0_10px_rgba(198,198,198,0.4)]" />
+          <div className="w-1.5 h-7 rounded-inset bg-secondary animate-led" />
           <h2 className="font-black uppercase tracking-widest text-lg text-bone">
             {t('achievements.title')}
           </h2>
         </div>
       )}
 
-      <div className="bg-surface-container-low rounded-sm flex flex-col h-[550px] shadow-2xl overflow-hidden relative">
+      <div className="bg-surface-container-low rounded-sm flex flex-col h-[550px] machined-edge overflow-hidden relative">
         <div className="p-6 border-b border-primary/10 bg-black/40 flex flex-col gap-4 relative z-10">
           <div className="flex justify-between items-center gap-4 flex-wrap">
             <div className="relative w-full max-w-md">
@@ -263,7 +263,7 @@ export default function AchievementsPanel({
                 {group.defs.map((ach) => (
                   <div
                     key={ach.id}
-                    className={`bg-black p-6 rounded-card flex flex-col gap-4 group transition shadow-lg ${
+                    className={`bg-surface-sunken p-6 rounded-card flex flex-col gap-4 group transition machined-edge ${
                       ach.enabled === false
                         ? 'opacity-50'
                         : ''
@@ -322,11 +322,11 @@ export default function AchievementsPanel({
                           )}
                         </p>
                         {ach.description && (
-                          <p className="text-[10px] text-ash-400 font-bold leading-relaxed">
+                          <p className="text-xs text-ash-400 font-medium leading-relaxed">
                             {ach.description}
                           </p>
                         )}
-                        <p className="text-[10px] text-ash-600 mt-2 leading-relaxed">
+                        <p className="text-xs text-ash-500 mt-2 leading-relaxed">
                           {ach.unlockCondition}
                         </p>
                         <p className="text-[10px] text-ash-700 mt-1 font-mono uppercase">

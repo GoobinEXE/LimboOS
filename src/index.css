@@ -9,12 +9,12 @@
    ═══════════════════════════════════════════════════════════════════ */
 
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Space Grotesk", sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, "Courier New", monospace;
-  --font-headline: "Space Grotesk", sans-serif;
-  --font-body: "Inter", sans-serif;
-  --font-label: "Space Grotesk", sans-serif;
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Archivo", sans-serif;
+  --font-mono: "Spline Sans Mono", ui-monospace, "Courier New", monospace;
+  --font-headline: "Archivo", sans-serif;
+  --font-body: "DM Sans", sans-serif;
+  --font-label: "Archivo", sans-serif;
 
   --color-retro-orange: #FF8C00;
   --color-industrial-silver: #C4BEB6;
@@ -258,9 +258,9 @@
 
   body {
     @apply bg-surface text-industrial-silver font-sans selection:bg-retro-orange selection:text-black;
+    line-height: 1.55;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    font-feature-settings: "cv11", "ss03";
     -webkit-tap-highlight-color: transparent;
   }
 
@@ -348,7 +348,7 @@
     }
   }
   .lmb-btn:active:not(:disabled) {
-    transform: scale(0.97);
+    transform: translateY(1px);
     box-shadow: var(--shadow-pressed);
   }
   .lmb-btn:disabled {
@@ -508,7 +508,7 @@
     transition: transform var(--duration-press) var(--easing-standard);
   }
   .press:active:not(:disabled) {
-    transform: scale(0.97);
+    transform: translateY(1px);
   }
 
   .glow-orange {
@@ -742,7 +742,7 @@
 .nokia-theme-active {
   background-color: var(--color-lcd-paper) !important;
   color: var(--color-lcd-ink) !important;
-  font-family: 'JetBrains Mono', ui-monospace, 'Courier New', monospace !important;
+  font-family: var(--font-mono) !important;
 }
 
 .nokia-theme-active * {
@@ -759,7 +759,7 @@
   border-radius: 2px !important;
   padding: 0.25rem 0.5rem !important;
   cursor: pointer !important;
-  font-family: 'JetBrains Mono', monospace !important;
+  font-family: var(--font-mono) !important;
   font-weight: bold !important;
   text-transform: uppercase !important;
   transition: background-color 0.1s linear, color 0.1s linear !important;
@@ -799,7 +799,7 @@
   border-radius: 2px !important;
   padding: 0.25rem 0.5rem !important;
   outline: none !important;
-  font-family: 'JetBrains Mono', monospace !important;
+  font-family: var(--font-mono) !important;
 }
 
 .nokia-theme-active input:focus,
@@ -814,7 +814,7 @@
 .nokia-theme-active h4,
 .nokia-theme-active h5,
 .nokia-theme-active h6 {
-  font-family: 'JetBrains Mono', monospace !important;
+  font-family: var(--font-mono) !important;
   font-weight: 800 !important;
   text-transform: uppercase !important;
   letter-spacing: 0.05em !important;

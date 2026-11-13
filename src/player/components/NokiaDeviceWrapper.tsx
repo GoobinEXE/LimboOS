@@ -134,7 +134,7 @@ export default function NokiaDeviceWrapper({
       >
         <div
           id="nokia-lcd-screen-inner"
-          style={{ fontFamily: '"JetBrains Mono", monospace' }}
+          style={{ fontFamily: 'var(--font-mono)' }}
           // overflow-clip: com hidden, o foco de um botão rolava o LCD e deslocava o perfil para fora da moldura
           className={`w-full h-full bg-lcd-paper text-lcd-ink overflow-clip relative select-none nokia-theme-active ${
             isLandscape && !isScanning ? 'flex flex-row min-h-0' : 'flex flex-col justify-between'

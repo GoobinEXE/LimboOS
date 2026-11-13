@@ -284,16 +284,16 @@ export default function JukeboxPanel({ embedded = false }: { embedded?: boolean 
       {!embedded ? (
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <div className="w-2 h-8 bg-primary rounded-full animate-pulse shadow-[0_0_10px_rgba(255,140,0,0.4)]" />
+          <div className="w-1.5 h-7 rounded-inset bg-primary animate-led" />
           <h2 className="font-black uppercase tracking-widest text-lg text-bone">{t('jukebox.title')}</h2>
           <span className="text-[10px] font-bold text-ash-600 tracking-widest uppercase">{tracks.length} FAIXAS NO BUFFER</span>
         </div>
         <div className={`flex items-center gap-3 px-4 py-1.5 text-[10px] font-black uppercase tracking-widest rounded-sm ${
-          isPlaying ? 'text-primary bg-primary/5 shadow-[0_0_15px_rgba(255,140,0,0.1)]' :
+          isPlaying ? 'text-primary bg-primary/5' :
           isLooping ? 'text-amber-400 bg-amber-500/5' :
           'text-ash-600'
         }`}>
-          <div className={`w-1.5 h-1.5 rounded-full ${isPlaying ? 'bg-primary animate-pulse shadow-[0_0_5px_rgba(255,140,0,0.8)]' : 'bg-ash-800'}`} />
+          <span className={`lmb-led ${isPlaying ? 'text-primary animate-led' : 'text-ash-700'}`} aria-hidden />
           {statusLabel}
         </div>
       </div>
@@ -305,14 +305,14 @@ export default function JukeboxPanel({ embedded = false }: { embedded?: boolean 
           isLooping ? 'text-amber-400 bg-amber-500/5' :
           'text-ash-500 bg-accent-10'
         }`}>
-          <div className={`w-1.5 h-1.5 rounded-full ${isPlaying ? 'bg-primary animate-pulse' : 'bg-ash-800'}`} />
+          <span className={`lmb-led ${isPlaying ? 'text-primary animate-led' : 'text-ash-700'}`} aria-hidden />
           {statusLabel}
         </div>
       </div>
       )}
 
       {/* Player Area */}
-      <div className="bg-seam rounded-card overflow-hidden shadow-2xl relative">
+      <div className="bg-seam rounded-card overflow-hidden machined-edge relative">
         <div className="p-6 border-b-4 border-seam bg-black/40 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="p-2 bg-primary/10 rounded-sm">

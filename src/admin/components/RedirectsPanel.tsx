@@ -103,7 +103,7 @@ export default function RedirectsPanel({
       {modal}
       {!embedded && (
       <div className="flex items-center gap-4">
-        <div className="w-2 h-8 bg-phosphor-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(86,185,75,0.4)]" />
+        <div className="w-1.5 h-7 rounded-inset bg-phosphor-500 animate-led" />
         <h2 className="font-black uppercase tracking-widest text-lg text-bone">
           Interface de Redirecionamento de Sinal QR
         </h2>
@@ -121,7 +121,7 @@ export default function RedirectsPanel({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Form Column */}
         <div className="lg:col-span-1">
-          <div className="bg-seam p-8 rounded-card shadow-xl space-y-8 relative overflow-hidden">
+          <div className="bg-seam p-8 rounded-card machined-edge space-y-8 relative overflow-hidden">
             <div className="flex items-center gap-3 border-b border-border-subtle pb-6">
               <span className="material-symbols-outlined text-phosphor-500 text-2xl">add_link</span>
               <h3 className="font-black text-xs uppercase tracking-widest text-bone">{t('redirects.inject')}</h3>
@@ -171,7 +171,7 @@ export default function RedirectsPanel({
                     {targetMatch ? targetMatch.title : t('redirects.targetUnknown')}
                   </p>
                 ) : (
-                  <p className="text-[11px] text-ash-500">{t('redirects.targetHint')}</p>
+                  <p className="text-xs leading-relaxed text-ash-500">{t('redirects.targetHint')}</p>
                 )}
               </div>
               <div className="space-y-2">
@@ -181,21 +181,21 @@ export default function RedirectsPanel({
                   onChange={(e) => setNewReason(e.target.value)}
                   placeholder="MOTIVO DO REDIRECIONAMENTO..."
                   rows={2}
-                  className="w-full bg-black/40 text-[10px] font-bold text-bone px-4 py-3 outline-none rounded-sm resize-none transition"
+                  className="w-full bg-surface-sunken text-xs leading-relaxed text-bone px-4 py-3 outline-none rounded-sm resize-none transition"
                 />
               </div>
               <button
                 type="submit"
                 disabled={isSaving}
-                className="w-full bg-phosphor-600 hover:bg-phosphor-500 text-bone py-4 font-black text-[10px] uppercase tracking-[0.3em] transition rounded-sm active:scale-[0.97] disabled:opacity-40"
+                className="w-full bg-phosphor-600 hover:bg-phosphor-500 text-bone py-4 font-black text-[10px] uppercase tracking-[0.3em] transition rounded-sm active:translate-y-px disabled:opacity-40"
               >
                 {isSaving ? 'SINC DADOS...' : t('redirects.linkAction')}
               </button>
             </form>
 
-            <div className="bg-black/60 p-5 rounded-card">
-              <p className="text-[10px] text-ash-600 leading-relaxed font-bold uppercase tracking-wide">
-                <span className="text-phosphor-500 font-black">LOG:</span> {t('redirects.help')}
+            <div className="bg-surface-sunken p-5 rounded-card machined-edge">
+              <p className="text-xs text-ash-500 leading-relaxed">
+                <span className="text-phosphor-500 font-bold">LOG:</span> {t('redirects.help')}
               </p>
             </div>
           </div>
@@ -203,7 +203,7 @@ export default function RedirectsPanel({
 
         {/* List Column */}
         <div className="lg:col-span-2">
-          <div className="bg-seam rounded-card shadow-2xl flex flex-col min-h-[500px] overflow-hidden">
+          <div className="bg-seam rounded-card machined-edge flex flex-col min-h-[500px] overflow-hidden">
             <div className="p-6 border-b-4 border-seam bg-black/40 flex items-center justify-between">
               <h3 className="font-black text-[10px] uppercase tracking-[0.3em] text-ash-600">{t('redirects.activeGrid')}</h3>
               <div className="relative">

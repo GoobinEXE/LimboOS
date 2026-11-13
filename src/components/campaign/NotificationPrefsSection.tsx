@@ -37,7 +37,7 @@ export default function NotificationPrefsSection() {
   return (
     <section className="space-y-3">
       <h3 className="text-protocol text-primary">{t('push.prefs.title')}</h3>
-      {permission === 'denied' && <p className="text-[11px] text-ash-400">{t('push.prefs.denied')}</p>}
+      {permission === 'denied' && <p className="text-xs leading-relaxed text-ash-400">{t('push.prefs.denied')}</p>}
       {permission === 'prompt' && (
         <button type="button" onClick={enable} className="w-full py-3 rounded-control bg-accent text-protocol text-[10px] text-black">
           {t('push.prefs.enable')}

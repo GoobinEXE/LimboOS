@@ -345,8 +345,8 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager, onUpdat
                         className="w-full bg-surface-sunken rounded-control px-3 py-2 text-base text-white placeholder:text-ash-600 focus:outline-none transition-colors font-mono"
                         autoFocus
                       />
-                      {spotifyError && <p className="text-red-400 text-[10px] mt-1.5 font-sans">{spotifyError}</p>}
-                      <p className="text-[10px] text-ash-600 mt-2 leading-relaxed font-sans">
+                      {spotifyError && <p className="text-red-400 text-xs mt-1.5 font-sans leading-relaxed">{spotifyError}</p>}
+                      <p className="text-xs text-ash-500 mt-2 leading-relaxed font-sans">
                         {t('profile.deck.hint')}
                       </p>
                     </div>
@@ -529,14 +529,14 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager, onUpdat
                   </div>
                 ) : (
                   <div className="p-4">
-                    <div className="rounded-inset bg-surface-sunken p-4 text-mono-ui text-[11px] text-primary/80 max-h-[50vh] overflow-y-auto custom-scrollbar leading-relaxed">
+                    <div className="rounded-inset bg-surface-sunken p-4 text-mono-ui text-xs text-primary/80 max-h-[50vh] overflow-y-auto custom-scrollbar leading-relaxed">
                       <p className="whitespace-pre-wrap">{selectedIntel instanceof TextIntel ? selectedIntel.content : selectedIntel.description}</p>
                     </div>
                   </div>
                 )}
                 <div className="px-4 pb-4 border-t border-border-subtle pt-3">
                   <p className="text-display text-base text-white uppercase">{selectedIntel.title}</p>
-                  <p className="text-ash-400 text-[10px] mt-1.5 leading-relaxed font-sans">{selectedIntel.description}</p>
+                  <p className="text-ash-400 text-xs mt-1.5 leading-relaxed font-sans">{selectedIntel.description}</p>
                 </div>
               </div>
               <button

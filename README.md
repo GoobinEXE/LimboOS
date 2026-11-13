@@ -269,7 +269,7 @@ O LimboOS imita sistemas operacionais sem ser um e depende da mesa para funciona
 Pré-requisitos: Node 22, Java 21 ou mais novo e o [Firebase CLI](https://firebase.google.com/docs/cli). O backend (regras, Functions e hosting) fica no submódulo `backend/`.
 
 ```bash
-git clone --recurse-submodules https://github.com/xXinous/LimboOS.git
+git clone --recurse-submodules https://github.com/GoobinEXE/LimboOS.git
 cd LimboOS
 npm install
 cp .env.example .env   # preencha as variáveis VITE_FIREBASE_*

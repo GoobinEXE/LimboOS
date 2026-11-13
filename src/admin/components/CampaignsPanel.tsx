@@ -36,6 +36,7 @@ import {
 } from '../lib/adminNavigation';
 import { useAdminNavigate } from '../hooks/useAdminRoute';
 import { setUnsavedChanges } from '../lib/unsavedChanges';
+import MIcon from './MIcon';
 
 interface CampaignsPanelProps {
   /** Última rota de Missões: lista, criação ou página de uma missão. */
@@ -261,7 +262,7 @@ export default function CampaignsPanel({
 
   if (loading) {
     return (
-      <div className="p-24 text-center animate-pulse font-display font-bold text-primary text-xs uppercase tracking-[0.4em]">
+      <div className="p-24 text-center animate-led font-display font-bold text-primary text-xs uppercase tracking-[0.12em]">
         {t('missions.loading')}
       </div>
     );
@@ -278,7 +279,7 @@ export default function CampaignsPanel({
         <div className="flex items-center gap-4">
           <div className="w-1 h-9 bg-accent shrink-0" />
           <div>
-            <h2 className="font-display font-bold uppercase tracking-widest text-lg text-bone">
+            <h2 className="font-display font-bold uppercase tracking-wider text-lg text-bone">
               {t('missions.title')}
             </h2>
           </div>
@@ -287,16 +288,16 @@ export default function CampaignsPanel({
         <div className="flex gap-4">
           <button
             onClick={() => setShowItemsModal(true)}
-            className="flex items-center gap-3 bg-surface-container-high text-ash-400 px-6 py-3 rounded-sm font-display font-bold text-[11px] tracking-widest hover:bg-white/5 transition active:scale-[0.97] uppercase"
+            className="flex items-center gap-3 bg-surface-container-high text-ash-400 px-6 py-3 rounded-sm font-display font-bold text-[11px] tracking-wider hover:bg-white/5 transition active:translate-y-px uppercase"
           >
-            <span className="material-symbols-outlined text-base">inventory_2</span>
+            <MIcon name="inventory_2" className="text-base" />
             {t('missions.persistentItems')}
           </button>
           <button
             onClick={openNewMission}
-            className="flex items-center gap-3 bg-primary text-black px-6 py-3 rounded-sm font-display font-bold text-[11px] tracking-widest hover:bg-primary-container transition active:scale-[0.97] uppercase"
+            className="flex items-center gap-3 bg-primary text-black px-6 py-3 rounded-sm font-display font-bold text-[11px] tracking-wider hover:bg-primary-container transition active:translate-y-px uppercase"
           >
-            <span className="material-symbols-outlined text-base">add_circle</span>
+            <MIcon name="add_circle" className="text-base" />
             {t('missions.modal.newTitle')}
           </button>
         </div>
@@ -305,7 +306,7 @@ export default function CampaignsPanel({
 
       {campaigns.length === 0 && (
         <div className="rounded-panel bg-surface-container-low px-6 py-14 flex flex-col items-center text-center gap-4">
-          <span className="material-symbols-outlined text-5xl text-ash-700" aria-hidden>map</span>
+          <MIcon name="map" className="text-5xl text-ash-700" />
           <div className="space-y-2 max-w-md">
             <h3 className="font-display font-bold uppercase tracking-[0.18em] text-sm text-bone">
               {t('missions.empty.title')}
@@ -316,7 +317,7 @@ export default function CampaignsPanel({
           </div>
           <div className="flex flex-wrap justify-center gap-2 pt-1">
             {canManage && <button type="button" onClick={openNewMission} className="lmb-btn lmb-btn-primary">
-              <span className="material-symbols-outlined text-base" aria-hidden>add_circle</span>
+              <MIcon name="add_circle" className="text-base" />
               {t('missions.modal.newTitle')}
             </button>}
           </div>
@@ -337,7 +338,7 @@ export default function CampaignsPanel({
           return (
             <div
               key={campaign.id}
-              className="bg-surface-container-low overflow-hidden group transition shadow-2xl relative hover:bg-accent-10"
+              className="bg-surface-container-low overflow-hidden group transition shadow-panel relative hover:bg-accent-10"
             >
               <div className="h-48 bg-black relative overflow-hidden">
                 {campaign.imageUrl ? (
@@ -352,7 +353,7 @@ export default function CampaignsPanel({
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-ash-700 bg-surface-container-high">
-                    <span className="material-symbols-outlined text-7xl">map</span>
+                    <MIcon name="map" className="text-7xl" />
                   </div>
                 )}
                 <div className="absolute inset-0 bg-linear-to-t from-surface-container-low via-surface-container-low/20 to-transparent" />
@@ -360,7 +361,7 @@ export default function CampaignsPanel({
                 <div className="absolute bottom-6 left-6 right-6">
                   <div className="flex items-center gap-3 mb-2">
                     <span className="lmb-led text-accent animate-led" aria-hidden />
-                    <p className="text-[10px] font-display font-bold text-primary/70 uppercase tracking-[0.2em]">
+                    <p className="text-[10px] font-display font-bold text-primary/70 uppercase tracking-[0.1em]">
                       {campaign.rpgSystem}
                     </p>
                   </div>
@@ -375,17 +376,13 @@ export default function CampaignsPanel({
                   {campaign.description}
                 </p>
 
-                <div className="flex items-center justify-between text-[10px] font-display font-bold text-ash-600 uppercase border-y border-border-subtle py-3 tracking-widest gap-2 flex-wrap">
+                <div className="flex items-center justify-between text-[10px] font-display font-bold text-ash-500 uppercase border-y border-border-subtle py-3 tracking-wider gap-2 flex-wrap">
                   <div className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-base text-ash-600">
-                      location_on
-                    </span>{' '}
+                    <MIcon name="location_on" className="text-base text-ash-500" />{' '}
                     {campaign.location}
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-base text-ash-600">
-                      devices
-                    </span>
+                    <MIcon name="devices" className="text-base text-ash-500" />
                     {campaign.playerType === 'nokia' ? t('missions.playerType.handset') : t('missions.playerType.deck')}
                   </div>
                   <span
@@ -394,7 +391,7 @@ export default function CampaignsPanel({
                         ? 'text-phosphor-500 bg-phosphor-500/5'
                         : campaign.status === 'Bloqueada'
                           ? 'text-red-500 bg-red-500/5'
-                          : 'text-ash-600'
+                          : 'text-ash-500'
                     }`}
                   >
                     {campaign.status.toUpperCase()}
@@ -416,21 +413,21 @@ export default function CampaignsPanel({
                   </span>
                   <span className="ml-auto flex items-center gap-3 font-mono text-[11px] text-ash-400 tabular-nums">
                     <span title={t('missions.resources.section.intel')} className="inline-flex items-center gap-1">
-                      <span className="material-symbols-outlined text-sm text-ash-600" aria-hidden>hub</span>
+                      <MIcon name="hub" className="text-sm text-ash-500" />
                       {summary.intel.length}
                     </span>
                     <span title={t('missions.resources.section.achievements')} className="inline-flex items-center gap-1">
-                      <span className="material-symbols-outlined text-sm text-ash-600" aria-hidden>emoji_events</span>
+                      <MIcon name="emoji_events" className="text-sm text-ash-500" />
                       {summary.achievements.length}
                     </span>
                     <span title={t('missions.resources.section.npcs')} className="inline-flex items-center gap-1">
-                      <span className="material-symbols-outlined text-sm text-ash-600" aria-hidden>sms</span>
+                      <MIcon name="sms" className="text-sm text-ash-500" />
                       {summary.npcs.length}
                     </span>
                   </span>
                 </button>
 
-                <div className="flex flex-wrap gap-2 text-[10px] font-display font-bold uppercase tracking-widest">
+                <div className="flex flex-wrap gap-2 text-[10px] font-display font-bold uppercase tracking-wider">
                   {authorizedGroups > 0 && (
                     <span className="bg-primary/5 text-primary/70 px-2 py-1 rounded-sm">
                       {t('missions.badge.authorized', { n: authorizedGroups })}
@@ -448,16 +445,16 @@ export default function CampaignsPanel({
                     onClick={() => openManage(campaign)}
                     className="lmb-btn flex-1 h-11 hover:border-primary/50 hover:text-primary"
                   >
-                    <span className="material-symbols-outlined text-sm">tune</span>
+                    <MIcon name="tune" className="text-sm" />
                     {t('missions.manage')}
                   </button>
                   {canManage && <button
                     onClick={() => handleDeleteCampaign(campaign.id, campaign.name)}
-                    className="w-11 flex items-center justify-center bg-black/40 rounded-inset text-ash-500 hover:text-red-500 transition active:scale-[0.97] hover:bg-red-500/10"
+                    className="w-11 flex items-center justify-center bg-black/40 rounded-inset text-ash-500 hover:text-red-500 transition active:translate-y-px hover:bg-red-500/10"
                     title={t('missions.deleteTitle')}
                     aria-label={t('missions.deleteTitle')}
                   >
-                    <span className="material-symbols-outlined text-xl">delete</span>
+                    <MIcon name="delete" className="text-xl" />
                   </button>}
                 </div>
               </div>
@@ -478,7 +475,7 @@ export default function CampaignsPanel({
                 animate={{ x: 0 }}
                 exit={{ x: '100%' }}
                 transition={ADMIN_SPRING}
-                className="bg-surface-container-low border-l border-seam w-full max-w-2xl shadow-2xl flex flex-col h-full relative overflow-hidden"
+                className="bg-surface-container-low border-l border-seam w-full max-w-2xl shadow-panel flex flex-col h-full relative overflow-hidden"
                 onClick={(e) => e.stopPropagation()}
               >
                 <Screw className="top-4 left-4" />
@@ -490,29 +487,25 @@ export default function CampaignsPanel({
 
                 <div className="p-8 border-b-4 border-seam flex justify-between items-center bg-black/40 relative z-10">
                   <div className="mt-2">
-                    <h3 className="font-black text-xl text-bone uppercase tracking-widest">
+                    <h3 className="font-black text-xl text-bone uppercase tracking-wider">
                       Retenção de <span className="text-primary">Recursos</span>
                     </h3>
                   </div>
                   <button
                     onClick={() => setShowItemsModal(false)}
-                    className="p-3 text-ash-600 hover:text-bone transition material-symbols-outlined rounded-sm"
-                  >
-                    close
-                  </button>
+                    className="p-3 text-ash-500 hover:text-bone transition rounded-sm"
+                  ><MIcon name="close" /></button>
                 </div>
 
                 <div className="p-6 bg-black/20 border-b-2 border-seam relative z-10">
                   <div className="relative group">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-ash-600 text-base group-focus-within:text-primary transition-colors">
-                      search
-                    </span>
+                    <MIcon name="search" className="absolute left-4 top-1/2 -translate-y-1/2 text-ash-500 text-base group-focus-within:text-primary transition-colors" />
                     <input
                       type="text"
                       placeholder={t('missions.persistent.search')}
                       value={itemSearch}
                       onChange={(e) => setItemSearch(e.target.value)}
-                      className="w-full bg-black/60 text-[11px] font-bold px-12 py-4 text-bone outline-none rounded-sm uppercase tracking-widest transition shadow-inner focus:ring-1 focus:ring-primary placeholder:text-ash-600"
+                      className="w-full bg-black/60 text-[11px] font-bold px-12 py-4 text-bone outline-none rounded-sm uppercase tracking-wider transition shadow-inner focus:ring-1 focus:ring-primary placeholder:text-ash-500"
                     />
                   </div>
                 </div>
@@ -540,26 +533,24 @@ export default function CampaignsPanel({
                               className={`w-10 h-10 rounded-sm bg-black/40 flex items-center justify-center transition ${
                                 persistentItems.includes(item.id)
                                   ? 'text-primary shadow-[0_0_10px_rgba(255,140,0,0.1)] bg-accent-10'
-                                  : 'text-ash-600'
+                                  : 'text-ash-500'
                               }`}
                             >
-                              <span className="material-symbols-outlined text-xl">
-                                {item.type === 'AUDIO'
+                              <MIcon name={item.type === 'AUDIO'
                                   ? 'album'
                                   : item.type === 'TEXT'
                                     ? 'save'
-                                    : 'description'}
-                              </span>
+                                    : 'description'} className="text-xl" />
                             </div>
                             <div>
                               <p className="text-[11px] font-black uppercase tracking-wider">
                                 {item.title}
                               </p>
                               <p
-                                className={`text-[10px] font-bold uppercase tracking-widest mt-0.5 ${
+                                className={`text-[10px] font-bold uppercase tracking-wider mt-0.5 ${
                                   persistentItems.includes(item.id)
                                     ? 'text-primary/40'
-                                    : 'text-ash-600'
+                                    : 'text-ash-500'
                                 }`}
                               >
                                 {item.metadata?.chapter || 'REGISTRO GERAL'}
@@ -567,7 +558,7 @@ export default function CampaignsPanel({
                             </div>
                           </div>
                           {persistentItems.includes(item.id) && (
-                            <div className="w-2 h-2 bg-primary rounded-full animate-pulse glow-orange" />
+                            <div className="w-2 h-2 bg-primary rounded-full animate-led glow-orange" />
                           )}
                         </button>
                       ))}
@@ -577,7 +568,7 @@ export default function CampaignsPanel({
                 <div className="p-8 border-t-4 border-seam flex justify-end bg-black/40 relative z-10 shrink-0">
                   <button
                     onClick={() => setShowItemsModal(false)}
-                    className="bg-[#333] hover:bg-[#444] text-bone px-12 py-4 text-[10px] font-black tracking-widest transition rounded-sm uppercase active:scale-[0.97]"
+                    className="bg-[#333] hover:bg-[#444] text-bone px-12 py-4 text-[10px] font-black tracking-wider transition rounded-sm uppercase active:translate-y-px"
                   >
                     Concluir Operação
                   </button>

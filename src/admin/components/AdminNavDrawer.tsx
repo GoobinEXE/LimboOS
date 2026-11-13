@@ -7,6 +7,7 @@ import OverlayPortal from './OverlayPortal';
 import { drawerLeft, overlayFade } from '../lib/motion';
 import { ADMIN_DESTINATIONS, ADMIN_NAV_GROUPS, type AdminDestinationId } from '../lib/adminNavigation';
 import WorkspaceSwitcher from './WorkspaceSwitcher';
+import MIcon from './MIcon';
 
 interface AdminNavDrawerProps {
   open: boolean;
@@ -53,17 +54,15 @@ export default function AdminNavDrawer({ open, onClose, activeDest, hrefFor }: A
                   type="button"
                   onClick={onClose}
                   aria-label={t('header.closeMenu')}
-                  className="lmb-btn lmb-btn-ghost lmb-btn-icon material-symbols-outlined text-[20px] tracking-normal normal-case"
-                >
-                  close
-                </button>
+                  className="lmb-btn lmb-btn-ghost lmb-btn-icon text-[20px]"
+                ><MIcon name="close" /></button>
               </div>
               <WorkspaceSwitcher className="px-5 py-3 border-b border-seam" />
 
               <div className="flex-1 overflow-y-auto custom-scrollbar px-3 py-5 space-y-6">
                 {ADMIN_NAV_GROUPS.map((group) => (
                   <div key={group.id}>
-                    <h3 className="px-3 mb-2 text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.32em]">
+                    <h3 className="px-3 mb-2 text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.12em]">
                       {t(group.labelKey)}
                     </h3>
                     <ul className="space-y-px">
@@ -80,15 +79,10 @@ export default function AdminNavDrawer({ open, onClose, activeDest, hrefFor }: A
                                 isActive ? 'text-primary bg-accent-05' : 'text-ash-400 active:bg-white/[0.04]'
                               )}
                             >
-                              <span
-                                className={clsx(
-                                  'material-symbols-outlined text-[20px]',
-                                  isActive ? 'text-accent' : 'text-ash-600'
-                                )}
-                                aria-hidden
-                              >
-                                {dest.icon}
-                              </span>
+                              <MIcon name={dest.icon} className={clsx(
+                                  'text-[20px]',
+                                  isActive ? 'text-accent' : 'text-ash-500'
+                                )} />
                               <span className="font-display uppercase font-bold tracking-[0.18em] text-[11px]">
                                 {t(dest.labelKey)}
                               </span>

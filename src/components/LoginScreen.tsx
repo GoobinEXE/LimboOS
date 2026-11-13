@@ -96,7 +96,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
                       placeholder={t('login.placeholder.id')}
                       autoComplete="username" autoCapitalize="none" spellCheck={false}
                       aria-invalid={Boolean(error)} aria-describedby={error ? 'login-error' : undefined}
-                      className="focus-bare w-full bg-surface-sunken rounded-control py-4 pl-12 pr-4 text-bone shadow-pressed font-sans text-base tracking-wide focus:ring-0 placeholder:text-ash-600 outline-none transition-colors duration-(--duration-fast)" />
+                      className="focus-bare w-full bg-surface-sunken rounded-control py-4 pl-12 pr-4 text-bone shadow-pressed font-sans text-base tracking-wide focus:ring-0 placeholder:text-ash-500 outline-none transition-colors duration-(--duration-fast)" />
                     <div className="absolute bottom-0 left-4 right-4 h-px bg-accent scale-x-0 origin-left transition-transform duration-(--duration-base) ease-limbo group-focus-within:scale-x-100" />
                   </div>
                 </div>
@@ -113,7 +113,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
                       placeholder="••••••••"
                       autoComplete="current-password"
                       aria-invalid={Boolean(error)} aria-describedby={error ? 'login-error' : undefined}
-                      className="focus-bare w-full bg-surface-sunken rounded-control py-4 pl-12 pr-4 text-bone shadow-pressed font-sans text-base tracking-wide focus:ring-0 placeholder:text-ash-600 outline-none transition-colors duration-(--duration-fast)" />
+                      className="focus-bare w-full bg-surface-sunken rounded-control py-4 pl-12 pr-4 text-bone shadow-pressed font-sans text-base tracking-wide focus:ring-0 placeholder:text-ash-500 outline-none transition-colors duration-(--duration-fast)" />
                     <div className="absolute bottom-0 left-4 right-4 h-px bg-accent scale-x-0 origin-left transition-transform duration-(--duration-base) ease-limbo group-focus-within:scale-x-100" />
                   </div>
                 </div>
@@ -131,11 +131,11 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
               </AnimatePresence>
 
               <div className="flex flex-col items-stretch gap-4 pt-2 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
-                <p className="text-[10px] font-display text-ash-600 uppercase tracking-widest leading-relaxed">
+                <p className="text-[10px] font-display text-ash-500 uppercase tracking-wider leading-relaxed">
                   {t('login.hint.register')}
                 </p>
                 <button type="submit" disabled={isLoggingIn}
-                  className="shrink-0 bg-accent hover:bg-primary text-[#1a0d00] font-display font-bold text-xs uppercase tracking-[0.2em] py-4 px-8 rounded-control transition duration-(--duration-fast) flex items-center justify-center gap-3 group disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.97]">
+                  className="shrink-0 bg-accent hover:bg-primary text-[#1a0d00] font-display font-bold text-xs uppercase tracking-[0.1em] py-4 px-8 rounded-control transition duration-(--duration-fast) flex items-center justify-center gap-3 group disabled:opacity-50 disabled:cursor-not-allowed active:translate-y-px">
                   {isLoggingIn ? (
                     <>
                       <RetroSpinner size="sm" />
@@ -150,7 +150,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
 
             <div className="mt-8 pt-6 border-t border-border space-y-4">
               <div className="text-center">
-                <span className="bg-surface-raised px-4 text-[10px] font-display font-bold uppercase tracking-[0.2em] text-ash-500">
+                <span className="bg-surface-raised px-4 text-[10px] font-display font-bold uppercase tracking-[0.1em] text-ash-500">
                   {t('login.orVia')}
                 </span>
               </div>
@@ -159,7 +159,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
                   type="button"
                   onClick={() => handleProviderLogin('google')}
                   disabled={isLoggingIn}
-                  className="group flex items-center justify-center gap-3 bg-surface-sunken hover:bg-white/5 rounded-control py-3 transition-colors duration-(--duration-fast) disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.97]"
+                  className="group flex items-center justify-center gap-3 bg-surface-sunken hover:bg-white/5 rounded-control py-3 transition-colors duration-(--duration-fast) disabled:opacity-50 disabled:cursor-not-allowed active:translate-y-px"
                 >
                   <svg viewBox="0 0 24 24" className="w-4 h-4 grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition duration-(--duration-fast)" xmlns="http://www.w3.org/2000/svg">
                     <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -173,7 +173,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
                   type="button"
                   onClick={() => handleProviderLogin('apple')}
                   disabled={isLoggingIn}
-                  className="flex items-center justify-center gap-3 bg-surface-sunken hover:bg-white/5 rounded-control py-3 transition-colors duration-(--duration-fast) disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.97]"
+                  className="flex items-center justify-center gap-3 bg-surface-sunken hover:bg-white/5 rounded-control py-3 transition-colors duration-(--duration-fast) disabled:opacity-50 disabled:cursor-not-allowed active:translate-y-px"
                 >
                   <svg viewBox="0 0 24 24" className="w-4 h-4 fill-industrial-silver" xmlns="http://www.w3.org/2000/svg">
                     <path d="M16.365 1.43c-.004.015-.008.03-.013.045C16.143 2.115 15.534 3.02 14.618 3.7c-.895.663-1.956 1.077-3.04 1.184a2.95 2.95 0 0 1-.027-.373c-.015-.99.373-1.996 1.055-2.732.682-.736 1.63-1.185 2.57-1.312a3.81 3.81 0 0 1 .158-.02c.003-.005.006-.01.009-.015a.014.014 0 0 1 .01-.01.012.012 0 0 1 .01.006.012.012 0 0 1 .002.002h.001ZM18.96 19.866c-1.137 1.634-2.316 3.266-4.135 3.303-1.782.037-2.366-1.042-4.412-1.042-2.046 0-2.684 1.005-4.375 1.08-1.782.073-3.136-1.78-4.274-3.414C-.626 16.33-1.396 10.96 1.013 7.643c1.173-1.614 2.946-2.64 4.885-2.677 1.745-.037 3.376 1.168 4.45 1.168 1.074 0 3.053-1.458 5.176-1.238 2.197.23 3.992 1.256 5.105 2.875-4.486 2.65-3.753 8.91 1.033 10.87-1.026 2.553-2.684 5.34-3.87 7.054Z"/>

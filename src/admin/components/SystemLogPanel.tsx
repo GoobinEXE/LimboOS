@@ -10,6 +10,7 @@ import { masterAccountLabelByUid, characterLabelByKey } from '../lib/entityLabel
 import type { MasterAccount } from '../../types/player';
 import { getIntlLocale } from '../../i18n/dateLocale';
 import { ADMIN_FADE, listItem, staggerDelay } from '../lib/motion';
+import MIcon from './MIcon';
 
 interface LogEntry {
   id: string;
@@ -51,7 +52,7 @@ const SEVERITY: Record<string, { label: string; color: string }> = {
   action: { label: 'EVENT',    color: 'text-tube-500' },
   navigation: { label: 'NAV',  color: 'text-phosphor-500' },
   auth:   { label: 'ACCESS',   color: 'text-yellow-500' },
-  trace:  { label: 'TRACE',    color: 'text-ash-600' },
+  trace:  { label: 'TRACE',    color: 'text-ash-500' },
 };
 
 const LogRow = React.memo(({
@@ -101,21 +102,19 @@ const LogRow = React.memo(({
           entry.type === 'error' ? 'bg-red-500/5' : ''
         }`}
       >
-        <span className={`material-symbols-outlined text-base text-ash-600 transition-transform ${isExpanded ? 'rotate-90 text-primary' : ''}`}>
-          chevron_right
-        </span>
+        <MIcon name="chevron_right" className={`text-base text-ash-500 transition-transform ${isExpanded ? 'rotate-90 text-primary' : ''}`} />
         
-        <span className={`text-[10px] font-display font-bold tracking-widest w-16 ${severity.color}`}>
+        <span className={`text-[10px] font-display font-bold tracking-wider w-16 ${severity.color}`}>
           {severity.label}
         </span>
 
-        <span className="text-[10px] font-mono text-ash-600 shrink-0 w-32 tabular-nums">
+        <span className="text-[10px] font-mono text-ash-500 shrink-0 w-32 tabular-nums">
           {formatTimestamp(entry.timestamp)}
         </span>
 
         {!compact && (
           <span className={`text-[10px] font-display font-bold px-2 py-0.5 rounded-sm shrink-0 flex items-center gap-1.5 ${typeColor}`}>
-            <span className="material-symbols-outlined text-[10px]">{typeIcon}</span>
+            <MIcon name={typeIcon} className="text-[10px]" />
             {entry.type.toUpperCase()}
           </span>
         )}
@@ -126,7 +125,7 @@ const LogRow = React.memo(({
 
         <span className={`text-[11px] font-sans flex-1 truncate ${
           entry.type === 'admin' ? 'text-primary/80 font-bold' : 
-          entry.type === 'trace' ? 'text-ash-600' : 
+          entry.type === 'trace' ? 'text-ash-500' : 
           entry.type === 'error' ? 'text-red-400' :
           'text-ash-400'
         }`}>
@@ -134,7 +133,7 @@ const LogRow = React.memo(({
         </span>
 
         {!compact && (
-          <span className="text-[10px] font-display font-bold text-ash-600 tracking-widest shrink-0 uppercase px-2 py-0.5 rounded-sm">
+          <span className="text-[10px] font-display font-bold text-ash-500 tracking-wider shrink-0 uppercase px-2 py-0.5 rounded-sm">
             {entry.category}
           </span>
         )}
@@ -144,13 +143,13 @@ const LogRow = React.memo(({
         <div className={`${compact ? 'px-10 py-4' : 'px-16 py-6'} bg-black/40 border-t border-border-subtle animate-fade-in`}>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-[11px] font-mono mb-6">
             <div className="space-y-1">
-              <p className="text-[10px] font-display font-bold text-ash-600 uppercase tracking-widest">{t('logs.sessionId')}</p>
+              <p className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-wider">{t('logs.sessionId')}</p>
               <p className="text-ash-400 break-all">
                 {masterAccountLabelByUid(entry.uid, users, entry.uid || 'SISTEMA')}
               </p>
             </div>
             <div className="space-y-1">
-              <p className="text-[10px] font-display font-bold text-ash-600 uppercase tracking-widest">{t('logs.agentVector')}</p>
+              <p className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-wider">{t('logs.agentVector')}</p>
               <p className="text-primary/60">
                 {entry.characterId
                   ? characterLabelByKey(entry.uid, entry.characterId, characterMap, t('logs.unidentified'))
@@ -158,13 +157,13 @@ const LogRow = React.memo(({
               </p>
             </div>
             <div className="space-y-1">
-              <p className="text-[10px] font-display font-bold text-ash-600 uppercase tracking-widest">{t('logs.source')}</p>
+              <p className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-wider">{t('logs.source')}</p>
               <p className="text-ash-400 uppercase">{entry.source} // {entry.category}</p>
             </div>
           </div>
           {entry.metadata && Object.keys(entry.metadata).length > 0 && (
             <div className="space-y-2">
-              <p className="text-[10px] font-display font-bold text-ash-600 uppercase tracking-widest">{t('logs.telemetry')}</p>
+              <p className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-wider">{t('logs.telemetry')}</p>
               <pre className="text-[10px] font-mono text-primary/40 bg-surface-container-lowest p-4 rounded-sm overflow-x-auto max-h-60 shadow-inner">
                 {JSON.stringify(entry.metadata, null, 2)}
               </pre>
@@ -295,7 +294,7 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
 
   return (
     <div
-      className={`bg-surface-container-low flex flex-col font-sans overflow-hidden ${compact ? 'h-[28rem] rounded-card' : 'shadow-2xl'}`}
+      className={`bg-surface-container-low flex flex-col font-sans overflow-hidden ${compact ? 'h-[28rem] rounded-card' : 'shadow-panel'}`}
       style={compact ? undefined : { minHeight: '500px', maxHeight: '65vh' }}
     >
       {modal}
@@ -306,17 +305,17 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
             <span className="lmb-led text-accent animate-led" aria-hidden />
             {/* No Ao Vivo o título já está no rótulo da seção */}
             {!compact && (
-              <h2 className="font-display font-bold uppercase tracking-[0.3em] text-xs text-primary">
+              <h2 className="font-display font-bold uppercase tracking-[0.12em] text-xs text-primary">
                 Fluxo de Telemetria em Tempo Real
               </h2>
             )}
           </div>
-          <span className="text-[10px] font-display font-bold text-ash-600 tracking-[0.2em] uppercase">
+          <span className="text-[10px] font-display font-bold text-ash-500 tracking-[0.1em] uppercase">
             {filtered.length} de {entries.length} Sinais Captados
           </span>
           {errorCount > 0 && (
-            <div className="text-[10px] font-display font-bold text-red-500 bg-red-500/5 px-3 py-1 rounded-sm flex items-center gap-2 animate-pulse">
-              <span className="material-symbols-outlined text-[14px]">report</span>
+            <div className="text-[10px] font-display font-bold text-red-500 bg-red-500/5 px-3 py-1 rounded-sm flex items-center gap-2 animate-led">
+              <MIcon name="report" className="text-[14px]" />
               {errorCount} ANOMALIAS DETECTADAS
             </div>
           )}
@@ -326,22 +325,22 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
             <>
               <button
                 onClick={handleExportJSON}
-                className="px-6 py-2 text-[10px] font-display font-bold uppercase tracking-widest bg-white/5 text-ash-500 hover:bg-white/10 hover:text-bone transition flex items-center gap-2 rounded-sm shadow-lg"
+                className="px-6 py-2 text-[10px] font-display font-bold uppercase tracking-wider bg-white/5 text-ash-500 hover:bg-white/10 hover:text-bone transition flex items-center gap-2 rounded-sm shadow-lg"
               >
-                <span className="material-symbols-outlined text-base">download</span>
+                <MIcon name="download" className="text-base" />
                 Exportar JSON
               </button>
 
               {isOwnerScope() && <button
                 onClick={handleClearLogs}
                 disabled={isClearing}
-                className={`px-6 py-2 text-[10px] font-display font-bold uppercase tracking-widest transition flex items-center gap-2 rounded-sm shadow-lg ${
+                className={`px-6 py-2 text-[10px] font-display font-bold uppercase tracking-wider transition flex items-center gap-2 rounded-sm shadow-lg ${
                   isClearing
                     ? 'bg-white/5 text-ash-700'
                     : 'bg-red-500/5 text-red-500/60 hover:bg-red-500/10 hover:text-red-500'
                 }`}
               >
-                <span className="material-symbols-outlined text-base">delete_sweep</span>
+                <MIcon name="delete_sweep" className="text-base" />
                 {isClearing ? 'PROCESSANDO...' : 'Purgar Logs'}
               </button>}
             </>
@@ -351,14 +350,14 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
 
       <div className={`flex items-center bg-black/20 border-b border-border-subtle shrink-0 flex-wrap ${compact ? 'gap-2 px-4 py-2.5' : 'gap-4 px-8 py-4'}`}>
         <div className={`flex items-center gap-3 ${compact ? '' : 'mr-4'}`}>
-          <span className="material-symbols-outlined text-ash-600 text-base" aria-hidden>filter_list</span>
-          <span className={`text-[10px] font-display font-bold text-ash-600 tracking-widest uppercase ${compact ? 'sr-only' : ''}`}>{t('logs.filters')}</span>
+          <MIcon name="filter_list" className="text-ash-500 text-base" />
+          <span className={`text-[10px] font-display font-bold text-ash-500 tracking-wider uppercase ${compact ? 'sr-only' : ''}`}>{t('logs.filters')}</span>
         </div>
         
         <select
           value={filterSource}
           onChange={(e) => setFilterSource(e.target.value)}
-          className="bg-surface-container-lowest text-[10px] font-display font-bold uppercase tracking-widest text-primary px-4 py-2 outline-none rounded-sm transition cursor-pointer shadow-inner"
+          className="bg-surface-container-lowest text-[10px] font-display font-bold uppercase tracking-wider text-primary px-4 py-2 outline-none rounded-sm transition cursor-pointer shadow-inner"
         >
           <option value="all">{t('logs.origin.all')}</option>
           <option value="player">{t('logs.origin.player')}</option>
@@ -368,7 +367,7 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
         <select
           value={filterType}
           onChange={(e) => setFilterType(e.target.value)}
-          className="bg-surface-container-lowest text-[10px] font-display font-bold uppercase tracking-widest text-primary px-4 py-2 outline-none rounded-sm transition cursor-pointer shadow-inner"
+          className="bg-surface-container-lowest text-[10px] font-display font-bold uppercase tracking-wider text-primary px-4 py-2 outline-none rounded-sm transition cursor-pointer shadow-inner"
         >
           <option value="all">{t('logs.type.all')}</option>
           <option value="navigation">{t('logs.type.navigation')}</option>
@@ -383,13 +382,13 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
         {!compact && <div className="flex-1" />}
         
         <div className={`relative group ${compact ? 'flex-1 min-w-40' : 'w-72'}`}>
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-ash-600 text-base group-focus-within:text-primary transition-colors pointer-events-none">search</span>
+          <MIcon name="search" className="absolute left-3 top-1/2 -translate-y-1/2 text-ash-500 text-base group-focus-within:text-primary transition-colors pointer-events-none" />
           <input
             type="text"
             placeholder={t('logs.search')}
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
-            className="bg-surface-container-lowest text-[10px] font-display font-bold uppercase tracking-widest text-bone placeholder:text-ash-600 pl-10 pr-4 py-2.5 w-full outline-none rounded-sm transition shadow-inner focus:bg-accent-10"
+            className="bg-surface-container-lowest text-[10px] font-display font-bold uppercase tracking-wider text-bone placeholder:text-ash-500 pl-10 pr-4 py-2.5 w-full outline-none rounded-sm transition shadow-inner focus:bg-accent-10"
           />
         </div>
       </div>
@@ -397,7 +396,7 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
       <div className="flex-1 overflow-y-auto min-h-0 bg-black/10 custom-scrollbar">
         {filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-ash-700 gap-6 py-20">
-            <span className="material-symbols-outlined text-7xl animate-pulse">radar</span>
+            <MIcon name="radar" className="text-7xl animate-led" />
             <p className="font-display font-bold text-[14px] uppercase tracking-[0.6em]">{t('logs.waiting')}</p>
           </div>
         ) : (
@@ -424,13 +423,13 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
            <div className="h-1 w-12 bg-white/5 rounded-full overflow-hidden">
               <div className="h-full bg-primary/20 animate-loading-bar w-1/2" />
            </div>
-           <span className="text-[10px] font-display font-bold text-ash-600 tracking-widest uppercase">
+           <span className="text-[10px] font-display font-bold text-ash-500 tracking-wider uppercase">
              Monitorando Atividade de Grid em Tempo Real
            </span>
         </div>
         
         <div className="flex items-center gap-4">
-          <span className="text-[10px] font-display font-bold text-ash-600 uppercase tracking-widest">{t('logs.density')}</span>
+          <span className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-wider">{t('logs.density')}</span>
           <div className="flex bg-black/40 p-1 rounded-sm">
             {[200, 500, 1000].map((n) => (
               <button
@@ -439,7 +438,7 @@ export default function SystemLogPanel({ compact = false, filterUids }: SystemLo
                 className={`px-4 py-1 text-[10px] font-display font-bold tracking-tighter transition rounded-sm ${
                   maxEntries === n
                     ? 'text-primary bg-primary/10 shadow-lg'
-                    : 'text-ash-600 hover:text-bone hover:bg-white/5'
+                    : 'text-ash-500 hover:text-bone hover:bg-white/5'
                 }`}
               >
                 {n}

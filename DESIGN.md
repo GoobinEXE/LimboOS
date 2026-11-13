@@ -13,7 +13,15 @@ Direção: **bancada escura de 1999, sem contorno**. É o visual original do Lim
 
 ## Tipografia
 
-Space Grotesk (títulos e rótulos), Inter (texto) e JetBrains Mono (dados). Piso de 10 px fora do walkman e dos sistemas de época.
+Archivo variável com eixo de largura: títulos (`.text-display`) a 116%, rótulos em `font-display` a 108% e texto corrido a 100%. Spline Sans Mono só para dados (códigos, horários, contagens). VT323 (`--font-lcd`) só na tela LCD do Nokia, com `font-size-adjust: 0.52` para não encolher. As três vêm do Google Fonts na web e embarcadas no nativo (`src/lib/native/fonts.ts`). Texto corrido com piso de 12 px e `line-height` 1.55; rótulos com piso de 10 px e espaçamento entre letras até 0.12em. Cinza de texto: `ash-500` (≥ 5:1); `ash-600` só para ícone e texto grande.
+
+## Ícones
+
+`lucide-react` em todo o app. No admin, `MIcon` (`src/admin/components/MIcon.tsx`) recebe os nomes antigos do Material Symbols e desenha o SVG em 1em, então as classes `text-*` definem o tamanho. Nenhuma fonte de ícone é carregada.
+
+## Toque
+
+Pressionar desce 1 px (`translateY`), nunca encolhe. Em tela de toque o controle também escurece no `:active`, e no app nativo todo botão dá vibração leve (`src/lib/native/nativeShell.ts`); o walkman fica de fora (`data-haptic="off"`) porque tem retorno próprio.
 
 ## Componentes base (`src/index.css`)
 

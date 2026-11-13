@@ -14,6 +14,7 @@ import {
   intelTypeIcon,
   type IntelFilterTab,
 } from '../lib/intelDisplay';
+import MIcon from './MIcon';
 
 export interface IntelDistributionDrawerProps {
   onClose: () => void;
@@ -184,7 +185,7 @@ export default function IntelDistributionDrawer({
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={ADMIN_SPRING}
-              className="bg-surface-container-low border-l border-seam w-full max-w-2xl shadow-2xl flex flex-col h-full relative overflow-hidden"
+              className="bg-surface-container-low border-l border-seam w-full max-w-2xl shadow-panel flex flex-col h-full relative overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
           <Screw className="top-4 left-4" />
@@ -196,26 +197,24 @@ export default function IntelDistributionDrawer({
 
           <div className="p-8 border-b-4 border-seam bg-black/40 relative z-10 flex justify-between items-center">
             <div>
-              <h3 className="font-black text-xl text-bone uppercase tracking-widest">
+              <h3 className="font-black text-xl text-bone uppercase tracking-wider">
                 {title || (broadcastMode ? t('intel.dist.videoTitle') : 'Distribuir Intel')}
               </h3>
               {character && (
-                <p className="text-[10px] text-ash-500 font-bold uppercase tracking-widest mt-1">
+                <p className="text-[10px] text-ash-500 font-bold uppercase tracking-wider mt-1">
                   Alvo: <span className="text-primary">{character.codinome}</span>
                 </p>
               )}
               {!character && targets.length > 0 && (
-                <p className="text-[10px] text-ash-500 font-bold uppercase tracking-widest mt-1">
+                <p className="text-[10px] text-ash-500 font-bold uppercase tracking-wider mt-1">
                   Destinos: <span className="text-primary">{targets.length}</span> agente(s)
                 </p>
               )}
             </div>
             <button
               onClick={requestClose}
-              className="p-2 text-ash-600 hover:text-bone transition material-symbols-outlined rounded-sm"
-            >
-              close
-            </button>
+              className="p-2 text-ash-500 hover:text-bone transition rounded-sm"
+            ><MIcon name="close" /></button>
           </div>
 
           {!broadcastMode && (
@@ -227,7 +226,7 @@ export default function IntelDistributionDrawer({
                   className={`flex-1 min-w-[72px] py-4 text-[10px] font-black uppercase tracking-[0.15em] transition ${
                     addTab === tab
                       ? 'text-primary bg-primary/10 border-b-2 border-primary'
-                      : 'text-ash-600 hover:text-ash-400'
+                      : 'text-ash-500 hover:text-ash-400'
                   }`}
                 >
                   {INTEL_FILTER_TAB_LABELS[tab]}
@@ -238,15 +237,13 @@ export default function IntelDistributionDrawer({
 
           <div className="p-6 border-b-2 border-seam bg-black/40 relative z-10 shrink-0">
             <div className="relative group">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-ash-700 text-sm">
-                search
-              </span>
+              <MIcon name="search" className="absolute left-4 top-1/2 -translate-y-1/2 text-ash-700 text-sm" />
               <input
                 type="text"
                 placeholder={t('intel.dist.search')}
                 value={addSearch}
                 onChange={(e) => setAddSearch(e.target.value)}
-                className="w-full bg-black/60 text-[11px] font-bold uppercase px-12 py-4 text-bone outline-none focus:ring-1 focus:ring-primary transition rounded-sm placeholder:text-ash-800 tracking-widest"
+                className="w-full bg-black/60 text-[11px] font-bold uppercase px-12 py-4 text-bone outline-none focus:ring-1 focus:ring-primary transition rounded-sm placeholder:text-ash-800 tracking-wider"
               />
             </div>
           </div>
@@ -284,13 +281,7 @@ export default function IntelDistributionDrawer({
                           : 'bg-seam hover:bg-white/5 cursor-pointer group'
                     }`}
                   >
-                    <span
-                      className={`material-symbols-outlined text-lg shrink-0 ${
-                        isSelected ? 'text-primary' : 'text-ash-600 group-hover:text-ash-400'
-                      }`}
-                    >
-                      {intelTypeIcon(item.type)}
-                    </span>
+                    <MIcon name={intelTypeIcon(item.type)} className={`text-lg shrink-0 ${ isSelected ? 'text-primary' : 'text-ash-500 group-hover:text-ash-400' }`} />
                     <div
                       className={`w-6 h-6 rounded-sm flex items-center justify-center transition shrink-0 ${
                         isSelected
@@ -299,9 +290,7 @@ export default function IntelDistributionDrawer({
                       }`}
                     >
                       {isSelected && (
-                        <span className="material-symbols-outlined text-black text-xs font-black">
-                          check
-                        </span>
+                        <MIcon name="check" className="text-black text-xs font-black" />
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -312,7 +301,7 @@ export default function IntelDistributionDrawer({
                       >
                         {item.title}
                       </p>
-                      <p className="text-[10px] font-mono text-ash-600 font-bold uppercase tracking-widest mt-1">
+                      <p className="text-[10px] font-mono text-ash-500 font-bold uppercase tracking-wider mt-1">
                         {item.metadata?.chapter || item.metadata?.npc || item.type}
                       </p>
                     </div>
@@ -325,7 +314,7 @@ export default function IntelDistributionDrawer({
                 );
               })}
               {filteredItems.length === 0 && (
-                <div className="py-16 text-center text-ash-600 text-[10px] font-black uppercase tracking-widest">
+                <div className="py-16 text-center text-ash-500 text-[10px] font-black uppercase tracking-wider">
                   Nenhum item no acervo
                 </div>
               )}
@@ -333,7 +322,7 @@ export default function IntelDistributionDrawer({
           </div>
 
           <div className="p-8 border-t-4 border-seam flex flex-col sm:flex-row justify-between items-center bg-black/40 gap-6 relative z-10 shrink-0">
-            <span className="text-[10px] font-black text-ash-500 uppercase tracking-widest">
+            <span className="text-[10px] font-black text-ash-500 uppercase tracking-wider">
               {broadcastMode
                 ? selectedToAdd.size === 1
                   ? t('intel.dist.videoSelected')
@@ -344,7 +333,7 @@ export default function IntelDistributionDrawer({
               <button
                 onClick={requestClose}
                 disabled={loading}
-                className="flex-1 sm:flex-none px-6 py-4 text-[10px] font-black text-ash-600 hover:text-bone transition-colors uppercase tracking-widest disabled:opacity-50"
+                className="flex-1 sm:flex-none px-6 py-4 text-[10px] font-black text-ash-500 hover:text-bone transition-colors uppercase tracking-wider disabled:opacity-50"
               >
                 CANCELAR
               </button>
@@ -359,7 +348,7 @@ export default function IntelDistributionDrawer({
                 whileTap={{ scale: 0.97 }}
                 animate={loading ? { scale: [1, 0.98, 1] } : { scale: 1 }}
                 transition={loading ? { repeat: Infinity, duration: 0.8 } : ADMIN_SPRING}
-                className="flex-2 sm:flex-none bg-primary text-black px-10 py-4 rounded-sm font-black text-[11px] uppercase tracking-widest hover:bg-primary-container transition disabled:opacity-20 glow-orange shadow-lg"
+                className="flex-2 sm:flex-none bg-primary text-black px-10 py-4 rounded-sm font-black text-[11px] uppercase tracking-wider hover:bg-primary-container transition disabled:opacity-20 glow-orange shadow-lg"
               >
                 {actionLabel}
               </motion.button>
@@ -368,7 +357,7 @@ export default function IntelDistributionDrawer({
 
           {feedback && (
             <div className="absolute top-6 left-1/2 -translate-x-1/2 bg-black/90 px-6 py-3 rounded-full text-[10px] font-black text-phosphor-400 uppercase z-50 flex items-center gap-2 shadow-[0_0_15px_rgba(86,185,75,0.3)]">
-              <span className="material-symbols-outlined text-sm">check_circle</span>
+              <MIcon name="check_circle" className="text-sm" />
               {feedback}
             </div>
           )}

@@ -3,6 +3,7 @@ import { motion } from 'motion/react';
 import RetroSpinner from '../../../components/player/RetroSpinner';
 import Screw from '../../../components/player/Screw';
 import OverlayPortal from '../OverlayPortal';
+import MIcon from '../MIcon';
 
 interface MediaUploadZoneProps {
   onUpload: (files: FileList) => Promise<void>;
@@ -48,7 +49,7 @@ export default function MediaUploadZone({
           <div className="fixed inset-0 bg-surface-scrim z-[200] flex flex-col items-center justify-center gap-6 animate-fade-in" role="status" aria-live="polite">
             <RetroSpinner />
             <div className="space-y-2 text-center">
-              <div className="text-primary font-display font-bold uppercase tracking-[0.4em] animate-pulse text-lg">
+              <div className="text-primary font-display font-bold uppercase tracking-[0.12em] animate-led text-lg">
                 Transferindo Dados...
               </div>
               <div className="w-64 h-1 bg-white/5 rounded-full overflow-hidden">
@@ -58,7 +59,7 @@ export default function MediaUploadZone({
                   animate={{ width: `${uploadProgress}%` }}
                 />
               </div>
-              <div className="text-[10px] font-display font-bold text-ash-500 tracking-widest uppercase">
+              <div className="text-[10px] font-display font-bold text-ash-500 tracking-wider uppercase">
                 {Math.round(uploadProgress)}% COMPLETO
               </div>
             </div>
@@ -81,11 +82,9 @@ export default function MediaUploadZone({
             type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={disabled || uploading}
-            className="flex items-center gap-2 bg-primary hover:bg-primary-container text-black px-5 py-2.5 rounded-sm font-display font-bold text-[10px] tracking-widest transition active:scale-[0.97] glow-orange shadow-lg disabled:opacity-40"
+            className="flex items-center gap-2 bg-primary hover:bg-primary-container text-black px-5 py-2.5 rounded-sm font-display font-bold text-[10px] tracking-wider transition active:translate-y-px glow-orange shadow-lg disabled:opacity-40"
           >
-            <span className="material-symbols-outlined text-base">
-              {uploading ? 'sync' : 'add_circle'}
-            </span>
+            <MIcon name={uploading ? 'sync' : 'add_circle'} className="text-base" />
             {uploadButtonLabel}
           </button>
         </div>
@@ -126,18 +125,12 @@ export default function MediaUploadZone({
           </div>
 
           <div className="relative inline-block mb-3">
-            <span
-              className={`material-symbols-outlined text-4xl transition duration-300 ${
-                isDragOver ? 'text-primary scale-110' : 'text-ash-600 group-hover:text-primary/40'
-              }`}
-            >
-              {isDragOver ? 'downloading' : 'cloud_upload'}
-            </span>
+            <MIcon name={isDragOver ? 'downloading' : 'cloud_upload'} className={`text-4xl transition duration-300 ${ isDragOver ? 'text-primary scale-110' : 'text-ash-500 group-hover:text-primary/40' }`} />
           </div>
-          <p className="text-ash-400 text-[10px] font-display font-bold uppercase tracking-[0.3em] group-hover:text-ash-300">
+          <p className="text-ash-400 text-[10px] font-display font-bold uppercase tracking-[0.12em] group-hover:text-ash-300">
             {isDragOver ? 'SOLTAR AGORA' : dropHint}
           </p>
-          <p className="text-ash-600 text-[10px] font-display uppercase tracking-widest mt-2">
+          <p className="text-ash-500 text-[10px] font-display uppercase tracking-wider mt-2">
             {dropSubhint}
           </p>
         </div>

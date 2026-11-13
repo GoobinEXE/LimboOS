@@ -132,7 +132,7 @@ export const CassetteCard = memo(({ campaign, onSelect, index, dragX, cardWidth,
             className={`w-9 h-9 rounded-control flex items-center justify-center shrink-0 transition-colors duration-300 ${
               isActive && !isLocked
                 ? 'bg-accent-10 text-primary'
-                : 'bg-surface-sunken text-ash-600'
+                : 'bg-surface-sunken text-ash-500'
             }`}
           >
             {isLocked ? <Lock size={15} /> : <Zap size={16} />}
@@ -214,7 +214,7 @@ export const CassetteCard = memo(({ campaign, onSelect, index, dragX, cardWidth,
                 if (!isActive) onSnapToSelf();
                 else onSelect(campaign);
               }}
-              className={`w-full text-protocol py-3.5 rounded-control transition duration-200 flex items-center justify-center gap-2 group/btn active:scale-[0.98] ${
+              className={`w-full text-protocol py-3.5 rounded-control transition duration-200 flex items-center justify-center gap-2 group/btn active:translate-y-px ${
                 isActive
                   ? 'bg-accent text-black hover:bg-primary-container'
                   : 'bg-surface-raised text-ash-400 hover:text-primary'
@@ -226,7 +226,7 @@ export const CassetteCard = memo(({ campaign, onSelect, index, dragX, cardWidth,
           ) : (
             <button
               disabled
-              className="w-full text-protocol py-3.5 rounded-control bg-surface-sunken text-ash-600 cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full text-protocol py-3.5 rounded-control bg-surface-sunken text-ash-500 cursor-not-allowed flex items-center justify-center gap-2"
             >
               <Lock size={12} /> {t('cassette.blocked')}
             </button>

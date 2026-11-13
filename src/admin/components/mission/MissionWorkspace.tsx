@@ -30,6 +30,7 @@ import {
   type NpcViewId,
 } from '../../lib/adminNavigation';
 import type { CampaignResourceSummary } from '../../lib/campaignResources';
+import MIcon from '../MIcon';
 
 /** Slug vira segmento de URL: sem barra, sem espaço e diferente de `new`. */
 function isValidMissionSlug(id: string): boolean {
@@ -105,11 +106,9 @@ export default function MissionWorkspace({
     }
     return (
       <div className="py-24 text-center rounded-sm flex flex-col items-center gap-4">
-        <span className="material-symbols-outlined text-5xl text-ash-700" aria-hidden>
-          travel_explore
-        </span>
+        <MIcon name="travel_explore" className="text-5xl text-ash-700" />
         <div>
-          <p className="text-[11px] font-display font-bold uppercase tracking-widest text-ash-400">
+          <p className="text-[11px] font-display font-bold uppercase tracking-wider text-ash-400">
             {t('missions.page.notFound')}
           </p>
           <p className="text-[12px] text-ash-500 mt-2">{t('missions.page.notFoundBody')}</p>
@@ -200,11 +199,9 @@ export default function MissionWorkspace({
         <button
           type="button"
           onClick={backToList}
-          className="inline-flex items-center gap-1.5 text-[10px] font-display font-bold uppercase tracking-[0.2em] text-ash-500 hover:text-bone transition-colors"
+          className="inline-flex items-center gap-1.5 text-[10px] font-display font-bold uppercase tracking-[0.1em] text-ash-500 hover:text-bone transition-colors"
         >
-          <span className="material-symbols-outlined text-base" aria-hidden>
-            arrow_back
-          </span>
+          <MIcon name="arrow_back" className="text-base" />
           {t('missions.page.back')}
         </button>
         <div className="flex items-center gap-3 min-w-0">

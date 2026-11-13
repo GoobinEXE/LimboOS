@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import AnalyticsPanel from './AnalyticsPanel';
 import { adminPath } from '../lib/adminNavigation';
 import { useAdminNavigate } from '../hooks/useAdminRoute';
+import MIcon from './MIcon';
 
 export type AgentMetrics = {
   active: number;
@@ -125,10 +126,10 @@ function OperationalPanorama({
           onClick={goAcesso}
           className="bg-surface-container-low p-5 text-left transition hover:bg-accent-10"
         >
-          <p className="font-display text-[10px] uppercase font-bold tracking-[0.2em] text-ash-400 mb-2">
+          <p className="font-display text-[10px] uppercase font-bold tracking-[0.1em] text-ash-400 mb-2">
             {t('reports.hardware')}
           </p>
-          <p className="text-sm font-display font-bold text-primary uppercase tracking-widest">{t('reports.openAccess')}</p>
+          <p className="text-sm font-display font-bold text-primary uppercase tracking-wider">{t('reports.openAccess')}</p>
         </button>
       </MetricGroup>
     </div>
@@ -139,7 +140,7 @@ function SectionDivider({ title }: { title: string }) {
   return (
     <div className="flex items-center gap-3 mb-6">
       <div className="h-px flex-1 bg-linear-to-r from-transparent to-primary/20" />
-      <h3 className="text-ash-500 font-display text-[10px] uppercase font-bold tracking-[0.3em]">{title}</h3>
+      <h3 className="text-ash-500 font-display text-[10px] uppercase font-bold tracking-[0.12em]">{title}</h3>
       <div className="h-px flex-1 bg-linear-to-l from-transparent to-primary/20" />
     </div>
   );
@@ -148,7 +149,7 @@ function SectionDivider({ title }: { title: string }) {
 function MetricGroup({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="space-y-3">
-      <p className="font-display text-[10px] uppercase font-bold tracking-[0.25em] text-ash-600">{title}</p>
+      <p className="font-display text-[10px] uppercase font-bold tracking-[0.12em] text-ash-500">{title}</p>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-4">{children}</div>
     </div>
   );
@@ -178,18 +179,16 @@ function StatCard({
     tertiary: 'text-tertiary/20',
   };
   const className = `bg-surface-container-low p-5 relative overflow-hidden group transition hover:bg-surface-container-high ${
-    onClick ? 'cursor-pointer active:scale-[0.98] hover:bg-accent-10' : ''
+    onClick ? 'cursor-pointer active:translate-y-px hover:bg-accent-10' : ''
   } ${colorMap[color] ?? colorMap.primary}`;
 
   const content = (
     <>
       {onClick && (
-        <span className="absolute top-3 right-3 material-symbols-outlined text-sm text-primary/0 group-hover:text-primary/60 group-focus-visible:text-primary/60 transition-colors">
-          arrow_forward
-        </span>
+        <MIcon name="arrow_forward" className="absolute top-3 right-3 text-sm text-primary/0 group-hover:text-primary/60 group-focus-visible:text-primary/60 transition-colors" />
       )}
-      <p className="flex items-center gap-1.5 font-display text-[10px] uppercase font-bold tracking-[0.2em] text-ash-400 mb-2">
-        <span className={`material-symbols-outlined text-[14px] ${iconColorMap[color] ?? iconColorMap.primary}`} aria-hidden>{icon}</span>
+      <p className="flex items-center gap-1.5 font-display text-[10px] uppercase font-bold tracking-[0.1em] text-ash-400 mb-2">
+        <MIcon name={icon} className={`text-[14px] ${iconColorMap[color] ?? iconColorMap.primary}`} />
         {label}
       </p>
       <p className="text-4xl font-display font-bold text-bone tracking-tighter">{value}</p>
@@ -220,20 +219,16 @@ function StatusCard({
   onClick?: () => void;
 }) {
   const className = `bg-surface-container-low p-5 relative overflow-hidden group transition hover:bg-surface-container-high ${
-    onClick ? 'cursor-pointer active:scale-[0.98] hover:bg-accent-10' : ''
+    onClick ? 'cursor-pointer active:translate-y-px hover:bg-accent-10' : ''
   } ${active ? 'text-red-400 bg-red-500/10' : 'text-phosphor-400'}`;
 
   const content = (
     <>
       {onClick && (
-        <span className="absolute top-3 right-3 material-symbols-outlined text-sm text-primary/0 group-hover:text-primary/60 group-focus-visible:text-primary/60 transition-colors">
-          arrow_forward
-        </span>
+        <MIcon name="arrow_forward" className="absolute top-3 right-3 text-sm text-primary/0 group-hover:text-primary/60 group-focus-visible:text-primary/60 transition-colors" />
       )}
-      <p className="flex items-center gap-1.5 font-display text-[10px] uppercase font-bold tracking-[0.2em] text-ash-400 mb-2">
-        <span className={`material-symbols-outlined text-[14px] ${active ? 'text-red-400' : 'text-phosphor-400'}`} aria-hidden>
-          {icon}
-        </span>
+      <p className="flex items-center gap-1.5 font-display text-[10px] uppercase font-bold tracking-[0.1em] text-ash-400 mb-2">
+        <MIcon name={icon} className={`text-[14px] ${active ? 'text-red-400' : 'text-phosphor-400'}`} />
         {label}
       </p>
       <p className="text-2xl font-display font-bold tracking-tight tabular-nums">{value}</p>

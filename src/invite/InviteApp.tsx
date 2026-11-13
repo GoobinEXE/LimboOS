@@ -89,7 +89,7 @@ export default function InviteApp() {
         variants={dialogPop}
         initial="hidden"
         animate="visible"
-        className="relative z-10 max-w-md w-full mx-4 bg-surface-container-low rounded-panel shadow-2xl machined-edge p-8 space-y-5"
+        className="relative z-10 max-w-md w-full mx-4 bg-surface-container-low rounded-panel shadow-panel machined-edge p-8 space-y-5"
       >
         {!preview.valid ? (
           <>
@@ -111,7 +111,7 @@ export default function InviteApp() {
             </p>
             {preview.kind === 'player' && (
               <label className="block space-y-2">
-                <span className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-500">{t('invite.codinome')}</span>
+                <span className="text-[10px] font-display font-bold uppercase tracking-wider text-ash-500">{t('invite.codinome')}</span>
                 <input
                   value={codinome}
                   onChange={(e) => setCodinome(e.target.value)}

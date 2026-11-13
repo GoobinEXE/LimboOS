@@ -9,6 +9,7 @@ import { activityLogger } from '../../services/ActivityLogger';
 import { staggerContainer, staggerItem } from '../lib/motion';
 import { adminPath } from '../lib/adminNavigation';
 import { useAdminNavigate } from '../hooks/useAdminRoute';
+import MIcon from './MIcon';
 
 export default function AnalyticsPanel() {
   const nav = useAdminNavigate();
@@ -99,15 +100,15 @@ export default function AnalyticsPanel() {
         <div className="flex items-center gap-4">
           <div className="w-1 h-9 bg-accent shrink-0" />
           <div>
-            <h2 className="font-display font-bold uppercase tracking-widest text-lg text-bone">{t('analytics.title')}</h2>
+            <h2 className="font-display font-bold uppercase tracking-wider text-lg text-bone">{t('analytics.title')}</h2>
           </div>
         </div>
         <button
           onClick={handleReset}
           disabled={isResetting}
-          className={`px-6 py-3 ${isResetting ? 'bg-surface-container-high text-ash-600' : 'bg-red-500/5 text-red-500/60 hover:bg-red-500/10 hover:text-red-500'} text-[10px] font-display font-bold uppercase tracking-widest transition flex items-center gap-3 rounded-sm active:scale-[0.97] bg-red-500/10`}
+          className={`px-6 py-3 ${isResetting ? 'bg-surface-container-high text-ash-500' : 'bg-red-500/5 text-red-500/60 hover:bg-red-500/10 hover:text-red-500'} text-[10px] font-display font-bold uppercase tracking-wider transition flex items-center gap-3 rounded-sm active:translate-y-px bg-red-500/10`}
         >
-          <span className="material-symbols-outlined text-base">delete_forever</span>
+          <MIcon name="delete_forever" className="text-base" />
           {isResetting ? 'Executando Reset...' : 'Zerar Banco de Dados BI'}
         </button>
       </motion.div>
@@ -128,8 +129,8 @@ export default function AnalyticsPanel() {
         <ClickableSection onClick={goContent} className="bg-surface-container-low p-6 machined-edge group transition hover:bg-accent-10">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
-              <span className="material-symbols-outlined text-secondary text-base">cloud_done</span>
-              <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-500">{t('analytics.storage')}</h3>
+              <MIcon name="cloud_done" className="text-secondary text-base" />
+              <h3 className="text-[10px] font-display font-bold uppercase tracking-wider text-ash-500">{t('analytics.storage')}</h3>
             </div>
             <span className="text-[10px] font-display font-bold text-ash-400">{(analytics.totalStorageSize / (1024 * 1024)).toFixed(1)} MB / 5 GB</span>
           </div>
@@ -141,8 +142,8 @@ export default function AnalyticsPanel() {
         <section className="bg-surface-container-low p-6 machined-edge group transition hover:bg-accent-10">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
-              <span className="material-symbols-outlined text-primary text-base">check_circle</span>
-              <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-500">{t('analytics.completionRate')}</h3>
+              <MIcon name="check_circle" className="text-primary text-base" />
+              <h3 className="text-[10px] font-display font-bold uppercase tracking-wider text-ash-500">{t('analytics.completionRate')}</h3>
             </div>
             <span className="text-[10px] font-display font-bold text-ash-400">{displayAnalytics.completionRate.toFixed(1)}% Concluído</span>
           </div>
@@ -155,8 +156,8 @@ export default function AnalyticsPanel() {
       <motion.div variants={staggerItem} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <section className="bg-surface-container-low p-6 machined-edge lg:col-span-2">
           <div className="flex items-center gap-3 mb-8">
-            <span className="material-symbols-outlined text-primary text-base">timeline</span>
-            <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-500">Atividade Temporal (30d)</h3>
+            <MIcon name="timeline" className="text-primary text-base" />
+            <h3 className="text-[10px] font-display font-bold uppercase tracking-wider text-ash-500">Atividade Temporal (30d)</h3>
           </div>
           <div className="flex items-end gap-1 h-40">
             {displayAnalytics.dailyPlaysSorted.map(([date, count]: [string, any]) => (
@@ -168,7 +169,7 @@ export default function AnalyticsPanel() {
               </div>
             ))}
           </div>
-          <div className="flex justify-between mt-4 text-[10px] font-display font-bold text-ash-600 tracking-widest uppercase border-t border-border-subtle pt-4">
+          <div className="flex justify-between mt-4 text-[10px] font-display font-bold text-ash-500 tracking-wider uppercase border-t border-border-subtle pt-4">
             <span>{displayAnalytics.dailyPlaysSorted[0]?.[0] || '---'}</span>
             <span>{displayAnalytics.dailyPlaysSorted[displayAnalytics.dailyPlaysSorted.length - 1]?.[0] || '---'}</span>
           </div>
@@ -176,8 +177,8 @@ export default function AnalyticsPanel() {
 
         <section className="bg-surface-container-low p-6 machined-edge">
           <div className="flex items-center gap-3 mb-8">
-            <span className="material-symbols-outlined text-primary text-base">schedule</span>
-            <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-500">{t('analytics.peakHours')}</h3>
+            <MIcon name="schedule" className="text-primary text-base" />
+            <h3 className="text-[10px] font-display font-bold uppercase tracking-wider text-ash-500">{t('analytics.peakHours')}</h3>
           </div>
           <div className="grid grid-cols-6 gap-3">
             {analytics.peakHours.map(({ hour, count }) => (
@@ -186,7 +187,7 @@ export default function AnalyticsPanel() {
                   {hour}h: {count} eventos
                 </div>
                 <div className="w-full aspect-square rounded-sm transition-colors shadow-inner group-hover:bg-accent-10" style={{ backgroundColor: count === 0 ? 'rgba(255,255,255,0.02)' : `rgba(255, 183, 125, ${0.1 + (count / analytics.maxHourCount) * 0.9})`, boxShadow: count > 0 ? `0 0 15px rgba(255, 183, 125, ${(count / analytics.maxHourCount) * 0.3})` : 'none' }} />
-                <span className="text-[10px] text-ash-600 mt-2 font-display font-bold">{hour}h</span>
+                <span className="text-[10px] text-ash-500 mt-2 font-display font-bold">{hour}h</span>
               </div>
             ))}
           </div>
@@ -194,19 +195,19 @@ export default function AnalyticsPanel() {
       </motion.div>
 
       <motion.div variants={staggerItem} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <ClickableSection onClick={goContent} className="bg-surface-container-low p-6 shadow-xl">
+        <ClickableSection onClick={goContent} className="bg-surface-container-low p-6 shadow-panel">
           <div className="flex items-center gap-3 mb-8">
-            <span className="material-symbols-outlined text-primary text-base">leaderboard</span>
-            <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-500">Top Conteúdo (Plays)</h3>
+            <MIcon name="leaderboard" className="text-primary text-base" />
+            <h3 className="text-[10px] font-display font-bold uppercase tracking-wider text-ash-500">Top Conteúdo (Plays)</h3>
           </div>
           <div className="space-y-5">
-            {displayAnalytics.mostPlayed.length === 0 ? (<p className="text-ash-600 text-[10px] font-display font-bold uppercase tracking-widest py-8 text-center rounded-sm">{t('analytics.empty')}</p>) : (
+            {displayAnalytics.mostPlayed.length === 0 ? (<p className="text-ash-500 text-[10px] font-display font-bold uppercase tracking-wider py-8 text-center rounded-sm">{t('analytics.empty')}</p>) : (
               displayAnalytics.mostPlayed.map(([tapeId, count]: [string, any], idx: number) => {
                 const maxCount = displayAnalytics.mostPlayed[0][1] as number;
                 const tapeName = intelTitleLabel(tapeId, audios);
                 return (
                   <div key={tapeId} className="flex items-center gap-4 group">
-                    <span className={`font-display font-bold text-xs w-6 text-right ${idx < 3 ? 'text-primary' : 'text-ash-600'}`}>0{idx + 1}</span>
+                    <span className={`font-display font-bold text-xs w-6 text-right ${idx < 3 ? 'text-primary' : 'text-ash-500'}`}>0{idx + 1}</span>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between mb-1.5">
                         <span className="text-[11px] font-display font-bold text-ash-300 truncate uppercase tracking-wider group-hover:text-primary transition-colors">{tapeName}</span>
@@ -223,18 +224,18 @@ export default function AnalyticsPanel() {
           </div>
         </ClickableSection>
 
-        <ClickableSection onClick={goAccounts} className="bg-surface-container-low p-6 shadow-xl">
+        <ClickableSection onClick={goAccounts} className="bg-surface-container-low p-6 shadow-panel">
           <div className="flex items-center gap-3 mb-8">
-            <span className="material-symbols-outlined text-primary text-base">person_play</span>
-            <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-500">{t('analytics.mostActive')}</h3>
+            <MIcon name="person_play" className="text-primary text-base" />
+            <h3 className="text-[10px] font-display font-bold uppercase tracking-wider text-ash-500">{t('analytics.mostActive')}</h3>
           </div>
           <div className="space-y-5">
-            {analytics.mostActiveUsers.length === 0 ? (<p className="text-ash-600 text-[10px] font-display font-bold uppercase tracking-widest py-8 text-center rounded-sm">{t('analytics.empty')}</p>) : (
+            {analytics.mostActiveUsers.length === 0 ? (<p className="text-ash-500 text-[10px] font-display font-bold uppercase tracking-wider py-8 text-center rounded-sm">{t('analytics.empty')}</p>) : (
               analytics.mostActiveUsers.map((user, idx) => {
                 const maxCount = analytics.mostActiveUsers[0].count;
                 return (
                   <div key={user.uid} className="flex items-center gap-4 group">
-                    <div className={`w-10 h-10 flex items-center justify-center text-[10px] font-display font-bold transition rounded-sm ${idx < 3 ? 'bg-primary/10 text-primary shadow-[0_0_10px_rgba(255,140,0,0.1)]' : 'bg-black/20 text-ash-600'}`}>
+                    <div className={`w-10 h-10 flex items-center justify-center text-[10px] font-display font-bold transition rounded-sm ${idx < 3 ? 'bg-primary/10 text-primary shadow-[0_0_10px_rgba(255,140,0,0.1)]' : 'bg-black/20 text-ash-500'}`}>
                       {idx + 1}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -255,10 +256,10 @@ export default function AnalyticsPanel() {
       </motion.div>
 
       <motion.div variants={staggerItem} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <ClickableSection onClick={() => nav.go(adminPath.content('conquistas'))} className="bg-surface-container-low p-6 shadow-xl">
+        <ClickableSection onClick={() => nav.go(adminPath.content('conquistas'))} className="bg-surface-container-low p-6 shadow-panel">
           <div className="flex items-center gap-3 mb-8">
-            <span className="material-symbols-outlined text-primary text-base">stars</span>
-            <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-500">{t('analytics.rareAchievements')}</h3>
+            <MIcon name="stars" className="text-primary text-base" />
+            <h3 className="text-[10px] font-display font-bold uppercase tracking-wider text-ash-500">{t('analytics.rareAchievements')}</h3>
           </div>
           <div className="space-y-6">
             {analytics.rarityList.slice(0, 5).map((ach) => (
@@ -287,10 +288,10 @@ export default function AnalyticsPanel() {
         <div className="space-y-6">
           <ClickableSection onClick={goAccounts} className="bg-surface-container-low p-6 machined-edge">
             <div className="flex items-center gap-3 mb-8">
-              <span className="material-symbols-outlined text-primary text-base">group_add</span>
-              <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-500">Crescimento de Rede (Semanal)</h3>
+              <MIcon name="group_add" className="text-primary text-base" />
+              <h3 className="text-[10px] font-display font-bold uppercase tracking-wider text-ash-500">Crescimento de Rede (Semanal)</h3>
             </div>
-            {analytics.weeklyGrowth.size === 0 ? (<p className="text-ash-600 text-[10px] font-display font-bold uppercase tracking-widest py-8 text-center">{t('analytics.noRecords')}</p>) : (
+            {analytics.weeklyGrowth.size === 0 ? (<p className="text-ash-500 text-[10px] font-display font-bold uppercase tracking-wider py-8 text-center">{t('analytics.noRecords')}</p>) : (
               <div className="flex items-end gap-2 h-24">
                 {Array.from(analytics.weeklyGrowth.entries()).sort(([a], [b]) => a.localeCompare(b)).slice(-12).map(([week, count]) => {
                   const maxWeekly = Math.max(...analytics.weeklyGrowth.values(), 1);
@@ -309,8 +310,8 @@ export default function AnalyticsPanel() {
 
           <section className="bg-surface-container-low p-6 machined-edge">
             <div className="flex items-center gap-3 mb-6">
-              <span className="material-symbols-outlined text-primary text-base">analytics</span>
-              <h3 className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-500">{t('analytics.engagement')}</h3>
+              <MIcon name="analytics" className="text-primary text-base" />
+              <h3 className="text-[10px] font-display font-bold uppercase tracking-wider text-ash-500">{t('analytics.engagement')}</h3>
             </div>
             <div className="grid grid-cols-2 gap-x-8 gap-y-6">
               <MetricRow label={t('analytics.avgPlays')} value={users.length > 0 ? ((aggregatedData?.totalPlays ?? playEvents.length) / users.length).toFixed(1) : '0'} />
@@ -345,17 +346,15 @@ function KPICard({
   const content = (
     <>
       {onClick && (
-        <span className="absolute top-3 right-3 material-symbols-outlined text-sm text-primary/0 group-hover:text-primary/60 transition-colors z-20">
-          arrow_forward
-        </span>
+        <MIcon name="arrow_forward" className="absolute top-3 right-3 text-sm text-primary/0 group-hover:text-primary/60 transition-colors z-20" />
       )}
       <div className="flex items-center justify-between relative z-10">
         <div>
-          <p className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-500 mb-2">{label.replaceAll('_', ' ')}</p>
+          <p className="text-[10px] font-display font-bold uppercase tracking-wider text-ash-500 mb-2">{label.replaceAll('_', ' ')}</p>
           <p className={`text-3xl font-display font-bold tracking-tight tabular-nums ${color}`}>{value}</p>
         </div>
         <div className="w-12 h-12 bg-black/20 rounded-sm flex items-center justify-center transition group-hover:bg-accent-10">
-          <span className={`material-symbols-outlined text-2xl opacity-40 group-hover:opacity-100 transition ${color}`}>{icon}</span>
+          <MIcon name={icon} className={`text-2xl opacity-40 group-hover:opacity-100 transition ${color}`} />
         </div>
       </div>
     </>
@@ -386,7 +385,7 @@ function ClickableSection({
   }
 
   return (
-    <button type="button" onClick={onClick} className={`${className} text-left w-full cursor-pointer hover:border-primary/40 active:scale-[0.99] transition`}>
+    <button type="button" onClick={onClick} className={`${className} text-left w-full cursor-pointer hover:border-primary/40 active:translate-y-px transition`}>
       {children}
     </button>
   );
@@ -395,8 +394,8 @@ function ClickableSection({
 function MetricRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex flex-col gap-1 border-b border-border-subtle pb-3">
-      <span className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-600">{label}</span>
-      <span className="text-sm font-display font-bold text-bone tracking-widest">{value}</span>
+      <span className="text-[10px] font-display font-bold uppercase tracking-wider text-ash-500">{label}</span>
+      <span className="text-sm font-display font-bold text-bone tracking-wider">{value}</span>
     </div>
   );
 }

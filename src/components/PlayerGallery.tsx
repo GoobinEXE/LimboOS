@@ -108,7 +108,7 @@ export default function PlayerGallery({ images, variant = 'default' }: PlayerGal
             >
               <div className="flex justify-between items-center border-b-2 border-lcd-ink pb-1 shrink-0 font-bold mb-1">
                 <span>{t('gallery.viewerTitle')}</span>
-                <button className="border border-lcd-ink px-1 hover:bg-lcd-ink hover:text-lcd-paper active:scale-[0.97] transition">{t('actions.x')}</button>
+                <button className="border border-lcd-ink px-1 hover:bg-lcd-ink hover:text-lcd-paper active:translate-y-px transition">{t('actions.x')}</button>
               </div>
               <div className="flex-1 overflow-y-auto flex flex-col items-center" style={{ scrollbarWidth: 'none' }}>
                 <div className="border-4 border-lcd-ink p-1 bg-black mb-2 grayscale contrast-125 w-full">
@@ -136,7 +136,7 @@ export default function PlayerGallery({ images, variant = 'default' }: PlayerGal
           <ImageIcon size={20} />
         </div>
         <p className="text-protocol text-ash-400 mb-1">{t('gallery.emptyTitle')}</p>
-        <p className="text-[10px] text-ash-600 font-sans">{t('gallery.emptyHint')}</p>
+        <p className="text-[10px] text-ash-500 font-sans">{t('gallery.emptyHint')}</p>
       </div>
     );
   }
@@ -197,7 +197,7 @@ export default function PlayerGallery({ images, variant = 'default' }: PlayerGal
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.3, delay: idx * 0.04 }}
                   onClick={() => setSelectedImage(img)}
-                  className="relative rounded-card overflow-hidden bg-surface-raised text-left cursor-pointer group active:scale-[0.98] transition duration-200"
+                  className="relative rounded-card overflow-hidden bg-surface-raised text-left cursor-pointer group active:translate-y-px transition duration-200"
                 >
                   <div className="aspect-square overflow-hidden relative bg-surface-sunken">
                     <img
@@ -263,7 +263,7 @@ export default function PlayerGallery({ images, variant = 'default' }: PlayerGal
                         {tabLabel(selectedTab.id)}
                       </span>
                     )}
-                    <span className="text-mono-ui text-[10px] text-ash-600">{t('gallery.evidenceVisual')}</span>
+                    <span className="text-mono-ui text-[10px] text-ash-500">{t('gallery.evidenceVisual')}</span>
                   </div>
                   <p className="text-display text-base text-white uppercase">{selectedImage.title}</p>
                   {selectedImage.description && (

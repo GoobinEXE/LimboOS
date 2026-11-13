@@ -535,7 +535,7 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
                 >
                   <div className="flex flex-col items-center gap-4">
                     <RetroSpinner size="md" />
-                    <p className="text-[10px] font-display font-bold text-primary uppercase tracking-[0.32em]">
+                    <p className="text-[10px] font-display font-bold text-primary uppercase tracking-[0.12em]">
                       {t('loading.data')}
                     </p>
                   </div>

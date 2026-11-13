@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import type { Campaign } from '../../data/campaigns';
+import MIcon from './MIcon';
 
 interface CampaignBindingPickerProps {
   /** `global` vale em qualquer missão; lista vazia não vale em nenhuma (regra do AchievementManager). */
@@ -40,7 +41,7 @@ export default function CampaignBindingPicker({
 
   return (
     <fieldset className="space-y-2">
-      <legend className="text-[10px] font-display font-bold uppercase tracking-[0.2em] text-ash-400 mb-2">
+      <legend className="text-[10px] font-display font-bold uppercase tracking-[0.1em] text-ash-400 mb-2">
         {label}
       </legend>
       <div role="radiogroup" className="flex flex-wrap gap-2">
@@ -51,7 +52,7 @@ export default function CampaignBindingPicker({
           onClick={() => onChange('global')}
           className={chipClass(isGlobal)}
         >
-          <span className="material-symbols-outlined text-sm" aria-hidden>public</span>
+          <MIcon name="public" className="text-sm" />
           {t('scope.bindGlobal')}
         </button>
         <button
@@ -63,7 +64,7 @@ export default function CampaignBindingPicker({
           }}
           className={chipClass(!isGlobal)}
         >
-          <span className="material-symbols-outlined text-sm" aria-hidden>map</span>
+          <MIcon name="map" className="text-sm" />
           {t('scope.bindSpecific')}
         </button>
       </div>

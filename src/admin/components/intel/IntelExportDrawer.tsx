@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import Screw from '../../../components/player/Screw';
 import OverlayPortal from '../OverlayPortal';
 import { ADMIN_SPRING } from '../../lib/motion';
+import MIcon from '../MIcon';
 
 interface IntelExportDrawerProps {
   open: boolean;
@@ -32,7 +33,7 @@ export default function IntelExportDrawer({
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={ADMIN_SPRING}
-              className="bg-surface-container-low border-l border-primary/20 w-full max-w-4xl shadow-2xl flex flex-col h-full relative overflow-hidden"
+              className="bg-surface-container-low border-l border-primary/20 w-full max-w-4xl shadow-panel flex flex-col h-full relative overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
               <Screw className="top-4 left-4" />
@@ -45,17 +46,15 @@ export default function IntelExportDrawer({
                   <h3 className="font-display font-bold text-2xl text-bone uppercase tracking-tighter">
                     Exportar <span className="text-primary">Registro Mestre</span>
                   </h3>
-                  <p className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-widest mt-1">
+                  <p className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-wider mt-1">
                     Cópia do IntelRegistry ({itemCount} entradas)
                   </p>
                 </div>
                 <button
                   type="button"
                   onClick={onClose}
-                  className="p-3 text-ash-500 hover:text-bone material-symbols-outlined rounded-sm"
-                >
-                  close
-                </button>
+                  className="p-3 text-ash-500 hover:text-bone rounded-sm"
+                ><MIcon name="close" /></button>
               </div>
 
               <div className="flex-1 overflow-y-auto p-8 bg-black/20 custom-scrollbar relative z-10">
@@ -71,9 +70,9 @@ export default function IntelExportDrawer({
                     void navigator.clipboard.writeText(exportJSON);
                     onCopied();
                   }}
-                  className="w-full sm:w-auto bg-primary text-black px-12 py-4 text-[11px] font-display font-bold uppercase tracking-widest hover:bg-primary-container transition rounded-sm active:scale-[0.97] glow-orange shadow-lg flex items-center justify-center gap-3"
+                  className="w-full sm:w-auto bg-primary text-black px-12 py-4 text-[11px] font-display font-bold uppercase tracking-wider hover:bg-primary-container transition rounded-sm active:translate-y-px glow-orange shadow-lg flex items-center justify-center gap-3"
                 >
-                  <span className="material-symbols-outlined text-base">content_copy</span>
+                  <MIcon name="content_copy" className="text-base" />
                   COPIAR PARA ÁREA DE TRANSFERÊNCIA
                 </button>
               </div>

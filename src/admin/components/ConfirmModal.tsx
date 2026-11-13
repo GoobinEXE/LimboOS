@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import Screw from '../../components/player/Screw';
 import { dialogPop, overlayFade } from '../lib/motion';
 import OverlayPortal from './OverlayPortal';
+import MIcon from './MIcon';
 
 type ModalVariant = 'confirm' | 'alert';
 interface ModalState {
@@ -62,7 +63,7 @@ export function ConfirmModal({ state, onConfirm, onCancel }: ConfirmModalProps) 
             aria-modal="true"
             aria-labelledby={titleId}
             aria-describedby={messageId}
-            className="relative w-full max-w-md bg-surface-container-low rounded-panel shadow-2xl machined-edge overflow-hidden"
+            className="relative w-full max-w-md bg-surface-container-low rounded-panel shadow-panel machined-edge overflow-hidden"
           >
             <Screw size="xs" className="top-2.5 left-2.5" />
             <Screw size="xs" className="top-2.5 right-2.5 -rotate-90" />
@@ -75,12 +76,7 @@ export function ConfirmModal({ state, onConfirm, onCancel }: ConfirmModalProps) 
                 isDanger ? 'border-red-500/20 bg-red-500/[0.04]' : 'border-seam bg-surface-container-lowest'
               }`}
             >
-              <span
-                className={`material-symbols-outlined text-[18px] ${isDanger ? 'text-red-400' : 'text-accent'}`}
-                aria-hidden
-              >
-                {isDanger ? 'report' : 'info'}
-              </span>
+              <MIcon name={isDanger ? 'report' : 'info'} className={`text-[18px] ${isDanger ? 'text-red-400' : 'text-accent'}`} />
               <h2
                 id={titleId}
                 className={`font-display font-bold text-[11px] uppercase tracking-[0.22em] ${isDanger ? 'text-red-300' : 'text-bone'}`}

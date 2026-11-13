@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useCallback, useRef, useEff
 import { AnimatePresence, motion } from 'motion/react';
 import { ADMIN_SPRING_TOAST } from '../lib/motion';
 import { EXIT_FAST } from '../../lib/motion';
+import MIcon from './MIcon';
 
 type ToastType = 'success' | 'error' | 'info';
 
@@ -121,11 +122,9 @@ function AdminToast({ toast, onDismiss }: { toast: Toast; onDismiss: (id: string
       onPointerEnter={() => setHovered(true)}
       onPointerLeave={() => setHovered(false)}
       onClick={() => onDismiss(toast.id)}
-      className={`pointer-events-auto relative overflow-hidden w-full flex items-center gap-3 pl-4 pr-5 py-3.5 text-left bg-surface-container-low ${style.frame} rounded-inset shadow-xl machined-edge font-display`}
+      className={`pointer-events-auto relative overflow-hidden w-full flex items-center gap-3 pl-4 pr-5 py-3.5 text-left bg-surface-container-low ${style.frame} rounded-inset shadow-panel machined-edge font-display`}
     >
-      <span className={`material-symbols-outlined text-[18px] shrink-0 ${style.text}`} aria-hidden>
-        {style.icon}
-      </span>
+      <MIcon name={style.icon} className={`text-[18px] shrink-0 ${style.text}`} />
       <span className={`text-[11px] font-bold uppercase tracking-[0.14em] flex-1 leading-relaxed ${style.text}`}>
         {toast.message}
       </span>

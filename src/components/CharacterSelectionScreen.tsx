@@ -125,14 +125,14 @@ export default function CharacterSelectionScreen({ account, onSelect, onLogout, 
           </div>
           <div className="flex items-center gap-3">
             {onOpenAdmin && (
-              <button onClick={onOpenAdmin} className="bg-surface-raised hover:bg-accent/10 text-ash-300 hover:text-accent w-10 h-10 rounded-control flex items-center justify-center transition-colors duration-(--duration-fast) active:scale-[0.97]" title={t('character.consoleTitle')} aria-label={t('character.consoleTitle')}>
+              <button onClick={onOpenAdmin} className="bg-surface-raised hover:bg-accent/10 text-ash-300 hover:text-accent w-10 h-10 rounded-control flex items-center justify-center transition-colors duration-(--duration-fast) active:translate-y-px" title={t('character.consoleTitle')} aria-label={t('character.consoleTitle')}>
                 <MonitorCog size={16} />
               </button>
             )}
-            <button onClick={onLogout} className="bg-error/10 hover:bg-error/20 text-error w-10 h-10 rounded-control flex items-center justify-center transition-colors duration-(--duration-fast) active:scale-[0.97]" title={t('character.logoutTitle')} aria-label={t('character.logoutTitle')}>
+            <button onClick={onLogout} className="bg-error/10 hover:bg-error/20 text-error w-10 h-10 rounded-control flex items-center justify-center transition-colors duration-(--duration-fast) active:translate-y-px" title={t('character.logoutTitle')} aria-label={t('character.logoutTitle')}>
               <LogOut size={16} />
             </button>
-            <button onClick={() => setIsCreating(true)} className="bg-accent/10 hover:bg-accent/20 text-accent px-4 py-2 rounded-control text-protocol transition-colors duration-(--duration-fast) flex items-center gap-2 group active:scale-[0.97]">
+            <button onClick={() => setIsCreating(true)} className="bg-accent/10 hover:bg-accent/20 text-accent px-4 py-2 rounded-control text-protocol transition-colors duration-(--duration-fast) flex items-center gap-2 group active:translate-y-px">
               <UserPlus size={14} /> {t('character.recruit')}
             </button>
           </div>
@@ -152,14 +152,14 @@ export default function CharacterSelectionScreen({ account, onSelect, onLogout, 
                 onClick={() => handleSelect(char)}
                 disabled={Boolean(selectedCharId) && selectedCharId !== char.id}
                 aria-busy={selectedCharId === char.id}
-                className="w-full text-left bg-surface-raised hover:bg-surface-panel rounded-card p-5 cursor-pointer transition-colors duration-(--duration-fast) group relative overflow-hidden shadow-hairline active:scale-[0.99] disabled:opacity-50 disabled:cursor-wait"
+                className="w-full text-left bg-surface-raised hover:bg-surface-panel rounded-card p-5 cursor-pointer transition-colors duration-(--duration-fast) group relative overflow-hidden shadow-hairline active:translate-y-px disabled:opacity-50 disabled:cursor-wait"
               >
                 <div className="flex items-center gap-4 relative z-10">
                   <div className={`w-16 h-16 rounded-card overflow-hidden bg-surface-panel ${char.agentStatus === 'morto' ? 'bg-red-500/10' : ''} flex items-center justify-center`}>
                     {char.profilePhotoUrl ? (
                       <img src={char.profilePhotoUrl} alt={char.codinome} className="w-full h-full object-cover" />
                     ) : (
-                      <User size={32} className="text-ash-600" />
+                      <User size={32} className="text-ash-500" />
                     )}
                   </div>
                   <div className="flex-1">
@@ -182,7 +182,7 @@ export default function CharacterSelectionScreen({ account, onSelect, onLogout, 
                   {selectedCharId === char.id ? (
                     <RetroSpinner size="sm" className="text-accent" />
                   ) : (
-                    <ChevronRight size={20} className="text-ash-600 group-hover:text-accent transition duration-(--duration-fast) group-hover:translate-x-0.5" />
+                    <ChevronRight size={20} className="text-ash-500 group-hover:text-accent transition duration-(--duration-fast) group-hover:translate-x-0.5" />
                   )}
                 </div>
 
@@ -219,7 +219,7 @@ export default function CharacterSelectionScreen({ account, onSelect, onLogout, 
             placeholder={t('character.invite.placeholder')}
             autoComplete="off"
             spellCheck={false}
-            className="focus-bare flex-1 bg-surface-raised shadow-pressed rounded-control py-3 px-4 text-bone font-mono text-sm outline-none placeholder:text-ash-600"
+            className="focus-bare flex-1 bg-surface-raised shadow-pressed rounded-control py-3 px-4 text-bone font-mono text-sm outline-none placeholder:text-ash-500"
           />
           <button type="submit" disabled={!parseInviteToken(inviteInput)} className="bg-accent/10 hover:bg-accent/20 text-accent px-4 py-3 rounded-control text-protocol transition-colors duration-(--duration-fast) disabled:opacity-40">
             {t('character.invite.submit')}
@@ -236,7 +236,7 @@ export default function CharacterSelectionScreen({ account, onSelect, onLogout, 
             onMouseDown={(e) => { if (e.target === e.currentTarget && !creating) setIsCreating(false); }}
             onKeyDown={(e) => { if (e.key === 'Escape' && !creating) setIsCreating(false); }}
           >
-            <motion.div role="dialog" aria-modal="true" variants={dialogPop} initial="hidden" animate="visible" exit="exit" className="w-full max-w-md bg-surface-raised rounded-card p-8 shadow-2xl machined-edge relative">
+            <motion.div role="dialog" aria-modal="true" variants={dialogPop} initial="hidden" animate="visible" exit="exit" className="w-full max-w-md bg-surface-raised rounded-card p-8 shadow-panel machined-edge relative">
               <h2 className="text-display text-2xl text-bone uppercase mb-6">
                 {t('character.create.title')} <span className="text-accent">{t('character.create.titleAccent')}</span>
               </h2>
@@ -271,7 +271,7 @@ export default function CharacterSelectionScreen({ account, onSelect, onLogout, 
                     <input type="text" autoFocus required value={newCodinome} onChange={e => setNewCodinome(e.target.value)}
                       placeholder={t('character.create.placeholder')}
                       autoComplete="off" spellCheck={false}
-                      className="focus-bare w-full bg-surface-sunken rounded-control py-4 pl-12 pr-4 text-bone shadow-pressed font-sans text-base tracking-wide focus:ring-0 placeholder:text-ash-600 outline-none uppercase transition-colors duration-(--duration-fast)" />
+                      className="focus-bare w-full bg-surface-sunken rounded-control py-4 pl-12 pr-4 text-bone shadow-pressed font-sans text-base tracking-wide focus:ring-0 placeholder:text-ash-500 outline-none uppercase transition-colors duration-(--duration-fast)" />
                     <div className="absolute bottom-0 left-4 right-4 h-px bg-accent scale-x-0 origin-left transition-transform duration-(--duration-base) ease-limbo group-focus-within:scale-x-100" />
                   </div>
                 </div>
@@ -287,7 +287,7 @@ export default function CharacterSelectionScreen({ account, onSelect, onLogout, 
                   <button type="button" onClick={() => setIsCreating(false)} className="flex-1 py-4 text-protocol text-ash-400 hover:text-white transition-colors duration-(--duration-fast)">
                     {tCommon('cancel')}
                   </button>
-                  <button type="submit" disabled={creating} className="flex-2 bg-accent hover:bg-primary text-[#1a0d00] active:scale-[0.97] font-display font-bold text-xs uppercase tracking-[0.2em] py-4 px-8 rounded-control transition duration-(--duration-fast) flex items-center justify-center gap-3 disabled:opacity-50">
+                  <button type="submit" disabled={creating} className="flex-2 bg-accent hover:bg-primary text-[#1a0d00] active:translate-y-px font-display font-bold text-xs uppercase tracking-[0.1em] py-4 px-8 rounded-control transition duration-(--duration-fast) flex items-center justify-center gap-3 disabled:opacity-50">
                     {creating ? <RetroSpinner size="sm" /> : t('character.create.submit')}
                   </button>
                 </div>
@@ -302,7 +302,7 @@ export default function CharacterSelectionScreen({ account, onSelect, onLogout, 
       <AnimatePresence>
         {showMasterNamePrompt && (
           <motion.div variants={overlayFade} initial="hidden" animate="visible" exit="exit" className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-surface-sunken/95">
-            <motion.div role="dialog" aria-modal="true" variants={dialogPop} initial="hidden" animate="visible" exit="exit" className="w-full max-w-md bg-surface-raised rounded-card p-8 shadow-2xl machined-edge relative">
+            <motion.div role="dialog" aria-modal="true" variants={dialogPop} initial="hidden" animate="visible" exit="exit" className="w-full max-w-md bg-surface-raised rounded-card p-8 shadow-panel machined-edge relative">
               <h2 className="text-display text-2xl text-bone uppercase mb-4 mt-2">
                 {t('character.master.title')} <span className="text-accent">{t('character.master.titleAccent')}</span>
               </h2>
@@ -322,12 +322,12 @@ export default function CharacterSelectionScreen({ account, onSelect, onLogout, 
                     <input type="text" autoFocus required value={newMasterName} onChange={e => setNewMasterName(e.target.value)}
                       placeholder={t('character.master.placeholder')}
                       autoComplete="name"
-                      className="focus-bare w-full bg-surface-sunken rounded-control py-4 pl-12 pr-4 text-bone shadow-pressed font-sans text-base tracking-wide focus:ring-0 placeholder:text-ash-600 outline-none transition-colors duration-(--duration-fast)" />
+                      className="focus-bare w-full bg-surface-sunken rounded-control py-4 pl-12 pr-4 text-bone shadow-pressed font-sans text-base tracking-wide focus:ring-0 placeholder:text-ash-500 outline-none transition-colors duration-(--duration-fast)" />
                     <div className="absolute bottom-0 left-4 right-4 h-px bg-accent scale-x-0 origin-left transition-transform duration-(--duration-base) ease-limbo group-focus-within:scale-x-100" />
                   </div>
                 </div>
 
-                <button type="submit" disabled={savingMasterName} className="w-full bg-accent hover:bg-primary text-[#1a0d00] active:scale-[0.97] font-display font-bold text-xs uppercase tracking-[0.2em] py-4 rounded-control transition duration-(--duration-fast) flex items-center justify-center gap-3 disabled:opacity-50">
+                <button type="submit" disabled={savingMasterName} className="w-full bg-accent hover:bg-primary text-[#1a0d00] active:translate-y-px font-display font-bold text-xs uppercase tracking-[0.1em] py-4 rounded-control transition duration-(--duration-fast) flex items-center justify-center gap-3 disabled:opacity-50">
                   {savingMasterName ? <RetroSpinner size="sm" /> : t('character.master.submit')}
                 </button>
               </form>

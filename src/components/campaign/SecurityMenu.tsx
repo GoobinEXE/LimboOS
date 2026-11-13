@@ -24,7 +24,7 @@ const ActionBtn = ({ onClick, icon: Icon, title, tone = 'accent' }: ActionBtnPro
     <button
       type="button"
       onClick={onClick}
-      className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-card bg-surface-raised transition duration-200 group text-left active:scale-[0.99] ${
+      className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-card bg-surface-raised transition duration-200 group text-left active:translate-y-px ${
         isDanger
           ? 'hover:bg-red-500/5'
           : 'hover:bg-accent-05'
@@ -80,7 +80,7 @@ export const SecurityMenu = ({ onClose, onLogout, onShowProfile, onChangeCharact
       animate={{ y: 0 }}
       exit={{ y: '-100%' }}
       transition={SPRING_DRAWER}
-      className="absolute inset-0 lg:inset-auto lg:top-20 lg:left-6 lg:w-[32rem] lg:max-h-[calc(100%-7rem)] lg:rounded-panel z-100 bg-surface/98 flex flex-col border-b shadow-2xl overflow-hidden touch-none"
+      className="absolute inset-0 lg:inset-auto lg:top-20 lg:left-6 lg:w-[32rem] lg:max-h-[calc(100%-7rem)] lg:rounded-panel z-100 bg-surface/98 flex flex-col border-b shadow-panel overflow-hidden touch-none"
     >
       <div className="noise-overlay" />
       <div className="scanlines" />
@@ -101,7 +101,7 @@ export const SecurityMenu = ({ onClose, onLogout, onShowProfile, onChangeCharact
           type="button"
           onClick={onClose}
           aria-label={t('security.closeAria')}
-          className="w-11 h-11 rounded-control bg-surface-panel text-primary flex items-center justify-center hover:bg-accent-10 active:scale-[0.97] transition duration-200 group shrink-0"
+          className="w-11 h-11 rounded-control bg-surface-panel text-primary flex items-center justify-center hover:bg-accent-10 active:translate-y-px transition duration-200 group shrink-0"
         >
           <X size={22} className="group-hover:rotate-90 transition-transform duration-300" />
         </button>
@@ -114,7 +114,7 @@ export const SecurityMenu = ({ onClose, onLogout, onShowProfile, onChangeCharact
       </div>
 
       <footer className="px-6 sm:px-8 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] border-t border-border-subtle bg-surface-raised/40 relative z-20">
-        <div className="flex justify-between items-center text-mono-ui text-[10px] text-ash-600">
+        <div className="flex justify-between items-center text-mono-ui text-[10px] text-ash-500">
           <span>{t('brand.smileCopyright', { ns: 'common' })}</span>
           <span>{t('security.grid')}</span>
         </div>

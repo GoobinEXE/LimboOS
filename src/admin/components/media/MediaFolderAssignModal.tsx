@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { MediaFolder } from '../../../types/media';
 import OverlayPortal from '../OverlayPortal';
 import Screw from '../../../components/player/Screw';
+import MIcon from '../MIcon';
 
 interface MediaFolderAssignModalProps {
   open: boolean;
@@ -67,23 +68,23 @@ export default function MediaFolderAssignModal({
               initial={{ opacity: 0, scale: 0.95, y: 12 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 12 }}
-              className="relative w-full max-w-md bg-surface-container-low shadow-2xl overflow-hidden"
+              className="relative w-full max-w-md bg-surface-container-low shadow-panel overflow-hidden"
             >
               <div className="absolute top-2 left-2"><Screw size="xs" /></div>
               <div className="absolute top-2 right-2"><Screw size="xs" /></div>
 
               <div className="px-6 py-4 border-b border-primary/10 bg-black/20">
-                <p className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.25em]">
+                <p className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.12em]">
                   Atribuir pastas
                 </p>
-                <h3 className="font-display font-bold text-bone uppercase tracking-widest text-sm truncate mt-1">
+                <h3 className="font-display font-bold text-bone uppercase tracking-wider text-sm truncate mt-1">
                   {assetTitle}
                 </h3>
               </div>
 
               <div className="max-h-72 overflow-y-auto custom-scrollbar p-2">
                 {folders.length === 0 ? (
-                  <p className="px-4 py-8 text-center text-[10px] font-display font-bold text-ash-600 uppercase tracking-widest">
+                  <p className="px-4 py-8 text-center text-[10px] font-display font-bold text-ash-500 uppercase tracking-wider">
                     Nenhuma pasta disponível
                   </p>
                 ) : (
@@ -100,13 +101,9 @@ export default function MediaFolderAssignModal({
                             : 'text-ash-400 hover:bg-primary/5 hover:text-primary'
                         }`}
                       >
-                        <span className="material-symbols-outlined text-lg">
-                          {checked ? 'check_box' : 'check_box_outline_blank'}
-                        </span>
-                        <span className="material-symbols-outlined text-base opacity-50">
-                          {folder.campaignId ? 'flag' : 'folder'}
-                        </span>
-                        <span className="flex-1 text-[10px] font-display font-bold uppercase tracking-widest truncate">
+                        <MIcon name={checked ? 'check_box' : 'check_box_outline_blank'} className="text-lg" />
+                        <MIcon name={folder.campaignId ? 'flag' : 'folder'} className="text-base opacity-50" />
+                        <span className="flex-1 text-[10px] font-display font-bold uppercase tracking-wider truncate">
                           {folder.name}
                         </span>
                       </button>
@@ -119,7 +116,7 @@ export default function MediaFolderAssignModal({
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-4 py-2 text-[10px] font-display font-bold text-ash-500 hover:text-bone uppercase tracking-widest"
+                  className="px-4 py-2 text-[10px] font-display font-bold text-ash-500 hover:text-bone uppercase tracking-wider"
                 >
                   {t('accounts.cancel')}
                 </button>
@@ -127,7 +124,7 @@ export default function MediaFolderAssignModal({
                   type="button"
                   disabled={saving}
                   onClick={() => void handleSave()}
-                  className="px-5 py-2 bg-primary text-black text-[10px] font-display font-bold uppercase tracking-widest hover:bg-primary-container disabled:opacity-50"
+                  className="px-5 py-2 bg-primary text-black text-[10px] font-display font-bold uppercase tracking-wider hover:bg-primary-container disabled:opacity-50"
                 >
                   {saving ? 'Salvando…' : 'Salvar'}
                 </button>

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Campaign } from '../../../data/campaigns';
 import { MediaAsset } from '../../../types/media';
 import MediaSelectorModal from '../MediaSelectorModal';
+import MIcon from '../MIcon';
 
 interface MissionDataTabProps {
   campaign: Partial<Campaign>;
@@ -47,7 +48,7 @@ export default function MissionDataTab({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="space-y-6">
             <div className="group">
-              <label className="block text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.2em] mb-2 group-focus-within:text-primary transition-colors">
+              <label className="block text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.1em] mb-2 group-focus-within:text-primary transition-colors">
                 Identificador Slug
               </label>
               <input
@@ -62,7 +63,7 @@ export default function MissionDataTab({
               <div className="h-0.5 w-full bg-primary scale-x-0 origin-left transition-transform duration-(--duration-base) ease-limbo group-focus-within:scale-x-100" />
             </div>
             <div className="group">
-              <label className="block text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.2em] mb-2 group-focus-within:text-primary transition-colors">
+              <label className="block text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.1em] mb-2 group-focus-within:text-primary transition-colors">
                 Nome Operacional
               </label>
               <input
@@ -75,7 +76,7 @@ export default function MissionDataTab({
               <div className="h-0.5 w-full bg-primary scale-x-0 origin-left transition-transform duration-(--duration-base) ease-limbo group-focus-within:scale-x-100" />
             </div>
             <div className="group">
-              <label className="block text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.2em] mb-2 group-focus-within:text-primary transition-colors">
+              <label className="block text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.1em] mb-2 group-focus-within:text-primary transition-colors">
                 Sistema de Regras
               </label>
               <input
@@ -88,7 +89,7 @@ export default function MissionDataTab({
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="group">
-                <label className="block text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.2em] mb-2 group-focus-within:text-primary transition-colors">
+                <label className="block text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.1em] mb-2 group-focus-within:text-primary transition-colors">
                   Ano
                 </label>
                 <input
@@ -100,7 +101,7 @@ export default function MissionDataTab({
                 <div className="h-0.5 w-full bg-primary scale-x-0 origin-left transition-transform duration-(--duration-base) ease-limbo group-focus-within:scale-x-100" />
               </div>
               <div className="group">
-                <label className="block text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.2em] mb-2 group-focus-within:text-primary transition-colors">
+                <label className="block text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.1em] mb-2 group-focus-within:text-primary transition-colors">
                   {t('logs.type.auth')}
                 </label>
                 <select
@@ -118,7 +119,7 @@ export default function MissionDataTab({
               </div>
             </div>
             <div className="group">
-              <label className="block text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.2em] mb-2 group-focus-within:text-primary transition-colors">
+              <label className="block text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.1em] mb-2 group-focus-within:text-primary transition-colors">
                 Interface do Jogador (Tema)
               </label>
               <select
@@ -137,7 +138,7 @@ export default function MissionDataTab({
 
           <div className="space-y-6">
             <div className="group">
-              <label className="block text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.2em] mb-2 group-focus-within:text-primary transition-colors">
+              <label className="block text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.1em] mb-2 group-focus-within:text-primary transition-colors">
                 Descrição do Setor
               </label>
               <textarea
@@ -148,7 +149,7 @@ export default function MissionDataTab({
               <div className="h-0.5 w-full bg-primary scale-x-0 origin-left transition-transform duration-(--duration-base) ease-limbo group-focus-within:scale-x-100" />
             </div>
             <div className="group">
-              <label className="block text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.2em] mb-2 group-focus-within:text-primary transition-colors">
+              <label className="block text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.1em] mb-2 group-focus-within:text-primary transition-colors">
                 Localização
               </label>
               <input
@@ -160,7 +161,7 @@ export default function MissionDataTab({
               <div className="h-0.5 w-full bg-primary scale-x-0 origin-left transition-transform duration-(--duration-base) ease-limbo group-focus-within:scale-x-100" />
             </div>
             <div className="group">
-              <label className="block text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.2em] mb-2 group-focus-within:text-primary transition-colors">
+              <label className="block text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.1em] mb-2 group-focus-within:text-primary transition-colors">
                 Frequência Visual (Capa)
               </label>
 
@@ -181,9 +182,9 @@ export default function MissionDataTab({
                     onClick={() => onChange({ ...campaign, imageUrl: '' })}
                     className="absolute top-2 right-2 w-7 h-7 bg-black/70 rounded-sm flex items-center justify-center text-red-500/70 hover:text-red-500 transition hover:bg-red-500/10"
                   >
-                    <span className="material-symbols-outlined text-sm">close</span>
+                    <MIcon name="close" className="text-sm" />
                   </button>
-                  <p className="absolute bottom-2 left-3 text-[10px] font-display font-bold text-bone/50 uppercase tracking-widest">
+                  <p className="absolute bottom-2 left-3 text-[10px] font-display font-bold text-bone/50 uppercase tracking-wider">
                     PREVIEW ATIVA
                   </p>
                 </div>
@@ -194,17 +195,15 @@ export default function MissionDataTab({
                 onClick={() => setIsMediaSelectorOpen(true)}
                 className="w-full bg-surface-container-lowest/50 hover:bg-primary/5 rounded-sm py-8 flex flex-col items-center gap-2 transition group/upload cursor-pointer"
               >
-                <span className="material-symbols-outlined text-3xl text-ash-600 group-hover/upload:text-primary/60 transition-colors">
-                  perm_media
-                </span>
-                <span className="text-[10px] font-display font-bold text-ash-600 group-hover/upload:text-primary/50 uppercase tracking-widest transition-colors">
+                <MIcon name="perm_media" className="text-3xl text-ash-500 group-hover/upload:text-primary/60 transition-colors" />
+                <span className="text-[10px] font-display font-bold text-ash-500 group-hover/upload:text-primary/50 uppercase tracking-wider transition-colors">
                   Selecionar da Central de Mídia
                 </span>
               </button>
 
               <div className="flex items-center gap-3 mt-3">
                 <div className="h-px flex-1 bg-white/5" />
-                <span className="text-[10px] font-display font-bold text-ash-700 uppercase tracking-widest">
+                <span className="text-[10px] font-display font-bold text-ash-700 uppercase tracking-wider">
                   ou cole URL
                 </span>
                 <div className="h-px flex-1 bg-white/5" />
@@ -226,16 +225,16 @@ export default function MissionDataTab({
             type="button"
             onClick={onDiscard}
             disabled={discardDisabled || saving}
-            className="px-8 py-4 text-[10px] font-display font-bold text-ash-600 hover:text-bone uppercase tracking-[0.3em] transition disabled:opacity-40 disabled:hover:text-ash-600"
+            className="px-8 py-4 text-[10px] font-display font-bold text-ash-500 hover:text-bone uppercase tracking-[0.12em] transition disabled:opacity-40 disabled:hover:text-ash-500"
           >
             {discardLabel}
           </button>
           <button
             type="submit"
             disabled={saving}
-            className="bg-primary hover:bg-primary-container text-black px-12 py-4 rounded-sm font-display font-bold text-[11px] tracking-widest uppercase transition active:scale-[0.97] glow-orange shadow-lg flex items-center justify-center gap-3 disabled:opacity-50"
+            className="bg-primary hover:bg-primary-container text-black px-12 py-4 rounded-sm font-display font-bold text-[11px] tracking-wider uppercase transition active:translate-y-px glow-orange shadow-lg flex items-center justify-center gap-3 disabled:opacity-50"
           >
-            <span className="material-symbols-outlined text-base">save</span>
+            <MIcon name="save" className="text-base" />
             {saving ? 'Salvando...' : t('missions.data.save')}
           </button>
         </div>

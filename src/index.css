@@ -9,12 +9,14 @@
    ═══════════════════════════════════════════════════════════════════ */
 
 @theme {
-  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Archivo", sans-serif;
+  --font-sans: "Archivo", "Archivo Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Archivo", "Archivo Variable", ui-sans-serif, sans-serif;
   --font-mono: "Spline Sans Mono", ui-monospace, "Courier New", monospace;
-  --font-headline: "Archivo", sans-serif;
-  --font-body: "DM Sans", sans-serif;
-  --font-label: "Archivo", sans-serif;
+  --font-headline: "Archivo", "Archivo Variable", ui-sans-serif, sans-serif;
+  --font-body: "Archivo", "Archivo Variable", ui-sans-serif, sans-serif;
+  --font-label: "Archivo", "Archivo Variable", ui-sans-serif, sans-serif;
+  /* Tela LCD do Nokia: glifo de bitmap, não mono moderna */
+  --font-lcd: "VT323", "Spline Sans Mono", ui-monospace, monospace;
 
   --color-retro-orange: #FF8C00;
   --color-industrial-silver: #C4BEB6;
@@ -112,9 +114,9 @@
   --color-ash-200: #ddd7cf;
   --color-ash-300: #c4bdb3;
   --color-ash-400: #9d958b;
-  /* 500 ≈ 4.6:1 e 600 ≈ 3.2:1 sobre --color-surface: texto secundário e terciário legíveis */
-  --color-ash-500: #847d74;
-  --color-ash-600: #6a645c;
+  /* 500 ≥ 5:1 (texto secundário, dicas, placeholder) e 600 ≈ 3.8:1 (só ícone e texto grande) sobre as superfícies */
+  --color-ash-500: #948c81;
+  --color-ash-600: #7a736a;
   --color-ash-700: #514b44;
   --color-ash-800: #2a2622;
   --color-ash-900: #1a1815;
@@ -462,11 +464,11 @@
     align-items: center;
     gap: 0.75rem;
     font-family: var(--font-display);
-    font-size: 0.5625rem;
+    font-size: 0.6875rem;
     font-weight: 700;
-    letter-spacing: 0.32em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--color-ash-500);
+    color: var(--color-ash-400);
   }
   .lmb-eyebrow::after {
     content: "";
@@ -478,10 +480,16 @@
 
 @layer utilities {
   /* Tipografia: três vozes, display (títulos), protocol (rótulos/UI), mono (dados) */
+  /* Rótulos e títulos em font-display saem levemente largos (eixo wdth) */
+  .font-display,
+  .font-headline {
+    font-stretch: 108%;
+  }
   .text-display {
     font-family: var(--font-display);
-    font-weight: 700;
-    letter-spacing: -0.02em;
+    font-weight: 750;
+    font-stretch: 116%;
+    letter-spacing: -0.01em;
     line-height: 1.05;
     text-wrap: balance;
   }
@@ -509,6 +517,12 @@
   }
   .press:active:not(:disabled) {
     transform: translateY(1px);
+  }
+  /* Toque: 1 px some embaixo do dedo; o controle também escurece ao ser pressionado */
+  @media (hover: none) {
+    :where(button, [role="button"], a[href]):active:not(:disabled):not([aria-disabled="true"]) {
+      filter: brightness(0.82);
+    }
   }
 
   .glow-orange {
@@ -742,10 +756,13 @@
 .nokia-theme-active {
   background-color: var(--color-lcd-paper) !important;
   color: var(--color-lcd-ink) !important;
-  font-family: var(--font-mono) !important;
+  font-family: var(--font-lcd) !important;
 }
 
 .nokia-theme-active * {
+  font-family: var(--font-lcd) !important;
+  /* VT323 tem olho baixo: iguala a altura-x à da mono para não encolher o texto */
+  font-size-adjust: 0.52;
   color: var(--color-lcd-ink) !important;
   border-color: var(--color-lcd-ink) !important;
   background-image: none !important;
@@ -759,7 +776,7 @@
   border-radius: 2px !important;
   padding: 0.25rem 0.5rem !important;
   cursor: pointer !important;
-  font-family: var(--font-mono) !important;
+  font-family: var(--font-lcd) !important;
   font-weight: bold !important;
   text-transform: uppercase !important;
   transition: background-color 0.1s linear, color 0.1s linear !important;
@@ -799,7 +816,7 @@
   border-radius: 2px !important;
   padding: 0.25rem 0.5rem !important;
   outline: none !important;
-  font-family: var(--font-mono) !important;
+  font-family: var(--font-lcd) !important;
 }
 
 .nokia-theme-active input:focus,
@@ -814,7 +831,7 @@
 .nokia-theme-active h4,
 .nokia-theme-active h5,
 .nokia-theme-active h6 {
-  font-family: var(--font-mono) !important;
+  font-family: var(--font-lcd) !important;
   font-weight: 800 !important;
   text-transform: uppercase !important;
   letter-spacing: 0.05em !important;

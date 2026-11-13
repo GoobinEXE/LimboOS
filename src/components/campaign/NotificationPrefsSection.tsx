@@ -56,7 +56,7 @@ export default function NotificationPrefsSection() {
               className="w-full flex items-center justify-between gap-3 px-4 py-3 text-left"
             >
               <span className="text-[11px] font-semibold text-white uppercase tracking-wide">{t(`push.prefs.${category}`)}</span>
-              <span className={`text-mono-ui text-[10px] ${enabled ? 'text-primary' : 'text-ash-600'}`}>
+              <span className={`text-mono-ui text-[10px] ${enabled ? 'text-primary' : 'text-ash-500'}`}>
                 {enabled ? t('push.prefs.on') : t('push.prefs.off')}
               </span>
             </button>

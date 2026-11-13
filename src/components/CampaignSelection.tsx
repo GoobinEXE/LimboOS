@@ -145,7 +145,7 @@ export default function CampaignSelection({
   if (loading) return <RetroLoading fullScreen message={t('campaign.loading')} />;
 
   const iconButtonClass =
-    'w-10 h-10 sm:w-11 sm:h-11 rounded-control bg-surface-panel text-primary flex items-center justify-center hover:bg-accent-10 active:scale-[0.97] transition duration-200 shrink-0';
+    'w-10 h-10 sm:w-11 sm:h-11 rounded-control bg-surface-panel text-primary flex items-center justify-center hover:bg-accent-10 active:translate-y-px transition duration-200 shrink-0';
 
   return (
     <div className="w-full h-full flex flex-col relative overflow-hidden bg-surface">
@@ -235,7 +235,7 @@ export default function CampaignSelection({
               type="button"
               onClick={() => snapTo(currentIndex - 1)}
               aria-label={t('campaign.prevTape')}
-              className="absolute left-3 sm:left-5 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-surface-panel/80 text-primary hover:bg-accent-10 active:scale-[0.97] transition duration-200 flex items-center justify-center shadow-panel"
+              className="absolute left-3 sm:left-5 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-surface-panel/80 text-primary hover:bg-accent-10 active:translate-y-px transition duration-200 flex items-center justify-center shadow-panel"
             >
               <ChevronLeft size={22} />
             </button>
@@ -245,7 +245,7 @@ export default function CampaignSelection({
               type="button"
               onClick={() => snapTo(currentIndex + 1)}
               aria-label={t('campaign.nextTape')}
-              className="absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-surface-panel/80 text-primary hover:bg-accent-10 active:scale-[0.97] transition duration-200 flex items-center justify-center shadow-panel"
+              className="absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-surface-panel/80 text-primary hover:bg-accent-10 active:translate-y-px transition duration-200 flex items-center justify-center shadow-panel"
             >
               <ChevronRight size={22} />
             </button>
@@ -256,7 +256,7 @@ export default function CampaignSelection({
           {campaigns.length > 0 ? (
             <TapeProgress total={campaigns.length} current={currentIndex} onChange={snapTo} />
           ) : (
-            <span className="text-protocol text-ash-600">{t('campaign.noTapes')}</span>
+            <span className="text-protocol text-ash-500">{t('campaign.noTapes')}</span>
           )}
         </div>
       </main>

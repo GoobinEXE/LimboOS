@@ -4,6 +4,7 @@ import type { Campaign } from '../../../data/campaigns';
 import { DEFAULT_CAMPAIGN_FEATURES, type CampaignFeatures } from '../../../types/workspace';
 import { campaignAdminService } from '../../../services/CampaignAdminService';
 import { useToast } from '../ToastProvider';
+import MIcon from '../MIcon';
 
 const FEATURE_ORDER: (keyof CampaignFeatures)[] = ['bios', 'limbo', 'win95', 'terminal', 'mac', 'diskRepair'];
 
@@ -48,10 +49,10 @@ export default function MissionAppsTab({ campaign }: { campaign: Campaign }) {
                 }`}
               >
                 <span>
-                  <span className="block text-[11px] font-display font-bold uppercase tracking-widest">{t(`apps.feature.${key}`)}</span>
+                  <span className="block text-[11px] font-display font-bold uppercase tracking-wider">{t(`apps.feature.${key}`)}</span>
                   <span className="block text-[10px] text-ash-500 mt-1 normal-case tracking-normal">{t(`apps.featureHint.${key}`)}</span>
                 </span>
-                <span className="material-symbols-outlined text-2xl shrink-0" aria-hidden>{on ? 'toggle_on' : 'toggle_off'}</span>
+                <MIcon name={on ? 'toggle_on' : 'toggle_off'} className="text-2xl shrink-0" />
               </button>
             </li>
           );

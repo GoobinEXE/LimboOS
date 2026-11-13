@@ -18,6 +18,7 @@ import {
 import type { Campaign } from '../../../data/campaigns';
 import type { CampaignScope } from '../../lib/campaignResources';
 import CampaignScopeSelect from '../CampaignScopeSelect';
+import MIcon from '../MIcon';
 
 interface IntelCatalogPaneProps {
   items: IntelItem[];
@@ -80,12 +81,12 @@ export default function IntelCatalogPane({
     >
       <div className="px-4 py-3 border-b border-primary/10 bg-black/30 flex items-center justify-between gap-2 shrink-0">
         <div className="flex items-center gap-2 min-w-0">
-          <span className="material-symbols-outlined text-primary text-base">hub</span>
+          <MIcon name="hub" className="text-primary text-base" />
           <div className="min-w-0">
-            <p className="font-display font-bold text-[11px] text-bone uppercase tracking-widest truncate">
+            <p className="font-display font-bold text-[11px] text-bone uppercase tracking-wider truncate">
               Catálogo Intel
             </p>
-            <p className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.2em]">
+            <p className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.1em]">
               {items.length} visíveis
               {isLoading ? ' · sync…' : ''}
             </p>
@@ -103,10 +104,10 @@ export default function IntelCatalogPane({
               key={key}
               type="button"
               onClick={() => onStatusFilter(key)}
-              className={`px-2.5 py-1 text-[10px] font-display font-bold uppercase tracking-widest transition rounded-sm ${
+              className={`px-2.5 py-1 text-[10px] font-display font-bold uppercase tracking-wider transition rounded-sm ${
                 statusFilter === key
                   ? 'text-amber-400 bg-amber-500/10'
-                  : 'text-ash-600 hover:text-ash-400'
+                  : 'text-ash-500 hover:text-ash-400'
               }`}
             >
               {INTEL_STATUS_FILTER_LABELS[key]}
@@ -114,9 +115,7 @@ export default function IntelCatalogPane({
           ))}
         </div>
         <div className="relative group">
-          <span className="absolute left-2.5 top-1/2 -translate-y-1/2 material-symbols-outlined text-ash-600 text-sm group-focus-within:text-primary">
-            search
-          </span>
+          <MIcon name="search" className="absolute left-2.5 top-1/2 -translate-y-1/2 text-ash-500 text-sm group-focus-within:text-primary" />
           <input
             type="text"
             value={search}
@@ -129,10 +128,10 @@ export default function IntelCatalogPane({
           <button
             type="button"
             onClick={() => onFilterType('ALL')}
-            className={`px-2 py-1 text-[10px] font-display font-bold uppercase tracking-widest rounded-sm ${
+            className={`px-2 py-1 text-[10px] font-display font-bold uppercase tracking-wider rounded-sm ${
               filterType === 'ALL'
                 ? 'text-primary bg-primary/10'
-                : 'text-ash-600'
+                : 'text-ash-500'
             }`}
           >
             {t('hardware.filter.all')}
@@ -143,13 +142,13 @@ export default function IntelCatalogPane({
               type="button"
               onClick={() => onFilterType(t.value)}
               title={t.label}
-              className={`px-2 py-1 text-[10px] font-display font-bold uppercase tracking-widest rounded-sm flex items-center gap-1 ${
+              className={`px-2 py-1 text-[10px] font-display font-bold uppercase tracking-wider rounded-sm flex items-center gap-1 ${
                 filterType === t.value
                   ? 'text-primary bg-primary/10'
-                  : 'text-ash-600'
+                  : 'text-ash-500'
               }`}
             >
-              <span className="material-symbols-outlined text-xs">{t.icon}</span>
+              <MIcon name={t.icon} className="text-xs" />
             </button>
           ))}
         </div>
@@ -163,7 +162,7 @@ export default function IntelCatalogPane({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="p-10 text-center text-ash-600 text-[10px] font-display font-bold uppercase tracking-[0.3em]"
+              className="p-10 text-center text-ash-500 text-[10px] font-display font-bold uppercase tracking-[0.12em]"
             >
               Nenhum sinal de intel
             </motion.div>
@@ -191,29 +190,27 @@ export default function IntelCatalogPane({
                   }`}
                 >
                   <div className="flex items-start gap-2">
-                    <span className="material-symbols-outlined text-base text-ash-600 group-hover:text-primary mt-0.5">
-                      {INTEL_TYPE_OPTIONS.find((t) => t.value === item.type)?.icon || 'description'}
-                    </span>
+                    <MIcon name={INTEL_TYPE_OPTIONS.find((t) => t.value === item.type)?.icon || 'description'} className=" text-base text-ash-500 group-hover:text-primary mt-0.5" />
                     <div className="min-w-0 flex-1">
                       <p className="text-[11px] font-display font-bold text-bone uppercase tracking-wide truncate">
                         {item.title}
                       </p>
-                      <p className="text-[10px] font-mono text-ash-600 truncate uppercase">
+                      <p className="text-[10px] font-mono text-ash-500 truncate uppercase">
                         {item.id}
                       </p>
                       <div className="flex flex-wrap gap-1 mt-1.5">
                         <span
-                          className={`text-[10px] font-display font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-sm ${intelCatalogStatusClass(catalogStatus)}`}
+                          className={`text-[10px] font-display font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-sm ${intelCatalogStatusClass(catalogStatus)}`}
                         >
                           {intelCatalogStatusLabel(catalogStatus)}
                         </span>
                         <span
-                          className={`text-[10px] font-display font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-sm ${accessLevelClass(item.level)}`}
+                          className={`text-[10px] font-display font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-sm ${accessLevelClass(item.level)}`}
                         >
                           {accessLevelLabel(item.level)}
                         </span>
                         {item.campaignId && campaignScope === 'all' && (
-                          <span className="text-[10px] font-display font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-sm text-primary/80 truncate max-w-[10rem] bg-accent-10">
+                          <span className="text-[10px] font-display font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-sm text-primary/80 truncate max-w-[10rem] bg-accent-10">
                             {campaigns.find((c) => c.id === item.campaignId)?.name || item.campaignId}
                           </span>
                         )}
@@ -227,7 +224,7 @@ export default function IntelCatalogPane({
                         <button
                           type="button"
                           onClick={() => onEdit(item)}
-                          className="mt-1.5 text-[10px] font-display font-bold uppercase tracking-widest text-primary hover:text-primary-container"
+                          className="mt-1.5 text-[10px] font-display font-bold uppercase tracking-wider text-primary hover:text-primary-container"
                         >
                           Completar metadados →
                         </button>
@@ -277,9 +274,7 @@ function IconBtn({
       type="button"
       title={title}
       onClick={onClick}
-      className={`p-1.5 text-ash-600 rounded-sm transition material-symbols-outlined text-base ${toneClass}`}
-    >
-      {icon}
-    </button>
+      className={`p-1.5 text-ash-500 rounded-sm transition text-base ${toneClass}`}
+    ><MIcon name={icon} /></button>
   );
 }

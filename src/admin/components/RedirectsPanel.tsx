@@ -9,6 +9,7 @@ import { intelService } from '../../services/IntelService';
 import { intelRegistry } from '../../data/intel_registry';
 import type { IntelItem } from '../../types/intel';
 import { matchesIntelScope, type CampaignScope } from '../lib/campaignResources';
+import MIcon from './MIcon';
 
 interface QrRedirect {
   sourceId: string;
@@ -104,16 +105,16 @@ export default function RedirectsPanel({
       {!embedded && (
       <div className="flex items-center gap-4">
         <div className="w-1.5 h-7 rounded-inset bg-phosphor-500 animate-led" />
-        <h2 className="font-black uppercase tracking-widest text-lg text-bone">
+        <h2 className="font-black uppercase tracking-wider text-lg text-bone">
           Interface de Redirecionamento de Sinal QR
         </h2>
-        <span className="text-[10px] font-bold text-ash-600 tracking-widest uppercase">
+        <span className="text-[10px] font-bold text-ash-500 tracking-wider uppercase">
           {redirects.length} MAPEAMENTOS ATIVOS NO GRID
         </span>
       </div>
       )}
       {embedded && (
-        <p className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-widest">
+        <p className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-wider">
           Mapear QR físico → intel · {redirects.length} mapeamentos ativos
         </p>
       )}
@@ -123,24 +124,24 @@ export default function RedirectsPanel({
         <div className="lg:col-span-1">
           <div className="bg-seam p-8 rounded-card machined-edge space-y-8 relative overflow-hidden">
             <div className="flex items-center gap-3 border-b border-border-subtle pb-6">
-              <span className="material-symbols-outlined text-phosphor-500 text-2xl">add_link</span>
-              <h3 className="font-black text-xs uppercase tracking-widest text-bone">{t('redirects.inject')}</h3>
+              <MIcon name="add_link" className="text-phosphor-500 text-2xl" />
+              <h3 className="font-black text-xs uppercase tracking-wider text-bone">{t('redirects.inject')}</h3>
             </div>
             
             <form onSubmit={handleAddRedirect} className="space-y-6 relative z-10">
               <div className="space-y-2">
-                <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-ash-600">ID ORIGEM (QR FÍSICO)</label>
+                <label className="block text-[10px] font-black uppercase tracking-[0.1em] text-ash-500">ID ORIGEM (QR FÍSICO)</label>
                 <input
                   type="text"
                   required
                   value={newSourceId}
                   onChange={(e) => setNewSourceId(e.target.value)}
                   placeholder="EX: IJZ0IE..."
-                  className="w-full bg-black/40 text-[11px] font-mono font-bold uppercase tracking-widest outline-none text-phosphor-400 px-4 py-3 rounded-sm transition"
+                  className="w-full bg-black/40 text-[11px] font-mono font-bold uppercase tracking-wider outline-none text-phosphor-400 px-4 py-3 rounded-sm transition"
                 />
               </div>
               <div className="space-y-2">
-                <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-ash-600">ID DESTINO (DADO CORRETO)</label>
+                <label className="block text-[10px] font-black uppercase tracking-[0.1em] text-ash-500">ID DESTINO (DADO CORRETO)</label>
                 <input
                   type="text"
                   required
@@ -149,7 +150,7 @@ export default function RedirectsPanel({
                   placeholder="EX: TAPE-ID-123..."
                   list="qr-intel-targets"
                   autoComplete="off"
-                  className="w-full bg-black/40 text-[11px] font-mono font-bold tracking-widest outline-none text-primary px-4 py-3 rounded-sm transition focus:bg-accent-10"
+                  className="w-full bg-black/40 text-[11px] font-mono font-bold tracking-wider outline-none text-primary px-4 py-3 rounded-sm transition focus:bg-accent-10"
                 />
                 <datalist id="qr-intel-targets">
                   {intelItems.map((item) => (
@@ -165,9 +166,7 @@ export default function RedirectsPanel({
                     }`}
                     role="status"
                   >
-                    <span className="material-symbols-outlined text-sm" aria-hidden>
-                      {targetMatch ? 'check_circle' : 'help'}
-                    </span>
+                    <MIcon name={targetMatch ? 'check_circle' : 'help'} className="text-sm" />
                     {targetMatch ? targetMatch.title : t('redirects.targetUnknown')}
                   </p>
                 ) : (
@@ -175,7 +174,7 @@ export default function RedirectsPanel({
                 )}
               </div>
               <div className="space-y-2">
-                <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-ash-600">{t('redirects.notes')}</label>
+                <label className="block text-[10px] font-black uppercase tracking-[0.1em] text-ash-500">{t('redirects.notes')}</label>
                 <textarea
                   value={newReason}
                   onChange={(e) => setNewReason(e.target.value)}
@@ -187,7 +186,7 @@ export default function RedirectsPanel({
               <button
                 type="submit"
                 disabled={isSaving}
-                className="w-full bg-phosphor-600 hover:bg-phosphor-500 text-bone py-4 font-black text-[10px] uppercase tracking-[0.3em] transition rounded-sm active:translate-y-px disabled:opacity-40"
+                className="w-full bg-phosphor-600 hover:bg-phosphor-500 text-bone py-4 font-black text-[10px] uppercase tracking-[0.12em] transition rounded-sm active:translate-y-px disabled:opacity-40"
               >
                 {isSaving ? 'SINC DADOS...' : t('redirects.linkAction')}
               </button>
@@ -205,15 +204,15 @@ export default function RedirectsPanel({
         <div className="lg:col-span-2">
           <div className="bg-seam rounded-card machined-edge flex flex-col min-h-[500px] overflow-hidden">
             <div className="p-6 border-b-4 border-seam bg-black/40 flex items-center justify-between">
-              <h3 className="font-black text-[10px] uppercase tracking-[0.3em] text-ash-600">{t('redirects.activeGrid')}</h3>
+              <h3 className="font-black text-[10px] uppercase tracking-[0.12em] text-ash-500">{t('redirects.activeGrid')}</h3>
               <div className="relative">
-                 <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-ash-700 text-xs">search</span>
+                 <MIcon name="search" className="absolute left-3 top-1/2 -translate-y-1/2 text-ash-700 text-xs" />
                  <input
                    type="text"
                    placeholder="LOCALIZAR VETOR..."
                    value={search}
                    onChange={(e) => setSearch(e.target.value)}
-                   className="bg-black/60 text-[10px] font-black uppercase tracking-widest focus:ring-1 focus:ring-phosphor-500 placeholder:text-ash-900 text-bone px-10 py-2 w-56 rounded-sm transition"
+                   className="bg-black/60 text-[10px] font-black uppercase tracking-wider focus:ring-1 focus:ring-phosphor-500 placeholder:text-ash-900 text-bone px-10 py-2 w-56 rounded-sm transition"
                  />
               </div>
             </div>
@@ -221,13 +220,13 @@ export default function RedirectsPanel({
             <div className="flex-1 overflow-y-auto bg-black/20 custom-scrollbar">
               {loading ? (
                 <div className="p-24 text-center">
-                  <span className="material-symbols-outlined text-3xl text-phosphor-900 animate-spin block mb-4">sync</span>
-                  <p className="font-black text-xs text-ash-700 tracking-[0.4em]">{t('redirects.loading')}</p>
+                  <MIcon name="sync" className="text-3xl text-phosphor-900 animate-spin block mb-4" />
+                  <p className="font-black text-xs text-ash-700 tracking-[0.12em]">{t('redirects.loading')}</p>
                 </div>
               ) : filteredRedirects.length === 0 ? (
                 <div className="p-24 text-center text-ash-500">
-                  <span className="material-symbols-outlined text-6xl block mb-4 text-ash-700" aria-hidden>link_off</span>
-                  <p className="font-black text-sm uppercase tracking-[0.4em]">{t('redirects.empty')}</p>
+                  <MIcon name="link_off" className="text-6xl block mb-4 text-ash-700" />
+                  <p className="font-black text-sm uppercase tracking-[0.12em]">{t('redirects.empty')}</p>
                 </div>
               ) : (
                 <div className="divide-y divide-white/5">
@@ -236,16 +235,16 @@ export default function RedirectsPanel({
                       <div className="flex items-center justify-between gap-6">
                         <div className="flex items-center gap-8 flex-1">
                           <div className="flex flex-col gap-2">
-                            <p className="text-[10px] font-black text-ash-700 uppercase tracking-widest">{t('redirects.origin')}</p>
+                            <p className="text-[10px] font-black text-ash-700 uppercase tracking-wider">{t('redirects.origin')}</p>
                             <code className="text-[11px] font-mono bg-black px-4 py-2 text-phosphor-400 transition rounded-sm font-black">
                               {r.sourceId}
                             </code>
                           </div>
                           <div className="pt-4">
-                             <span className="material-symbols-outlined text-ash-800 text-2xl group-hover:text-primary transition-colors">double_arrow</span>
+                             <MIcon name="double_arrow" className="text-ash-800 text-2xl group-hover:text-primary transition-colors" />
                           </div>
                           <div className="flex flex-col gap-2">
-                            <p className="text-[10px] font-black text-ash-700 uppercase tracking-widest">{t('redirects.destination')}</p>
+                            <p className="text-[10px] font-black text-ash-700 uppercase tracking-wider">{t('redirects.destination')}</p>
                             <code className="text-[11px] font-mono bg-black px-4 py-2 text-primary transition rounded-sm font-black group-hover:bg-accent-10">
                               {r.targetId}
                             </code>
@@ -261,18 +260,16 @@ export default function RedirectsPanel({
                             {r.reason && (
                               <p className="text-[10px] text-ash-500 font-bold uppercase tracking-tight truncate group-hover:text-ash-300" title={r.reason}>"{r.reason}"</p>
                             )}
-                            <p className="text-[10px] font-black text-ash-800 mt-2 uppercase tracking-widest">
+                            <p className="text-[10px] font-black text-ash-800 mt-2 uppercase tracking-wider">
                               SINC: {r.updatedAt?.toDate ? format(r.updatedAt.toDate(), 'dd/MM/yy HH:mm') : '---'}
                             </p>
                           </div>
                         </div>
                         <button
                           onClick={() => handleDelete(r.sourceId)}
-                          className="w-10 h-10 flex items-center justify-center text-ash-800 hover:text-red-500 hover:bg-red-500/10 transition opacity-0 group-hover:opacity-100 material-symbols-outlined rounded-sm"
+                          className="w-10 h-10 flex items-center justify-center text-ash-800 hover:text-red-500 hover:bg-red-500/10 transition opacity-0 group-hover:opacity-100 rounded-sm"
                           title="ELIMINAR MAPEAMENTO"
-                        >
-                          delete
-                        </button>
+                        ><MIcon name="delete" /></button>
                       </div>
                     </div>
                   ))}
@@ -282,10 +279,10 @@ export default function RedirectsPanel({
             
             <div className="bg-black/40 border-t-4 border-seam p-6 px-10 flex justify-between items-center shrink-0">
                <div className="flex items-center gap-3">
-                  <div className="w-1.5 h-1.5 rounded-full bg-phosphor-500 animate-pulse shadow-[0_0_5px_rgba(86,185,75,0.6)]" />
-                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-ash-600">{t('redirects.integrity')}</span>
+                  <div className="w-1.5 h-1.5 rounded-full bg-phosphor-500 animate-led shadow-[0_0_5px_rgba(86,185,75,0.6)]" />
+                  <span className="text-[10px] font-black uppercase tracking-[0.1em] text-ash-500">{t('redirects.integrity')}</span>
                </div>
-               <span className="text-[10px] font-black text-ash-800 uppercase tracking-widest">RM-REDIRECT-SYS-v4</span>
+               <span className="text-[10px] font-black text-ash-800 uppercase tracking-wider">RM-REDIRECT-SYS-v4</span>
             </div>
           </div>
         </div>

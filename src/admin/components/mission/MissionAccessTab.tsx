@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Campaign } from '../../../data/campaigns';
 import { Group, MasterAccount, CharacterData } from '../../../types/player';
 import { campaignAdminService } from '../../../services/CampaignAdminService';
+import MIcon from '../MIcon';
 
 interface MissionAccessTabProps {
   campaign: Campaign;
@@ -88,7 +89,7 @@ export default function MissionAccessTab({
     <div className="space-y-8">
       <div className="flex items-center gap-3">
         <div className="h-px flex-1 bg-white/5" />
-        <span className="text-[10px] font-display font-bold text-ash-600 uppercase tracking-[0.3em]">
+        <span className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.12em]">
           Vínculos de Rede
         </span>
         <div className="h-px flex-1 bg-white/5" />
@@ -96,7 +97,7 @@ export default function MissionAccessTab({
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <p className="text-[10px] text-ash-600 font-display font-bold uppercase tracking-widest">
+          <p className="text-[10px] text-ash-500 font-display font-bold uppercase tracking-wider">
             Autorizar Missão para Esquadrão
           </p>
           <select
@@ -115,7 +116,7 @@ export default function MissionAccessTab({
           </select>
         </div>
         <div className="space-y-2">
-          <p className="text-[10px] text-ash-600 font-display font-bold uppercase tracking-widest">
+          <p className="text-[10px] text-ash-500 font-display font-bold uppercase tracking-wider">
             Autorizar Missão para Agente
           </p>
           <select
@@ -143,7 +144,7 @@ export default function MissionAccessTab({
       </div>
 
       <div className="space-y-4">
-        <p className="text-[10px] text-ash-600 font-display font-bold uppercase tracking-widest border-b border-border-subtle pb-2">
+        <p className="text-[10px] text-ash-500 font-display font-bold uppercase tracking-wider border-b border-border-subtle pb-2">
           Acessos Autorizados (Quem tem acesso)
         </p>
         <div className="flex flex-wrap gap-2">
@@ -159,10 +160,8 @@ export default function MissionAccessTab({
                 </span>
                 <button
                   onClick={() => handleUnlockForGroup(g.id, false)}
-                  className="p-1 text-primary/40 hover:text-red-500 material-symbols-outlined text-xs"
-                >
-                  close
-                </button>
+                  className="p-1 text-primary/40 hover:text-red-500 text-xs"
+                ><MIcon name="close" /></button>
               </div>
             ))}
           {allCharacters
@@ -179,17 +178,15 @@ export default function MissionAccessTab({
                   onClick={() =>
                     handleUnlockForCharacter(c.account.uid, c.character.id, false)
                   }
-                  className="p-1 text-bone/20 hover:text-red-500 material-symbols-outlined text-xs"
-                >
-                  close
-                </button>
+                  className="p-1 text-bone/20 hover:text-red-500 text-xs"
+                ><MIcon name="close" /></button>
               </div>
             ))}
           {groups.filter((g) => (g.unlockedCampaigns || []).includes(campaign.id)).length === 0 &&
             allCharacters.filter((c) =>
               (c.character.unlockedCampaigns || []).includes(campaign.id)
             ).length === 0 && (
-              <p className="text-[10px] text-ash-600 uppercase tracking-widest">
+              <p className="text-[10px] text-ash-500 uppercase tracking-wider">
                 Nenhum acesso autorizado
               </p>
             )}
@@ -197,7 +194,7 @@ export default function MissionAccessTab({
       </div>
 
       <div className="space-y-4">
-        <p className="text-[10px] text-phosphor-500/50 font-display font-bold uppercase tracking-widest border-b border-phosphor-500/10 pb-2">
+        <p className="text-[10px] text-phosphor-500/50 font-display font-bold uppercase tracking-wider border-b border-phosphor-500/10 pb-2">
           Missão Ativa (Em Campo)
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -243,18 +240,16 @@ export default function MissionAccessTab({
             .map((g) => (
               <div
                 key={g.id}
-                className="flex items-center gap-1 bg-phosphor-500/10 text-phosphor-500 rounded-sm pr-1 animate-pulse"
+                className="flex items-center gap-1 bg-phosphor-500/10 text-phosphor-500 rounded-sm pr-1 animate-led"
               >
                 <span className="text-[10px] font-display font-bold px-3 py-1 uppercase tracking-wider">
                   OPERANDO: {g.name}
                 </span>
                 <button
                   onClick={() => handleUnassignGroup(g.id)}
-                  className="p-1 text-phosphor-500/40 hover:text-red-500 material-symbols-outlined text-xs"
+                  className="p-1 text-phosphor-500/40 hover:text-red-500 text-xs"
                   title="Remover do campo"
-                >
-                  close
-                </button>
+                ><MIcon name="close" /></button>
               </div>
             ))}
           {allCharacters
@@ -262,18 +257,16 @@ export default function MissionAccessTab({
             .map((c) => (
               <div
                 key={c.character.id}
-                className="flex items-center gap-1 bg-phosphor-500/10 text-phosphor-500 rounded-sm pr-1 animate-pulse"
+                className="flex items-center gap-1 bg-phosphor-500/10 text-phosphor-500 rounded-sm pr-1 animate-led"
               >
                 <span className="text-[10px] font-display font-bold px-3 py-1 uppercase tracking-wider">
                   OPERANDO: {c.character.codinome}
                 </span>
                 <button
                   onClick={() => handleUnassignCharacter(c.account.uid, c.character.id)}
-                  className="p-1 text-phosphor-500/40 hover:text-red-500 material-symbols-outlined text-xs"
+                  className="p-1 text-phosphor-500/40 hover:text-red-500 text-xs"
                   title="Remover do campo"
-                >
-                  close
-                </button>
+                ><MIcon name="close" /></button>
               </div>
             ))}
         </div>

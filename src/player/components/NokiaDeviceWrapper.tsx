@@ -37,14 +37,14 @@ function NavButton({
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`border border-lcd-ink rounded hover:bg-lcd-ink hover:text-lcd-paper transition duration-100 ease-limbo active:scale-95 active:translate-y-px cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed ${
+      className={`border border-lcd-ink rounded hover:bg-lcd-ink hover:text-lcd-paper transition duration-100 ease-limbo active:translate-y-px active:translate-y-px cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed ${
         vertical
           ? 'w-full py-2 flex flex-col items-center justify-center gap-0.5 min-h-11'
           : 'px-3 py-1.5 flex items-center gap-1'
       }`}
     >
       <span className="text-[10px] font-black">{icon}</span>
-      <span className={`font-black tracking-tight uppercase ${vertical ? 'text-[8px]' : 'text-[10px]'}`}>{label}</span>
+      <span className={`font-black tracking-tight uppercase ${vertical ? 'text-[10px]' : 'text-[10px]'}`}>{label}</span>
     </button>
   );
 }
@@ -134,7 +134,7 @@ export default function NokiaDeviceWrapper({
       >
         <div
           id="nokia-lcd-screen-inner"
-          style={{ fontFamily: 'var(--font-mono)' }}
+          style={{ fontFamily: 'var(--font-lcd)', fontSizeAdjust: 0.52 }}
           // overflow-clip: com hidden, o foco de um botão rolava o LCD e deslocava o perfil para fora da moldura
           className={`w-full h-full bg-lcd-paper text-lcd-ink overflow-clip relative select-none nokia-theme-active ${
             isLandscape && !isScanning ? 'flex flex-row min-h-0' : 'flex flex-col justify-between'

@@ -22,7 +22,7 @@ function platformBorder(platform: PlayerPlatform, earned: boolean): string {
 function TierBadge({ tier }: { tier: AchievementTier }) {
   const { t } = useTranslation('common');
   return (
-    <span className="text-[10px] uppercase tracking-widest text-amber-500/80 font-mono shrink-0">
+    <span className="text-[10px] uppercase tracking-wider text-amber-500/80 font-mono shrink-0">
       {t(`achievement.tier.${tier}`)}
     </span>
   );
@@ -94,7 +94,7 @@ function AchievementCard({
         {description}
       </p>
       {earned && (
-        <p className="text-[10px] uppercase tracking-widest text-ash-500 font-mono">
+        <p className="text-[10px] uppercase tracking-wider text-ash-500 font-mono">
           {t(`achievement.platform.${ach.primaryPlatform}`)}
           {campaignLabel ? ` · ${campaignLabel}` : ''}
         </p>
@@ -202,7 +202,7 @@ export function AchievementCatalog({
               key={c.id}
               type="button"
               onClick={() => setSelectedCampaignId(c.id)}
-              className={`text-[10px] uppercase tracking-widest px-2 py-1 rounded-sm transition-colors ${
+              className={`text-[10px] uppercase tracking-wider px-2 py-1 rounded-sm transition-colors ${
                 activeCampaignId === c.id
                   ? 'text-accent bg-accent-05'
                   : 'text-ash-400 hover:text-industrial-silver'
@@ -215,7 +215,7 @@ export function AchievementCatalog({
       )}
 
       <div className="flex items-center justify-between gap-2 px-0.5">
-        <span className={`text-protocol text-[10px] uppercase tracking-[0.2em] ${platformChrome}`}>
+        <span className={`text-protocol text-[10px] uppercase tracking-[0.1em] ${platformChrome}`}>
           {t(`achievement.platform.${platform === 'nokia' ? 'nokia' : platform === 'walkman' ? 'walkman' : 'global'}`)}
           {campaign ? ` · ${campaign.year}` : ''}
         </span>
@@ -248,11 +248,11 @@ export function AchievementCatalog({
           {groups.map((group) => (
             <div key={group.category} className="space-y-2">
               <div className="flex items-center gap-2 px-0.5">
-                <span className="text-protocol text-[10px] text-ash-500 uppercase tracking-[0.2em]">
+                <span className="text-protocol text-[10px] text-ash-500 uppercase tracking-[0.1em]">
                   {t(`achievement.category.${group.category}`)}
                 </span>
                 <span aria-hidden className="flex-1 h-px bg-border-subtle" />
-                <span className="text-mono-ui text-[10px] text-ash-600">
+                <span className="text-mono-ui text-[10px] text-ash-500">
                   {group.items.filter((a) => isAchievementEarned(grantDocIds, a.id, activeCampaignId)).length}/
                   {group.items.length}
                 </span>

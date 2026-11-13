@@ -17,8 +17,6 @@ import { intelRegistry } from '../data/intel_registry';
 import type { WorkspaceMembership } from '../types/workspace';
 import { AdminScopeProvider, type AdminScopeValue, type WorkspaceOption } from './context/AdminScopeContext';
 
-// Lazy-load Material Symbols font (admin-only, ~250KB)
-const MATERIAL_SYMBOLS_URL = 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap';
 const ACTIVE_WORKSPACE_KEY = 'limboos.admin.workspace';
 
 interface AccessState {
@@ -96,13 +94,6 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (!document.querySelector(`link[href="${MATERIAL_SYMBOLS_URL}"]`)) {
-      const link = document.createElement('link');
-      link.rel = 'stylesheet';
-      link.href = MATERIAL_SYMBOLS_URL;
-      document.head.appendChild(link);
-    }
-
     const stopCatalog = achievementCatalogService.start();
     const stopNpcSms = npcSmsCatalogService.start();
 
@@ -239,7 +230,7 @@ function AccessShell({ children }: { children: React.ReactNode }) {
         variants={dialogPop}
         initial="hidden"
         animate="visible"
-        className="relative z-10 max-w-md w-full mx-4 bg-surface-container-low rounded-panel shadow-2xl machined-edge p-8 text-center space-y-5"
+        className="relative z-10 max-w-md w-full mx-4 bg-surface-container-low rounded-panel shadow-panel machined-edge p-8 text-center space-y-5"
       >
         {children}
       </motion.div>
@@ -292,7 +283,7 @@ function CreateWorkspaceScreen({ user, onCreated }: { user: User; onCreated: () 
       <AccessHeader title={t('workspace.createTitle')} />
       <p className="text-sm text-ash-400 leading-relaxed text-pretty">{t('workspace.createBody')}</p>
       <form onSubmit={handleCreate} className="space-y-3 text-left">
-        <label className="block text-[10px] font-display font-bold uppercase tracking-widest text-ash-500" htmlFor="ws-name">
+        <label className="block text-[10px] font-display font-bold uppercase tracking-wider text-ash-500" htmlFor="ws-name">
           {t('workspace.nameLabel')}
         </label>
         <input

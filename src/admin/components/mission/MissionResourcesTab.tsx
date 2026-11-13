@@ -11,6 +11,7 @@ import {
   type ReadinessState,
 } from '../../lib/campaignResources';
 import { INTEL_TYPE_OPTIONS, accessLevelLabel } from '../../lib/intelDisplay';
+import MIcon from '../MIcon';
 
 interface MissionResourcesTabProps {
   campaign: Partial<Campaign>;
@@ -142,12 +143,10 @@ export default function MissionResourcesTab({
                 key={check.id}
                 className="grid grid-cols-[1.25rem_minmax(0,8rem)_minmax(0,1fr)_auto] items-center gap-x-3 px-4 min-h-12 py-2"
               >
-                <span className={`material-symbols-outlined text-[18px] ${style.tone}`} aria-hidden>
-                  {style.icon}
-                </span>
+                <MIcon name={style.icon} className={`text-[18px] ${style.tone}`} />
                 <span
                   className={`font-display font-bold uppercase tracking-[0.14em] text-[11px] ${
-                    check.state === 'na' ? 'text-ash-600' : 'text-bone'
+                    check.state === 'na' ? 'text-ash-500' : 'text-bone'
                   }`}
                 >
                   {t(`missions.resources.check.${check.id}.label`)}
@@ -287,9 +286,7 @@ function ResourceColumn({
   return (
     <div className="flex flex-col min-w-0 p-4 gap-3">
       <div className="flex items-center gap-2">
-        <span className="material-symbols-outlined text-[18px] text-ash-500" aria-hidden>
-          {icon}
-        </span>
+        <MIcon name={icon} className="text-[18px] text-ash-500" />
         <h5 className="font-display font-bold uppercase tracking-[0.16em] text-[11px] text-bone">{title}</h5>
         <span className="font-mono text-[12px] text-primary tabular-nums">{count}</span>
         <button
@@ -299,9 +296,7 @@ function ResourceColumn({
           aria-label={createLabel}
           className="lmb-btn lmb-btn-ghost lmb-btn-icon ml-auto h-8 min-h-8 w-8"
         >
-          <span className="material-symbols-outlined text-[18px] tracking-normal normal-case" aria-hidden>
-            add
-          </span>
+          <MIcon name="add" className="text-[18px]" />
         </button>
       </div>
 
@@ -328,9 +323,7 @@ function ResourceColumn({
           className="inline-flex items-center gap-1 text-[11px] font-display font-bold uppercase tracking-[0.14em] text-ash-400 hover:text-primary transition-colors"
         >
           {t('missions.resources.action.viewCatalog')}
-          <span className="material-symbols-outlined text-sm" aria-hidden>
-            arrow_forward
-          </span>
+          <MIcon name="arrow_forward" className="text-sm" />
         </button>
       </div>
     </div>
@@ -354,9 +347,7 @@ function ResourceRow({
 }) {
   return (
     <li className={`flex items-center gap-2 min-h-7 ${muted ? 'opacity-50' : ''}`}>
-      <span className="material-symbols-outlined text-base text-ash-600 w-5 shrink-0" aria-hidden>
-        {icon}
-      </span>
+      <MIcon name={icon} className="text-base text-ash-500 w-5 shrink-0" />
       <span className="text-[12px] text-ash-200 truncate flex-1 min-w-0">{title}</span>
       {muted && mutedLabel && (
         <span className="text-[10px] uppercase tracking-[0.12em] text-ash-500 shrink-0">{mutedLabel}</span>

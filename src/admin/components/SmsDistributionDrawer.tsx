@@ -11,6 +11,7 @@ import { useToast } from './ToastProvider';
 import { ADMIN_SPRING } from '../lib/motion';
 import { useAdminCampaigns } from '../hooks/useAdminCampaigns';
 import { bindingIncludes, isGlobalBinding } from '../lib/campaignResources';
+import MIcon from './MIcon';
 
 /** Destinatário de SMS: o envio exige o esquadrão do agente (thread do grupo). */
 export interface SmsTarget {
@@ -184,11 +185,11 @@ export default function SmsDistributionDrawer({
   };
 
   const tabClass = (active: boolean) =>
-    `flex-1 min-w-[80px] py-3 text-[10px] font-black uppercase tracking-widest transition ${
-      active ? 'text-primary bg-primary/10 border-b-2 border-primary' : 'text-ash-600 hover:text-ash-400'
+    `flex-1 min-w-[80px] py-3 text-[10px] font-black uppercase tracking-wider transition ${
+      active ? 'text-primary bg-primary/10 border-b-2 border-primary' : 'text-ash-500 hover:text-ash-400'
     }`;
   const modeClass = (active: boolean) =>
-    `text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-sm ${
+    `text-[10px] font-black uppercase tracking-wider px-3 py-1.5 rounded-sm ${
       active ? 'text-secondary bg-secondary/10' : 'text-ash-500'
     }`;
 
@@ -251,7 +252,7 @@ export default function SmsDistributionDrawer({
       <div className="flex-1 overflow-y-auto p-6 custom-scrollbar flex flex-col gap-4">
         {missingGroup.length > 0 && (
           <div className="bg-yellow-500/5 px-4 py-3">
-            <p className="text-[10px] font-display font-bold uppercase tracking-widest text-yellow-500/80">
+            <p className="text-[10px] font-display font-bold uppercase tracking-wider text-yellow-500/80">
               {t('deliver.sms.noSquad')}
             </p>
             <p className="text-[10px] text-ash-500 mt-1">{missingGroup.map((target) => target.label).join(', ')}</p>
@@ -259,21 +260,19 @@ export default function SmsDistributionDrawer({
         )}
 
         {ready.length === 0 ? (
-          <div className="text-center py-16 rounded-sm text-ash-600 uppercase tracking-widest font-black text-xs">
-            <span className="material-symbols-outlined text-4xl block mb-2" aria-hidden>
-              person_off
-            </span>
+          <div className="text-center py-16 rounded-sm text-ash-500 uppercase tracking-wider font-black text-xs">
+            <MIcon name="person_off" className="text-4xl block mb-2" />
             {targets.length === 0 ? t('deliver.sms.noTargets') : t('deliver.sms.noAgents')}
           </div>
         ) : (
           <>
             {mode === 'pick' && (
               <div className="space-y-2">
-                <span className="text-[10px] font-black text-ash-400 uppercase tracking-widest">
+                <span className="text-[10px] font-black text-ash-400 uppercase tracking-wider">
                   {t('npcSms.selectDialogues')}
                 </span>
                 {availableDialogues.length === 0 && (
-                  <p className="text-[10px] text-ash-600 uppercase">{t('npcSms.noDialogues')}</p>
+                  <p className="text-[10px] text-ash-500 uppercase">{t('npcSms.noDialogues')}</p>
                 )}
                 {availableDialogues.map((d) => (
                   <label
@@ -295,17 +294,15 @@ export default function SmsDistributionDrawer({
             )}
 
             <div className="flex justify-between items-center bg-seam px-4 py-3 rounded-sm">
-              <span className="text-[10px] font-black text-ash-400 uppercase tracking-widest">{t('npcSms.preview')}</span>
+              <span className="text-[10px] font-black text-ash-400 uppercase tracking-wider">{t('npcSms.preview')}</span>
               {mode === 'shuffle' && (
                 <button
                   type="button"
                   onClick={() => setShuffleSeed((n) => n + 1)}
                   disabled={loading}
-                  className="flex items-center gap-1.5 text-primary text-[10px] font-black uppercase tracking-widest bg-primary/5 hover:bg-primary/15 px-3 py-1.5 rounded-sm active:scale-[0.97] transition"
+                  className="flex items-center gap-1.5 text-primary text-[10px] font-black uppercase tracking-wider bg-primary/5 hover:bg-primary/15 px-3 py-1.5 rounded-sm active:translate-y-px transition"
                 >
-                  <span className="material-symbols-outlined text-[12px]" aria-hidden>
-                    shuffle
-                  </span>
+                  <MIcon name="shuffle" className="text-[12px]" />
                   {t('npcSms.reshuffle')}
                 </button>
               )}
@@ -322,12 +319,10 @@ export default function SmsDistributionDrawer({
                       <span className="text-[10px] font-mono bg-ash-800 text-ash-400 px-2 py-0.5 rounded-sm font-bold uppercase">
                         NPC: {asg.npcName}
                       </span>
-                      <span className="material-symbols-outlined text-ash-600 text-xs" aria-hidden>
-                        arrow_forward
-                      </span>
+                      <MIcon name="arrow_forward" className="text-ash-500 text-xs" />
                       <span className="text-[10px] font-black text-primary uppercase">{asg.target.label}</span>
                       {asg.target.groupName && (
-                        <span className="text-[10px] text-ash-500 uppercase tracking-widest">{asg.target.groupName}</span>
+                        <span className="text-[10px] text-ash-500 uppercase tracking-wider">{asg.target.groupName}</span>
                       )}
                     </div>
                     <h4 className="text-[11px] font-bold text-bone uppercase mt-2 tracking-wide truncate">
@@ -337,7 +332,7 @@ export default function SmsDistributionDrawer({
                       &ldquo;{asg.dialogue.messages[0]?.text || ''}&rdquo;
                     </p>
                   </div>
-                  <span className="text-[10px] text-ash-600 font-bold font-mono ml-4 shrink-0">
+                  <span className="text-[10px] text-ash-500 font-bold font-mono ml-4 shrink-0">
                     {asg.dialogue.messages.length} SMS
                   </span>
                 </div>
@@ -348,7 +343,7 @@ export default function SmsDistributionDrawer({
       </div>
 
       <div className="p-4 border-t border-border-subtle bg-black/30 flex items-center justify-between gap-3">
-        <span className="text-[10px] font-black text-ash-500 uppercase tracking-widest">
+        <span className="text-[10px] font-black text-ash-500 uppercase tracking-wider">
           {t('deliver.sms.summary', { dialogues: assignments.length, agents: ready.length })}
         </span>
         <div className="flex gap-3">
@@ -356,7 +351,7 @@ export default function SmsDistributionDrawer({
             type="button"
             disabled={loading}
             onClick={onClose}
-            className="px-4 py-2 text-[10px] font-display font-bold uppercase tracking-widest text-ash-500 hover:text-bone"
+            className="px-4 py-2 text-[10px] font-display font-bold uppercase tracking-wider text-ash-500 hover:text-bone"
           >
             {t('accounts.cancel')}
           </button>
@@ -367,13 +362,11 @@ export default function SmsDistributionDrawer({
             whileTap={{ scale: 0.97 }}
             animate={loading ? { scale: [1, 0.98, 1] } : { scale: 1 }}
             transition={loading ? { repeat: Infinity, duration: 0.8 } : ADMIN_SPRING}
-            className="px-5 py-2 bg-primary text-black text-[10px] font-display font-black uppercase tracking-widest disabled:opacity-30 flex items-center gap-2"
+            className="px-5 py-2 bg-primary text-black text-[10px] font-display font-black uppercase tracking-wider disabled:opacity-30 flex items-center gap-2"
           >
             {loading ? (
               <>
-                <span className="material-symbols-outlined text-sm animate-spin" aria-hidden>
-                  progress_activity
-                </span>
+                <MIcon name="progress_activity" className="text-sm animate-spin" />
                 {t('deliver.sms.sending')}
               </>
             ) : (

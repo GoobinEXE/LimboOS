@@ -246,7 +246,7 @@ function AboutPanel({ onClose }: { onClose: () => void }) {
 
           {/* Estúdio e legal: logo da Dark Room só sobre Preto Fita Magnética */}
           <section className="mt-2 px-6 pt-7 pb-8 bg-[#090A0C] border-t border-border-subtle flex flex-col items-center text-center">
-            <span className="text-mono-ui text-[10px] tracking-[0.3em] uppercase text-[#8F9397]">
+            <span className="text-mono-ui text-[10px] tracking-[0.12em] uppercase text-[#8F9397]">
               {t('about.developedBy')}
             </span>
             <DarkRoomLogo className="mt-4 w-36 h-auto" />

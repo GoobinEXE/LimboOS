@@ -14,6 +14,7 @@ import {
   type CampaignScope,
 } from '../lib/campaignResources';
 import type { CampaignScopeRequest, NpcViewId } from '../lib/adminNavigation';
+import MIcon from './MIcon';
 
 type TabId = 'contacts' | 'dialogues';
 
@@ -312,12 +313,12 @@ export default function NpcSmsPanel({
       {modal}
       {!embedded && (
         <div className="flex items-center gap-4">
-          <div className="w-2 h-8 bg-secondary rounded-full animate-pulse shadow-[0_0_10px_rgba(198,198,198,0.4)]" />
-          <h2 className="font-black uppercase tracking-widest text-lg text-bone">{t('npcSms.title')}</h2>
+          <div className="w-2 h-8 bg-secondary rounded-full animate-led shadow-[0_0_10px_rgba(198,198,198,0.4)]" />
+          <h2 className="font-black uppercase tracking-wider text-lg text-bone">{t('npcSms.title')}</h2>
         </div>
       )}
 
-      <div className="bg-surface-container-low rounded-sm flex flex-col h-[580px] shadow-2xl overflow-hidden relative">
+      <div className="bg-surface-container-low rounded-sm flex flex-col h-[580px] shadow-panel overflow-hidden relative">
         <div className="p-6 border-b border-primary/10 bg-black/40 flex flex-col gap-4 relative z-10">
           <div className="flex justify-between items-center gap-4 flex-wrap">
             <div className="flex gap-2">
@@ -326,7 +327,7 @@ export default function NpcSmsPanel({
                   key={id}
                   type="button"
                   onClick={() => setTab(id)}
-                  className={`text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-sm ${
+                  className={`text-[10px] font-black uppercase tracking-wider px-4 py-2 rounded-sm ${
                     tab === id
                       ? 'text-secondary bg-secondary/10'
                       : 'text-ash-500'
@@ -337,7 +338,7 @@ export default function NpcSmsPanel({
               ))}
             </div>
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-[10px] font-black text-ash-600 uppercase tracking-widest">
+              <span className="text-[10px] font-black text-ash-500 uppercase tracking-wider">
                 {tab === 'contacts' ? filteredContacts.length : filteredDialogues.length}{' '}
                 {tab === 'contacts' ? t('npcSms.countContacts') : t('npcSms.countDialogues')}
                 {!isRemote && (
@@ -348,14 +349,14 @@ export default function NpcSmsPanel({
                 type="button"
                 disabled={importing}
                 onClick={handleImport}
-                className="text-[10px] font-black uppercase tracking-widest px-3 py-2 text-secondary hover:bg-secondary/10 rounded-sm disabled:opacity-40"
+                className="text-[10px] font-black uppercase tracking-wider px-3 py-2 text-secondary hover:bg-secondary/10 rounded-sm disabled:opacity-40"
               >
                 {importing ? '…' : t('npcSms.import')}
               </button>
               <button
                 type="button"
                 onClick={() => (tab === 'contacts' ? openCreateContact() : openCreateDialogue())}
-                className="text-[10px] font-black uppercase tracking-widest px-3 py-2 bg-primary text-black rounded-sm"
+                className="text-[10px] font-black uppercase tracking-wider px-3 py-2 bg-primary text-black rounded-sm"
               >
                 {tab === 'contacts' ? t('npcSms.createContact') : t('npcSms.createDialogue')}
               </button>
@@ -364,9 +365,7 @@ export default function NpcSmsPanel({
 
           <div className="flex flex-wrap gap-3 items-center">
             <div className="relative flex-1 min-w-[200px] max-w-md">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-ash-700 text-sm">
-                search
-              </span>
+              <MIcon name="search" className="absolute left-4 top-1/2 -translate-y-1/2 text-ash-700 text-sm" />
               <input
                 type="text"
                 placeholder={t('npcSms.filter')}
@@ -405,24 +404,22 @@ export default function NpcSmsPanel({
                   {c.avatarUrl ? (
                     <img src={c.avatarUrl} alt="" className="w-full h-full object-cover" />
                   ) : (
-                    <span className="material-symbols-outlined text-ash-600">person</span>
+                    <MIcon name="person" className="text-ash-500" />
                   )}
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
                     <h4 className="text-sm font-black text-bone uppercase tracking-wider">{c.name}</h4>
-                    <span className="text-[10px] font-mono text-ash-600">{c.id}</span>
+                    <span className="text-[10px] font-mono text-ash-500">{c.id}</span>
                     {c.source === 'suggestion' && (
-                      <span className="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-sm text-amber-400/80 bg-accent-10">
+                      <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-sm text-amber-400/80 bg-accent-10">
                         {t('npcSms.badgeSuggestion')}
                       </span>
                     )}
                   </div>
                   <p className="text-[10px] text-ash-400 font-mono mt-1">{c.number}</p>
                   <p className="flex flex-wrap items-center gap-1 mt-1.5">
-                    <span className="material-symbols-outlined text-sm text-ash-600" aria-hidden>
-                      {c.campaignIds === 'global' ? 'public' : 'map'}
-                    </span>
+                    <MIcon name={c.campaignIds === 'global' ? 'public' : 'map'} className="text-sm text-ash-500" />
                     {c.campaignIds === 'global' ? (
                       <span className="text-[10px] text-ash-400">{t('scope.bindGlobal')}</span>
                     ) : c.campaignIds.length === 0 ? (
@@ -444,7 +441,7 @@ export default function NpcSmsPanel({
                     type="button"
                     disabled={!hasRemoteContacts}
                     onClick={() => openEditContact(c)}
-                    className="text-[10px] font-black uppercase tracking-widest px-3 py-2 text-ash-400 hover:text-bone rounded-sm disabled:opacity-30"
+                    className="text-[10px] font-black uppercase tracking-wider px-3 py-2 text-ash-400 hover:text-bone rounded-sm disabled:opacity-30"
                   >
                     {t('npcSms.edit')}
                   </button>
@@ -452,7 +449,7 @@ export default function NpcSmsPanel({
                     type="button"
                     disabled={!hasRemoteContacts}
                     onClick={() => toggleContact(c)}
-                    className="text-[10px] font-black uppercase tracking-widest px-3 py-2 text-ash-400 rounded-sm disabled:opacity-30"
+                    className="text-[10px] font-black uppercase tracking-wider px-3 py-2 text-ash-400 rounded-sm disabled:opacity-30"
                   >
                     {c.enabled === false ? t('npcSms.enable') : t('npcSms.disable')}
                   </button>
@@ -460,7 +457,7 @@ export default function NpcSmsPanel({
                     type="button"
                     disabled={!hasRemoteContacts}
                     onClick={() => deleteContact(c)}
-                    className="text-[10px] font-black uppercase tracking-widest px-3 py-2 text-red-400/70 rounded-sm disabled:opacity-30 bg-red-500/10"
+                    className="text-[10px] font-black uppercase tracking-wider px-3 py-2 text-red-400/70 rounded-sm disabled:opacity-30 bg-red-500/10"
                   >
                     {t('npcSms.delete')}
                   </button>
@@ -484,10 +481,10 @@ export default function NpcSmsPanel({
                         <h4 className="text-sm font-black text-bone uppercase tracking-wider">
                           {d.title}
                         </h4>
-                        <span className="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-sm text-primary bg-accent-10">
+                        <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-sm text-primary bg-accent-10">
                           {contact?.name || d.npcId}
                         </span>
-                        <span className="text-[10px] font-mono text-ash-600">{d.messages.length} SMS</span>
+                        <span className="text-[10px] font-mono text-ash-500">{d.messages.length} SMS</span>
                       </div>
                       <p className="text-[10px] text-ash-500 line-clamp-2 italic">
                         &ldquo;{d.messages[0]?.text || ''}&rdquo;
@@ -499,7 +496,7 @@ export default function NpcSmsPanel({
                         type="button"
                         disabled={!hasRemoteDialogues}
                         onClick={() => openEditDialogue(d)}
-                        className="text-[10px] font-black uppercase tracking-widest px-3 py-2 text-ash-400 hover:text-bone rounded-sm disabled:opacity-30"
+                        className="text-[10px] font-black uppercase tracking-wider px-3 py-2 text-ash-400 hover:text-bone rounded-sm disabled:opacity-30"
                       >
                         {t('npcSms.edit')}
                       </button>
@@ -507,7 +504,7 @@ export default function NpcSmsPanel({
                         type="button"
                         disabled={!hasRemoteDialogues}
                         onClick={() => toggleDialogue(d)}
-                        className="text-[10px] font-black uppercase tracking-widest px-3 py-2 text-ash-400 rounded-sm disabled:opacity-30"
+                        className="text-[10px] font-black uppercase tracking-wider px-3 py-2 text-ash-400 rounded-sm disabled:opacity-30"
                       >
                         {d.enabled === false ? t('npcSms.enable') : t('npcSms.disable')}
                       </button>
@@ -515,7 +512,7 @@ export default function NpcSmsPanel({
                         type="button"
                         disabled={!hasRemoteDialogues}
                         onClick={() => deleteDialogue(d)}
-                        className="text-[10px] font-black uppercase tracking-widest px-3 py-2 text-red-400/70 rounded-sm disabled:opacity-30 bg-red-500/10"
+                        className="text-[10px] font-black uppercase tracking-wider px-3 py-2 text-red-400/70 rounded-sm disabled:opacity-30 bg-red-500/10"
                       >
                         {t('npcSms.delete')}
                       </button>
@@ -528,8 +525,8 @@ export default function NpcSmsPanel({
           {((tab === 'contacts' && filteredContacts.length === 0) ||
             (tab === 'dialogues' && filteredDialogues.length === 0)) && (
             <div className="p-20 text-center text-ash-500 flex flex-col items-center">
-              <span className="material-symbols-outlined text-6xl mb-4 text-ash-700" aria-hidden>sms</span>
-              <p className="text-[10px] font-black uppercase tracking-[0.4em]">{t('npcSms.empty')}</p>
+              <MIcon name="sms" className="text-6xl mb-4 text-ash-700" />
+              <p className="text-[10px] font-black uppercase tracking-[0.12em]">{t('npcSms.empty')}</p>
               {scopedCampaignId && (
                 <div className="mt-5 flex flex-col items-center gap-3">
                   <p className="text-[12px] text-ash-400 max-w-sm leading-relaxed">
@@ -541,7 +538,7 @@ export default function NpcSmsPanel({
                       onClick={() => openCreateContact()}
                       className="lmb-btn lmb-btn-primary"
                     >
-                      <span className="material-symbols-outlined text-base" aria-hidden>person_add</span>
+                      <MIcon name="person_add" className="text-base" />
                       {t('npcSms.createForMission')}
                     </button>
                   )}
@@ -562,14 +559,12 @@ export default function NpcSmsPanel({
             if (e.target === e.currentTarget && !saving) setDialogueEditor(null);
           }}
         >
-          <div className="bg-seam w-full max-w-2xl max-h-[90vh] flex flex-col rounded-card shadow-2xl overflow-hidden">
+          <div className="bg-seam w-full max-w-2xl max-h-[90vh] flex flex-col rounded-card shadow-panel overflow-hidden">
             <div className="px-6 py-4 border-b border-border flex justify-between items-center bg-black/40 shrink-0">
-              <h3 className="text-xs font-black uppercase tracking-[0.2em] text-bone">
+              <h3 className="text-xs font-black uppercase tracking-[0.1em] text-bone">
                 {isEdit ? t('npcSms.editDialogue') : t('npcSms.createDialogue')}
               </h3>
-              <button type="button" onClick={() => !saving && setDialogueEditor(null)} className="material-symbols-outlined text-ash-500">
-                close
-              </button>
+              <button type="button" onClick={() => !saving && setDialogueEditor(null)} className=" text-ash-500"><MIcon name="close" /></button>
             </div>
             <div className="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -618,7 +613,7 @@ export default function NpcSmsPanel({
                   <button
                     type="button"
                     onClick={addTurn}
-                    className="text-[10px] font-black uppercase tracking-widest text-secondary px-2 py-1 rounded-sm"
+                    className="text-[10px] font-black uppercase tracking-wider text-secondary px-2 py-1 rounded-sm"
                   >
                     + {t('npcSms.addTurn')}
                   </button>
@@ -638,15 +633,9 @@ export default function NpcSmsPanel({
                         <option value="npc">NPC</option>
                         <option value="player">PLAYER</option>
                       </select>
-                      <button type="button" onClick={() => moveTurn(i, -1)} className="text-ash-600 hover:text-bone material-symbols-outlined text-sm">
-                        arrow_upward
-                      </button>
-                      <button type="button" onClick={() => moveTurn(i, 1)} className="text-ash-600 hover:text-bone material-symbols-outlined text-sm">
-                        arrow_downward
-                      </button>
-                      <button type="button" onClick={() => removeTurn(i)} className="text-red-500/60 hover:text-red-400 material-symbols-outlined text-sm ml-auto">
-                        delete
-                      </button>
+                      <button type="button" onClick={() => moveTurn(i, -1)} className="text-ash-500 hover:text-bone text-sm"><MIcon name="arrow_upward" /></button>
+                      <button type="button" onClick={() => moveTurn(i, 1)} className="text-ash-500 hover:text-bone text-sm"><MIcon name="arrow_downward" /></button>
+                      <button type="button" onClick={() => removeTurn(i)} className="text-red-500/60 hover:text-red-400 text-sm ml-auto"><MIcon name="delete" /></button>
                     </div>
                     <textarea
                       className={`${fieldClass} min-h-[64px] normal-case`}
@@ -657,7 +646,7 @@ export default function NpcSmsPanel({
                 ))}
               </div>
 
-              <label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-ash-400">
+              <label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-wider text-ash-400">
                 <input
                   type="checkbox"
                   checked={dialogueEditor.enabled}
@@ -673,7 +662,7 @@ export default function NpcSmsPanel({
                 type="button"
                 disabled={saving}
                 onClick={() => setDialogueEditor(null)}
-                className="flex-1 px-4 py-3 text-[10px] font-black uppercase tracking-widest text-ash-500 bg-[#333] rounded-sm"
+                className="flex-1 px-4 py-3 text-[10px] font-black uppercase tracking-wider text-ash-500 bg-[#333] rounded-sm"
               >
                 {t('npcSms.cancel')}
               </button>
@@ -681,7 +670,7 @@ export default function NpcSmsPanel({
                 type="button"
                 disabled={saving}
                 onClick={saveDialogue}
-                className="flex-1 px-4 py-3 text-[10px] font-black uppercase tracking-widest bg-primary text-black rounded-sm disabled:opacity-40"
+                className="flex-1 px-4 py-3 text-[10px] font-black uppercase tracking-wider bg-primary text-black rounded-sm disabled:opacity-40"
               >
                 {saving ? '…' : t('npcSms.save')}
               </button>

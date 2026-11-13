@@ -11,9 +11,10 @@ import {
   type IntelFormData,
 } from './intelFormUtils';
 import type { IntelItem } from '../../../types/intel';
+import MIcon from '../MIcon';
 
 const SELECT_CLASS =
-  'w-full bg-surface-container-lowest py-4 px-4 text-bone font-display font-bold text-sm tracking-widest outline-none uppercase cursor-pointer appearance-none transition rounded-sm focus:bg-accent-10';
+  'w-full bg-surface-container-lowest py-4 px-4 text-bone font-display font-bold text-sm tracking-wider outline-none uppercase cursor-pointer appearance-none transition rounded-sm focus:bg-accent-10';
 
 const INPUT_CLASS =
   'w-full bg-surface-container-lowest py-4 px-4 text-bone outline-none transition rounded-sm focus:bg-accent-10';
@@ -64,8 +65,8 @@ export default function IntelEditorModal({
     <OverlayPortal open={open} onClose={onClose}>
       {open && (
         <div className="fixed inset-0 z-100 flex items-center justify-center bg-surface-scrim p-4 animate-fade-in" role="dialog" aria-modal="true">
-          <div className="bg-surface-container-low w-full max-w-2xl rounded-sm shadow-2xl flex flex-col max-h-[90vh] relative">
-            <div className="absolute -top-3 left-6 bg-primary px-2 py-0.5 text-[10px] font-display font-bold text-black tracking-widest uppercase">
+          <div className="bg-surface-container-low w-full max-w-2xl rounded-sm shadow-panel flex flex-col max-h-[90vh] relative">
+            <div className="absolute -top-3 left-6 bg-primary px-2 py-0.5 text-[10px] font-display font-bold text-black tracking-wider uppercase">
               {editingItem ? 'ATUALIZAÇÃO-DE-REGISTRO' : 'NOVA-ENTRADA-DE-INTEL'}
             </div>
 
@@ -75,7 +76,7 @@ export default function IntelEditorModal({
                   {editingItem ? 'Ajustar' : 'Injetar'}{' '}
                   <span className="text-primary">{t('intel.editor.properties')}</span>
                 </h3>
-                <p className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-widest mt-1">
+                <p className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-wider mt-1">
                   {editingItem
                     ? `Ponto de Acesso: ${editingItem.id}`
                     : 'Upload e metadados no mesmo fluxo'}
@@ -84,10 +85,8 @@ export default function IntelEditorModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="p-3 text-ash-600 hover:text-bone transition rounded-sm material-symbols-outlined"
-              >
-                close
-              </button>
+                className="p-3 text-ash-500 hover:text-bone transition rounded-sm"
+              ><MIcon name="close" /></button>
             </div>
 
             <div className="flex-1 overflow-y-auto p-8 space-y-8 custom-scrollbar">
@@ -96,7 +95,7 @@ export default function IntelEditorModal({
                 <input
                   value={formData.title}
                   onChange={(e) => onUpdateField('title', e.target.value)}
-                  className={`${INPUT_CLASS} font-display font-bold text-sm tracking-widest uppercase`}
+                  className={`${INPUT_CLASS} font-display font-bold text-sm tracking-wider uppercase`}
                   placeholder="NOME DA ENTRADA"
                   autoFocus={isNew && !formData.mediaUrl}
                 />
@@ -120,12 +119,10 @@ export default function IntelEditorModal({
                         </option>
                       ))}
                     </select>
-                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-ash-600 text-base">
-                      expand_more
-                    </span>
+                    <MIcon name="expand_more" className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-ash-500 text-base" />
                   </div>
                   {formData.campaignId && (
-                    <p className="mt-1.5 text-[10px] font-mono text-ash-600 truncate">
+                    <p className="mt-1.5 text-[10px] font-mono text-ash-500 truncate">
                       id: {formData.campaignId}
                     </p>
                   )}
@@ -137,7 +134,7 @@ export default function IntelEditorModal({
                       value={formData.id}
                       onChange={(e) => onUpdateField('id', e.target.value)}
                       disabled={!!editingItem}
-                      className={`${INPUT_CLASS} font-mono text-sm tracking-widest disabled:opacity-20 uppercase flex-1`}
+                      className={`${INPUT_CLASS} font-mono text-sm tracking-wider disabled:opacity-20 uppercase flex-1`}
                       placeholder="intel_nome_do_item"
                     />
                     {isNew && (
@@ -148,7 +145,7 @@ export default function IntelEditorModal({
                         onClick={() => onUpdateField('id', slugifyIntelId(formData.title))}
                         className="shrink-0 px-3 bg-black/30 text-ash-400 hover:text-primary transition rounded-sm disabled:opacity-30 hover:bg-accent-10"
                       >
-                        <span className="material-symbols-outlined text-base">auto_fix</span>
+                        <MIcon name="auto_fix" className="text-base" />
                       </button>
                     )}
                   </div>
@@ -157,7 +154,7 @@ export default function IntelEditorModal({
 
               {/* 2. Tipo e nível */}
               <div className="space-y-3">
-                <label className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.2em] block">
+                <label className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.1em] block">
                   Classificação de Tipo
                 </label>
                 <div className="flex flex-wrap gap-2">
@@ -166,13 +163,13 @@ export default function IntelEditorModal({
                       key={t.value}
                       type="button"
                       onClick={() => onUpdateField('type', t.value)}
-                      className={`flex-1 min-w-[4.5rem] py-3.5 text-[10px] font-display font-bold uppercase tracking-widest transition flex items-center justify-center gap-2 rounded-sm ${
+                      className={`flex-1 min-w-[4.5rem] py-3.5 text-[10px] font-display font-bold uppercase tracking-wider transition flex items-center justify-center gap-2 rounded-sm ${
                         formData.type === t.value
                           ? 'bg-primary/10 text-primary'
-                          : 'bg-black/20 text-ash-600'
+                          : 'bg-black/20 text-ash-500'
                       }`}
                     >
-                      <span className="material-symbols-outlined text-base">{t.icon}</span>
+                      <MIcon name={t.icon} className="text-base" />
                       {t.label}
                     </button>
                   ))}
@@ -180,7 +177,7 @@ export default function IntelEditorModal({
               </div>
 
               <div className="space-y-3">
-                <label className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.2em] block">
+                <label className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.1em] block">
                   Nível de Autorização
                 </label>
                 <div className="flex flex-wrap gap-2">
@@ -189,10 +186,10 @@ export default function IntelEditorModal({
                       key={l.value}
                       type="button"
                       onClick={() => onUpdateField('level', l.value)}
-                      className={`flex-1 py-3.5 text-[10px] font-display font-bold uppercase tracking-widest transition rounded-sm ${
+                      className={`flex-1 py-3.5 text-[10px] font-display font-bold uppercase tracking-wider transition rounded-sm ${
                         formData.level === l.value
                           ? 'bg-primary/10 text-primary'
-                          : 'bg-black/20 text-ash-600'
+                          : 'bg-black/20 text-ash-500'
                       }`}
                     >
                       <span className="block text-[10px] opacity-50 mb-0.5">N{l.value}</span>
@@ -228,7 +225,7 @@ export default function IntelEditorModal({
               {needsMedia && (
                 <div className="space-y-4 bg-primary/5 p-5 rounded-sm">
                   <div className="flex items-center justify-between gap-3">
-                    <p className="text-[10px] font-display font-bold text-primary/80 uppercase tracking-[0.2em]">
+                    <p className="text-[10px] font-display font-bold text-primary/80 uppercase tracking-[0.1em]">
                       Mídia —{' '}
                       {formData.type === 'AUDIO'
                         ? t('intel.type.audio')
@@ -268,9 +265,9 @@ export default function IntelEditorModal({
                           : mediaFileInputRef
                         ).current?.click()
                       }
-                      className="py-4 bg-primary/10 text-primary hover:bg-primary hover:text-black transition rounded-sm flex items-center justify-center gap-2 font-display font-bold text-[10px] uppercase tracking-widest disabled:opacity-40"
+                      className="py-4 bg-primary/10 text-primary hover:bg-primary hover:text-black transition rounded-sm flex items-center justify-center gap-2 font-display font-bold text-[10px] uppercase tracking-wider disabled:opacity-40"
                     >
-                      <span className="material-symbols-outlined text-base">upload_file</span>
+                      <MIcon name="upload_file" className="text-base" />
                       {mediaUploading
                         ? 'Enviando...'
                         : formData.mediaUrl
@@ -280,9 +277,9 @@ export default function IntelEditorModal({
                     <button
                       type="button"
                       onClick={onOpenLibrary}
-                      className="py-4 bg-black/30 text-ash-400 hover:text-bone transition rounded-sm flex items-center justify-center gap-2 font-display font-bold text-[10px] uppercase tracking-widest"
+                      className="py-4 bg-black/30 text-ash-400 hover:text-bone transition rounded-sm flex items-center justify-center gap-2 font-display font-bold text-[10px] uppercase tracking-wider"
                     >
-                      <span className="material-symbols-outlined text-base">perm_media</span>
+                      <MIcon name="perm_media" className="text-base" />
                       {t('media.title')}
                     </button>
                   </div>
@@ -298,7 +295,7 @@ export default function IntelEditorModal({
                       <button
                         type="button"
                         onClick={onApplyYoutube}
-                        className="px-4 bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-bone transition rounded-sm font-display font-bold text-[10px] uppercase tracking-widest shrink-0"
+                        className="px-4 bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-bone transition rounded-sm font-display font-bold text-[10px] uppercase tracking-wider shrink-0"
                       >
                         YouTube
                       </button>
@@ -350,7 +347,7 @@ export default function IntelEditorModal({
 
               {/* 4. Metadados */}
               <div className="border-t border-border-subtle pt-8">
-                <p className="text-[10px] font-display font-bold text-ash-400 uppercase tracking-[0.3em] mb-6">
+                <p className="text-[10px] font-display font-bold text-ash-400 uppercase tracking-[0.12em] mb-6">
                   Metadados Sistêmicos
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -446,12 +443,10 @@ export default function IntelEditorModal({
                           className="peer hidden"
                         />
                         <div className="w-6 h-6 bg-black/20 rounded-sm peer-checked:bg-primary transition flex items-center justify-center">
-                          <span className="material-symbols-outlined text-black text-sm font-black opacity-0 peer-checked:opacity-100">
-                            check
-                          </span>
+                          <MIcon name="check" className="text-black text-sm font-black opacity-0 peer-checked:opacity-100" />
                         </div>
                       </div>
-                      <span className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-widest group-hover:text-primary">
+                      <span className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-wider group-hover:text-primary">
                         Sinal Sigiloso
                       </span>
                     </label>
@@ -464,18 +459,16 @@ export default function IntelEditorModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="px-8 py-4 text-[10px] font-display font-bold text-ash-600 hover:text-bone uppercase tracking-[0.3em]"
+                className="px-8 py-4 text-[10px] font-display font-bold text-ash-500 hover:text-bone uppercase tracking-[0.12em]"
               >
                 Abortar Missão
               </button>
               <button
                 type="button"
                 onClick={onSave}
-                className="bg-primary hover:bg-primary-container text-black px-12 py-4 rounded-sm font-display font-bold text-[11px] tracking-widest uppercase transition active:scale-[0.97] glow-orange shadow-lg flex items-center justify-center gap-2"
+                className="bg-primary hover:bg-primary-container text-black px-12 py-4 rounded-sm font-display font-bold text-[11px] tracking-wider uppercase transition active:translate-y-px glow-orange shadow-lg flex items-center justify-center gap-2"
               >
-                <span className="material-symbols-outlined text-base">
-                  {editingItem ? 'sync' : 'save'}
-                </span>
+                <MIcon name={editingItem ? 'sync' : 'save'} className="text-base" />
                 {editingItem ? 'SINCRONIZAR ALTERAÇÕES' : 'REGISTRAR DADO'}
               </button>
             </div>
@@ -489,7 +482,7 @@ export default function IntelEditorModal({
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="group">
-      <label className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.2em] mb-2 block group-focus-within:text-primary transition-colors">
+      <label className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.1em] mb-2 block group-focus-within:text-primary transition-colors">
         {label}
       </label>
       {children}
@@ -501,7 +494,7 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 function MetaField({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="group">
-      <label className="text-[10px] font-display font-bold text-ash-600 uppercase block mb-2 tracking-widest group-focus-within:text-primary">
+      <label className="text-[10px] font-display font-bold text-ash-500 uppercase block mb-2 tracking-wider group-focus-within:text-primary">
         {label}
       </label>
       {children}

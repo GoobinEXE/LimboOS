@@ -14,6 +14,7 @@ import RetroSpinner from '../../../components/player/RetroSpinner';
 import IntelDistributionDrawer from '../IntelDistributionDrawer';
 import { fetchAudioTapesByIds } from '../../../store/firestore';
 import { intelTitleLabel } from '../../lib/entityLabels';
+import MIcon from '../MIcon';
 
 interface MissionInventoryTabProps {
   campaign: Campaign;
@@ -151,7 +152,7 @@ export default function MissionInventoryTab({
     return (
       <div className="flex flex-col items-center justify-center py-24 opacity-50">
         <RetroSpinner />
-        <p className="text-[10px] font-display font-bold text-primary uppercase tracking-widest mt-4 animate-pulse">
+        <p className="text-[10px] font-display font-bold text-primary uppercase tracking-wider mt-4 animate-led">
           Analisando Datacrons...
         </p>
       </div>
@@ -165,7 +166,7 @@ export default function MissionInventoryTab({
         {campaignCharacters.length > 0 && (
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-black/30 p-5 rounded-sm">
             <div className="min-w-0">
-              <h4 className="text-[11px] font-display font-bold uppercase tracking-[0.2em] text-primary">
+              <h4 className="text-[11px] font-display font-bold uppercase tracking-[0.1em] text-primary">
                 {t('missions.inventory.broadcastTitle')}
               </h4>
               <p className="text-[11px] text-ash-400 leading-relaxed mt-1">
@@ -173,7 +174,7 @@ export default function MissionInventoryTab({
               </p>
             </div>
             <button type="button" onClick={() => setShowBroadcast(true)} className="lmb-btn lmb-btn-primary shrink-0">
-              <span className="material-symbols-outlined text-base" aria-hidden>cast</span>
+              <MIcon name="cast" className="text-base" />
               {t('missions.inventory.broadcastAction')}
             </button>
           </div>
@@ -181,13 +182,11 @@ export default function MissionInventoryTab({
 
         {campaignCharacters.length === 0 && (
           <div className="py-24 text-center rounded-sm flex flex-col items-center">
-            <span className="material-symbols-outlined text-5xl text-ash-700 mb-4" aria-hidden>
-              person_off
-            </span>
-            <p className="text-[11px] font-display font-bold uppercase tracking-widest text-ash-500">
+            <MIcon name="person_off" className="text-5xl text-ash-700 mb-4" />
+            <p className="text-[11px] font-display font-bold uppercase tracking-wider text-ash-500">
               Nenhum Agente Vinculado a Esta Missão
             </p>
-            <p className="text-[10px] text-ash-600 mt-2 uppercase tracking-widest">
+            <p className="text-[10px] text-ash-500 mt-2 uppercase tracking-wider">
               Designe agentes ou esquadrões na aba Vínculos
             </p>
           </div>
@@ -214,20 +213,20 @@ export default function MissionInventoryTab({
                     <h4 className="font-display font-bold text-sm text-bone uppercase tracking-wider">
                       {character.codinome}
                     </h4>
-                    <p className="text-[10px] font-mono font-bold text-ash-500 uppercase tracking-widest mt-0.5">
+                    <p className="text-[10px] font-mono font-bold text-ash-500 uppercase tracking-wider mt-0.5">
                       Mestre: {account.masterName || account.email}
                     </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="text-[10px] font-display font-bold text-primary/40 uppercase tracking-widest bg-primary/5 px-3 py-1 rounded-sm">
+                  <span className="text-[10px] font-display font-bold text-primary/40 uppercase tracking-wider bg-primary/5 px-3 py-1 rounded-sm">
                     {items.length} Itens
                   </span>
                   <button
                     onClick={() => setShowGrantModal({ charId: character.id, uid: account.uid })}
-                    className="bg-primary/10 text-primary px-4 py-2 rounded-sm font-display font-bold text-[10px] tracking-widest uppercase hover:bg-primary hover:text-black transition active:scale-[0.97] glow-orange flex items-center gap-2"
+                    className="bg-primary/10 text-primary px-4 py-2 rounded-sm font-display font-bold text-[10px] tracking-wider uppercase hover:bg-primary hover:text-black transition active:translate-y-px glow-orange flex items-center gap-2"
                   >
-                    <span className="material-symbols-outlined text-sm">add</span> Conceder
+                    <MIcon name="add" className="text-sm" /> Conceder
                   </button>
                 </div>
               </div>
@@ -252,24 +251,22 @@ export default function MissionInventoryTab({
                                   : 'text-primary'
                           }`}
                         >
-                          <span className="material-symbols-outlined text-sm">
-                            {intel?.type === 'AUDIO'
+                          <MIcon name={intel?.type === 'AUDIO'
                               ? 'album'
                               : intel?.type === 'VISUAL'
                                 ? 'photo_library'
                                 : intel?.type === 'TEXT'
                                   ? 'description'
-                                  : 'shield'}
-                          </span>
+                                  : 'shield'} className="text-sm" />
                         </div>
                         <button
                           onClick={() => handleRevokeIntel(account.uid, character.id, t.id)}
-                          className="text-ash-600 hover:text-red-500 transition-colors bg-black/40 p-1 rounded-sm hover:bg-red-500/10"
+                          className="text-ash-500 hover:text-red-500 transition-colors bg-black/40 p-1 rounded-sm hover:bg-red-500/10"
                         >
-                          <span className="material-symbols-outlined text-xs">close</span>
+                          <MIcon name="close" className="text-xs" />
                         </button>
                       </div>
-                      <p className="font-display font-bold text-[10px] text-bone uppercase tracking-widest truncate group-hover/item:text-primary transition-colors">
+                      <p className="font-display font-bold text-[10px] text-bone uppercase tracking-wider truncate group-hover/item:text-primary transition-colors">
                         {intelTitleLabel(t.id, Object.entries(remoteIntelTitles).map(([id, title]) => ({ id, title })))}
                       </p>
                       <p className="text-[10px] font-mono text-ash-500 uppercase mt-1 truncate">
@@ -280,7 +277,7 @@ export default function MissionInventoryTab({
                 })}
                 {items.length === 0 && (
                   <div className="col-span-full py-6 text-center rounded-sm">
-                    <span className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-500">
+                    <span className="text-[10px] font-display font-bold uppercase tracking-wider text-ash-500">
                       Inventário Vazio
                     </span>
                   </div>

@@ -16,6 +16,7 @@ import { campaignLabel, masterAccountLabel, masterAccountLabelByUid } from '../l
 import { ADMIN_FADE, listItem, staggerDelay } from '../lib/motion';
 import { adminPath } from '../lib/adminNavigation';
 import { campaignService } from '../../services/CampaignService';
+import MIcon from './MIcon';
 
 interface GroupManagerProps {
   isAdmin: boolean;
@@ -276,15 +277,15 @@ export default function GroupManager({
       {!embedded && (
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-           <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-           <h3 className="text-ash-600 font-black text-[10px] uppercase tracking-[0.3em]">{t('squads.title')}</h3>
+           <div className="w-1.5 h-1.5 rounded-full bg-primary animate-led" />
+           <h3 className="text-ash-500 font-black text-[10px] uppercase tracking-[0.12em]">{t('squads.title')}</h3>
         </div>
         {!isCreating && (
           <button 
             onClick={() => setIsCreating(true)}
-            className="flex items-center gap-2 bg-primary/10 text-primary px-6 py-2 rounded-sm font-black text-[10px] tracking-widest hover:bg-primary/20 transition active:scale-[0.97] glow-orange uppercase"
+            className="flex items-center gap-2 bg-primary/10 text-primary px-6 py-2 rounded-sm font-black text-[10px] tracking-wider hover:bg-primary/20 transition active:translate-y-px glow-orange uppercase"
           >
-            <span className="material-symbols-outlined text-sm">group_add</span>
+            <MIcon name="group_add" className="text-sm" />
             NOVO ESQUADRÃO
           </button>
         )}
@@ -294,23 +295,23 @@ export default function GroupManager({
         <div className="flex justify-end">
           <button 
             onClick={() => setIsCreating(true)}
-            className="flex items-center gap-2 bg-primary/10 text-primary px-6 py-2 rounded-sm font-black text-[10px] tracking-widest hover:bg-primary/20 transition active:scale-[0.97] glow-orange uppercase"
+            className="flex items-center gap-2 bg-primary/10 text-primary px-6 py-2 rounded-sm font-black text-[10px] tracking-wider hover:bg-primary/20 transition active:translate-y-px glow-orange uppercase"
           >
-            <span className="material-symbols-outlined text-sm">group_add</span>
+            <MIcon name="group_add" className="text-sm" />
             NOVO ESQUADRÃO
           </button>
         </div>
       )}
 
       {isCreating ? (
-        <div className="bg-seam p-8 rounded-card shadow-2xl relative overflow-hidden">
+        <div className="bg-seam p-8 rounded-card shadow-panel relative overflow-hidden">
           <div className="noise-overlay" /><div className="scanlines" />
           <form onSubmit={editingGroup ? handleUpdateGroup : handleCreateGroup} className="space-y-8 relative z-10">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
               {/* Coluna 1: Info Básica */}
               <div className="space-y-6">
                 <div>
-                  <label className="block font-black text-[10px] text-ash-500 mb-3 uppercase tracking-widest">{t('squads.idLabel')}</label>
+                  <label className="block font-black text-[10px] text-ash-500 mb-3 uppercase tracking-wider">{t('squads.idLabel')}</label>
                   <input 
                     type="text" 
                     value={groupName}
@@ -322,13 +323,13 @@ export default function GroupManager({
                 </div>
 
                 <div className="bg-primary/5 rounded-sm p-4">
-                  <p className="text-[10px] font-black text-primary/70 uppercase tracking-widest leading-relaxed">
+                  <p className="text-[10px] font-black text-primary/70 uppercase tracking-wider leading-relaxed">
                     Após criar o esquadrão, use o botão de missões no card para autorizar e designar missões.
                   </p>
                 </div>
 
                 <div className="pt-4 border-t border-border-subtle">
-                  <label className="block font-black text-[10px] text-ash-500 mb-3 uppercase tracking-widest">{t('squads.sessions')}</label>
+                  <label className="block font-black text-[10px] text-ash-500 mb-3 uppercase tracking-wider">{t('squads.sessions')}</label>
                   <div className="flex gap-2 mb-4">
                     <input 
                       type="date" 
@@ -339,7 +340,7 @@ export default function GroupManager({
                     <button 
                       type="button"
                       onClick={addSession}
-                      className="bg-[#333] hover:bg-[#444] text-bone px-6 py-2 text-[10px] font-black uppercase tracking-widest transition rounded-sm"
+                      className="bg-[#333] hover:bg-[#444] text-bone px-6 py-2 text-[10px] font-black uppercase tracking-wider transition rounded-sm"
                     >
                       ADD DATA
                     </button>
@@ -348,10 +349,10 @@ export default function GroupManager({
                     {sessions.map(date => (
                       <span key={date} className="bg-black text-primary px-3 py-1.5 rounded-sm text-[10px] font-mono font-black flex items-center gap-3 shadow-lg">
                         {date}
-                        <button type="button" onClick={() => removeSession(date)} className="text-ash-600 hover:text-red-500 transition-colors">×</button>
+                        <button type="button" onClick={() => removeSession(date)} className="text-ash-500 hover:text-red-500 transition-colors">×</button>
                       </span>
                     ))}
-                    {sessions.length === 0 && <p className="text-ash-800 text-[10px] font-black uppercase tracking-widest italic pt-1">{t('squads.noSessions')}</p>}
+                    {sessions.length === 0 && <p className="text-ash-800 text-[10px] font-black uppercase tracking-wider italic pt-1">{t('squads.noSessions')}</p>}
                   </div>
                 </div>
               </div>
@@ -361,7 +362,7 @@ export default function GroupManager({
                 {/* Membros Atuais */}
                 <div>
                   <div className="flex justify-between items-center mb-3">
-                    <label className="block font-black text-[10px] text-ash-500 uppercase tracking-widest">Membros do Esquadrão ({selectedCharacters.length})</label>
+                    <label className="block font-black text-[10px] text-ash-500 uppercase tracking-wider">Membros do Esquadrão ({selectedCharacters.length})</label>
                   </div>
                   <div className="bg-black/40 h-36 overflow-y-auto p-3 space-y-2 custom-scrollbar rounded-sm">
                     {squadMembers.map(item => {
@@ -379,7 +380,7 @@ export default function GroupManager({
                               <p className="font-black text-[10px] text-primary uppercase truncate">
                                 {item.char.codinome}
                               </p>
-                              <p className="text-[10px] font-mono text-ash-600 font-bold uppercase truncate mt-0.5">
+                              <p className="text-[10px] font-mono text-ash-500 font-bold uppercase truncate mt-0.5">
                                 {masterAccountLabel(user, '?')}
                               </p>
                             </div>
@@ -387,18 +388,18 @@ export default function GroupManager({
                           <button
                             type="button"
                             onClick={() => toggleCharacter(item.uid, item.char.id)}
-                            className="w-5 h-5 flex items-center justify-center text-ash-600 hover:text-red-500 transition rounded-xs hover:bg-red-500/10 cursor-pointer"
+                            className="w-5 h-5 flex items-center justify-center text-ash-500 hover:text-red-500 transition rounded-xs hover:bg-red-500/10 cursor-pointer"
                             title={t('squads.removeTitle')}
                           >
-                            <span className="material-symbols-outlined text-sm font-black">close</span>
+                            <MIcon name="close" className="text-sm font-black" />
                           </button>
                         </div>
                       );
                     })}
                     {selectedCharacters.length === 0 && (
                       <div className="h-full flex flex-col items-center justify-center text-ash-700 py-8 opacity-40">
-                        <span className="material-symbols-outlined text-2xl mb-1">group_off</span>
-                        <p className="text-[10px] font-black uppercase tracking-widest">{t('squads.noSelected')}</p>
+                        <MIcon name="group_off" className="text-2xl mb-1" />
+                        <p className="text-[10px] font-black uppercase tracking-wider">{t('squads.noSelected')}</p>
                       </div>
                     )}
                   </div>
@@ -407,15 +408,15 @@ export default function GroupManager({
                 {/* Agentes Disponíveis para Seleção */}
                 <div>
                   <div className="flex justify-between items-center mb-3">
-                     <label className="block font-black text-[10px] text-ash-500 uppercase tracking-widest">{t('squads.available')}</label>
+                     <label className="block font-black text-[10px] text-ash-500 uppercase tracking-wider">{t('squads.available')}</label>
                      <label className="flex items-center gap-2 cursor-pointer group">
                        <input type="checkbox" checked={showArchived} onChange={(e) => setShowArchived(e.target.checked)} className="hidden" />
-                       <span className={`text-[10px] font-black uppercase tracking-widest transition-colors ${showArchived ? 'text-primary' : 'text-ash-600 group-hover:text-ash-400'}`}>{t('squads.includeArchived')}</span>
+                       <span className={`text-[10px] font-black uppercase tracking-wider transition-colors ${showArchived ? 'text-primary' : 'text-ash-500 group-hover:text-ash-400'}`}>{t('squads.includeArchived')}</span>
                      </label>
                   </div>
 
                   <div className="relative mb-3 group">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-ash-600 text-sm group-focus-within:text-primary transition">search</span>
+                    <MIcon name="search" className="absolute left-3 top-1/2 -translate-y-1/2 text-ash-500 text-sm group-focus-within:text-primary transition" />
                     <input 
                       type="text" 
                       placeholder={t('squads.searchAgent')}
@@ -444,17 +445,17 @@ export default function GroupManager({
                               <p className="font-black text-[10px] text-ash-400 uppercase truncate group-hover:text-bone transition-colors">
                                 {item.char.codinome}
                               </p>
-                              <p className="text-[10px] font-mono text-ash-600 font-bold uppercase truncate mt-0.5">
+                              <p className="text-[10px] font-mono text-ash-500 font-bold uppercase truncate mt-0.5">
                                 JOGADOR: {masterAccountLabel(user, '?')}
                               </p>
                             </div>
                           </div>
-                          <span className="material-symbols-outlined text-sm text-ash-800 group-hover:text-primary transition-colors pr-1">person_add</span>
+                          <MIcon name="person_add" className="text-sm text-ash-800 group-hover:text-primary transition-colors pr-1" />
                         </button>
                       );
                     })}
                     {availableAgents.length === 0 && (
-                      <p className="text-ash-600 text-[10px] font-black uppercase tracking-widest text-center py-8">{t('squads.noneAvailable')}</p>
+                      <p className="text-ash-500 text-[10px] font-black uppercase tracking-wider text-center py-8">{t('squads.noneAvailable')}</p>
                     )}
                   </div>
                 </div>
@@ -462,10 +463,10 @@ export default function GroupManager({
             </div>
 
             <div className="flex justify-end gap-6 pt-8 border-t-4 border-seam">
-              <button type="button" onClick={resetForm} className="px-8 py-3 text-[10px] font-black text-ash-600 hover:text-bone uppercase tracking-widest transition-colors">{t('squads.abort')}</button>
+              <button type="button" onClick={resetForm} className="px-8 py-3 text-[10px] font-black text-ash-500 hover:text-bone uppercase tracking-wider transition-colors">{t('squads.abort')}</button>
               <button 
                 type="submit" 
-                className="bg-primary hover:bg-primary-container text-black px-12 py-3 rounded-sm font-black text-[10px] tracking-widest uppercase transition active:scale-[0.97] glow-orange shadow-lg"
+                className="bg-primary hover:bg-primary-container text-black px-12 py-3 rounded-sm font-black text-[10px] tracking-wider uppercase transition active:translate-y-px glow-orange shadow-lg"
               >
                 {editingGroup ? t('squads.sync') : 'CONFIRMAR REGISTRO'}
               </button>
@@ -495,7 +496,7 @@ export default function GroupManager({
                 animate="visible"
                 exit="exit"
                 transition={{ ...ADMIN_FADE, delay: staggerDelay(index) }}
-                className="bg-seam p-6 group transition-colors rounded-card shadow-xl relative overflow-hidden hover:bg-accent-10"
+                className="bg-seam p-6 group transition-colors rounded-card shadow-panel relative overflow-hidden hover:bg-accent-10"
               >
                 <div className="absolute top-0 right-0 w-12 h-12 bg-primary/5 rotate-45 translate-x-6 -translate-y-6 border-b border-primary/10" />
                 <div className="flex justify-between items-start mb-6">
@@ -522,8 +523,8 @@ export default function GroupManager({
                          </div>
                       </div>
                       <div className="flex items-center gap-1.5 bg-black/40 px-2 py-0.5 rounded-sm shadow-inner">
-                         <div className="w-1 h-1 bg-primary rounded-full animate-pulse" />
-                         <p className="text-[10px] font-black text-ash-500 uppercase tracking-widest">
+                         <div className="w-1 h-1 bg-primary rounded-full animate-led" />
+                         <p className="text-[10px] font-black text-ash-500 uppercase tracking-wider">
                            {slots.length} AGENTES
                          </p>
                       </div>
@@ -532,9 +533,9 @@ export default function GroupManager({
                         <Link
                           to={adminPath.mission(group.campaignId, 'vinculos')}
                           title={t('squads.missionChips.editInMission')}
-                          className="text-[10px] font-black bg-phosphor-500/10 text-phosphor-500 px-2 py-1 rounded-sm uppercase tracking-widest flex items-center gap-1 hover:bg-phosphor-500/20 transition-colors"
+                          className="text-[10px] font-black bg-phosphor-500/10 text-phosphor-500 px-2 py-1 rounded-sm uppercase tracking-wider flex items-center gap-1 hover:bg-phosphor-500/20 transition-colors"
                         >
-                          <span className="material-symbols-outlined text-[10px]" aria-hidden>rocket_launch</span>
+                          <MIcon name="rocket_launch" className="text-[10px]" />
                           <span className="sr-only">{t('squads.missionChips.inField')}: </span>
                           {campaignLabel(group.campaignId, campaigns)}
                         </Link>
@@ -551,9 +552,9 @@ export default function GroupManager({
                                 key={campaignId}
                                 to={adminPath.mission(campaignId, 'vinculos')}
                                 title={t('squads.missionChips.editInMission')}
-                                className="flex items-center gap-1.5 bg-black/40 px-2 py-1 rounded-sm text-[10px] font-black text-ash-400 uppercase tracking-widest hover:text-bone transition-colors"
+                                className="flex items-center gap-1.5 bg-black/40 px-2 py-1 rounded-sm text-[10px] font-black text-ash-400 uppercase tracking-wider hover:text-bone transition-colors"
                               >
-                                <span className="material-symbols-outlined text-[10px] text-ash-500" aria-hidden>vpn_key</span>
+                                <MIcon name="vpn_key" className="text-[10px] text-ash-500" />
                                 <span className="sr-only">{t('squads.missionChips.authorized')}: </span>
                                 {campaignLabel(campaignId, campaigns)}
                               </Link>
@@ -562,7 +563,7 @@ export default function GroupManager({
                               <button
                                 type="button"
                                 onClick={() => setExpandedMissionChips((prev) => new Set(prev).add(group.id))}
-                                className="text-[10px] font-black text-ash-500 uppercase tracking-widest px-2 py-1 rounded-sm hover:text-bone"
+                                className="text-[10px] font-black text-ash-500 uppercase tracking-wider px-2 py-1 rounded-sm hover:text-bone"
                               >
                                 {t('squads.missionChips.more', { n: authorized.length - visible.length })}
                               </button>
@@ -573,17 +574,17 @@ export default function GroupManager({
                     </div>
                   </div>
                   <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition translate-x-2 group-hover:translate-x-0">
-                    <button onClick={() => setShowSmsModal(group.id)} className="w-8 h-8 flex items-center justify-center bg-black/60 rounded-sm text-primary hover:bg-primary hover:text-black transition active:scale-95" title={t('squads.smsTitle')}>
-                      <span className="material-symbols-outlined text-sm">sms</span>
+                    <button onClick={() => setShowSmsModal(group.id)} className="w-8 h-8 flex items-center justify-center bg-black/60 rounded-sm text-primary hover:bg-primary hover:text-black transition active:translate-y-px" title={t('squads.smsTitle')}>
+                      <MIcon name="sms" className="text-sm" />
                     </button>
-                    <button onClick={() => setShowGrantModal(group.id)} className="w-8 h-8 flex items-center justify-center bg-black/60 rounded-sm text-primary hover:bg-primary hover:text-black transition active:scale-95" title={t('squads.bulkIntelTitle')}>
-                      <span className="material-symbols-outlined text-sm">wifi_tethering</span>
+                    <button onClick={() => setShowGrantModal(group.id)} className="w-8 h-8 flex items-center justify-center bg-black/60 rounded-sm text-primary hover:bg-primary hover:text-black transition active:translate-y-px" title={t('squads.bulkIntelTitle')}>
+                      <MIcon name="wifi_tethering" className="text-sm" />
                     </button>
-                    <button onClick={() => startEdit(group)} className="w-8 h-8 flex items-center justify-center bg-black/60 rounded-sm text-ash-600 hover:text-phosphor-400 transition active:scale-95">
-                      <span className="material-symbols-outlined text-sm">edit</span>
+                    <button onClick={() => startEdit(group)} className="w-8 h-8 flex items-center justify-center bg-black/60 rounded-sm text-ash-500 hover:text-phosphor-400 transition active:translate-y-px">
+                      <MIcon name="edit" className="text-sm" />
                     </button>
-                    <button onClick={() => handleDeleteGroup(group.id)} className="w-8 h-8 flex items-center justify-center bg-black/60 rounded-sm text-ash-600 hover:text-red-500 transition active:scale-95">
-                      <span className="material-symbols-outlined text-sm">delete</span>
+                    <button onClick={() => handleDeleteGroup(group.id)} className="w-8 h-8 flex items-center justify-center bg-black/60 rounded-sm text-ash-500 hover:text-red-500 transition active:translate-y-px">
+                      <MIcon name="delete" className="text-sm" />
                     </button>
                   </div>
                 </div>
@@ -591,7 +592,7 @@ export default function GroupManager({
                 <div className="space-y-6">
                   <div className="flex flex-wrap gap-1.5">
                     {group.sessions?.slice(0, 4).map(date => (
-                      <span key={date} className="text-[10px] font-mono bg-black text-ash-600 px-2 py-1 rounded-sm font-bold tracking-widest uppercase shadow-sm">
+                      <span key={date} className="text-[10px] font-mono bg-black text-ash-500 px-2 py-1 rounded-sm font-bold tracking-wider uppercase shadow-sm">
                         {date}
                       </span>
                     ))}
@@ -610,18 +611,18 @@ export default function GroupManager({
                              <p className="font-mono text-[10px] text-ash-500 truncate">{masterAccountLabelByUid(slot.uid, users, '???')}</p>
                            </div>
                            <button onClick={() => handleQuickRemoveMember(group.id, item.char.id, item.char.codinome)} className="absolute right-1 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center text-ash-500 hover:text-red-500 hover:bg-red-500/10 rounded-sm opacity-0 group-hover/member:opacity-100 transition bg-black/80 z-10">
-                             <span className="material-symbols-outlined text-[14px]">close</span>
+                             <MIcon name="close" className="text-[14px]" />
                            </button>
                         </div>
                       );
                     })}
                     <button onClick={() => { setQuickAddGroup(quickAddGroup === group.id ? null : group.id); setQuickAddSearch(""); }} className={`flex items-center justify-center w-8 h-8 rounded-sm transition ${quickAddGroup === group.id ? 'bg-primary text-black border-primary' : 'bg-primary/10 text-primary hover:bg-primary/20'}`}>
-                      <span className="material-symbols-outlined text-[16px]">{quickAddGroup === group.id ? 'close' : 'person_add'}</span>
+                      <MIcon name={quickAddGroup === group.id ? 'close' : 'person_add'} className="text-[16px]" />
                     </button>
                   </div>
 
                   {quickAddGroup === group.id && (
-                    <div className="mt-4 p-4 bg-black/60 rounded-sm shadow-xl">
+                    <div className="mt-4 p-4 bg-black/60 rounded-sm shadow-panel">
                       <input 
                         type="text" 
                         placeholder={t('squads.searchAdd')}
@@ -646,7 +647,7 @@ export default function GroupManager({
                                  <div className={`w-2 h-2 rounded-full ${c.char.agentStatus === 'vivo' ? 'bg-phosphor-500' : c.char.agentStatus === 'morto' ? 'bg-red-500' : 'bg-yellow-500'}`} />
                                  <div className="flex flex-col">
                                    <span className="text-[10px] font-black text-bone uppercase">{c.char.codinome}</span>
-                                   <span className="text-[10px] font-mono text-ash-600 uppercase">{masterAccountLabelByUid(c.uid, users, '???')}</span>
+                                   <span className="text-[10px] font-mono text-ash-500 uppercase">{masterAccountLabelByUid(c.uid, users, '???')}</span>
                                  </div>
                                </div>
                                <button onClick={() => handleQuickAddMember(group.id, c.uid, c.char.id, c.char.codinome)} className="text-[10px] font-black bg-primary/10 text-primary px-3 py-1.5 rounded-sm uppercase hover:bg-primary hover:text-black transition opacity-0 group-hover/add:opacity-100">{t('squads.add')}</button>
@@ -663,8 +664,8 @@ export default function GroupManager({
           </AnimatePresence>
           {groups.length === 0 && (
             <div className="col-span-full py-24 text-center rounded-panel flex flex-col items-center justify-center">
-              <span className="material-symbols-outlined text-6xl text-ash-700 mb-4" aria-hidden>groups_2</span>
-              <p className="text-ash-500 font-black text-sm uppercase tracking-[0.4em]">{t('squads.empty')}</p>
+              <MIcon name="groups_2" className="text-6xl text-ash-700 mb-4" />
+              <p className="text-ash-500 font-black text-sm uppercase tracking-[0.12em]">{t('squads.empty')}</p>
             </div>
           )}
         </div>

@@ -131,7 +131,7 @@ export const MetadataOverlay = ({ onClose, agent }: MetadataOverlayProps) => {
                       RM-{agentCode}
                     </motion.span>
                   ) : (
-                    <motion.span key="mask" exit={{ opacity: 0, y: -4 }} className="inline-block tracking-widest opacity-60">
+                    <motion.span key="mask" exit={{ opacity: 0, y: -4 }} className="inline-block tracking-wider opacity-60">
                       RM-{maskedCode}
                     </motion.span>
                   )}
@@ -176,7 +176,7 @@ export const MetadataOverlay = ({ onClose, agent }: MetadataOverlayProps) => {
           <button
             type="button"
             onClick={onClose}
-            className="w-full bg-accent-10 hover:bg-accent-20 text-primary rounded-control py-3.5 text-protocol transition duration-200 active:scale-[0.98]"
+            className="w-full bg-accent-10 hover:bg-accent-20 text-primary rounded-control py-3.5 text-protocol transition duration-200 active:translate-y-px"
           >
             {t('metadata.syncExit')}
           </button>

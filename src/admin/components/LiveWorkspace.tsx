@@ -25,6 +25,7 @@ import JukeboxPanel from './JukeboxPanel';
 import SystemLogPanel from './SystemLogPanel';
 import { ADMIN_FADE, listItem, staggerDelay } from '../lib/motion';
 import { campaignService } from '../../services/CampaignService';
+import MIcon from './MIcon';
 
 interface LiveWorkspaceProps {
   accounts: MasterAccount[];
@@ -275,9 +276,9 @@ export default function LiveWorkspace({
       <section className="bg-surface-container-low/60 p-4 sm:p-5 space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0">
-            <span className="material-symbols-outlined text-phosphor-400 text-xl">event_available</span>
+            <MIcon name="event_available" className="text-phosphor-400 text-xl" />
             <div className="min-w-0">
-              <h2 className="font-display font-bold uppercase tracking-widest text-sm text-bone">
+              <h2 className="font-display font-bold uppercase tracking-wider text-sm text-bone">
                 {t('live.session.title')}
               </h2>
             </div>
@@ -287,7 +288,7 @@ export default function LiveWorkspace({
               <button
                 type="button"
                 onClick={() => nav.go(adminPath.mission(activeSession.campaignId))}
-                className="text-[10px] font-display font-bold uppercase tracking-widest px-3 py-1.5 text-primary hover:bg-primary/10 bg-accent-10"
+                className="text-[10px] font-display font-bold uppercase tracking-wider px-3 py-1.5 text-primary hover:bg-primary/10 bg-accent-10"
               >
                 {t('live.session.openMission')}
               </button>
@@ -296,7 +297,7 @@ export default function LiveWorkspace({
               <button
                 type="button"
                 onClick={() => nav.go(adminPath.squad(activeSession.groupId))}
-                className="text-[10px] font-display font-bold uppercase tracking-widest px-3 py-1.5 text-primary hover:bg-primary/10 bg-accent-10"
+                className="text-[10px] font-display font-bold uppercase tracking-wider px-3 py-1.5 text-primary hover:bg-primary/10 bg-accent-10"
               >
                 {t('live.session.openSquad')}
               </button>
@@ -305,7 +306,7 @@ export default function LiveWorkspace({
               <button
                 type="button"
                 onClick={() => onSessionChange(null)}
-                className="text-[10px] font-display font-bold uppercase tracking-widest px-3 py-1.5 text-ash-500 hover:text-red-400 hover:bg-red-500/10"
+                className="text-[10px] font-display font-bold uppercase tracking-wider px-3 py-1.5 text-ash-500 hover:text-red-400 hover:bg-red-500/10"
               >
                 {t('live.session.clear')}
               </button>
@@ -314,13 +315,13 @@ export default function LiveWorkspace({
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <label className="space-y-1.5">
-            <span className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-500">
+            <span className="text-[10px] font-display font-bold uppercase tracking-wider text-ash-500">
               {t('live.session.squad')}
             </span>
             <select
               value={activeSession?.groupId || ''}
               onChange={(e) => handleGroupSelect(e.target.value)}
-              className="w-full bg-black/50 px-3 py-2.5 text-[10px] font-display font-bold uppercase tracking-widest text-bone outline-none"
+              className="w-full bg-black/50 px-3 py-2.5 text-[10px] font-display font-bold uppercase tracking-wider text-bone outline-none"
             >
               <option value="">{t('live.session.noneSquad')}</option>
               {groups.map((g) => (
@@ -331,14 +332,14 @@ export default function LiveWorkspace({
             </select>
           </label>
           <label className="space-y-1.5">
-            <span className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-500">
+            <span className="text-[10px] font-display font-bold uppercase tracking-wider text-ash-500">
               {t('live.session.mission')}
             </span>
             <select
               value={activeSession?.campaignId || ''}
               onChange={(e) => handleCampaignSelect(e.target.value)}
               disabled={!activeSession?.groupId}
-              className="w-full bg-black/50 px-3 py-2.5 text-[10px] font-display font-bold uppercase tracking-widest text-bone outline-none disabled:opacity-30"
+              className="w-full bg-black/50 px-3 py-2.5 text-[10px] font-display font-bold uppercase tracking-wider text-bone outline-none disabled:opacity-30"
             >
               <option value="">{t('live.session.noneMission')}</option>
               {campaigns.map((c) => (
@@ -357,7 +358,7 @@ export default function LiveWorkspace({
               onChange={(e) => setSessionOnly(e.target.checked)}
               className="accent-phosphor-500"
             />
-            <span className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-400 group-hover:text-phosphor-400">
+            <span className="text-[10px] font-display font-bold uppercase tracking-wider text-ash-400 group-hover:text-phosphor-400">
               {t('live.session.onlySession')}
             </span>
           </label>
@@ -389,7 +390,7 @@ export default function LiveWorkspace({
             <div className="flex items-center gap-3 min-w-0">
               <span className="lmb-led text-phosphor-400 animate-led" aria-hidden />
               <div className="min-w-0">
-                <h2 className="font-display font-bold uppercase tracking-widest text-sm text-bone truncate">
+                <h2 className="font-display font-bold uppercase tracking-wider text-sm text-bone truncate">
                   {t('live.presence.title')}
                 </h2>
                 <span className="text-mono-ui text-[11px] text-ash-400 tabular-nums">{rows.length}</span>
@@ -403,7 +404,7 @@ export default function LiveWorkspace({
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-500 mr-1">
+            <span className="text-[10px] font-display font-bold uppercase tracking-wider text-ash-500 mr-1">
               {t('live.confirm.deliverAction')}
             </span>
             <DeliverBtn label={t('live.deliver.intel')} icon="inventory_2" onClick={() => openDeliver('intel')} disabled={rows.length === 0} />
@@ -425,9 +426,9 @@ export default function LiveWorkspace({
                   toast.error(t('live.toast.dosFail'));
                 }
               }}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary text-black text-[10px] font-display font-bold uppercase tracking-widest hover:bg-primary-container transition-colors disabled:opacity-20"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary text-black text-[10px] font-display font-bold uppercase tracking-wider hover:bg-primary-container transition-colors disabled:opacity-20"
             >
-              <span className="material-symbols-outlined text-sm">terminal</span>
+              <MIcon name="terminal" className="text-sm" />
               {t('live.deliver.dosAll')}
             </button>
             <button
@@ -441,9 +442,9 @@ export default function LiveWorkspace({
                   toast.error(t('live.toast.macFail'));
                 }
               }}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-ash-200 text-black text-[10px] font-display font-bold uppercase tracking-widest hover:bg-white transition-colors disabled:opacity-20"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-ash-200 text-black text-[10px] font-display font-bold uppercase tracking-wider hover:bg-white transition-colors disabled:opacity-20"
             >
-              <span className="material-symbols-outlined text-sm">laptop_mac</span>
+              <MIcon name="laptop_mac" className="text-sm" />
               {t('live.deliver.macAll')}
             </button>
           </div>
@@ -451,7 +452,7 @@ export default function LiveWorkspace({
 
         {rows.length === 0 ? (
           <div className="px-6 py-10 text-center">
-            <p className="text-[10px] font-display font-bold uppercase tracking-[0.3em] text-ash-600">
+            <p className="text-[10px] font-display font-bold uppercase tracking-[0.12em] text-ash-500">
               {filteringBySession
                 ? t('live.presence.emptySession')
                 : t('live.presence.empty')}
@@ -460,7 +461,7 @@ export default function LiveWorkspace({
               <button
                 type="button"
                 onClick={() => setSessionOnly(false)}
-                className="mt-4 text-[10px] font-display font-bold uppercase tracking-widest text-primary/60 hover:text-primary"
+                className="mt-4 text-[10px] font-display font-bold uppercase tracking-wider text-primary/60 hover:text-primary"
               >
                 {t('live.presence.seeAllOnline')}
               </button>
@@ -468,7 +469,7 @@ export default function LiveWorkspace({
               <button
                 type="button"
                 onClick={() => nav.go(adminPath.mesa('acesso'))}
-                className="mt-4 text-[10px] font-display font-bold uppercase tracking-widest text-primary/60 hover:text-primary"
+                className="mt-4 text-[10px] font-display font-bold uppercase tracking-wider text-primary/60 hover:text-primary"
               >
                 {t('live.presence.openAccess')}
               </button>
@@ -480,13 +481,13 @@ export default function LiveWorkspace({
               <button
                 type="button"
                 onClick={selectAll}
-                className="text-[10px] font-display font-bold uppercase tracking-widest text-ash-500 hover:text-primary"
+                className="text-[10px] font-display font-bold uppercase tracking-wider text-ash-500 hover:text-primary"
               >
                 {selectedUids.size === rows.length
                   ? t('live.presence.clearSelection', { n: selectedUids.size })
                   : t('live.presence.selectAll', { n: rows.length })}
               </button>
-              <span className="text-[10px] font-mono text-ash-600 uppercase tracking-widest">
+              <span className="text-[10px] font-mono text-ash-500 uppercase tracking-wider">
                 {selectedUids.size > 0 ? t('live.presence.marked', { n: selectedUids.size }) : t('live.presence.noMark')}
               </span>
             </div>
@@ -524,11 +525,11 @@ export default function LiveWorkspace({
                         aria-label="Selecionar"
                       >
                         {selected && (
-                          <span className="material-symbols-outlined text-black text-xs font-black">check</span>
+                          <MIcon name="check" className="text-black text-xs font-black" />
                         )}
                       </button>
                       <div className="min-w-0">
-                        <p className="text-[11px] font-display font-bold uppercase tracking-widest text-bone truncate">
+                        <p className="text-[11px] font-display font-bold uppercase tracking-wider text-bone truncate">
                           {row.label}
                           {row.agentName ? (
                             <span className="text-primary/80 font-normal"> // {row.agentName}</span>
@@ -547,7 +548,7 @@ export default function LiveWorkspace({
                         </span>
                       )}
                       {row.forceTerminal ? (
-                        <span className="text-[10px] font-display font-bold uppercase tracking-wider px-2 py-0.5 text-primary animate-pulse bg-accent-10">
+                        <span className="text-[10px] font-display font-bold uppercase tracking-wider px-2 py-0.5 text-primary animate-led bg-accent-10">
                           Push pendente
                         </span>
                       ) : row.hasTerminalAccess ? (
@@ -556,7 +557,7 @@ export default function LiveWorkspace({
                         </span>
                       ) : null}
                       {row.forceMac ? (
-                        <span className="text-[10px] font-display font-bold uppercase tracking-wider px-2 py-0.5 text-tube-400 animate-pulse">
+                        <span className="text-[10px] font-display font-bold uppercase tracking-wider px-2 py-0.5 text-tube-400 animate-led">
                           Push Mac
                         </span>
                       ) : row.hasMacAccess ? (
@@ -600,7 +601,7 @@ export default function LiveWorkspace({
                             setMenuUid(null);
                             openDeliver('achievements', [row.uid]);
                           }}
-                          className="w-full text-left px-3 py-2 text-[10px] font-display font-bold uppercase tracking-widest text-ash-400 hover:bg-primary/10 hover:text-primary"
+                          className="w-full text-left px-3 py-2 text-[10px] font-display font-bold uppercase tracking-wider text-ash-400 hover:bg-primary/10 hover:text-primary"
                         >
                           Outorgar conquista
                         </button>
@@ -610,7 +611,7 @@ export default function LiveWorkspace({
                             setMenuUid(null);
                             openDeliver('sms', [row.uid]);
                           }}
-                          className="w-full text-left px-3 py-2 text-[10px] font-display font-bold uppercase tracking-widest text-ash-400 hover:bg-primary/10 hover:text-primary"
+                          className="w-full text-left px-3 py-2 text-[10px] font-display font-bold uppercase tracking-wider text-ash-400 hover:bg-primary/10 hover:text-primary"
                         >
                           Enviar SMS
                         </button>
@@ -626,7 +627,7 @@ export default function LiveWorkspace({
                               toast.error(t('hardware.toast.revokeDosFail'));
                             }
                           }}
-                          className="w-full text-left px-3 py-2 text-[10px] font-display font-bold uppercase tracking-widest text-ash-400 hover:bg-red-500/10 hover:text-red-400 disabled:opacity-20"
+                          className="w-full text-left px-3 py-2 text-[10px] font-display font-bold uppercase tracking-wider text-ash-400 hover:bg-red-500/10 hover:text-red-400 disabled:opacity-20"
                         >
                           Revogar DOS
                         </button>
@@ -642,7 +643,7 @@ export default function LiveWorkspace({
                               toast.error(t('hardware.toast.revokeMacFail'));
                             }
                           }}
-                          className="w-full text-left px-3 py-2 text-[10px] font-display font-bold uppercase tracking-widest text-ash-400 hover:bg-red-500/10 hover:text-red-400 disabled:opacity-20"
+                          className="w-full text-left px-3 py-2 text-[10px] font-display font-bold uppercase tracking-wider text-ash-400 hover:bg-red-500/10 hover:text-red-400 disabled:opacity-20"
                         >
                           Revogar Mac
                         </button>
@@ -671,7 +672,7 @@ export default function LiveWorkspace({
               <button
                 type="button"
                 onClick={() => nav.go(adminPath.system('log'))}
-                className="text-[10px] font-display font-bold uppercase tracking-widest text-primary/70 hover:text-primary shrink-0 transition-colors"
+                className="text-[10px] font-display font-bold uppercase tracking-wider text-primary/70 hover:text-primary shrink-0 transition-colors"
               >
                 {t('live.fullLog')}
               </button>
@@ -805,7 +806,7 @@ function PresenceRowMenu({
                 ? { position: 'fixed', top: coords.top, left: coords.left }
                 : { position: 'fixed', top: -9999, left: -9999, visibility: 'hidden' }
             }
-            className="z-[200] min-w-44 bg-seam shadow-2xl py-1"
+            className="z-[200] min-w-44 bg-seam shadow-panel py-1"
           >
             {children}
           </div>,
@@ -843,8 +844,8 @@ function MiniStat({
         : 'text-primary border-primary/20';
   return (
     <div className={`bg-surface-container-low border-y border-r border-y-seam border-r-seam px-4 py-3 ${color}`}>
-      <p className="flex items-center gap-1.5 font-display text-[10px] uppercase font-bold tracking-[0.2em] text-ash-500 mb-1.5">
-        <span className="material-symbols-outlined text-[14px] opacity-70" aria-hidden>{icon}</span>
+      <p className="flex items-center gap-1.5 font-display text-[10px] uppercase font-bold tracking-[0.1em] text-ash-500 mb-1.5">
+        <MIcon name={icon} className="text-[14px] opacity-70" />
         {label}
       </p>
       <p className="text-2xl font-display font-bold tracking-tight tabular-nums leading-none">{value}</p>
@@ -857,9 +858,9 @@ function QuickBtn({ label, icon, onClick }: { label: string; icon: string; onCli
     <button
       type="button"
       onClick={onClick}
-      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-display font-bold uppercase tracking-widest text-primary/80 hover:bg-primary/10 transition-colors bg-accent-10"
+      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-display font-bold uppercase tracking-wider text-primary/80 hover:bg-primary/10 transition-colors bg-accent-10"
     >
-      <span className="material-symbols-outlined text-sm">{icon}</span>
+      <MIcon name={icon} className="text-sm" />
       {label}
     </button>
   );
@@ -881,9 +882,9 @@ function DeliverBtn({
       type="button"
       disabled={disabled}
       onClick={onClick}
-      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/5 text-[10px] font-display font-bold uppercase tracking-widest text-primary hover:bg-primary/15 transition-colors disabled:opacity-20"
+      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/5 text-[10px] font-display font-bold uppercase tracking-wider text-primary hover:bg-primary/15 transition-colors disabled:opacity-20"
     >
-      <span className="material-symbols-outlined text-sm">{icon}</span>
+      <MIcon name={icon} className="text-sm" />
       {label}
     </button>
   );

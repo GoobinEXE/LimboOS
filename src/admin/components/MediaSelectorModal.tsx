@@ -6,6 +6,7 @@ import MediaLibraryPanel from './MediaLibraryPanel';
 import { MediaAsset, MediaType } from '../../types/media';
 import Screw from '../../components/player/Screw';
 import OverlayPortal from './OverlayPortal';
+import MIcon from './MIcon';
 
 interface MediaSelectorModalProps {
   isOpen: boolean;
@@ -42,7 +43,7 @@ export default function MediaSelectorModal({
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.96, y: 16 }}
               transition={SPRING_SNAP}
-              className="relative w-full max-w-4xl max-h-[85vh] bg-surface-container-low shadow-2xl flex flex-col overflow-hidden"
+              className="relative w-full max-w-4xl max-h-[85vh] bg-surface-container-low shadow-panel flex flex-col overflow-hidden"
             >
               <div className="absolute top-2 left-2 opacity-40">
                 <Screw size="xs" />
@@ -53,8 +54,8 @@ export default function MediaSelectorModal({
 
               <div className="px-6 py-4 border-b border-primary/10 flex items-center justify-between bg-black/30 shrink-0">
                 <div className="flex items-center gap-3">
-                  <span className="material-symbols-outlined text-primary text-lg">perm_media</span>
-                  <h3 className="font-display font-bold text-bone uppercase tracking-widest text-sm">
+                  <MIcon name="perm_media" className="text-primary text-lg" />
+                  <h3 className="font-display font-bold text-bone uppercase tracking-wider text-sm">
                     {resolvedTitle}
                   </h3>
                 </div>
@@ -63,7 +64,7 @@ export default function MediaSelectorModal({
                   onClick={onClose}
                   className="w-8 h-8 flex items-center justify-center text-ash-500 hover:text-primary transition-colors"
                 >
-                  <span className="material-symbols-outlined">close</span>
+                  <MIcon name="close" className="" />
                 </button>
               </div>
 
@@ -83,7 +84,7 @@ export default function MediaSelectorModal({
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-5 py-2 text-[10px] font-display font-bold text-ash-500 hover:text-bone uppercase tracking-widest transition-colors"
+                  className="px-5 py-2 text-[10px] font-display font-bold text-ash-500 hover:text-bone uppercase tracking-wider transition-colors"
                 >
                   {t('accounts.cancel')}
                 </button>

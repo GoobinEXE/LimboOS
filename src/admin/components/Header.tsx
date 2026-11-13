@@ -7,6 +7,7 @@ import AboutDialog from '../../components/AboutDialog';
 import LanguageSelector from '../../components/LanguageSelector';
 import { modKeyLabel } from '../lib/platform';
 import type { AdminCrumb } from '../lib/adminBreadcrumb';
+import MIcon from './MIcon';
 
 interface HeaderProps {
   user: User | null;
@@ -57,17 +58,15 @@ export default function Header({
               type="button"
               onClick={onOpenMenu}
               aria-label={t('header.openMenu')}
-              className="lmb-btn lmb-btn-ghost lmb-btn-icon material-symbols-outlined text-[22px] tracking-normal normal-case"
-            >
-              menu
-            </button>
+              className="lmb-btn lmb-btn-ghost lmb-btn-icon text-[22px]"
+            ><MIcon name="menu" /></button>
           </div>
         )}
 
         {/* A trilha ocupa a própria largura e corta em vez de vazar por baixo do
             selo da sessão; os níveis de cima encolhem antes da página atual. */}
         <nav aria-label={t('breadcrumb.navLabel')} className="min-w-0 lg:shrink-0 max-w-[32rem] overflow-hidden">
-          <ol className="flex items-center gap-1.5 min-w-0 text-[10px] font-display uppercase font-bold tracking-[0.2em] leading-4">
+          <ol className="flex items-center gap-1.5 min-w-0 text-[10px] font-display uppercase font-bold tracking-[0.1em] leading-4">
             {breadcrumb.map((crumb, i) => {
               const last = i === breadcrumb.length - 1;
               return (
@@ -108,7 +107,7 @@ export default function Header({
             </span>
           </button>
         ) : (
-          <span className="text-[10px] font-display uppercase font-bold tracking-[0.24em] text-ash-600 hidden 2xl:inline truncate">
+          <span className="text-[10px] font-display uppercase font-bold tracking-[0.24em] text-ash-500 hidden 2xl:inline truncate">
             {t('header.noSession')}
           </span>
         )}
@@ -137,7 +136,7 @@ export default function Header({
 
         <div className="flex items-center gap-3 pl-3 border-l border-border-subtle">
           <div className="text-right hidden lg:block">
-            <p className="text-xs font-display font-bold text-bone tracking-widest uppercase leading-none">
+            <p className="text-xs font-display font-bold text-bone tracking-wider uppercase leading-none">
               {user?.email?.split('@')[0] || 'GM.MPG'}
             </p>
           </div>
@@ -157,9 +156,7 @@ export default function Header({
             title={t('header.playAsAgentTitle')}
             aria-label={t('header.playAsAgent')}
           >
-            <span className="material-symbols-outlined text-base tracking-normal normal-case" aria-hidden>
-              sports_esports
-            </span>
+            <MIcon name="sports_esports" className="text-base" />
             <span className="hidden xl:inline">{t('header.playAsAgent')}</span>
           </a>
         )}

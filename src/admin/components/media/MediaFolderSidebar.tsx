@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MediaFolder } from '../../../types/media';
+import MIcon from '../MIcon';
 
 export type FolderFilter = 'all' | 'unfiled' | string;
 
@@ -71,7 +72,7 @@ export default function MediaFolderSidebar({
   return (
     <aside className="w-full md:w-56 shrink-0 bg-black/20 flex flex-col max-h-[70vh] md:max-h-none">
       <div className="px-3 py-2.5 border-b border-primary/10 flex items-center justify-between gap-2">
-        <p className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.25em]">
+        <p className="text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.12em]">
           {t('media.foldersTitle')}
         </p>
         {!selectionMode && (
@@ -81,7 +82,7 @@ export default function MediaFolderSidebar({
             className="p-1 text-ash-500 hover:text-primary transition-colors"
             title="Nova pasta extra"
           >
-            <span className="material-symbols-outlined text-base">create_new_folder</span>
+            <MIcon name="create_new_folder" className="text-base" />
           </button>
         )}
       </div>
@@ -103,7 +104,7 @@ export default function MediaFolderSidebar({
         />
 
         {campaignFolders.length > 0 && (
-          <p className="px-3 pt-3 pb-1 text-[10px] font-display font-bold text-ash-600 uppercase tracking-[0.3em]">
+          <p className="px-3 pt-3 pb-1 text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.12em]">
             {t('reports.group.campaigns')}
           </p>
         )}
@@ -119,7 +120,7 @@ export default function MediaFolderSidebar({
         ))}
 
         {(extraFolders.length > 0 || creating) && (
-          <p className="px-3 pt-3 pb-1 text-[10px] font-display font-bold text-ash-600 uppercase tracking-[0.3em]">
+          <p className="px-3 pt-3 pb-1 text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.12em]">
             Extras
           </p>
         )}
@@ -135,7 +136,7 @@ export default function MediaFolderSidebar({
                 if (e.key === 'Escape') setCreating(false);
               }}
               placeholder="NOME PASTA"
-              className="flex-1 min-w-0 bg-surface-container-lowest text-[10px] font-display font-bold uppercase tracking-widest text-bone px-2 py-1.5 outline-none focus:bg-accent-10"
+              className="flex-1 min-w-0 bg-surface-container-lowest text-[10px] font-display font-bold uppercase tracking-wider text-bone px-2 py-1.5 outline-none focus:bg-accent-10"
             />
             <button
               type="button"
@@ -160,7 +161,7 @@ export default function MediaFolderSidebar({
                     if (e.key === 'Enter') void submitRename(folder);
                     if (e.key === 'Escape') setRenamingId(null);
                   }}
-                  className="flex-1 min-w-0 bg-surface-container-lowest text-[10px] font-display font-bold uppercase tracking-widest text-bone px-2 py-1.5 outline-none focus:bg-accent-10"
+                  className="flex-1 min-w-0 bg-surface-container-lowest text-[10px] font-display font-bold uppercase tracking-wider text-bone px-2 py-1.5 outline-none focus:bg-accent-10"
                 />
                 <button
                   type="button"
@@ -189,9 +190,9 @@ export default function MediaFolderSidebar({
                           setRenamingId(folder.id);
                           setRenameValue(folder.name);
                         }}
-                        className="p-0.5 text-ash-600 hover:text-primary"
+                        className="p-0.5 text-ash-500 hover:text-primary"
                       >
-                        <span className="material-symbols-outlined text-sm">edit</span>
+                        <MIcon name="edit" className="text-sm" />
                       </button>
                       <button
                         type="button"
@@ -200,9 +201,9 @@ export default function MediaFolderSidebar({
                           e.stopPropagation();
                           void onDelete(folder);
                         }}
-                        className="p-0.5 text-ash-600 hover:text-red-400"
+                        className="p-0.5 text-ash-500 hover:text-red-400"
                       >
-                        <span className="material-symbols-outlined text-sm">delete</span>
+                        <MIcon name="delete" className="text-sm" />
                       </button>
                     </>
                   ) : undefined
@@ -241,11 +242,11 @@ function FolderRow({
           : 'text-ash-400 hover:bg-primary/5 hover:text-primary border-l-transparent'
       }`}
     >
-      <span className="material-symbols-outlined text-base shrink-0">{icon}</span>
-      <span className="flex-1 min-w-0 text-[10px] font-display font-bold uppercase tracking-widest truncate">
+      <MIcon name={icon} className="text-base shrink-0" />
+      <span className="flex-1 min-w-0 text-[10px] font-display font-bold uppercase tracking-wider truncate">
         {label}
       </span>
-      <span className="text-[10px] font-display font-bold text-ash-600 tabular-nums">
+      <span className="text-[10px] font-display font-bold text-ash-500 tabular-nums">
         {count}
       </span>
       {actions && (

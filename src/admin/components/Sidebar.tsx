@@ -8,6 +8,7 @@ import { ADMIN_SPRING_INDICATOR } from '../lib/motion';
 import { modKeyLabel } from '../lib/platform';
 import { ADMIN_DESTINATIONS, ADMIN_NAV_GROUPS, type AdminDestinationId } from '../lib/adminNavigation';
 import WorkspaceSwitcher from './WorkspaceSwitcher';
+import MIcon from './MIcon';
 
 interface SidebarProps {
   activeDest: AdminDestinationId;
@@ -73,7 +74,7 @@ export default function Sidebar({ activeDest, hrefFor, isCollapsed, onToggleColl
             {isCollapsed ? (
               <div className="h-px bg-border-subtle mx-3 mb-3" aria-hidden />
             ) : (
-              <h3 className="px-3 mb-2 text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.32em] whitespace-nowrap">
+              <h3 className="px-3 mb-2 text-[10px] font-display font-bold text-ash-500 uppercase tracking-[0.12em] whitespace-nowrap">
                 {group.title}
               </h3>
             )}
@@ -103,16 +104,11 @@ export default function Sidebar({ activeDest, hrefFor, isCollapsed, onToggleColl
                           <span className="absolute left-0 top-2 bottom-2 w-0.5 bg-accent" />
                         </motion.span>
                       )}
-                      <span
-                        className={clsx(
-                          'material-symbols-outlined relative z-10 transition-colors',
+                      <MIcon name={item.icon} className={clsx(
+                          'relative z-10 transition-colors',
                           isCollapsed ? 'text-xl' : 'text-[18px]',
-                          isActive ? 'text-accent' : 'text-ash-600 group-hover:text-ash-300'
-                        )}
-                        aria-hidden
-                      >
-                        {item.icon}
-                      </span>
+                          isActive ? 'text-accent' : 'text-ash-500 group-hover:text-ash-300'
+                        )} />
                       {!isCollapsed && (
                         <>
                           <span className="relative z-10 flex-1 font-display uppercase font-bold tracking-[0.18em] text-[10px] whitespace-nowrap overflow-hidden">
@@ -120,7 +116,7 @@ export default function Sidebar({ activeDest, hrefFor, isCollapsed, onToggleColl
                           </span>
                           <kbd
                             className={clsx(
-                              'relative z-10 text-[10px] text-ash-600 transition-opacity',
+                              'relative z-10 text-[10px] text-ash-500 transition-opacity',
                               isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
                             )}
                           >
@@ -154,10 +150,10 @@ export default function Sidebar({ activeDest, hrefFor, isCollapsed, onToggleColl
           ) : (
             <>
               <ChevronLeft size={16} />
-              <span className="flex-1 text-left font-display uppercase font-bold tracking-[0.2em] text-[10px] whitespace-nowrap">
+              <span className="flex-1 text-left font-display uppercase font-bold tracking-[0.1em] text-[10px] whitespace-nowrap">
                 {t('sidebar.collapse')}
               </span>
-              <kbd className="text-[10px] text-ash-600">{mod}\</kbd>
+              <kbd className="text-[10px] text-ash-500">{mod}\</kbd>
             </>
           )}
         </button>

@@ -105,7 +105,7 @@ function ToastItem({ toast, onDismiss }: ToastItemProps) {
     >
       <ToastIcon icon={toast.icon} />
       <div className="min-w-0">
-        <p className={`text-[10px] uppercase tracking-[0.25em] opacity-60 truncate ${textColors[toast.type]}`}>
+        <p className={`text-[10px] uppercase tracking-[0.12em] opacity-60 truncate ${textColors[toast.type]}`}>
           {protocolLabels[toast.type]}
         </p>
         <p className={`text-xs font-bold uppercase tracking-wider truncate mt-0.5 ${textColors[toast.type]}`}>
@@ -201,7 +201,7 @@ function AchievementToast({
             {toast.subtitle}
           </p>
         )}
-        <p className={`text-[10px] uppercase tracking-[0.2em] mt-2 font-mono opacity-50 ${accentText}`}>
+        <p className={`text-[10px] uppercase tracking-[0.1em] mt-2 font-mono opacity-50 ${accentText}`}>
           {t('toast.achievement.class', { tier: tierLabel })}
         </p>
       </div>

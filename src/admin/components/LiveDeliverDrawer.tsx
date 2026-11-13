@@ -14,6 +14,7 @@ import DeliverShell from './DeliverShell';
 import PushDeliverDrawer from './PushDeliverDrawer';
 import { useToast } from './ToastProvider';
 import { ADMIN_SPRING } from '../lib/motion';
+import MIcon from './MIcon';
 
 export type LiveDeliverKind = 'intel' | 'achievements' | 'sms' | 'video' | 'push';
 
@@ -152,7 +153,7 @@ function AchievementDeliverPane({
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder={t('deliver.searchAchievement')}
-          className="w-full bg-black/50 px-4 py-2.5 text-[10px] font-display font-bold uppercase tracking-widest text-bone placeholder:text-ash-600 outline-none focus:bg-accent-10"
+          className="w-full bg-black/50 px-4 py-2.5 text-[10px] font-display font-bold uppercase tracking-wider text-bone placeholder:text-ash-500 outline-none focus:bg-accent-10"
         />
       </div>
       <div className="flex-1 overflow-y-auto custom-scrollbar divide-y divide-white/5">
@@ -167,18 +168,18 @@ function AchievementDeliverPane({
           >
             <img src={a.icon} alt="" className="w-10 h-10 object-cover rounded-sm shrink-0" />
             <div className="min-w-0 flex-1">
-              <p className="text-[11px] font-display font-bold uppercase tracking-widest text-bone truncate">
+              <p className="text-[11px] font-display font-bold uppercase tracking-wider text-bone truncate">
                 {a.title}
               </p>
-              <p className="text-[10px] font-mono text-ash-600 truncate mt-0.5">{a.id}</p>
+              <p className="text-[10px] font-mono text-ash-500 truncate mt-0.5">{a.id}</p>
             </div>
             {selectedId === a.id && (
-              <span className="material-symbols-outlined text-primary text-lg">check_circle</span>
+              <MIcon name="check_circle" className="text-primary text-lg" />
             )}
           </button>
         ))}
         {filtered.length === 0 && (
-          <p className="p-12 text-center text-[10px] font-display font-bold uppercase tracking-widest text-ash-600">
+          <p className="p-12 text-center text-[10px] font-display font-bold uppercase tracking-wider text-ash-500">
             Nenhuma conquista encontrada
           </p>
         )}
@@ -188,7 +189,7 @@ function AchievementDeliverPane({
           type="button"
           disabled={loading}
           onClick={onClose}
-          className="px-4 py-2 text-[10px] font-display font-bold uppercase tracking-widest text-ash-500 hover:text-bone"
+          className="px-4 py-2 text-[10px] font-display font-bold uppercase tracking-wider text-ash-500 hover:text-bone"
         >
           {t('accounts.cancel')}
         </button>
@@ -199,11 +200,11 @@ function AchievementDeliverPane({
           whileTap={{ scale: 0.97 }}
           animate={loading ? { scale: [1, 0.98, 1] } : { scale: 1 }}
           transition={loading ? { repeat: Infinity, duration: 0.8 } : ADMIN_SPRING}
-          className="px-5 py-2 bg-primary text-black text-[10px] font-display font-black uppercase tracking-widest disabled:opacity-30 flex items-center gap-2"
+          className="px-5 py-2 bg-primary text-black text-[10px] font-display font-black uppercase tracking-wider disabled:opacity-30 flex items-center gap-2"
         >
           {loading ? (
             <>
-              <span className="material-symbols-outlined text-sm animate-spin">progress_activity</span>
+              <MIcon name="progress_activity" className="text-sm animate-spin" />
               Outorgando...
             </>
           ) : (

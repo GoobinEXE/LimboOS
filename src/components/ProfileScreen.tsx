@@ -10,6 +10,7 @@ import { useLandscapeLayout } from '../player/hooks/useLandscapeLayout';
 import { useAchievementCatalog } from '../hooks/useAchievementCatalog';
 import type { GalleryImage, PlayerData } from '../types/player';
 import { extractSpotifyEmbedUrl } from '../lib/spotify';
+import { SectionLabel, Stat } from './campaign/AgentReadouts';
 
 interface ProfileScreenProps {
   profile: PlayerData;
@@ -62,35 +63,6 @@ const CornerMarks = () => (
   </>
 );
 
-const SectionHeader = ({
-  title,
-  Icon,
-  tone = 'text-primary',
-  action,
-}: {
-  index?: string;
-  title: string;
-  Icon: React.FC<{ size?: number; className?: string }>;
-  tone?: string;
-  action?: React.ReactNode;
-}) => (
-  <div className="flex items-center gap-3 mb-3">
-    <h2 className={`text-protocol flex items-center gap-2 ${tone}`}>
-      <Icon size={12} />
-      {title}
-    </h2>
-    <span aria-hidden className="flex-1 h-px bg-border-subtle" />
-    {action}
-  </div>
-);
-
-const Stat = ({ value, label }: { value: React.ReactNode; label: string }) => (
-  <div className="flex-1 flex flex-col items-center py-3 border-r border-border-subtle last:border-r-0">
-    <span className="text-mono-ui text-xl font-semibold text-primary leading-none">{value}</span>
-    <span className="text-protocol text-[10px] text-ash-500 mt-1.5">{label}</span>
-  </div>
-);
-
 const ActionRow = ({
   onClick,
   Icon,
@@ -103,7 +75,7 @@ const ActionRow = ({
   <button
     type="button"
     onClick={onClick}
-    className="w-full flex items-center gap-3 px-3.5 py-3 rounded-card bg-surface-raised hover:bg-accent-05 active:scale-[0.99] transition duration-200 group text-left"
+    className="w-full flex items-center gap-3 px-3.5 py-3 rounded-card bg-surface-raised hover:bg-accent-05 active:translate-y-px transition duration-200 group text-left"
   >
     <div className="w-9 h-9 rounded-control bg-surface-sunken text-primary flex items-center justify-center shrink-0 group-hover:bg-accent-10 transition-colors">
       <Icon size={15} />
@@ -206,14 +178,14 @@ export default function ProfileScreen({
       <div className="w-full h-full bg-lcd-paper text-lcd-ink flex flex-col p-1 font-mono uppercase text-[10px] select-none tracking-widest relative">
         {/* Header */}
         <div className="flex justify-between items-center border-b-2 border-lcd-ink pb-1 shrink-0 font-bold mb-2">
-          <button onClick={onBack} className="hover:bg-lcd-ink hover:text-lcd-paper px-1 active:scale-[0.97] transition">
+          <button onClick={onBack} className="hover:bg-lcd-ink hover:text-lcd-paper px-1 active:translate-y-px transition">
             {tCommon('actions.backBracket')}
           </button>
           <span className="text-[10px] flex items-center gap-1">
             <span className="w-1.5 h-1.5 bg-lcd-ink animate-led" />
             {t('profile.header.nokia')}
           </span>
-          <button onClick={onLogout} className="hover:bg-lcd-ink hover:text-lcd-paper px-1 active:scale-[0.97] transition">
+          <button onClick={onLogout} className="hover:bg-lcd-ink hover:text-lcd-paper px-1 active:translate-y-px transition">
             {tCommon('actions.exitBracket')}
           </button>
         </div>
@@ -276,22 +248,22 @@ export default function ProfileScreen({
 
           {/* Ações */}
           <div className="space-y-1">
-            <button onClick={onChangeMission} className="w-full border-2 border-lcd-ink flex justify-between px-2 py-2 hover:bg-lcd-ink hover:text-lcd-paper font-black active:scale-[0.97] transition shadow-[1px_1px_0px_#111e14]">
+            <button onClick={onChangeMission} className="w-full border-2 border-lcd-ink flex justify-between px-2 py-2 hover:bg-lcd-ink hover:text-lcd-paper font-black active:translate-y-px transition shadow-[1px_1px_0px_#111e14]">
               <span>{t('profile.action.missionNokia')}</span>
               <span>&raquo;</span>
             </button>
-            <button onClick={onChangeCharacter} className="w-full border-2 border-lcd-ink flex justify-between px-2 py-2 hover:bg-lcd-ink hover:text-lcd-paper font-black active:scale-[0.97] transition shadow-[1px_1px_0px_#111e14]">
+            <button onClick={onChangeCharacter} className="w-full border-2 border-lcd-ink flex justify-between px-2 py-2 hover:bg-lcd-ink hover:text-lcd-paper font-black active:translate-y-px transition shadow-[1px_1px_0px_#111e14]">
               <span>{t('profile.action.agentNokia')}</span>
               <span>&raquo;</span>
             </button>
             {onOpenDossier && (
-              <button onClick={onOpenDossier} className="w-full border-2 border-lcd-ink flex justify-between px-2 py-2 hover:bg-lcd-ink hover:text-lcd-paper font-black active:scale-[0.97] transition shadow-[1px_1px_0px_#111e14]">
+              <button onClick={onOpenDossier} className="w-full border-2 border-lcd-ink flex justify-between px-2 py-2 hover:bg-lcd-ink hover:text-lcd-paper font-black active:translate-y-px transition shadow-[1px_1px_0px_#111e14]">
                 <span>{t('profile.action.dossierNokia')}</span>
                 <span>&raquo;</span>
               </button>
             )}
             {onOpenAdmin && (
-              <button onClick={onOpenAdmin} className="w-full border-2 border-dashed border-lcd-ink flex justify-between px-2 py-2 hover:bg-lcd-ink hover:text-lcd-paper font-black active:scale-[0.97] transition">
+              <button onClick={onOpenAdmin} className="w-full border-2 border-dashed border-lcd-ink flex justify-between px-2 py-2 hover:bg-lcd-ink hover:text-lcd-paper font-black active:translate-y-px transition">
                 <span>{t('profile.action.consoleNokia')}</span>
                 <span>&raquo;</span>
               </button>
@@ -308,7 +280,7 @@ export default function ProfileScreen({
             title={t('profile.deck.nokia')}
             action={
               onUpdateSpotify && !isEditingSpotify ? (
-                <button onClick={startEditingSpotify} className="hover:bg-lcd-ink hover:text-lcd-paper px-1 active:scale-[0.97] transition text-[8px] border border-lcd-ink">
+                <button onClick={startEditingSpotify} className="hover:bg-lcd-ink hover:text-lcd-paper px-1 active:translate-y-px transition text-[8px] border border-lcd-ink">
                   {embedUrl ? t('profile.deck.editShort') : t('profile.deck.linkShort')}
                 </button>
               ) : undefined
@@ -326,8 +298,8 @@ export default function ProfileScreen({
                 />
                 {spotifyError && <p role="alert" className="text-[10px]">{tCommon('error')}: {spotifyError}</p>}
                 <div className="flex gap-1 justify-end">
-                  <button onClick={handleCancelEdit} className="border border-lcd-ink px-2 py-0.5 hover:bg-lcd-ink hover:text-lcd-paper active:scale-[0.97] transition text-[8px]">{tCommon('actions.cancelShort')}</button>
-                  <button onClick={handleSaveSpotify} className="border border-lcd-ink px-2 py-0.5 hover:bg-lcd-ink hover:text-lcd-paper active:scale-[0.97] transition font-black text-[8px]">{tCommon('actions.saveShort')}</button>
+                  <button onClick={handleCancelEdit} className="border border-lcd-ink px-2 py-0.5 hover:bg-lcd-ink hover:text-lcd-paper active:translate-y-px transition text-[8px]">{tCommon('actions.cancelShort')}</button>
+                  <button onClick={handleSaveSpotify} className="border border-lcd-ink px-2 py-0.5 hover:bg-lcd-ink hover:text-lcd-paper active:translate-y-px transition font-black text-[8px]">{tCommon('actions.saveShort')}</button>
                 </div>
               </div>
             ) : embedUrl ? (
@@ -351,7 +323,7 @@ export default function ProfileScreen({
             ) : (
               <button
                 onClick={handleGeneratePhone}
-                className="w-full border-2 border-lcd-ink py-1.5 text-center hover:bg-lcd-ink hover:text-lcd-paper active:scale-[0.97] transition text-[9px] font-black"
+                className="w-full border-2 border-lcd-ink py-1.5 text-center hover:bg-lcd-ink hover:text-lcd-paper active:translate-y-px transition text-[9px] font-black"
               >
                 {t('profile.contact.generateNokia')}
               </button>
@@ -379,7 +351,7 @@ export default function ProfileScreen({
   }
 
   const iconButtonClass =
-    'w-10 h-10 rounded-control bg-surface-panel flex items-center justify-center active:scale-[0.97] transition duration-200 shrink-0';
+    'w-10 h-10 rounded-control bg-surface-panel flex items-center justify-center active:translate-y-px transition duration-200 shrink-0';
 
   return (
     <motion.div
@@ -488,9 +460,7 @@ export default function ProfileScreen({
 
           {/* Deck */}
           <section className="px-4 pt-5 pb-2">
-            <SectionHeader
-              
-              title={t('profile.deck.title')}
+            <SectionLabel as="h2" className="mb-3" title={t('profile.deck.title')}
               Icon={Music}
               tone="text-[#1DB954]"
               action={
@@ -524,11 +494,11 @@ export default function ProfileScreen({
                       value={spotifyInput}
                       onChange={(e) => { setSpotifyInput(e.target.value); setSpotifyError(''); }}
                       placeholder={t('profile.deck.placeholder')}
-                      className="w-full bg-surface-sunken rounded-control px-3 py-2 text-base text-white placeholder:text-ash-600 focus:outline-none transition-colors font-mono"
+                      className="w-full bg-surface-sunken rounded-control px-3 py-2 text-base text-white placeholder:text-ash-500 focus:outline-none transition-colors font-mono"
                       autoFocus
                     />
                     {spotifyError && <p className="text-red-400 text-[10px] mt-1.5 font-sans">{spotifyError}</p>}
-                    <p className="text-[10px] text-ash-600 mt-2 leading-relaxed font-sans">
+                    <p className="text-[10px] text-ash-500 mt-2 leading-relaxed font-sans">
                       {t('profile.deck.hint')}
                     </p>
                   </div>
@@ -580,7 +550,7 @@ export default function ProfileScreen({
                     <Music size={20} />
                   </div>
                   <p className="text-protocol text-ash-400 mb-1">{t('profile.deck.emptyTitle')}</p>
-                  <p className="text-[10px] text-ash-600 font-sans">{t('profile.deck.emptyHint')}</p>
+                  <p className="text-[10px] text-ash-500 font-sans">{t('profile.deck.emptyHint')}</p>
                   {onUpdateSpotify && (
                     <button
                       type="button"
@@ -598,7 +568,7 @@ export default function ProfileScreen({
 
           {/* Linha de contato */}
           <section className="px-4 pt-5 pb-2">
-            <SectionHeader  title={t('profile.contact.title')} Icon={Phone} />
+            <SectionLabel as="h2" className="mb-3" title={t('profile.contact.title')} Icon={Phone} />
             <div className="rounded-card bg-surface-raised p-3">
               {profile.character.phoneNumber ? (
                 <div className="flex items-center justify-between gap-3">
@@ -615,7 +585,7 @@ export default function ProfileScreen({
                   <button
                     type="button"
                     onClick={handleGeneratePhone}
-                    className="w-full py-2.5 rounded-control bg-accent text-black text-protocol hover:bg-primary-container active:scale-[0.98] transition"
+                    className="w-full py-2.5 rounded-control bg-accent text-black text-protocol hover:bg-primary-container active:translate-y-px transition"
                   >
                     {t('profile.contact.generate')}
                   </button>
@@ -626,15 +596,13 @@ export default function ProfileScreen({
 
           {/* Galeria */}
           <section className="px-4 pt-5 pb-2">
-            <SectionHeader  title={t('profile.gallery.title')} Icon={Image} />
+            <SectionLabel as="h2" className="mb-3" title={t('profile.gallery.title')} Icon={Image} />
             <PlayerGallery images={galleryImages} />
           </section>
 
           {/* Conquistas */}
           <section className="px-4 pt-5 pb-6">
-            <SectionHeader
-              
-              title={t('profile.achievements.title')}
+            <SectionLabel as="h2" className="mb-3" title={t('profile.achievements.title')}
               Icon={Trophy}
               action={<span className="text-mono-ui text-[10px] text-ash-500">{profile.achievementIds.length}/{achievements.length}</span>}
             />

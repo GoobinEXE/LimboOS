@@ -22,6 +22,7 @@ import {
 } from '../lib/campaignResources';
 import type { CampaignScopeRequest } from '../lib/adminNavigation';
 import { useAchievementEditor } from '../hooks/useAchievementEditor';
+import MIcon from './MIcon';
 
 interface AchievementsPanelProps {
   embedded?: boolean;
@@ -150,7 +151,7 @@ export default function AchievementsPanel({
           ? 'text-yellow-300 border-yellow-500/30 bg-yellow-500/10'
           : 'text-ash-400 border-border bg-white/5';
     return (
-      <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-sm ${tone}`}>
+      <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-sm ${tone}`}>
         {ACHIEVEMENT_TIER_LABELS[tier]}
       </span>
     );
@@ -162,7 +163,7 @@ export default function AchievementsPanel({
       {!embedded && (
         <div className="flex items-center gap-4">
           <div className="w-1.5 h-7 rounded-inset bg-secondary animate-led" />
-          <h2 className="font-black uppercase tracking-widest text-lg text-bone">
+          <h2 className="font-black uppercase tracking-wider text-lg text-bone">
             {t('achievements.title')}
           </h2>
         </div>
@@ -172,9 +173,7 @@ export default function AchievementsPanel({
         <div className="p-6 border-b border-primary/10 bg-black/40 flex flex-col gap-4 relative z-10">
           <div className="flex justify-between items-center gap-4 flex-wrap">
             <div className="relative w-full max-w-md">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-ash-700 text-sm">
-                search
-              </span>
+              <MIcon name="search" className="absolute left-4 top-1/2 -translate-y-1/2 text-ash-700 text-sm" />
               <input
                 type="text"
                 placeholder={t('achievements.filter')}
@@ -184,7 +183,7 @@ export default function AchievementsPanel({
               />
             </div>
             <div className="flex items-center gap-2 flex-wrap sm:ml-auto">
-              <span className="text-[10px] font-black text-ash-600 uppercase tracking-widest shrink-0">
+              <span className="text-[10px] font-black text-ash-500 uppercase tracking-wider shrink-0">
                 {filteredDefs.length} {t('achievements.countLabel')}
                 {!isRemote && (
                   <span className="ml-2 text-amber-500/80">· {t('achievements.localHint')}</span>
@@ -194,14 +193,14 @@ export default function AchievementsPanel({
                 type="button"
                 disabled={importing}
                 onClick={handleImport}
-                className="text-[10px] font-black uppercase tracking-widest px-3 py-2 text-secondary hover:bg-secondary/10 rounded-sm disabled:opacity-40"
+                className="text-[10px] font-black uppercase tracking-wider px-3 py-2 text-secondary hover:bg-secondary/10 rounded-sm disabled:opacity-40"
               >
                 {importing ? '…' : t('achievements.import')}
               </button>
               <button
                 type="button"
                 onClick={() => openCreate()}
-                className="text-[10px] font-black uppercase tracking-widest px-3 py-2 bg-primary text-black rounded-sm hover:bg-primary-container"
+                className="text-[10px] font-black uppercase tracking-wider px-3 py-2 bg-primary text-black rounded-sm hover:bg-primary-container"
               >
                 {t('achievements.create')}
               </button>
@@ -211,7 +210,7 @@ export default function AchievementsPanel({
             <button
               type="button"
               onClick={() => setCategoryFilter('all')}
-              className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-sm transition-colors ${
+              className={`text-[10px] font-black uppercase tracking-wider px-3 py-1.5 rounded-sm transition-colors ${
                 categoryFilter === 'all'
                   ? 'text-secondary bg-secondary/10'
                   : 'text-ash-500 hover:text-bone'
@@ -224,7 +223,7 @@ export default function AchievementsPanel({
                 key={cat}
                 type="button"
                 onClick={() => setCategoryFilter(cat)}
-                className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-sm transition-colors ${
+                className={`text-[10px] font-black uppercase tracking-wider px-3 py-1.5 rounded-sm transition-colors ${
                   categoryFilter === cat
                     ? 'text-secondary bg-secondary/10'
                     : 'text-ash-500 hover:text-bone'
@@ -239,15 +238,15 @@ export default function AchievementsPanel({
         <div className="flex-1 overflow-y-auto p-8 bg-black/20 custom-scrollbar relative z-10 space-y-8">
           {filteredDefs.length === 0 && (
             <div className="p-24 text-center text-ash-500 flex flex-col items-center">
-              <span className="material-symbols-outlined text-6xl mb-4 text-ash-700" aria-hidden>search_off</span>
-              <p className="text-[10px] font-black uppercase tracking-[0.4em]">{t('achievements.empty')}</p>
+              <MIcon name="search_off" className="text-6xl mb-4 text-ash-700" />
+              <p className="text-[10px] font-black uppercase tracking-[0.12em]">{t('achievements.empty')}</p>
               {campaignScope !== 'all' && campaignScope !== 'global' && (
                 <div className="mt-5 flex flex-col items-center gap-3">
                   <p className="text-[12px] text-ash-400 max-w-sm leading-relaxed">
                     {t('scope.emptyForMission')}
                   </p>
                   <button type="button" onClick={() => openCreate()} className="lmb-btn lmb-btn-primary">
-                    <span className="material-symbols-outlined text-base" aria-hidden>add</span>
+                    <MIcon name="add" className="text-base" />
                     {t('achievements.createForMission')}
                   </button>
                 </div>
@@ -256,7 +255,7 @@ export default function AchievementsPanel({
           )}
           {groups.map((group) => (
             <div key={group.category} className="space-y-4">
-              <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-ash-500">
+              <h3 className="text-[10px] font-black uppercase tracking-[0.12em] text-ash-500">
                 {group.label} // {group.defs.length}
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -279,7 +278,7 @@ export default function AchievementsPanel({
                             {ach.title}
                           </h4>
                           {tierBadge(ach.tier)}
-                          <span className="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-sm text-ash-400">
+                          <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-sm text-ash-400">
                             {PLATFORM_LABELS[
                               ach.platforms.includes('walkman')
                                 ? 'walkman'
@@ -289,23 +288,21 @@ export default function AchievementsPanel({
                             ]}
                           </span>
                           {ach.source === 'suggestion' && (
-                            <span className="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-sm text-amber-400/80 bg-accent-10">
+                            <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-sm text-amber-400/80 bg-accent-10">
                               {t('achievements.badgeSuggestion')}
                             </span>
                           )}
                           {ach.enabled === false && (
-                            <span className="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-sm text-red-400/80 bg-red-500/10">
+                            <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-sm text-red-400/80 bg-red-500/10">
                               {t('achievements.badgeDisabled')}
                             </span>
                           )}
                         </div>
-                        <p className="text-[10px] font-mono text-ash-600 font-bold uppercase mt-1 tracking-widest">
+                        <p className="text-[10px] font-mono text-ash-500 font-bold uppercase mt-1 tracking-wider">
                           ID: {ach.id}
                         </p>
                         <p className="flex flex-wrap items-center gap-1 mt-1.5 mb-2">
-                          <span className="material-symbols-outlined text-sm text-ash-600" aria-hidden>
-                            {ach.campaignIds === 'global' ? 'public' : 'map'}
-                          </span>
+                          <MIcon name={ach.campaignIds === 'global' ? 'public' : 'map'} className="text-sm text-ash-500" />
                           {ach.campaignIds === 'global' ? (
                             <span className="text-[10px] text-ash-400">{t('scope.bindGlobal')}</span>
                           ) : ach.campaignIds.length === 0 ? (
@@ -339,7 +336,7 @@ export default function AchievementsPanel({
                         type="button"
                         onClick={() => openEdit(ach)}
                         disabled={!isRemote}
-                        className="flex-1 text-[10px] font-black uppercase tracking-widest py-2 text-ash-400 hover:text-bone rounded-sm disabled:opacity-30"
+                        className="flex-1 text-[10px] font-black uppercase tracking-wider py-2 text-ash-400 hover:text-bone rounded-sm disabled:opacity-30"
                       >
                         {t('achievements.edit')}
                       </button>
@@ -347,7 +344,7 @@ export default function AchievementsPanel({
                         type="button"
                         onClick={() => handleToggleEnabled(ach)}
                         disabled={!isRemote}
-                        className="flex-1 text-[10px] font-black uppercase tracking-widest py-2 text-ash-400 hover:text-amber-300 rounded-sm disabled:opacity-30"
+                        className="flex-1 text-[10px] font-black uppercase tracking-wider py-2 text-ash-400 hover:text-amber-300 rounded-sm disabled:opacity-30"
                       >
                         {ach.enabled === false
                           ? t('achievements.enable')
@@ -357,7 +354,7 @@ export default function AchievementsPanel({
                         type="button"
                         onClick={() => handleDelete(ach)}
                         disabled={!isRemote}
-                        className="text-[10px] font-black uppercase tracking-widest px-3 py-2 text-red-400/70 hover:text-red-300 rounded-sm disabled:opacity-30 bg-red-500/10"
+                        className="text-[10px] font-black uppercase tracking-wider px-3 py-2 text-red-400/70 hover:text-red-300 rounded-sm disabled:opacity-30 bg-red-500/10"
                       >
                         {t('achievements.delete')}
                       </button>

@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { motion } from 'motion/react';
 import { ADMIN_SPRING_INDICATOR } from '../lib/motion';
+import MIcon from './MIcon';
 
 export interface AdminSubTab<T extends string> {
   id: T;
@@ -70,7 +71,7 @@ export default function AdminSubTabs<T extends string>({
             tabIndex={isActive ? 0 : -1}
             title={tab.title}
             onClick={() => !tab.disabled && onChange(tab.id)}
-            className={`relative flex items-center gap-2 h-10 px-4 text-[10px] font-display font-bold tracking-[0.2em] uppercase rounded-t-inset transition-colors ${
+            className={`relative flex items-center gap-2 h-10 px-4 text-[10px] font-display font-bold tracking-[0.1em] uppercase rounded-t-inset transition-colors ${
               isActive
                 ? 'text-primary'
                 : tab.disabled
@@ -78,7 +79,7 @@ export default function AdminSubTabs<T extends string>({
                   : 'text-ash-500 hover:text-bone hover:bg-white/[0.03]'
             }`}
           >
-            <span className="material-symbols-outlined text-base" aria-hidden>{tab.icon}</span>
+            <MIcon name={tab.icon} className="text-base" />
             <span>{tab.label}</span>
             {isActive && (
               <motion.span

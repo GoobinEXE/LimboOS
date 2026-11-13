@@ -14,6 +14,7 @@ import { IntelManager, IntelBase, VisualIntel, TextIntel } from '../../services/
 import RetroSpinner from '../player/RetroSpinner';
 import { extractSpotifyEmbedUrl, isValidSpotifyPlaylistInput } from '../../lib/spotify';
 import IntelTypeIcon from '../player/IntelTypeIcon';
+import { SectionLabel, Stat } from './AgentReadouts';
 
 const STATUS_STYLE = {
   vivo: { labelKey: 'status.ativo', color: 'text-phosphor-400', dot: 'bg-phosphor-400', border: 'border-phosphor-500/30' },
@@ -56,13 +57,6 @@ const Row = ({ label, children }: { label: string; children: React.ReactNode }) 
     <span className="text-protocol text-[10px] text-ash-500 shrink-0">{label}</span>
     <span aria-hidden className="flex-1 border-b border-dotted border-border-strong -translate-y-0.75" />
     <span className="text-mono-ui text-[11px] text-right min-w-0 truncate">{children}</span>
-  </div>
-);
-
-const SectionLabel = ({ title, tone = 'text-primary' }: { title: string; tone?: string }) => (
-  <div className="flex items-center gap-3">
-    <h3 className={`text-protocol ${tone}`}>{title}</h3>
-    <span aria-hidden className="flex-1 h-px bg-border-subtle" />
   </div>
 );
 
@@ -230,7 +224,7 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager, onUpdat
           type="button"
           onClick={onClose}
           aria-label={t('dossier.closeAria')}
-          className="w-11 h-11 rounded-control bg-surface-panel text-primary flex items-center justify-center hover:bg-accent-10 active:scale-[0.97] transition duration-200 group shrink-0"
+          className="w-11 h-11 rounded-control bg-surface-panel text-primary flex items-center justify-center hover:bg-accent-10 active:translate-y-px transition duration-200 group shrink-0"
         >
           <X size={20} className="group-hover:rotate-90 transition-transform duration-300" />
         </button>
@@ -243,10 +237,7 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager, onUpdat
           { val: stats.earnedIds.size, lab: t('dossier.stat.medals') },
           { val: intelManager?.getByType('VISUAL').length || 0, lab: t('dossier.stat.evidence') }
         ].map((s, i) => (
-          <div key={i} className="flex-1 flex flex-col items-center py-3 border-r border-border-subtle last:border-r-0">
-            <span className="text-mono-ui text-xl font-semibold text-primary leading-none">{String(s.val).padStart(2, '0')}</span>
-            <span className="text-protocol text-[10px] text-ash-500 mt-1.5">{s.lab}</span>
-          </div>
+          <Stat key={i} value={String(s.val).padStart(2, '0')} label={s.lab} />
         ))}
       </div>
 
@@ -342,7 +333,7 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager, onUpdat
                         value={spotifyInput}
                         onChange={(e) => { setSpotifyInput(e.target.value); setSpotifyError(''); }}
                         placeholder={t('profile.deck.placeholder')}
-                        className="w-full bg-surface-sunken rounded-control px-3 py-2 text-base text-white placeholder:text-ash-600 focus:outline-none transition-colors font-mono"
+                        className="w-full bg-surface-sunken rounded-control px-3 py-2 text-base text-white placeholder:text-ash-500 focus:outline-none transition-colors font-mono"
                         autoFocus
                       />
                       {spotifyError && <p className="text-red-400 text-xs mt-1.5 font-sans leading-relaxed">{spotifyError}</p>}
@@ -426,12 +417,12 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager, onUpdat
 
               <div className="flex items-center justify-between px-1">
                 <span className="text-protocol text-[10px] text-ash-500">{accessLabel(activeLevel)}</span>
-                <span className="text-mono-ui text-[10px] text-ash-600">{t('dossier.recordsCount', { n: String(levelItems.length).padStart(2, '0') })}</span>
+                <span className="text-mono-ui text-[10px] text-ash-500">{t('dossier.recordsCount', { n: String(levelItems.length).padStart(2, '0') })}</span>
               </div>
 
               <div className="space-y-2">
                 {levelItems.length === 0 ? (
-                  <div className="rounded-card bg-surface-raised/40 p-10 text-center flex flex-col items-center gap-3 text-ash-600">
+                  <div className="rounded-card bg-surface-raised/40 p-10 text-center flex flex-col items-center gap-3 text-ash-500">
                     <Radio size={28} />
                     <span className="text-protocol text-[10px]">{t('dossier.noRecords')}</span>
                   </div>
@@ -448,7 +439,7 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager, onUpdat
                         onClick={() => openable && setSelectedIntel(item)}
                         disabled={!openable}
                         className={`w-full text-left rounded-card bg-surface-raised p-3.5 flex items-center gap-3.5 transition duration-200 group ${
-                          openable ? 'cursor-pointer hover:bg-accent-05 active:scale-[0.99]' : 'cursor-default'
+                          openable ? 'cursor-pointer hover:bg-accent-05 active:translate-y-px' : 'cursor-default'
                         }`}
                       >
                         <div className="w-10 h-10 rounded-control bg-surface-sunken flex items-center justify-center shrink-0 transition-colors">
@@ -470,7 +461,7 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager, onUpdat
             <motion.div key="conquistas" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} className="p-5 sm:p-6 space-y-4">
               <div className="flex items-center justify-between px-1">
                 <span className="text-protocol text-[10px] text-ash-500">{t('dossier.opsRecords')}</span>
-                <span className="text-mono-ui text-[10px] text-ash-600">{stats.earnedIds.size}/{achievements.length}</span>
+                <span className="text-mono-ui text-[10px] text-ash-500">{stats.earnedIds.size}/{achievements.length}</span>
               </div>
               <AchievementCatalog
                 grantDocIds={playerData.achievementIds || []}
@@ -488,7 +479,7 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager, onUpdat
         <div className="flex items-center gap-2 text-protocol text-[10px] text-ash-400">
           <span className="w-1.5 h-1.5 bg-primary rounded-full animate-led" /> {t('dossier.secureConn')}
         </div>
-        <div className="text-mono-ui text-[10px] text-ash-600">{t('dossier.gridNode')}</div>
+        <div className="text-mono-ui text-[10px] text-ash-500">{t('dossier.gridNode')}</div>
       </footer>
 
       <AnimatePresence>
@@ -511,7 +502,7 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager, onUpdat
                 <div aria-hidden className="absolute inset-x-0 top-0 h-0.75 bg-linear-to-r from-accent via-accent-60 to-transparent z-10" />
                 <div className="flex items-center justify-between px-4 pt-4">
                   <span className="text-protocol text-[10px] text-primary/70">{t('dossier.unlockedFile')}</span>
-                  <span className="text-mono-ui text-[10px] text-ash-600">{selectedIntel.getFormattedLevel()}</span>
+                  <span className="text-mono-ui text-[10px] text-ash-500">{selectedIntel.getFormattedLevel()}</span>
                 </div>
                 {selectedIntel instanceof VisualIntel ? (
                   <div className="p-4">

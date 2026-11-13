@@ -47,7 +47,7 @@ export default function MiniAppsOverlay({ screen, playerData, limboStatus, setSc
         <div className="absolute top-0 inset-x-0 h-px bg-linear-to-r from-transparent via-accent-40 to-transparent" />
         <div className="absolute bottom-0 inset-x-0 h-px bg-linear-to-r from-transparent via-border-strong to-transparent" />
         <div
-          className="absolute text-protocol text-[10px] text-accent/50 tracking-[0.35em]"
+          className="absolute text-protocol text-[10px] text-accent/50 tracking-[0.12em]"
           style={{
             top: 'max(0.75rem, env(safe-area-inset-top, 0px))',
             left: 'max(0.75rem, env(safe-area-inset-left, 0px))',
@@ -56,7 +56,7 @@ export default function MiniAppsOverlay({ screen, playerData, limboStatus, setSc
           LIMBOOS // PORTAL
         </div>
         <div
-          className="absolute text-mono-ui text-[10px] text-ash-500 uppercase tracking-widest"
+          className="absolute text-mono-ui text-[10px] text-ash-500 uppercase tracking-wider"
           style={{
             top: 'max(0.75rem, env(safe-area-inset-top, 0px))',
             right: 'max(0.75rem, env(safe-area-inset-right, 0px))',

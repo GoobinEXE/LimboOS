@@ -1,4 +1,5 @@
 import { getPlatform, isNative } from './platform';
+import { haptic } from './haptics';
 
 /**
  * Ajustes do shell nativo no boot: status bar clara sobre o fundo escuro e
@@ -20,6 +21,19 @@ export function initNativeShell(): void {
   void import('@capacitor/status-bar')
     .then(({ StatusBar, Style }) => StatusBar.setStyle({ style: Style.Dark }))
     .catch(() => {});
+
+  // Toque em qualquer controle dá um retorno tátil leve: o deslocamento de 1 px
+  // do :active some embaixo do dedo. O walkman tem o próprio retorno (data-haptic="off").
+  document.addEventListener(
+    'pointerdown',
+    (e) => {
+      const el = (e.target as Element | null)?.closest?.('button, [role="button"], a[href], summary');
+      if (!el || el.closest('[data-haptic="off"]')) return;
+      if ((el as HTMLButtonElement).disabled || el.getAttribute('aria-disabled') === 'true') return;
+      haptic('light');
+    },
+    { passive: true, capture: true },
+  );
 
   requestAnimationFrame(() => {
     void import('@capacitor/splash-screen')

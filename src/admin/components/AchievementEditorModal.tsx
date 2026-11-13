@@ -11,6 +11,7 @@ import {
 } from '../../services/AchievementManager';
 import { useAdminCampaigns } from '../hooks/useAdminCampaigns';
 import CampaignBindingPicker from './CampaignBindingPicker';
+import MIcon from './MIcon';
 
 const STAT_KEYS: (keyof PlayerStats)[] = [
   'totalListenTime',
@@ -184,7 +185,7 @@ type Props = {
 
 const fieldClass =
   'w-full bg-black/50 text-[11px] font-bold uppercase px-3 py-2.5 text-bone outline-none rounded-sm';
-const labelClass = 'text-[10px] font-black uppercase tracking-widest text-ash-500 mb-1.5 block';
+const labelClass = 'text-[10px] font-black uppercase tracking-wider text-ash-500 mb-1.5 block';
 
 export default function AchievementEditorModal({
   open,
@@ -249,19 +250,17 @@ export default function AchievementEditorModal({
         if (e.target === e.currentTarget && !saving) onClose();
       }}
     >
-      <div className="bg-seam w-full max-w-2xl max-h-[90vh] overflow-hidden rounded-card shadow-2xl flex flex-col">
+      <div className="bg-seam w-full max-w-2xl max-h-[90vh] overflow-hidden rounded-card shadow-panel flex flex-col">
         <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-black/40">
-          <h3 className="text-xs font-black uppercase tracking-[0.2em] text-bone">
+          <h3 className="text-xs font-black uppercase tracking-[0.1em] text-bone">
             {isEdit ? 'Editar conquista' : 'Nova conquista'}
           </h3>
           <button
             type="button"
             disabled={saving}
             onClick={onClose}
-            className="text-ash-500 hover:text-bone material-symbols-outlined text-xl"
-          >
-            close
-          </button>
+            className="text-ash-500 hover:text-bone text-xl"
+          ><MIcon name="close" /></button>
         </div>
 
         <div className="flex-1 overflow-y-auto p-6 space-y-5 custom-scrollbar">
@@ -272,11 +271,11 @@ export default function AchievementEditorModal({
                   <img src={iconSrc} alt="" className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-ash-700">
-                    <span className="material-symbols-outlined text-3xl">military_tech</span>
+                    <MIcon name="military_tech" className="text-3xl" />
                   </div>
                 )}
               </div>
-              <label className="block cursor-pointer text-[10px] font-black uppercase tracking-widest text-secondary px-2 py-1.5 text-center rounded-sm hover:bg-secondary/10">
+              <label className="block cursor-pointer text-[10px] font-black uppercase tracking-wider text-secondary px-2 py-1.5 text-center rounded-sm hover:bg-secondary/10">
                 Foto
                 <input
                   type="file"
@@ -377,7 +376,7 @@ export default function AchievementEditorModal({
               </select>
             </div>
             <div className="flex items-end gap-4 pb-1">
-              <label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-ash-400 cursor-pointer">
+              <label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-wider text-ash-400 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={form.isSecret}
@@ -385,7 +384,7 @@ export default function AchievementEditorModal({
                 />
                 Secreta
               </label>
-              <label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-ash-400 cursor-pointer">
+              <label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-wider text-ash-400 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={form.enabled}
@@ -404,7 +403,7 @@ export default function AchievementEditorModal({
                   key={p}
                   type="button"
                   onClick={() => togglePlatform(p)}
-                  className={`text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-sm ${
+                  className={`text-[10px] font-black uppercase tracking-wider px-3 py-1.5 rounded-sm ${
                     form.platforms.includes(p)
                       ? 'text-secondary bg-secondary/10'
                       : 'text-ash-500'
@@ -535,7 +534,7 @@ export default function AchievementEditorModal({
                     className={`text-[10px] font-mono px-2 py-1 rounded-sm ${
                       form.ruleFlagKeys.includes(k)
                         ? 'text-secondary'
-                        : 'text-ash-600'
+                        : 'text-ash-500'
                     }`}
                   >
                     {k}
@@ -551,7 +550,7 @@ export default function AchievementEditorModal({
             type="button"
             disabled={saving}
             onClick={onClose}
-            className="flex-1 px-4 py-3 text-[10px] font-black uppercase tracking-widest text-ash-500 hover:text-bone bg-[#333] rounded-sm"
+            className="flex-1 px-4 py-3 text-[10px] font-black uppercase tracking-wider text-ash-500 hover:text-bone bg-[#333] rounded-sm"
           >
             Cancelar
           </button>
@@ -559,7 +558,7 @@ export default function AchievementEditorModal({
             type="button"
             disabled={saving || !form.id.trim() || !form.title.trim()}
             onClick={() => onSave(form, file)}
-            className="flex-1 px-4 py-3 text-[10px] font-black uppercase tracking-widest bg-primary text-black rounded-sm disabled:opacity-40"
+            className="flex-1 px-4 py-3 text-[10px] font-black uppercase tracking-wider bg-primary text-black rounded-sm disabled:opacity-40"
           >
             {saving ? 'Salvando…' : 'Salvar'}
           </button>

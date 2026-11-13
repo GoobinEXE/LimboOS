@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import type { Campaign } from '../../data/campaigns';
 import type { CampaignScope } from '../lib/campaignResources';
+import MIcon from './MIcon';
 
 interface CampaignScopeSelectProps {
   value: CampaignScope;
@@ -23,12 +24,7 @@ export default function CampaignScopeSelect({
   return (
     <label className={`relative flex items-center min-w-0 ${className}`}>
       <span className="sr-only">{t('scope.label')}</span>
-      <span
-        className="material-symbols-outlined absolute left-2.5 text-base text-ash-500 pointer-events-none"
-        aria-hidden
-      >
-        map
-      </span>
+      <MIcon name="map" className="absolute left-2.5 text-base text-ash-500 pointer-events-none" />
       <select
         value={value}
         onChange={(e) => onChange(e.target.value as CampaignScope)}

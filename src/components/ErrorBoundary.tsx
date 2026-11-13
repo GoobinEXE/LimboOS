@@ -33,7 +33,7 @@ class ErrorBoundary extends React.Component<Props, State> {
         <div className="min-h-screen bg-surface-sunken flex items-center justify-center p-6" role="alert">
           <div className="max-w-md w-full">
             {/* Placa de advertência da bancada (hero: WARNING / SYSTEM INSTABILITY) */}
-            <div className="bg-[#d9ad3c] text-[#14110a] px-5 py-3 rounded-inset shadow-xl">
+            <div className="bg-[#d9ad3c] text-[#14110a] px-5 py-3 rounded-inset shadow-panel">
               <p className="font-display font-bold text-2xl tracking-[0.08em] uppercase leading-none">
                 {i18n.t('errorBoundary.title', { ns: 'common' })}
               </p>

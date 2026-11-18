@@ -1,0 +1,12 @@
+{ "pacote": "A9-entrada", "chaves": [
+  { "id": "J06", "ns": "player", "chave": "login.password.show", "pt-BR": "Mostrar senha", "en": "Show password", "onde": "rótulo do botão de olho no campo de senha do login (aria-label e title)", "limite": 20, "publico": "jogador" },
+  { "id": "J06", "ns": "player", "chave": "login.password.hide", "pt-BR": "Ocultar senha", "en": "Hide password", "onde": "title do botão de olho quando a senha está visível", "limite": 20, "publico": "jogador" },
+  { "id": "J06", "ns": "player", "chave": "login.hint.lostAccess", "pt-BR": "PERDEU O ACESSO? FALE COM O MESTRE DA MESA.", "en": "LOST ACCESS? CONTACT YOUR GAME MASTER.", "onde": "linha abaixo do campo de senha no login", "limite": 50, "publico": "jogador" },
+  { "id": "J07", "ns": "common", "chave": "auth.error.tooManyRequests", "pt-BR": "ACESSO BLOQUEADO: muitas tentativas. Aguarde alguns minutos.", "en": "ACCESS LOCKED: too many attempts. Wait a few minutes.", "onde": "erro do login ao exceder tentativas", "limite": 70, "publico": "jogador" },
+  { "id": "J08", "ns": "common", "chave": "invite.reason.network", "pt-BR": "SEM SINAL: não deu para ler o convite. Verifique a rede.", "en": "NO SIGNAL: could not read the invite. Check your network.", "onde": "cartão do convite quando a consulta falha por rede", "limite": 70, "publico": "visitante" },
+  { "id": "J08", "ns": "common", "chave": "invite.reason.unexpected", "pt-BR": "Falha inesperada ao ler o convite. Tente de novo.", "en": "Unexpected error reading the invite. Try again.", "onde": "cartão do convite quando a consulta falha por outro motivo", "limite": 70, "publico": "visitante" },
+  { "id": "J08", "ns": "common", "chave": "invite.retry", "pt-BR": "Tentar novamente", "en": "Try again", "onde": "botão do cartão de falha do convite", "limite": 20, "publico": "visitante" },
+  { "id": "J09", "ns": "common", "chave": "errorBoundary.miniApp.title", "pt-BR": "CONEXÃO PERDIDA", "en": "CONNECTION LOST", "onde": "placa de erro dentro do overlay de mini-app", "limite": 24, "publico": "jogador" },
+  { "id": "J09", "ns": "common", "chave": "errorBoundary.miniApp.body", "pt-BR": "O sistema caiu. Sua fita continua intacta no aparelho.", "en": "The system went down. Your tape is still safe in the player.", "onde": "corpo da placa de erro do mini-app", "limite": 70, "publico": "jogador" },
+  { "id": "J09", "ns": "common", "chave": "errorBoundary.miniApp.back", "pt-BR": "Voltar ao aparelho", "en": "Back to device", "onde": "botão da placa de erro do mini-app", "limite": 24, "publico": "jogador" }
+] }

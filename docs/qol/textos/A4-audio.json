@@ -1,0 +1,85 @@
+{
+  "pacote": "A4-audio",
+  "chaves": [
+    {
+      "id": "J03",
+      "ns": "player",
+      "chave": "walkman.visor.buffering",
+      "pt-BR": "CARREGANDO FITA...",
+      "en": "LOADING TAPE...",
+      "onde": "visor do cassete enquanto a fita bufferiza",
+      "limite": 24,
+      "publico": "jogador"
+    },
+    {
+      "id": "J03",
+      "ns": "player",
+      "chave": "nokia.state.buffering",
+      "pt-BR": "CARREGANDO...",
+      "en": "LOADING...",
+      "onde": "estado do Nokia no lugar de PLAYING durante buffering (usado pelo pacote do Nokia)",
+      "limite": 16,
+      "publico": "jogador"
+    },
+    {
+      "id": "J12",
+      "ns": "player",
+      "chave": "toast.resumeTape",
+      "pt-BR": "FITA RETOMADA",
+      "en": "TAPE RESUMED",
+      "onde": "toast ao reinserir uma fita com posição guardada",
+      "limite": 24,
+      "publico": "jogador"
+    },
+    {
+      "id": "J12",
+      "ns": "player",
+      "chave": "toast.resumeTapeSub",
+      "pt-BR": "Voltou de onde você parou.",
+      "en": "Back where you left off.",
+      "onde": "subtítulo do toast de retomada",
+      "limite": 48,
+      "publico": "jogador"
+    },
+    {
+      "id": "J12",
+      "ns": "player",
+      "chave": "toast.action.fromStart",
+      "pt-BR": "Do início",
+      "en": "From start",
+      "onde": "botão de ação do toast de retomada (onda 2, quando o toast com ação existir)",
+      "limite": 14,
+      "publico": "jogador"
+    },
+    {
+      "id": "J01",
+      "ns": "player",
+      "chave": "toast.tapeLoadFail",
+      "pt-BR": "FITA ILEGÍVEL",
+      "en": "UNREADABLE TAPE",
+      "onde": "título do toast quando o áudio da fita falha",
+      "limite": 24,
+      "publico": "jogador"
+    },
+    {
+      "id": "J01",
+      "ns": "player",
+      "chave": "toast.tapeLoadFailSub",
+      "pt-BR": "Não foi possível ler a fita.",
+      "en": "The tape could not be read.",
+      "onde": "subtítulo do toast de fita ilegível",
+      "limite": 48,
+      "publico": "jogador"
+    },
+    {
+      "id": "J01",
+      "ns": "player",
+      "chave": "toast.tapeLoadFailOffline",
+      "pt-BR": "Sem sinal. Verifique a conexão.",
+      "en": "No signal. Check your connection.",
+      "onde": "subtítulo do toast de fita ilegível quando o aparelho está offline",
+      "limite": 48,
+      "publico": "jogador"
+    }
+  ]
+}

@@ -1,0 +1,255 @@
+{
+  "pacote": "A10-intel-midia",
+  "chaves": [
+    {
+      "id": "M01",
+      "ns": "admin",
+      "chave": "intel.catalog.duplicate",
+      "pt-BR": "Duplicar",
+      "en": "Duplicate",
+      "onde": "dica do botão de duplicar na linha do catálogo de intel",
+      "limite": 14,
+      "publico": "mestre"
+    },
+    {
+      "id": "M01",
+      "ns": "common",
+      "chave": "copySuffix",
+      "pt-BR": "(cópia)",
+      "en": "(copy)",
+      "onde": "sufixo do título de um item duplicado (anexado após o título, com parênteses)",
+      "limite": 12,
+      "publico": "mestre"
+    },
+    {
+      "id": "M06",
+      "ns": "admin",
+      "chave": "intel.catalog.sort.default",
+      "pt-BR": "Ordem do catálogo",
+      "en": "Catalog order",
+      "onde": "opção padrão do seletor de ordem do catálogo de intel",
+      "limite": 22,
+      "publico": "mestre"
+    },
+    {
+      "id": "M03",
+      "ns": "admin",
+      "chave": "bulk.moveToFolder",
+      "pt-BR": "Mover para pasta",
+      "en": "Move to folder",
+      "onde": "botão da barra de lote da grade de mídia",
+      "limite": 20,
+      "publico": "mestre"
+    },
+    {
+      "id": "M03",
+      "ns": "admin",
+      "chave": "bulk.linkMission",
+      "pt-BR": "Vincular a missão",
+      "en": "Link to mission",
+      "onde": "seletor da barra de lote do catálogo de intel",
+      "limite": 22,
+      "publico": "mestre"
+    },
+    {
+      "id": "M03",
+      "ns": "admin",
+      "chave": "bulk.unlinkMission",
+      "pt-BR": "Sem missão",
+      "en": "No mission",
+      "onde": "opção do seletor de vínculo em lote que remove a missão",
+      "limite": 16,
+      "publico": "mestre"
+    },
+    {
+      "id": "M03",
+      "ns": "admin",
+      "chave": "bulk.remove",
+      "pt-BR": "Remover",
+      "en": "Remove",
+      "onde": "botão e título do diálogo de remoção em lote",
+      "limite": 16,
+      "publico": "mestre"
+    },
+    {
+      "id": "M03",
+      "ns": "admin",
+      "chave": "bulk.removeBody_one",
+      "pt-BR": "Remover {{count}} item do catálogo? Jogadores que já têm o item mantêm no inventário.",
+      "en": "Remove {{count}} item from the catalog? Players who already have it keep it in their inventory.",
+      "onde": "corpo do diálogo de remoção em lote de intel (singular)",
+      "limite": 100,
+      "publico": "mestre"
+    },
+    {
+      "id": "M03",
+      "ns": "admin",
+      "chave": "bulk.removeBody_other",
+      "pt-BR": "Remover {{count}} itens do catálogo? Jogadores que já têm os itens mantêm no inventário.",
+      "en": "Remove {{count}} items from the catalog? Players who already have them keep them in their inventory.",
+      "onde": "corpo do diálogo de remoção em lote de intel (plural)",
+      "limite": 100,
+      "publico": "mestre"
+    },
+    {
+      "id": "M03",
+      "ns": "admin",
+      "chave": "bulk.removeFilesBody_one",
+      "pt-BR": "Remover permanentemente {{count}} arquivo? Isso pode quebrar links existentes.",
+      "en": "Permanently remove {{count}} file? This may break existing links.",
+      "onde": "corpo do diálogo de remoção em lote na grade de mídia (singular)",
+      "limite": 90,
+      "publico": "mestre"
+    },
+    {
+      "id": "M03",
+      "ns": "admin",
+      "chave": "bulk.removeFilesBody_other",
+      "pt-BR": "Remover permanentemente {{count}} arquivos? Isso pode quebrar links existentes.",
+      "en": "Permanently remove {{count}} files? This may break existing links.",
+      "onde": "corpo do diálogo de remoção em lote na grade de mídia (plural)",
+      "limite": 90,
+      "publico": "mestre"
+    },
+    {
+      "id": "M03",
+      "ns": "admin",
+      "chave": "bulk.result",
+      "pt-BR": "{{ok}} de {{total}} itens processados",
+      "en": "{{ok}} of {{total}} items processed",
+      "onde": "toast do resultado de uma ação em lote sem falhas",
+      "limite": 40,
+      "publico": "mestre"
+    },
+    {
+      "id": "M03",
+      "ns": "admin",
+      "chave": "bulk.resultPartial",
+      "pt-BR": "{{ok}} processados, {{failed}} falharam",
+      "en": "{{ok}} processed, {{failed}} failed",
+      "onde": "toast do resultado de uma ação em lote com falhas",
+      "limite": 44,
+      "publico": "mestre"
+    },
+    {
+      "id": "M14",
+      "ns": "admin",
+      "chave": "intel.delete.storageCheckbox",
+      "pt-BR": "Apagar também o arquivo do Storage",
+      "en": "Also delete the file from Storage",
+      "onde": "caixa do diálogo de remover intel que tem arquivo",
+      "limite": 40,
+      "publico": "mestre"
+    },
+    {
+      "id": "M14",
+      "ns": "admin",
+      "chave": "intel.delete.sharedFileWarning",
+      "pt-BR": "Outra intel usa este mesmo arquivo. Apagá-lo quebra essa intel.",
+      "en": "Another intel uses this same file. Deleting it breaks that intel.",
+      "onde": "aviso sob a caixa quando o arquivo é compartilhado (caixa desmarcada por padrão)",
+      "limite": 70,
+      "publico": "mestre"
+    },
+    {
+      "id": "M05",
+      "ns": "admin",
+      "chave": "intel.editor.saveShortcutHint",
+      "pt-BR": "⌘S ou ⌘Enter",
+      "en": "⌘S or ⌘Enter",
+      "onde": "dica (title) do botão de salvar do editor de intel",
+      "limite": 16,
+      "publico": "mestre"
+    },
+    {
+      "id": "M09",
+      "ns": "admin",
+      "chave": "media.queue.title",
+      "pt-BR": "Fila de envio",
+      "en": "Upload queue",
+      "onde": "título da lista de arquivos em envio",
+      "limite": 20,
+      "publico": "mestre"
+    },
+    {
+      "id": "M09",
+      "ns": "admin",
+      "chave": "media.queue.tooLarge",
+      "pt-BR": "Maior que o limite de {{max}} MB",
+      "en": "Larger than the {{max}} MB limit",
+      "onde": "erro de um arquivo acima do limite, antes de enviar",
+      "limite": 40,
+      "publico": "mestre"
+    },
+    {
+      "id": "M09",
+      "ns": "admin",
+      "chave": "media.queue.badType",
+      "pt-BR": "Tipo não permitido (áudio, imagem, vídeo ou PDF)",
+      "en": "File type not allowed (audio, image, video or PDF)",
+      "onde": "erro de um arquivo com tipo não aceito",
+      "limite": 60,
+      "publico": "mestre"
+    },
+    {
+      "id": "M09",
+      "ns": "admin",
+      "chave": "media.queue.retry",
+      "pt-BR": "Tentar de novo",
+      "en": "Retry",
+      "onde": "botão por arquivo com erro de envio",
+      "limite": 18,
+      "publico": "mestre"
+    },
+    {
+      "id": "M09",
+      "ns": "admin",
+      "chave": "media.queue.clearDone",
+      "pt-BR": "Limpar concluídos",
+      "en": "Clear finished",
+      "onde": "botão que remove da fila os arquivos enviados",
+      "limite": 22,
+      "publico": "mestre"
+    },
+    {
+      "id": "M09",
+      "ns": "admin",
+      "chave": "media.queue.done",
+      "pt-BR": "Enviado",
+      "en": "Uploaded",
+      "onde": "rótulo do arquivo enviado com sucesso",
+      "limite": 12,
+      "publico": "mestre"
+    },
+    {
+      "id": "M11",
+      "ns": "admin",
+      "chave": "intel.editor.previewAsPlayer",
+      "pt-BR": "Ver como jogador",
+      "en": "View as player",
+      "onde": "botão do editor de intel e do contato NPC que abre a prévia lateral",
+      "limite": 22,
+      "publico": "mestre"
+    },
+    {
+      "id": "M11",
+      "ns": "admin",
+      "chave": "intel.editor.previewClose",
+      "pt-BR": "Fechar prévia",
+      "en": "Close preview",
+      "onde": "rótulo acessível do X do painel de prévia",
+      "limite": 18,
+      "publico": "mestre"
+    },
+    {
+      "id": "M11",
+      "ns": "admin",
+      "chave": "intel.editor.previewUnavailable",
+      "pt-BR": "A prévia cobre texto, imagem e meta. Áudio e vídeo não têm prévia aqui.",
+      "en": "Preview covers text, image and meta. Audio and video have no preview here.",
+      "onde": "mensagem do painel quando o tipo não tem prévia",
+      "limite": 80,
+      "publico": "mestre"
+    }
+  ]
+}

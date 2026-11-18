@@ -21,7 +21,7 @@ export function useAchievementEditor() {
   const { t } = useTranslation('admin');
   const toast = useToast();
   const { showConfirm, modal } = useModal();
-  const { isRemote } = useAchievementCatalog();
+  const { isRemote, defs } = useAchievementCatalog();
 
   const [editorOpen, setEditorOpen] = useState(false);
   const [editing, setEditing] = useState<AchievementDef | null>(null);
@@ -41,6 +41,19 @@ export function useAchievementEditor() {
     setEditorForm(formFromDef(def));
     setEditorOpen(true);
   }, []);
+
+  /** Abre o editor em modo criação com os campos da conquista e um id novo (`_COPIA`, `_COPIA2`...). */
+  const openDuplicate = useCallback(
+    (def: AchievementDef) => {
+      const taken = new Set(defs.map((d) => d.id));
+      let id = `${def.id}_COPIA`;
+      for (let n = 2; taken.has(id); n++) id = `${def.id}_COPIA${n}`;
+      setEditing(null);
+      setEditorForm({ ...formFromDef(def), id, title: `${def.title} ${t('common.copySuffix')}` });
+      setEditorOpen(true);
+    },
+    [defs, t],
+  );
 
   const handleSave = async (form: AchievementEditorForm, file: File | null) => {
     const isEdit = Boolean(editing);
@@ -116,5 +129,5 @@ export function useAchievementEditor() {
     </>
   );
 
-  return { openCreate, openEdit, editor };
+  return { openCreate, openEdit, openDuplicate, editor };
 }

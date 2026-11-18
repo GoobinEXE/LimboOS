@@ -5,7 +5,11 @@ import type { IntelItem, IntelType } from '../../types/intel';
 import { MediaAsset } from '../../types/media';
 import { mediaService } from '../../services/MediaService';
 import { extractYoutubeId, isYoutubeUrl, youtubeWatchUrl } from '../../lib/youtube';
+import { useTranslation } from 'react-i18next';
 import { useModal } from '../components/ConfirmModal';
+import { useToast } from '../components/ToastProvider';
+import { useListControls } from './useListControls';
+import { useSelection } from './useSelection';
 import { matchesIntelScope, type CampaignScope } from '../lib/campaignResources';
 import {
   matchesIntelStatusFilter,
@@ -18,13 +22,47 @@ import {
   type IntelFormData,
 } from '../components/intel/intelFormUtils';
 
+export type IntelSortKey = 'default' | 'title' | 'type' | 'id';
+
+const byText = (a: string | undefined, b: string | undefined) => (a || '').localeCompare(b || '', 'pt-BR');
+const INTEL_SORTERS: Record<IntelSortKey, ((a: IntelItem, b: IntelItem) => number) | null> = {
+  default: null,
+  title: (a, b) => byText(a.title, b.title),
+  type: (a, b) => byText(a.type, b.type) || byText(a.title, b.title),
+  id: (a, b) => byText(a.id, b.id),
+};
+
 /** `campaignScope` vem de quem exibe o catálogo (Conteúdo: `?mission=` do URL). */
 export function useIntelCatalog({ campaignScope = 'all' }: { campaignScope?: CampaignScope } = {}) {
-  const { showConfirm, modal } = useModal();
+  const { t } = useTranslation('admin');
+  const { t: tc } = useTranslation('common');
+  const toast = useToast();
+  const { showConfirm, showConfirmWithOption, modal } = useModal();
   const [allItems, setAllItems] = useState<IntelItem[]>(() => intelRegistry.getAll());
-  const [search, setSearch] = useState('');
-  const [filterType, setFilterType] = useState<IntelType | 'ALL'>('ALL');
-  const [statusFilter, setStatusFilter] = useState<IntelStatusFilter>('all');
+  // Busca, ordem e filtros ficam em sessionStorage por pasta (M06, M12).
+  const controls = useListControls<IntelItem, IntelSortKey>({
+    storageKey: 'intel',
+    defaultSort: 'default',
+    sorters: INTEL_SORTERS,
+    defaultFilters: { type: 'ALL', status: 'all' },
+  });
+  const search = controls.query;
+  const setSearch = controls.setQuery;
+  const filterType = (controls.filters.type || 'ALL') as IntelType | 'ALL';
+  const setFilterType = useCallback(
+    (v: IntelType | 'ALL') => controls.setFilter('type', v),
+    [controls.setFilter],
+  );
+  const statusFilter = (controls.filters.status || 'all') as IntelStatusFilter;
+  const setStatusFilter = useCallback(
+    (v: IntelStatusFilter) => controls.setFilter('status', v),
+    [controls.setFilter],
+  );
+  const sortKey = controls.sortKey;
+  const setSortKey = controls.setSortKey;
+  const selection = useSelection<string>();
+  const [isSaving, setIsSaving] = useState(false);
+  const [bulkBusy, setBulkBusy] = useState(false);
   /** Missão do filtro ativo: intel nova (em branco ou via upload) nasce vinculada a ela. */
   const scopedCampaignId =
     campaignScope !== 'all' && campaignScope !== 'global' ? campaignScope : undefined;
@@ -68,19 +106,29 @@ export function useIntelCatalog({ campaignScope = 'all' }: { campaignScope?: Cam
   }, []);
 
   const filteredItems = useMemo(() => {
-    return allItems.filter((item) => {
+    const base = allItems.filter((item) => {
       const asset = mediaAssetMap[item.id];
       const matchesType = filterType === 'ALL' || item.type === filterType;
       const matchesStatus = matchesIntelStatusFilter(item, statusFilter, asset);
       if (!matchesIntelScope(item, campaignScope)) return false;
-      const matchesSearch =
-        search === '' ||
-        (item.title || '').toLowerCase().includes(search.toLowerCase()) ||
-        (item.id || '').toLowerCase().includes(search.toLowerCase()) ||
-        (item.description || '').toLowerCase().includes(search.toLowerCase());
-      return matchesType && matchesStatus && matchesSearch;
+      return matchesType && matchesStatus;
     });
-  }, [allItems, search, filterType, statusFilter, mediaAssetMap, campaignScope]);
+    return controls.apply(
+      base,
+      (item, q) =>
+        (item.title || '').toLowerCase().includes(q) ||
+        (item.id || '').toLowerCase().includes(q) ||
+        (item.description || '').toLowerCase().includes(q),
+    );
+  }, [allItems, filterType, statusFilter, mediaAssetMap, campaignScope, controls.apply]);
+
+  // Trocar busca ou filtro limpa a seleção; remoções e sync descartam o que sumiu (M03).
+  useEffect(() => {
+    selection.clear();
+  }, [search, filterType, statusFilter, campaignScope, selection.clear]);
+  useEffect(() => {
+    selection.prune(filteredItems.map((i) => i.id));
+  }, [filteredItems, selection.prune]);
 
   const typeStats = useMemo(() => {
     const stats: Record<string, number> = { AUDIO: 0, TEXT: 0, VISUAL: 0, META: 0, VIDEO: 0, total: 0 };
@@ -217,18 +265,40 @@ export function useIntelCatalog({ campaignScope = 'all' }: { campaignScope?: Cam
     }
   }, [mediaAssetMap, showConfirm, refreshItems]);
 
+  /** Outro item do catálogo (fora de `ignoreIds`) aponta para o mesmo arquivo. */
+  const isFileSharedElsewhere = useCallback(
+    (item: IntelItem, ignoreIds: ReadonlySet<string>) =>
+      !!item.mediaUrl &&
+      allItems.some((o) => o.id !== item.id && !ignoreIds.has(o.id) && o.mediaUrl === item.mediaUrl),
+    [allItems],
+  );
+
+  const storageCheckbox = useCallback(
+    (shared: boolean) => ({
+      label: t('intel.delete.storageCheckbox', { defaultValue: 'Apagar também o arquivo do Storage' }),
+      defaultChecked: !shared,
+      ...(shared
+        ? {
+            hint: t('intel.delete.sharedFileWarning', {
+              defaultValue: 'Outra intel usa este mesmo arquivo. Apagá-lo quebra essa intel.',
+            }),
+          }
+        : {}),
+    }),
+    [t],
+  );
+
   const handleDeleteItem = useCallback(async (item: IntelItem) => {
-    const ok = await showConfirm(
+    const hasFile = !!mediaAssetMap[item.id]?.storagePath;
+    const shared = hasFile && isFileSharedElsewhere(item, new Set());
+    const { confirmed, checked } = await showConfirmWithOption(
       'Remover Intel',
-      `Remover "${item.title}" do catálogo? Jogadores que já possuem o item mantêm no inventário. O arquivo no Storage não será removido automaticamente.`,
+      `Remover "${item.title}" do catálogo? Jogadores que já possuem o item mantêm no inventário.`,
       'Remover',
+      { danger: true, ...(hasFile ? { checkbox: storageCheckbox(shared) } : {}) },
     );
-    if (!ok) return;
-    const deleteFile = await showConfirm(
-      'Arquivo de mídia',
-      'Deseja também remover o arquivo do Storage (se existir)?',
-      'Remover arquivo',
-    );
+    if (!confirmed) return;
+    const deleteFile = hasFile && checked;
     setIsLoading(true);
     try {
       await intelService.deleteIntel(item, { deleteStorageFile: deleteFile });
@@ -240,7 +310,70 @@ export function useIntelCatalog({ campaignScope = 'all' }: { campaignScope?: Cam
     } finally {
       setIsLoading(false);
     }
-  }, [showConfirm, refreshItems]);
+  }, [showConfirmWithOption, refreshItems, mediaAssetMap, isFileSharedElsewhere, storageCheckbox]);
+
+  /** Remove vários itens com uma única confirmação; falhas por item vão para um só toast. */
+  const handleBulkDelete = useCallback(async (items: IntelItem[]) => {
+    if (items.length === 0 || bulkBusy) return;
+    const ids = new Set(items.map((i) => i.id));
+    const withFile = items.filter((i) => mediaAssetMap[i.id]?.storagePath);
+    const shared = withFile.some((i) => isFileSharedElsewhere(i, ids));
+    const { confirmed, checked } = await showConfirmWithOption(
+      t('bulk.remove', { defaultValue: 'Remover itens' }),
+      t('bulk.removeBody', {
+        count: items.length,
+        defaultValue: 'Remover {{count}} itens do catálogo? Jogadores que já possuem os itens mantêm no inventário.',
+      }),
+      t('bulk.remove', { defaultValue: 'Remover' }),
+      { danger: true, ...(withFile.length > 0 ? { checkbox: storageCheckbox(shared) } : {}) },
+    );
+    if (!confirmed) return;
+    setBulkBusy(true);
+    setIsLoading(true);
+    let ok = 0;
+    let failed = 0;
+    for (const item of items) {
+      const deleteFile = checked && !!mediaAssetMap[item.id]?.storagePath;
+      try {
+        await intelService.deleteIntel(item, { deleteStorageFile: deleteFile });
+        ok++;
+      } catch (err) {
+        console.error('[IntelCatalog] Bulk delete failed:', item.id, err);
+        failed++;
+      }
+    }
+    refreshItems();
+    selection.clear();
+    setIsLoading(false);
+    setBulkBusy(false);
+    if (failed === 0) toast.success(t('bulk.result', { ok, total: items.length, defaultValue: '{{ok}} de {{total}} itens processados' }));
+    else toast.error(t('bulk.resultPartial', { ok, failed, defaultValue: '{{ok}} processados, {{failed}} falharam' }));
+  }, [bulkBusy, mediaAssetMap, isFileSharedElsewhere, showConfirmWithOption, storageCheckbox, t, refreshItems, selection, toast]);
+
+  /** Grava `campaignId` nos itens pelo mesmo caminho do editor (`persistChanges`). `null` desvincula. */
+  const handleBulkLink = useCallback(async (items: IntelItem[], campaignId: string | null) => {
+    if (items.length === 0 || bulkBusy) return;
+    setBulkBusy(true);
+    let ok = 0;
+    let failed = 0;
+    for (const item of items) {
+      const next: IntelItem = { ...item };
+      if (campaignId) next.campaignId = campaignId;
+      else delete next.campaignId;
+      try {
+        await intelService.persistChanges(next);
+        ok++;
+      } catch (err) {
+        console.error('[IntelCatalog] Bulk link failed:', item.id, err);
+        failed++;
+      }
+    }
+    refreshItems();
+    selection.clear();
+    setBulkBusy(false);
+    if (failed === 0) toast.success(t('bulk.result', { ok, total: items.length, defaultValue: '{{ok}} de {{total}} itens processados' }));
+    else toast.error(t('bulk.resultPartial', { ok, failed, defaultValue: '{{ok}} processados, {{failed}} falharam' }));
+  }, [bulkBusy, refreshItems, selection, t, toast]);
 
   const handleApplyYoutubeLink = useCallback(() => {
     const url = youtubeInput.trim();
@@ -263,14 +396,15 @@ export function useIntelCatalog({ campaignScope = 'all' }: { campaignScope?: Cam
     setFeedback({ type: 'success', text: 'Link do YouTube vinculado.' });
   }, [youtubeInput]);
 
-  const handleEditItem = useCallback((item: IntelItem) => {
-    setEditingItem(item);
-    setFocusedIntelId(item.id);
+  /** Preenche o editor com `item`; `copy` abre em modo criação com id novo e título "(cópia)". */
+  const openEditorWith = useCallback((item: IntelItem, copy: boolean) => {
+    setEditingItem(copy ? null : item);
+    setFocusedIntelId(copy ? null : item.id);
     setFormData({
-      id: item.id,
+      id: copy ? `item-${Date.now()}` : item.id,
       type: item.type,
       level: item.level,
-      title: item.title,
+      title: copy ? `${item.title} ${tc('copySuffix', { defaultValue: '(cópia)' })}` : item.title,
       description: item.description,
       textContent: item.textContent || '',
       mediaUrl: item.mediaUrl || '',
@@ -301,7 +435,14 @@ export function useIntelCatalog({ campaignScope = 'all' }: { campaignScope?: Cam
     );
     setShowEditor(true);
     setFeedback(null);
-  }, []);
+  }, [tc]);
+
+  const handleEditItem = useCallback((item: IntelItem) => openEditorWith(item, false), [openEditorWith]);
+  /**
+   * Duplica como item novo. Só a URL do arquivo é copiada (a cópia não ganha `storagePath`),
+   * então apagar a cópia nunca apaga o arquivo da origem.
+   */
+  const handleDuplicateItem = useCallback((item: IntelItem) => openEditorWith(item, true), [openEditorWith]);
 
   const focusAsset = useCallback((assetId: string) => {
     setFocusedIntelId(assetId);
@@ -349,6 +490,8 @@ export function useIntelCatalog({ campaignScope = 'all' }: { campaignScope?: Cam
       ...(Object.keys(cleanMeta).length > 0 ? { metadata: cleanMeta } : {}),
     };
 
+    if (isSaving) return;
+    setIsSaving(true);
     setIsLoading(true);
     try {
       await intelService.persistChanges(intelItem);
@@ -363,8 +506,9 @@ export function useIntelCatalog({ campaignScope = 'all' }: { campaignScope?: Cam
       setFeedback({ type: 'error', text: 'Falha ao persistir alterações no Firebase.' });
     } finally {
       setIsLoading(false);
+      setIsSaving(false);
     }
-  }, [formData, editingItem, refreshItems]);
+  }, [formData, editingItem, refreshItems, isSaving]);
 
   const updateField = useCallback((field: string, value: unknown) => {
     setFormData((prev) => {
@@ -399,6 +543,11 @@ export function useIntelCatalog({ campaignScope = 'all' }: { campaignScope?: Cam
     setFilterType,
     statusFilter,
     setStatusFilter,
+    sortKey,
+    setSortKey,
+    selection,
+    bulkBusy,
+    isSaving,
     campaignScope,
     showEditor,
     setShowEditor,
@@ -428,8 +577,11 @@ export function useIntelCatalog({ campaignScope = 'all' }: { campaignScope?: Cam
     handleMediaFileUpload,
     handleDeleteFileOnly,
     handleDeleteItem,
+    handleBulkDelete,
+    handleBulkLink,
     handleApplyYoutubeLink,
     handleEditItem,
+    handleDuplicateItem,
     handleSave,
     updateField,
     updateMeta,

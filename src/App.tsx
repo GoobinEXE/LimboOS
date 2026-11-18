@@ -1,10 +1,14 @@
-import { lazy, Suspense } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { lazy, Suspense, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { MotionConfig } from 'motion/react';
 import RetroLoading from './components/player/RetroLoading';
 import ErrorBoundary from './components/ErrorBoundary';
+import OfflineBanner from './components/OfflineBanner';
+import UpdateNotice from './components/UpdateNotice';
 import { DEFAULT_TRANSITION } from './lib/motion';
+import { useOverlayStack } from './lib/overlayStack';
+import { isZoomLockedPath, setZoomLocked } from './lib/viewportZoom';
 
 const Player = lazy(() => import('./Player'));
 
@@ -34,6 +38,29 @@ function AppRoutes() {
   );
 }
 
+/**
+ * Camada comum a todas as superfícies, fora do ErrorBoundary para continuar visível
+ * numa tela de erro: faixa "Sem sinal", aviso de nova versão e trava de zoom por rota
+ * (o player trava; um overlay com `allowZoom`, como o leitor de evidência, destrava).
+ */
+function GlobalShell() {
+  const { pathname } = useLocation();
+  const overlays = useOverlayStack();
+  const playerRoute = isZoomLockedPath(pathname);
+  const overlayWantsZoom = overlays.some((overlay) => overlay.allowZoom);
+
+  useEffect(() => {
+    setZoomLocked(playerRoute && !overlayWantsZoom);
+  }, [playerRoute, overlayWantsZoom]);
+
+  return (
+    <>
+      <OfflineBanner announceRestored={!playerRoute} />
+      <UpdateNotice />
+    </>
+  );
+}
+
 export default function App() {
   return (
     <BrowserRouter>
@@ -43,6 +70,7 @@ export default function App() {
         <ErrorBoundary>
           <AppRoutes />
         </ErrorBoundary>
+        <GlobalShell />
       </MotionConfig>
     </BrowserRouter>
   );

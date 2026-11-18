@@ -1,4 +1,4 @@
-import React, { RefObject } from 'react';
+import React, { RefObject, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { VideoFormat } from '../../../types/intel';
 import type { Campaign } from '../../../data/campaigns';
@@ -12,6 +12,8 @@ import {
 } from './intelFormUtils';
 import type { IntelItem } from '../../../types/intel';
 import MIcon from '../MIcon';
+import IntelPlayerPreview from './IntelPlayerPreview';
+import { useSaveShortcut } from '../../hooks/useSaveShortcut';
 
 const SELECT_CLASS =
   'w-full bg-surface-container-lowest py-4 px-4 text-bone font-display font-bold text-sm tracking-wider outline-none uppercase cursor-pointer appearance-none transition rounded-sm focus:bg-accent-10';
@@ -26,6 +28,8 @@ interface IntelEditorModalProps {
   campaigns: Campaign[];
   youtubeInput: string;
   mediaUploading: boolean;
+  /** Gravando: ⌘S/⌘Enter e o botão ficam inertes. */
+  saving?: boolean;
   mediaFileInputRef: RefObject<HTMLInputElement | null>;
   videoFileInputRef: RefObject<HTMLInputElement | null>;
   onClose: () => void;
@@ -45,6 +49,7 @@ export default function IntelEditorModal({
   campaigns,
   youtubeInput,
   mediaUploading,
+  saving = false,
   mediaFileInputRef,
   videoFileInputRef,
   onClose,
@@ -57,8 +62,14 @@ export default function IntelEditorModal({
   onOpenLibrary,
 }: IntelEditorModalProps) {
   const { t } = useTranslation('admin');
+  const [previewOpen, setPreviewOpen] = useState(false);
+  React.useEffect(() => {
+    if (!open) setPreviewOpen(false);
+  }, [open]);
   const isNew = !editingItem;
   const activeCampaigns = campaigns.filter((c) => c.status !== 'Arquivada');
+  // M05: ⌘S e ⌘Enter salvam; com dois modais empilhados só o do topo responde.
+  useSaveShortcut(open && !saving && !mediaUploading, onSave);
   const needsMedia = formData.type === 'AUDIO' || formData.type === 'VISUAL' || formData.type === 'VIDEO';
 
   return (
@@ -66,6 +77,9 @@ export default function IntelEditorModal({
       {open && (
         <div className="fixed inset-0 z-100 flex items-center justify-center bg-surface-scrim p-4 animate-fade-in" role="dialog" aria-modal="true">
           <div className="bg-surface-container-low w-full max-w-2xl rounded-sm shadow-panel flex flex-col max-h-[90vh] relative">
+            {previewOpen && (
+              <IntelPlayerPreview draft={formData} onClose={() => setPreviewOpen(false)} />
+            )}
             <div className="absolute -top-3 left-6 bg-primary px-2 py-0.5 text-[10px] font-display font-bold text-black tracking-wider uppercase">
               {editingItem ? 'ATUALIZAÇÃO-DE-REGISTRO' : 'NOVA-ENTRADA-DE-INTEL'}
             </div>
@@ -465,8 +479,19 @@ export default function IntelEditorModal({
               </button>
               <button
                 type="button"
+                onClick={() => setPreviewOpen((v) => !v)}
+                aria-pressed={previewOpen}
+                className="px-6 py-4 text-[10px] font-display font-bold text-ash-400 hover:text-primary uppercase tracking-[0.12em] flex items-center justify-center gap-2 sm:mr-auto"
+              >
+                <MIcon name="visibility" className="text-base" />
+                {t('intel.editor.previewAsPlayer', { defaultValue: 'Ver como jogador' })}
+              </button>
+              <button
+                type="button"
                 onClick={onSave}
-                className="bg-primary hover:bg-primary-container text-black px-12 py-4 rounded-sm font-display font-bold text-[11px] tracking-wider uppercase transition active:translate-y-px glow-orange shadow-lg flex items-center justify-center gap-2"
+                disabled={saving}
+                title={t('intel.editor.saveShortcutHint', { defaultValue: '⌘S ou ⌘Enter' })}
+                className="bg-primary hover:bg-primary-container text-black px-12 py-4 rounded-sm font-display font-bold text-[11px] tracking-wider uppercase transition active:translate-y-px glow-orange shadow-lg flex items-center justify-center gap-2 disabled:opacity-40"
               >
                 <MIcon name={editingItem ? 'sync' : 'save'} className="text-base" />
                 {editingItem ? 'SINCRONIZAR ALTERAÇÕES' : 'REGISTRAR DADO'}

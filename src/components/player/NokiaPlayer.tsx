@@ -8,7 +8,9 @@ import { audioEngine } from '../../services/AudioEngine';
 import { useLandscapeLayout } from '../../player/hooks/useLandscapeLayout';
 import type { WalkmanStatus, CharacterData, Group } from '../../types/player';
 import { groupService } from '../../services/GroupService';
+import { pushService } from '../../services/PushService';
 import { analyticsTracker } from '../../services/AnalyticsTracker';
+import { AGENT_KEYS, readAgentValue, writeAgentValue, removeAgentValue, type AgentRef } from '../../player/lib/agentPersistence';
 
 // Lazy loaded scanner to keep bundle optimized
 const QrScanner = React.lazy(() => import('../QrScanner'));
@@ -77,6 +79,8 @@ interface NokiaPlayerProps {
   currentIntel: IntelBase | null;
   status: WalkmanStatus;
   isPlaying: boolean;
+  /** Fita bufferizando (A4/J03); vem de `playback.isBuffering`. */
+  isBuffering?: boolean;
   setIsPlaying: (p: boolean) => void;
   volume: number;
   setVolume: (v: number) => void;
@@ -166,6 +170,7 @@ export default function NokiaPlayer({
   currentIntel,
   status,
   isPlaying,
+  isBuffering,
   setIsPlaying,
   volume,
   setVolume,
@@ -201,17 +206,33 @@ export default function NokiaPlayer({
   const [showVolumeBar, setShowVolumeBar] = useState(false);
   const volumeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const [activeTab, setActiveTab] = useState<FilterTab>(() => {
-    return (sessionStorage.getItem('nokia_active_tab') as FilterTab) || 'TODOS';
-  });
-  const [activeConversationId, setActiveConversationId] = useState<string | null>(() => {
-    return sessionStorage.getItem('nokia_active_conv') || null;
-  });
+  // J14: aba e conversa ativas por agente (sessão da aba), sem vazar entre agentes
+  const agentRef = useMemo<AgentRef | null>(() => {
+    const cid = characterIdProp || activeCharacter?.id;
+    return uid && cid ? { uid, characterId: cid } : null;
+  }, [uid, characterIdProp, activeCharacter?.id]);
+
+  const [activeTab, setActiveTab] = useState<FilterTab>(() =>
+    readAgentValue<FilterTab>(agentRef, AGENT_KEYS.nokiaTab, 'TODOS', 'session'),
+  );
+  const [activeConversationId, setActiveConversationId] = useState<string | null>(() =>
+    readAgentValue<string | null>(agentRef, AGENT_KEYS.nokiaConv, null, 'session'),
+  );
+
+  // Trocou de agente sem remontar: relê os valores do novo agente
+  const lastAgentKeyRef = useRef(agentRef ? `${agentRef.uid}/${agentRef.characterId}` : '');
+  useEffect(() => {
+    const key = agentRef ? `${agentRef.uid}/${agentRef.characterId}` : '';
+    if (key === lastAgentKeyRef.current) return;
+    lastAgentKeyRef.current = key;
+    setActiveTab(readAgentValue<FilterTab>(agentRef, AGENT_KEYS.nokiaTab, 'TODOS', 'session'));
+    setActiveConversationId(readAgentValue<string | null>(agentRef, AGENT_KEYS.nokiaConv, null, 'session'));
+  }, [agentRef]);
 
   useEffect(() => {
-    if (activeConversationId) sessionStorage.setItem('nokia_active_conv', activeConversationId);
-    else sessionStorage.removeItem('nokia_active_conv');
-  }, [activeConversationId]);
+    if (activeConversationId) writeAgentValue(agentRef, AGENT_KEYS.nokiaConv, activeConversationId, 'session');
+    else removeAgentValue(agentRef, AGENT_KEYS.nokiaConv, 'session');
+  }, [activeConversationId, agentRef]);
 
   const [userGroups, setUserGroups] = useState<Group[]>([]);
   const [groupsLoaded, setGroupsLoaded] = useState(false);
@@ -343,9 +364,15 @@ export default function NokiaPlayer({
       setGroupMessages([]);
       return;
     }
-    const unsub = groupService.subscribeToMessagesForGroups(groupIds, setGroupMessages);
+    const unsub = groupService.subscribeToMessagesForGroups(groupIds, msgs => {
+      setGroupMessages(msgs);
+      // Primeira fala recebida (NPC ou outro agente) é o momento de pedir push (P06).
+      if (resolvedCharacterId && msgs.some(m => m.senderId !== resolvedCharacterId)) {
+        pushService.markPushMoment();
+      }
+    });
     return unsub;
-  }, [userGroups]);
+  }, [userGroups, resolvedCharacterId]);
 
   const scrollMessagesToBottom = useCallback((force = false) => {
     const container = messagesContainerRef.current;
@@ -576,7 +603,7 @@ export default function NokiaPlayer({
   const handleTabChange = (tab: FilterTab) => {
     getSfx().playBeep();
     setActiveTab(tab);
-    sessionStorage.setItem('nokia_active_tab', tab);
+    writeAgentValue(agentRef, AGENT_KEYS.nokiaTab, tab, 'session');
     if (intelListRef.current) intelListRef.current.scrollTop = 0;
     if (messagesContainerRef.current) messagesContainerRef.current.scrollTop = 0;
   };
@@ -732,7 +759,7 @@ export default function NokiaPlayer({
                           <div className="flex justify-between items-center text-[8px] font-black px-0.5 mb-0.5">
                             <span>{currentTimeStr}</span>
                             <span className="uppercase tracking-[0.15em] text-[7px]">
-                              {status === 'REWINDING' ? t('nokia.state.rew') : isPlaying ? t('nokia.state.play') : t('nokia.state.pause')}
+                              {status === 'REWINDING' ? t('nokia.state.rew') : isPlaying && isBuffering ? t('nokia.state.buffering') : isPlaying ? t('nokia.state.play') : t('nokia.state.pause')}
                             </span>
                             <span>{durationTimeStr}</span>
                           </div>
@@ -753,25 +780,30 @@ export default function NokiaPlayer({
                         <div className="flex justify-center items-center gap-1.5 mt-auto shrink-0">
                           <button
                             onClick={handleRewindTap}
-                            className={`w-8 h-8 min-h-8 border-2 border-lcd-ink flex items-center justify-center active:bg-lcd-ink active:text-lcd-paper active:scale-95 ${status === 'REWINDING' ? 'bg-lcd-ink text-lcd-paper' : ''}`}
+                            aria-label={t('walkman.rewind')}
+                            className={`relative before:content-[''] before:absolute before:-inset-y-[8px] before:-inset-x-[5px] w-8 h-8 min-h-8 border-2 border-lcd-ink flex items-center justify-center active:bg-lcd-ink active:text-lcd-paper active:scale-95 ${status === 'REWINDING' ? 'bg-lcd-ink text-lcd-paper' : ''}`}
                           >
                             <PixelIcon.Rewind />
                           </button>
                           <button
                             onClick={handlePlayToggle}
-                            className="w-10 h-9 min-h-9 border-2 border-lcd-ink flex items-center justify-center bg-lcd-ink text-lcd-paper active:scale-95"
+                            aria-label={isPlaying ? t('walkman.pause') : t('walkman.play')}
+                            aria-pressed={isPlaying}
+                            className="relative before:content-[''] before:absolute before:-inset-y-[6px] before:-inset-x-[5px] w-10 h-9 min-h-9 border-2 border-lcd-ink flex items-center justify-center bg-lcd-ink text-lcd-paper active:scale-95"
                           >
                             {isPlaying ? <PixelIcon.Pause /> : <PixelIcon.Play />}
                           </button>
                           <button
                             onClick={handleEject}
-                            className="w-8 h-8 min-h-8 border-2 border-lcd-ink flex items-center justify-center active:bg-lcd-ink active:text-lcd-paper active:scale-95"
+                            aria-label={t('nokia.aria.eject')}
+                            className="relative before:content-[''] before:absolute before:-inset-y-[8px] before:-inset-x-[5px] w-8 h-8 min-h-8 border-2 border-lcd-ink flex items-center justify-center active:bg-lcd-ink active:text-lcd-paper active:scale-95"
                           >
                             <PixelIcon.Close />
                           </button>
                           <button
                             onClick={handleVolumeTap}
-                            className="w-8 h-8 min-h-8 border-2 border-lcd-ink flex items-center justify-center active:bg-lcd-ink active:text-lcd-paper active:scale-95"
+                            aria-label={t('walkman.volume')}
+                            className="relative before:content-[''] before:absolute before:-inset-y-[8px] before:-inset-x-[5px] w-8 h-8 min-h-8 border-2 border-lcd-ink flex items-center justify-center active:bg-lcd-ink active:text-lcd-paper active:scale-95"
                           >
                             <PixelIcon.Volume />
                           </button>
@@ -881,7 +913,7 @@ export default function NokiaPlayer({
                       <div className="flex justify-between items-center text-[9px] font-black px-0.5 mb-1">
                         <span>{currentTimeStr}</span>
                         <span className="uppercase tracking-[0.2em] text-[8px]">
-                          {status === 'REWINDING' ? t('nokia.state.rew') : isPlaying ? t('nokia.state.playing') : t('nokia.state.paused')}
+                          {status === 'REWINDING' ? t('nokia.state.rew') : isPlaying && isBuffering ? t('nokia.state.buffering') : isPlaying ? t('nokia.state.playing') : t('nokia.state.paused')}
                         </span>
                         <span>{durationTimeStr}</span>
                       </div>
@@ -903,25 +935,30 @@ export default function NokiaPlayer({
                     <div className="flex justify-center items-center gap-3">
                       <button
                         onClick={handleRewindTap}
-                        className={`w-10 h-9 border-2 border-lcd-ink flex items-center justify-center active:bg-lcd-ink active:text-lcd-paper shadow-[1px_1px_0px_#111e14] ${status === 'REWINDING' ? 'bg-lcd-ink text-lcd-paper' : ''}`}
+                        aria-label={t('walkman.rewind')}
+                        className={`relative before:content-[''] before:absolute before:-inset-y-[6px] before:-inset-x-[6px] w-10 h-9 border-2 border-lcd-ink flex items-center justify-center active:bg-lcd-ink active:text-lcd-paper shadow-[1px_1px_0px_#111e14] ${status === 'REWINDING' ? 'bg-lcd-ink text-lcd-paper' : ''}`}
                       >
                         <PixelIcon.Rewind />
                       </button>
                       <button
                         onClick={handlePlayToggle}
-                        className="w-12 h-10 border-2 border-lcd-ink flex items-center justify-center bg-lcd-ink text-lcd-paper shadow-[1px_1px_0px_#111e14] active:translate-y-[1px] active:shadow-none"
+                        aria-label={isPlaying ? t('walkman.pause') : t('walkman.play')}
+                        aria-pressed={isPlaying}
+                        className="relative before:content-[''] before:absolute before:-inset-y-[6px] before:-inset-x-[6px] w-12 h-10 border-2 border-lcd-ink flex items-center justify-center bg-lcd-ink text-lcd-paper shadow-[1px_1px_0px_#111e14] active:translate-y-[1px] active:shadow-none"
                       >
                         {isPlaying ? <PixelIcon.Pause /> : <PixelIcon.Play />}
                       </button>
                       <button
                         onClick={handleEject}
-                        className="w-10 h-9 border-2 border-lcd-ink flex items-center justify-center active:bg-lcd-ink active:text-lcd-paper shadow-[1px_1px_0px_#111e14]"
+                        aria-label={t('nokia.aria.eject')}
+                        className="relative before:content-[''] before:absolute before:-inset-y-[6px] before:-inset-x-[6px] w-10 h-9 border-2 border-lcd-ink flex items-center justify-center active:bg-lcd-ink active:text-lcd-paper shadow-[1px_1px_0px_#111e14]"
                       >
                         <PixelIcon.Close />
                       </button>
                       <button
                         onClick={handleVolumeTap}
-                        className="w-10 h-9 border-2 border-lcd-ink flex items-center justify-center active:bg-lcd-ink active:text-lcd-paper shadow-[1px_1px_0px_#111e14]"
+                        aria-label={t('walkman.volume')}
+                        className="relative before:content-[''] before:absolute before:-inset-y-[6px] before:-inset-x-[6px] w-10 h-9 border-2 border-lcd-ink flex items-center justify-center active:bg-lcd-ink active:text-lcd-paper shadow-[1px_1px_0px_#111e14]"
                       >
                         <PixelIcon.Volume />
                       </button>

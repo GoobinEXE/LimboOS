@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'motion/react';
 import { intelService, type IntelGrantTarget } from '../../services/IntelService';
 import { activityLogger } from '../../services/ActivityLogger';
+import { getDoc, doc } from 'firebase/firestore';
+import { db } from '../../lib/firebase';
 import { CharacterData } from '../../types/player';
 import type { IntelItem } from '../../types/intel';
 import Screw from '../../components/player/Screw';
@@ -16,9 +18,19 @@ import {
 } from '../lib/intelDisplay';
 import MIcon from './MIcon';
 
+/**
+ * Recibo de uma entrega ao vivo: só os pares que ainda não tinham o item,
+ * para que "Desfazer" nunca revogue algo que o agente já possuía.
+ */
+export interface DeliveryReceipt {
+  kind: 'intel' | 'achievement';
+  /** `docId` é o id do documento na subcoleção `intel` ou `achievements`. */
+  ids: { uid: string; characterId: string; docId: string }[];
+}
+
 export interface IntelDistributionDrawerProps {
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccess: (receipt?: DeliveryReceipt) => void;
   title?: string;
   character?: CharacterData;
   targets?: IntelGrantTarget[];
@@ -95,6 +107,7 @@ export default function IntelDistributionDrawer({
     if (selectedToAdd.size === 0 || targets.length === 0) return;
     setLoading(true);
     setFeedback(null);
+    let receipt: DeliveryReceipt | undefined;
     try {
       if (broadcastMode && selectedToAdd.size === 1) {
         const intelId = [...selectedToAdd][0];
@@ -113,6 +126,22 @@ export default function IntelDistributionDrawer({
         await onExecuteGrant(selectedToAdd);
         setFeedback(`✓ ${selectedToAdd.size} item(s) vinculados.`);
       } else {
+        // Antes de conceder: quais pares ainda não têm o item (base do "Desfazer")
+        try {
+          const pairs = targets.flatMap((tg) =>
+            [...selectedToAdd].map((docId) => ({ uid: tg.uid, characterId: tg.characterId, docId })),
+          );
+          const exists = await Promise.all(
+            pairs.map((p) =>
+              getDoc(doc(db, 'users', p.uid, 'characters', p.characterId, 'intel', p.docId))
+                .then((snap) => snap.exists())
+                .catch(() => true),
+            ),
+          );
+          receipt = { kind: 'intel', ids: pairs.filter((_, i) => !exists[i]) };
+        } catch {
+          receipt = undefined;
+        }
         await intelService.grantIntel(targets, [...selectedToAdd], {
           campaignId,
           aliveOnly,
@@ -130,7 +159,7 @@ export default function IntelDistributionDrawer({
       }
       setSelectedToAdd(new Set());
       setTimeout(() => {
-        onSuccess();
+        onSuccess(receipt);
         onClose();
       }, 1000);
     } catch {

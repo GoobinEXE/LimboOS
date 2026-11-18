@@ -1,0 +1,7 @@
+{ "pacote": "A2-toasts", "chaves": [
+  { "id": "J13", "ns": "common", "chave": "toast.action.retry", "pt-BR": "TENTAR DE NOVO", "en": "RETRY", "onde": "botão de ação em toast de erro do jogador", "limite": 16, "publico": "jogador" },
+  { "id": "J13", "ns": "common", "chave": "toast.action.scanAgain", "pt-BR": "ESCANEAR DE NOVO", "en": "SCAN AGAIN", "onde": "botão de ação do toast de código QR inválido (aplicado em useWalkmanPlayback pelo pacote da onda 2)", "limite": 18, "publico": "jogador" },
+  { "id": "J13", "ns": "common", "chave": "toast.action.dismiss", "pt-BR": "FECHAR", "en": "DISMISS", "onde": "rótulo acessível para dispensar toast com ação", "limite": 12, "publico": "jogador" },
+  { "id": "J13", "ns": "player", "chave": "profile.saveNameFail", "pt-BR": "FALHA AO SALVAR CODINOME", "en": "CODENAME SAVE FAILED", "onde": "toast de erro no dossiê ao salvar o codinome", "limite": 28, "publico": "jogador" },
+  { "id": "J13", "ns": "player", "chave": "profile.photoFail", "pt-BR": "FALHA AO ENVIAR FOTO", "en": "PHOTO UPLOAD FAILED", "onde": "toast de erro no dossiê ao enviar a foto de perfil", "limite": 28, "publico": "jogador" }
+] }

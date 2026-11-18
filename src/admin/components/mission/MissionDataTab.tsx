@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Campaign } from '../../../data/campaigns';
 import { MediaAsset } from '../../../types/media';
 import MediaSelectorModal from '../MediaSelectorModal';
 import MIcon from '../MIcon';
+import { useSaveShortcut } from '../../hooks/useSaveShortcut';
 
 interface MissionDataTabProps {
   campaign: Partial<Campaign>;
@@ -29,6 +30,11 @@ export default function MissionDataTab({
 }: MissionDataTabProps) {
   const { t } = useTranslation('admin');
   const [isMediaSelectorOpen, setIsMediaSelectorOpen] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
+  // ⌘S e ⌘Enter: requestSubmit valida o formulário e ignora enquanto salva
+  useSaveShortcut(true, () => {
+    if (!saving) formRef.current?.requestSubmit();
+  });
 
   const handleMediaSelect = (asset: MediaAsset) => {
     onChange({ ...campaign, imageUrl: asset.url });
@@ -44,7 +50,7 @@ export default function MissionDataTab({
         allowedTypes={['image']}
       />
 
-      <form onSubmit={onSave} className="space-y-8">
+      <form ref={formRef} onSubmit={onSave} className="space-y-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="space-y-6">
             <div className="group">

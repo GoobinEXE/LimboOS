@@ -1,0 +1,3 @@
+{ "pacote": "A5-estaticos-dx", "chaves": [
+  { "id": "P14", "ns": "arquivo", "chave": "404.html:convite", "pt-BR": "Se você recebeu este endereço como convite, o link pode estar quebrado ou incompleto. Peça um novo link ao mestre da sua mesa.", "en": "If you received this address as an invite, the link may be broken or incomplete. Ask the master of your table for a new link.", "onde": "parágrafo extra da página 404, antes do botão de voltar", "limite": 160, "publico": "visitante" }
+] }

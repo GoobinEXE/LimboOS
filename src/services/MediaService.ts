@@ -37,8 +37,20 @@ function toAssets(docs: QueryDocumentSnapshot<DocumentData>[]): MediaAsset[] {
     .sort((a, b) => uploadedMillis(b) - uploadedMillis(a));
 }
 
-const MAX_UPLOAD_BYTES = 100 * 1024 * 1024;
+export const MAX_UPLOAD_BYTES = 100 * 1024 * 1024;
 const ALLOWED_MIME_PREFIXES = ['audio/', 'image/', 'video/', 'application/pdf'] as const;
+
+export type UploadRejection = 'badType' | 'tooLarge';
+
+/** Valida tipo e tamanho antes de enfileirar; devolve o motivo da rejeição ou null. */
+export function validateUploadFile(file: File): UploadRejection | null {
+  const allowed = ALLOWED_MIME_PREFIXES.some((prefix) =>
+    prefix.endsWith('/') ? file.type.startsWith(prefix) : file.type === prefix,
+  );
+  if (!allowed) return 'badType';
+  if (file.size <= 0 || file.size > MAX_UPLOAD_BYTES) return 'tooLarge';
+  return null;
+}
 
 export type UploadMediaOptions = {
   folderIds?: string[];
@@ -62,14 +74,11 @@ class MediaService {
   }
 
   private assertAllowedUpload(file: File): void {
-    const allowed =
-      ALLOWED_MIME_PREFIXES.some((prefix) =>
-        prefix.endsWith('/') ? file.type.startsWith(prefix) : file.type === prefix,
-      );
-    if (!allowed || this.getMediaType(file.type) === 'other') {
+    const rejection = validateUploadFile(file);
+    if (rejection === 'badType' || this.getMediaType(file.type) === 'other') {
       throw new Error('Tipo de arquivo não permitido. Use áudio, imagem, vídeo ou PDF.');
     }
-    if (file.size <= 0 || file.size > MAX_UPLOAD_BYTES) {
+    if (rejection === 'tooLarge') {
       throw new Error('Arquivo inválido ou maior que 100MB.');
     }
   }

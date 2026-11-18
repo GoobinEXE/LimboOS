@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { Campaign } from '../../../data/campaigns';
 import { ACHIEVEMENT_TIER_LABELS } from '../../../services/AchievementManager';
@@ -48,6 +48,25 @@ export default function MissionResourcesTab({
   const checks = campaignReadiness(campaign, summary);
   const { done, total } = readinessScore(checks);
   const usesSms = campaign.playerType === 'nokia';
+  const [query, setQuery] = useState('');
+  const q = query.trim().toLocaleLowerCase('pt-BR');
+  const has = (...parts: (string | undefined)[]) =>
+    !q || parts.some((p) => (p || '').toLocaleLowerCase('pt-BR').includes(q));
+  const intelShown = useMemo(
+    () => summary.intel.filter((i) => has(i.title, i.id)),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [summary.intel, q],
+  );
+  const achievementsShown = useMemo(
+    () => summary.achievements.filter((a) => has(a.title, a.id)),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [summary.achievements, q],
+  );
+  const npcsShown = useMemo(
+    () => summary.npcs.filter((n) => has(n.name, n.id)),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [summary.npcs, q],
+  );
 
   const detail = (check: ReadinessCheck): string => {
     const k = `missions.resources.check.${check.id}`;
@@ -180,18 +199,28 @@ export default function MissionResourcesTab({
           {t('missions.resources.kitTitle')}
         </h4>
 
+        <input
+          type="search"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder={t('missions.resources.search')}
+          aria-label={t('missions.resources.search')}
+          className="w-full sm:max-w-xs bg-surface-container-lowest text-bone px-3 h-9 text-[12px] outline-none rounded-sm focus:bg-accent-10"
+        />
+
         <div className="grid grid-cols-1 lg:grid-cols-3 rounded-inset bg-surface-container-lowest divide-y lg:divide-y-0 lg:divide-x divide-border-subtle">
           <ResourceColumn
             icon="hub"
             title={t('missions.resources.section.intel')}
             count={summary.intel.length}
+            shownCount={intelShown.length}
             globalCount={summary.globalIntelCount}
             emptyText={t('missions.resources.empty.intel')}
             onView={() => onOpenScoped('intel')}
             onCreate={() => onOpenScoped('intel', true)}
             createLabel={t('missions.resources.action.createIntel')}
           >
-            {summary.intel.slice(0, LIST_LIMIT).map((item) => (
+            {intelShown.slice(0, LIST_LIMIT).map((item) => (
               <ResourceRow
                 key={item.id}
                 icon={INTEL_TYPE_OPTIONS.find((o) => o.value === item.type)?.icon || 'description'}
@@ -205,13 +234,14 @@ export default function MissionResourcesTab({
             icon="emoji_events"
             title={t('missions.resources.section.achievements')}
             count={summary.achievements.length}
+            shownCount={achievementsShown.length}
             globalCount={summary.globalAchievementCount}
             emptyText={t('missions.resources.empty.achievements')}
             onView={() => onOpenScoped('achievements')}
             onCreate={() => onOpenScoped('achievements', true)}
             createLabel={t('missions.resources.action.createAchievement')}
           >
-            {summary.achievements.slice(0, LIST_LIMIT).map((ach) => (
+            {achievementsShown.slice(0, LIST_LIMIT).map((ach) => (
               <ResourceRow
                 key={ach.id}
                 icon="emoji_events"
@@ -227,6 +257,7 @@ export default function MissionResourcesTab({
             icon="sms"
             title={t('missions.resources.section.npcs')}
             count={summary.npcs.length}
+            shownCount={npcsShown.length}
             globalCount={summary.globalNpcCount}
             emptyText={
               usesSms ? t('missions.resources.empty.npcs') : t('missions.resources.empty.npcsWalkman')
@@ -236,7 +267,7 @@ export default function MissionResourcesTab({
             onCreate={() => onOpenScoped('sms', true)}
             createLabel={t('missions.resources.action.createNpc')}
           >
-            {summary.npcs.slice(0, LIST_LIMIT).map((npc) => {
+            {npcsShown.slice(0, LIST_LIMIT).map((npc) => {
               const dialogues = summary.dialogues.filter((d) => d.npcId === npc.id).length;
               return (
                 <ResourceRow
@@ -261,6 +292,7 @@ function ResourceColumn({
   icon,
   title,
   count,
+  shownCount,
   globalCount,
   emptyText,
   note,
@@ -272,6 +304,8 @@ function ResourceColumn({
   icon: string;
   title: string;
   count: number;
+  /** Itens que passam pela busca (igual a `count` sem busca). */
+  shownCount: number;
   globalCount: number;
   emptyText: string;
   note?: string;
@@ -281,7 +315,7 @@ function ResourceColumn({
   children: React.ReactNode;
 }) {
   const { t } = useTranslation('admin');
-  const overflow = count - LIST_LIMIT;
+  const overflow = shownCount - LIST_LIMIT;
 
   return (
     <div className="flex flex-col min-w-0 p-4 gap-3">
@@ -301,7 +335,14 @@ function ResourceColumn({
       </div>
 
       {count === 0 ? (
-        <p className="text-[12px] text-ash-500 leading-relaxed">{emptyText}</p>
+        <div className="space-y-3">
+          <p className="text-[12px] text-ash-500 leading-relaxed">{emptyText}</p>
+          <button type="button" onClick={onCreate} className="lmb-btn h-8 min-h-8">
+            {createLabel}
+          </button>
+        </div>
+      ) : shownCount === 0 ? (
+        <p className="text-[12px] text-ash-500 leading-relaxed">{t('missions.resources.noMatch')}</p>
       ) : (
         <ul className="space-y-1">
           {children}

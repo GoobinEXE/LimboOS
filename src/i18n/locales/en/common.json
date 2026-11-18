@@ -124,12 +124,22 @@
     "achievement": {
       "header": "LOG // MEDAL UNLOCKED",
       "class": "CLASS // {{tier}}"
+    },
+    "action": {
+      "retry": "RETRY",
+      "scanAgain": "SCAN AGAIN",
+      "dismiss": "DISMISS"
     }
   },
   "errorBoundary": {
     "title": "CRITICAL SYSTEM FAILURE",
     "body": "The module hit an unrecoverable instability in the interface protocols. The log was sent to command center.",
-    "reload": "Restart Protocols"
+    "reload": "Restart Protocols",
+    "miniApp": {
+      "title": "CONNECTION LOST",
+      "body": "The system went down. Your tape is still safe in the player.",
+      "back": "Back to device"
+    }
   },
   "auth": {
     "error": {
@@ -145,7 +155,8 @@
       "cancelled": "OPERATION CANCELLED BY USER",
       "emailInUse": "Email already registered via another login method.",
       "unexpected": "Unexpected error ({{code}})",
-      "provider": "Provider login error ({{code}})"
+      "provider": "Provider login error ({{code}})",
+      "tooManyRequests": "ACCESS LOCKED: too many attempts. Wait a few minutes."
     }
   },
   "os": {
@@ -170,7 +181,9 @@
       "expired": "This invite expired. Ask the GM for a new one.",
       "revoked": "The GM revoked this invite.",
       "exhausted": "This invite reached its use limit.",
-      "not-found": "Invite not found. Check the link."
+      "not-found": "Invite not found. Check the link.",
+      "network": "NO SIGNAL: could not read the invite. Check your network.",
+      "unexpected": "Unexpected error reading the invite. Try again."
     },
     "goHome": "Go to start",
     "cogmTitle": "Co-GM invite",
@@ -183,7 +196,8 @@
     "signedAs": "Signed in as {{name}}.",
     "switchAccount": "Switch account",
     "accept": "Accept invite",
-    "acceptFail": "Could not accept the invite. It may have expired or already been used."
+    "acceptFail": "Could not accept the invite. It may have expired or already been used.",
+    "retry": "Try again"
   },
   "about": {
     "title": "About LimboOS",
@@ -223,5 +237,14 @@
     "licenseNote": "Use, copying and redistribution follow the LimboOS license. Third-party libraries keep their own licenses.",
     "close": "Close",
     "rowSub": "Version, licenses and credits"
+  },
+  "copySuffix": "(copy)",
+  "offline": {
+    "banner": "No signal. Trying to reconnect",
+    "restored": "Signal restored"
+  },
+  "update": {
+    "available": "A new version is available.",
+    "action": "Update"
   }
 }

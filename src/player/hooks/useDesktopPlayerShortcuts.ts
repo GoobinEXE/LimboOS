@@ -14,9 +14,25 @@ function isTypingTarget(target: EventTarget | null): boolean {
   );
 }
 
+/** Controles de mídia para os atalhos de teclado (J05). Passe undefined sem fita carregada. */
+export interface PlayerMediaShortcuts {
+  toggle: () => void;
+  /** Só áudio avança/recua; vídeo do Nokia fica de fora. */
+  canSeek: boolean;
+  seekBy: (deltaSeconds: number) => void;
+  toggleMute: () => void;
+}
+
+const SEEK_STEP_S = 10;
+
+/** Espaço no botão, link ou slider já tem ação nativa; não duplicar. */
+function ownsSpaceKey(target: EventTarget | null): boolean {
+  return target instanceof HTMLElement && Boolean(target.closest('button, a, [role="slider"]'));
+}
+
 /**
  * Atalhos de teclado para viewport desktop (≥1024px).
- * P = perfil, Esc = fechar overlay/mini-app / voltar à tela anterior.
+ * Espaço = tocar/pausar, setas = ±10 s, M = mudo (só na tela do player), P = perfil, Esc = fechar overlay/mini-app / voltar à tela anterior.
  */
 export function useDesktopPlayerShortcuts(
   screen: AppScreen,
@@ -26,6 +42,7 @@ export function useDesktopPlayerShortcuts(
   hasCampaign: boolean,
   goBack: (fallback: AppScreen) => void,
   exitMiniApp: () => void,
+  media?: PlayerMediaShortcuts,
 ): void {
   useEffect(() => {
     if (!enabled) return;
@@ -67,6 +84,24 @@ export function useDesktopPlayerShortcuts(
         return;
       }
 
+      if (media && screen === 'player' && !document.querySelector('[aria-modal="true"]')) {
+        if (e.key === ' ' && !ownsSpaceKey(e.target)) {
+          e.preventDefault();
+          media.toggle();
+          return;
+        }
+        if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && media.canSeek && !ownsSpaceKey(e.target)) {
+          e.preventDefault();
+          media.seekBy(e.key === 'ArrowRight' ? SEEK_STEP_S : -SEEK_STEP_S);
+          return;
+        }
+        if (e.key === 'm' || e.key === 'M') {
+          e.preventDefault();
+          media.toggleMute();
+          return;
+        }
+      }
+
       if ((e.key === 'p' || e.key === 'P') && screen === 'player') {
         e.preventDefault();
         setScreen('profile');
@@ -81,7 +116,7 @@ export function useDesktopPlayerShortcuts(
 
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [enabled, screen, setScreen, onCloseEvidence, hasCampaign, goBack, exitMiniApp]);
+  }, [enabled, screen, setScreen, onCloseEvidence, hasCampaign, goBack, exitMiniApp, media]);
 }
 
 /** True quando a viewport é desktop larga. */

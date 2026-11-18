@@ -4,6 +4,8 @@ import type { TFunction } from 'i18next';
 import type { NpcContact } from '../../types/npcSms';
 import { useNpcSmsCatalog } from '../../hooks/useNpcSmsCatalog';
 import { npcSmsCatalogService } from '../../services/NpcSmsCatalogService';
+import { useDraftGuard } from './useDraftGuard';
+import { useSaveShortcut } from './useSaveShortcut';
 import { useToast } from '../components/ToastProvider';
 import { useModal } from '../components/ConfirmModal';
 import { useAdminCampaigns } from './useAdminCampaigns';
@@ -55,7 +57,7 @@ export function useNpcContactEditor() {
   const { t } = useTranslation('admin');
   const toast = useToast();
   const { showConfirm, modal } = useModal();
-  const { hasRemoteContacts } = useNpcSmsCatalog();
+  const { hasRemoteContacts, contacts } = useNpcSmsCatalog();
   const { campaigns } = useAdminCampaigns();
 
   const [contactEditor, setContactEditor] = useState<NpcContact | null>(null);
@@ -76,6 +78,35 @@ export function useNpcContactEditor() {
     setContactEditor({ ...c });
     setAvatarFile(null);
   }, []);
+
+  /** Abre o editor em modo criação com os dados do contato e um id novo (`_COPIA`, `_COPIA2`...). */
+  const openDuplicate = useCallback(
+    (c: NpcContact) => {
+      const taken = new Set(contacts.map((x) => x.id.toUpperCase()));
+      const base = c.id.trim().toUpperCase().replace(/\s+/g, '_');
+      let id = `${base}_COPIA`;
+      for (let n = 2; taken.has(id); n++) id = `${base}_COPIA${n}`;
+      setIsEdit(false);
+      setContactEditor({
+        ...c,
+        id,
+        name: `${c.name} ${t('common.copySuffix')}`,
+        campaignIds: c.campaignIds === 'global' ? 'global' : [...c.campaignIds],
+        source: 'custom',
+      });
+      setAvatarFile(null);
+    },
+    [contacts, t],
+  );
+
+  const guard = useDraftGuard({
+    key: 'npc-contact-editor',
+    open: contactEditor !== null,
+    value: contactEditor,
+    extraDirty: avatarFile !== null,
+    saving,
+  });
+  const requestClose = () => void guard.requestClose(() => setContactEditor(null));
 
   const saveContact = async () => {
     if (!contactEditor) return;
@@ -124,9 +155,14 @@ export function useNpcContactEditor() {
     }
   };
 
+  useSaveShortcut(contactEditor !== null, () => {
+    if (!saving) void saveContact();
+  });
+
   const editor = (
     <>
       {modal}
+      {guard.modal}
       {contactEditor && (
         <NpcContactEditorModal
           contact={contactEditor}
@@ -137,12 +173,12 @@ export function useNpcContactEditor() {
           campaigns={campaigns}
           onChange={setContactEditor}
           onAvatarFile={setAvatarFile}
-          onClose={() => setContactEditor(null)}
+          onClose={requestClose}
           onSave={() => void saveContact()}
         />
       )}
     </>
   );
 
-  return { openCreate, openEdit, editor };
+  return { openCreate, openEdit, openDuplicate, editor };
 }

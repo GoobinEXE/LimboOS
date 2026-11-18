@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { usePlayerPlayback } from '../../player/context/PlayerProviders';
 import NotificationPrefsSection from './NotificationPrefsSection';
 import { motion, AnimatePresence } from 'motion/react';
 import { SPRING_INDICATOR, SPRING_SNAP } from '../../lib/motion';
@@ -69,6 +70,7 @@ interface AgentDossierOverlayProps {
 
 export const AgentDossierOverlay = ({ onClose, playerData, intelManager, onUpdateSpotify }: AgentDossierOverlayProps) => {
   const { t } = useTranslation(['player', 'common']);
+  const { addToast } = usePlayerPlayback();
   const { achievements } = useAchievementCatalog();
   const [activeTab, setActiveTab] = useState<DossierTab>('agente');
   const [selectedIntel, setSelectedIntel] = useState<IntelBase | null>(null);
@@ -106,11 +108,23 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager, onUpdat
   const levelItems = intelManager?.getByLevel(activeLevel) ?? [];
   const isOpenable = (item: IntelBase) => item instanceof VisualIntel || item instanceof TextIntel;
 
-  const handleSaveName = async () => {
+  const handleSaveName = () => {
     const trimmed = editName.trim();
     if (!trimmed || trimmed === currentUsername) return setIsEditingName(false);
+    return saveName(trimmed);
+  };
+
+  const saveName = async (trimmed: string) => {
     setSavingName(true);
-    try { await updateCodinome(playerData.uid, playerData.activeCharacterId, trimmed); setCurrentUsername(trimmed); } catch (err) { console.error(err); }
+    try { await updateCodinome(playerData.uid, playerData.activeCharacterId, trimmed); setCurrentUsername(trimmed); } catch (err) {
+      console.error(err);
+      addToast({
+        type: 'error',
+        title: t('profile.saveNameFail'),
+        icon: '[!]',
+        action: { label: t('toast.action.retry', { ns: 'common' }), onClick: () => { void saveName(trimmed); } },
+      });
+    }
     finally { setSavingName(false); setIsEditingName(false); }
   };
 
@@ -157,8 +171,20 @@ export const AgentDossierOverlay = ({ onClose, playerData, intelManager, onUpdat
       console.error('Imagem maior que 5MB');
       return;
     }
+    return uploadPhotoFile(file);
+  };
+
+  const uploadPhotoFile = async (file: File) => {
     setUploading(true);
-    try { const photo = await uploadProfilePhoto(playerData.uid, playerData.activeCharacterId, file); setCurrentPhotoUrl(photo.url); } catch (err) { console.error(err); }
+    try { const photo = await uploadProfilePhoto(playerData.uid, playerData.activeCharacterId, file); setCurrentPhotoUrl(photo.url); } catch (err) {
+      console.error(err);
+      addToast({
+        type: 'error',
+        title: t('profile.photoFail'),
+        icon: '[!]',
+        action: { label: t('toast.action.retry', { ns: 'common' }), onClick: () => { void uploadPhotoFile(file); } },
+      });
+    }
     finally { setUploading(false); }
   };
 

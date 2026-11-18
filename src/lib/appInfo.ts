@@ -5,7 +5,7 @@ export const COPYRIGHT_START_YEAR = 2026;
 export const COPYRIGHT_HOLDER = 'Marcelo Pessoa / LimboOS';
 export const STUDIO_NAME = 'Dark Room';
 export const APP_NAME = 'LimboOS';
-export const WEBSITE_URL = 'https://terminalhubrpg.web.app';
+export const WEBSITE_URL = 'https://limboos.web.app';
 export const SOURCE_URL = 'https://github.com/xXinous/LimboOS';
 
 export interface AppInfo {
@@ -26,13 +26,15 @@ export interface LicenseEntry {
   url: string | null;
 }
 
-interface BuildInfoFile {
+/** Conteúdo de /build-info.json (scripts/build-info.mjs). Objeto vazio quando a leitura falha. */
+export interface BuildInfoFile {
   version?: string;
   commit?: string | null;
   builtAt?: string | null;
 }
 
 let cached: Promise<AppInfo> | null = null;
+let loaded: Promise<BuildInfoFile> | null = null;
 
 async function readBuildInfo(): Promise<BuildInfoFile> {
   try {
@@ -44,9 +46,33 @@ async function readBuildInfo(): Promise<BuildInfoFile> {
   }
 }
 
+export function isEmptyBuildInfo(file: BuildInfoFile): boolean {
+  return !file.commit && !file.builtAt;
+}
+
+/** Leitura nova de /build-info.json, sem cache do navegador (aviso de nova versão). */
+export function fetchBuildInfo(): Promise<BuildInfoFile> {
+  return readBuildInfo();
+}
+
+/**
+ * Build carregado nesta sessão: a primeira leitura bem-sucedida, guardada para sempre.
+ * Serve de base para a tela Sobre e para a comparação com o deploy publicado.
+ * Uma leitura que falhou (sem rede no boot) não fica guardada e é tentada de novo.
+ */
+export function getLoadedBuildInfo(): Promise<BuildInfoFile> {
+  if (loaded) return loaded;
+  const pending = readBuildInfo();
+  loaded = pending;
+  void pending.then((file) => {
+    if (isEmptyBuildInfo(file) && loaded === pending) loaded = null;
+  });
+  return pending;
+}
+
 export function getAppInfo(): Promise<AppInfo> {
   cached ??= (async () => {
-    const file = await readBuildInfo();
+    const file = await getLoadedBuildInfo();
     const info: AppInfo = {
       version: file.version ?? '—',
       build: null,

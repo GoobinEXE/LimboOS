@@ -1,0 +1,75 @@
+{
+  "pacote": "A8-sincronizacao",
+  "chaves": [
+    {
+      "id": "J02",
+      "ns": "player",
+      "chave": "sync.error.title",
+      "pt-BR": "SINAL INSTÁVEL",
+      "en": "UNSTABLE SIGNAL",
+      "onde": "título da faixa quando um listener do Firestore falha com rede",
+      "limite": 24,
+      "publico": "jogador"
+    },
+    {
+      "id": "J02",
+      "ns": "player",
+      "chave": "sync.error.body",
+      "pt-BR": "A sincronização caiu. Novos itens podem demorar.",
+      "en": "Sync dropped. New items may be delayed.",
+      "onde": "corpo da faixa em erro de rede",
+      "limite": 60,
+      "publico": "jogador"
+    },
+    {
+      "id": "J02",
+      "ns": "player",
+      "chave": "sync.error.bodyServer",
+      "pt-BR": "O servidor recusou a sincronização.",
+      "en": "The server refused to sync.",
+      "onde": "corpo da faixa em erro que não é de rede",
+      "limite": 60,
+      "publico": "jogador"
+    },
+    {
+      "id": "J02",
+      "ns": "player",
+      "chave": "sync.error.retry",
+      "pt-BR": "TENTAR DE NOVO",
+      "en": "TRY AGAIN",
+      "onde": "botão da faixa de sincronização",
+      "limite": 16,
+      "publico": "jogador"
+    },
+    {
+      "id": "J02",
+      "ns": "player",
+      "chave": "sync.error.retrying",
+      "pt-BR": "RECONECTANDO...",
+      "en": "RECONNECTING...",
+      "onde": "botão enquanto reassina os listeners",
+      "limite": 16,
+      "publico": "jogador"
+    },
+    {
+      "id": "P01",
+      "ns": "player",
+      "chave": "offline.lost",
+      "pt-BR": "SEM SINAL",
+      "en": "NO SIGNAL",
+      "onde": "toast quando a rede cai no player",
+      "limite": 16,
+      "publico": "jogador"
+    },
+    {
+      "id": "P01",
+      "ns": "player",
+      "chave": "offline.restored",
+      "pt-BR": "SINAL RESTABELECIDO",
+      "en": "SIGNAL RESTORED",
+      "onde": "toast quando a rede volta no player",
+      "limite": 24,
+      "publico": "jogador"
+    }
+  ]
+}

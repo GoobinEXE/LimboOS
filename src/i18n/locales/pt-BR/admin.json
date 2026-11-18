@@ -216,7 +216,12 @@
     "jukebox": "Jukebox da Mesa",
     "recentLog": "Log Recente",
     "fullLog": "Ver log completo →",
-    "allTargets": "todos*"
+    "allTargets": "todos*",
+    "undo": {
+      "delivered": "Entrega feita para {{n}} agente(s).",
+      "done": "Entrega desfeita para {{n}} agente(s). Notificações já enviadas não são recolhidas.",
+      "fail": "Não foi possível desfazer a entrega."
+    }
   },
   "deliver": {
     "kind": {
@@ -412,7 +417,9 @@
       "more": "e mais {{count}}",
       "disabled": "Off",
       "dialogueCount_one": "{{count}} diálogo",
-      "dialogueCount_other": "{{count}} diálogos"
+      "dialogueCount_other": "{{count}} diálogos",
+      "search": "Buscar nos recursos da missão",
+      "noMatch": "Nada encontrado."
     },
     "delete": {
       "lead": "Apagar \"{{name}}\" tira a missão do Firestore e desfaz os vínculos com ela.",
@@ -432,7 +439,8 @@
       "title": "Nenhuma missão nesta pasta",
       "bodyOwner": "Crie a primeira missão para começar a montar a mesa.",
       "bodyCogm": "O mestre ainda não te convidou para nenhuma missão desta pasta."
-    }
+    },
+    "duplicate": "Duplicar missão"
   },
   "media": {
     "title": "Biblioteca",
@@ -467,6 +475,14 @@
     },
     "toast": {
       "uploadOk": "✓ {{n}} arquivos enviados. Editando o primeiro — os demais estão no catálogo."
+    },
+    "queue": {
+      "title": "Fila de envio",
+      "tooLarge": "Maior que o limite de {{max}} MB",
+      "badType": "Tipo não permitido (áudio, imagem, vídeo ou PDF)",
+      "retry": "Tentar de novo",
+      "clearDone": "Limpar concluídos",
+      "done": "Enviado"
     }
   },
   "intel": {
@@ -500,7 +516,11 @@
       "npc": "NPC RESPONSÁVEL",
       "chapter": "CAPÍTULO / SETOR",
       "duration": "DURAÇÃO (SEG)",
-      "format": "FORMATO FÍSICO"
+      "format": "FORMATO FÍSICO",
+      "saveShortcutHint": "⌘S ou ⌘Enter",
+      "previewAsPlayer": "Ver como jogador",
+      "previewClose": "Fechar prévia",
+      "previewUnavailable": "A prévia cobre texto, imagem e meta. Áudio e vídeo não têm prévia aqui."
     },
     "qr": {
       "title": "Gerar QR desta Intel",
@@ -511,7 +531,11 @@
       "title": "Exportar Registro Mestre"
     },
     "catalog": {
-      "preview": "Prévia"
+      "preview": "Prévia",
+      "duplicate": "Duplicar",
+      "sort": {
+        "default": "Ordem do catálogo"
+      }
     },
     "dist": {
       "search": "LOCALIZAR NA BIBLIOTECA...",
@@ -520,6 +544,10 @@
       "videoSelected": "1 VÍDEO SELECIONADO",
       "selectVideo": "SELECIONE UM VÍDEO",
       "error": "ERRO: Falha na operação."
+    },
+    "delete": {
+      "storageCheckbox": "Apagar também o arquivo do Storage",
+      "sharedFileWarning": "Outra intel usa este mesmo arquivo. Apagá-lo quebra essa intel."
     }
   },
   "accounts": {
@@ -794,7 +822,11 @@
     "destination": "Destino",
     "integrity": "Integridade de Mapeamento: Ótima",
     "targetHint": "Digite o título ou o id: o campo sugere as intel do catálogo.",
-    "targetUnknown": "Intel não encontrada no catálogo"
+    "targetUnknown": "Intel não encontrada no catálogo",
+    "removeTitle": "Remover redirecionamento",
+    "removeBody": "O código {{sourceId}} deixará de apontar para a intel de destino.",
+    "removeAction": "Remover",
+    "removed": "Redirecionamento removido."
   },
   "achievements": {
     "title": "Catálogo Global de Conquistas",
@@ -831,7 +863,8 @@
     "createForMission": "Nova conquista para esta missão",
     "firstCreateTitle": "Importar sugestões antes",
     "firstCreateBody": "O catálogo ainda usa as sugestões locais. A primeira conquista salva no Firestore passa a ser o catálogo inteiro e as sugestões somem da lista. Importar as sugestões e criar a nova conquista em seguida?",
-    "firstCreateAction": "Importar e criar"
+    "firstCreateAction": "Importar e criar",
+    "duplicate": "Duplicar"
   },
   "npcSms": {
     "title": "Catálogo SMS / NPCs",
@@ -900,7 +933,8 @@
     "distHidden_other": "{{count}} NPCs de outras missões ocultos. Mostrar todos",
     "firstCreateTitle": "Importar sugestões antes",
     "firstCreateBody": "O catálogo ainda usa os NPCs e diálogos sugeridos. O primeiro registro salvo no Firestore substitui as sugestões, que somem da lista. Importar as sugestões e criar o novo registro em seguida?",
-    "firstCreateAction": "Importar e criar"
+    "firstCreateAction": "Importar e criar",
+    "duplicate": "Duplicar"
   },
   "jukebox": {
     "title": "Interface de Broadcast Jukebox",
@@ -918,7 +952,9 @@
     "addFail": "Falha ao adicionar áudio à jukebox.",
     "removeTitle": "Atenção",
     "removeBody": "Remover \"{{title}}\" da jukebox?",
-    "removeAction": "Remover"
+    "removeAction": "Remover",
+    "removeFail": "Não foi possível remover a faixa.",
+    "removeOrphan": "Faixa removida, mas o arquivo não foi apagado do Storage: {{path}}"
   },
   "scope": {
     "label": "Filtrar por missão",
@@ -1007,8 +1043,11 @@
       "createFail": "Não foi possível criar o convite.",
       "revokeFail": "Não foi possível revogar o convite.",
       "removed": "Co-mestre removido.",
-      "removeFail": "Não foi possível remover o co-mestre."
-    }
+      "removeFail": "Não foi possível remover o co-mestre.",
+      "duplicated": "Convite igual gerado. Link copiado."
+    },
+    "duplicateInvite": "Gerar igual",
+    "noInvitesAction": "Gerar primeiro convite"
   },
   "platform": {
     "title": "Contas da plataforma",
@@ -1034,11 +1073,66 @@
     }
   },
   "push": {
-    "target": { "label": "Destino", "selected": "Agentes ({{n}})", "group": "Esquadrão da sessão", "mission": "Missão", "all": "Pasta inteira" },
-    "field": { "title": "Título", "body": "Mensagem", "sendAt": "Agendar (vazio envia agora)" },
-    "action": { "send": "Enviar agora", "schedule": "Agendar" },
+    "target": {
+      "label": "Destino",
+      "selected": "Agentes ({{n}})",
+      "group": "Esquadrão da sessão",
+      "mission": "Missão",
+      "all": "Pasta inteira"
+    },
+    "field": {
+      "title": "Título",
+      "body": "Mensagem",
+      "sendAt": "Agendar (vazio envia agora)"
+    },
+    "action": {
+      "send": "Enviar agora",
+      "schedule": "Agendar"
+    },
     "pending": "Agendados",
     "history": "Últimos envios",
-    "toast": { "sent": "Enviado a {{sent}} aparelho(s) de {{n}} conta(s)", "scheduled": "Lembrete agendado", "fail": "Falha no push" }
+    "toast": {
+      "sent": "Enviado a {{sent}} aparelho(s) de {{n}} conta(s)",
+      "scheduled": "Lembrete agendado",
+      "fail": "Falha no push"
+    }
+  },
+  "bulk": {
+    "moveToFolder": "Mover para pasta",
+    "linkMission": "Vincular a missão",
+    "unlinkMission": "Sem missão",
+    "remove": "Remover",
+    "removeBody_one": "Remover {{count}} item do catálogo? Jogadores que já têm o item mantêm no inventário.",
+    "removeBody_other": "Remover {{count}} itens do catálogo? Jogadores que já têm os itens mantêm no inventário.",
+    "removeFilesBody_one": "Remover permanentemente {{count}} arquivo? Isso pode quebrar links existentes.",
+    "removeFilesBody_other": "Remover permanentemente {{count}} arquivos? Isso pode quebrar links existentes.",
+    "result": "{{ok}} de {{total}} itens processados",
+    "resultPartial": "{{ok}} processados, {{failed}} falharam",
+    "selected_one": "{{count}} selecionado",
+    "selected_other": "{{count}} selecionados",
+    "clear": "Limpar",
+    "selectAll": "Selecionar todos"
+  },
+  "common": {
+    "copySuffix": "(cópia)",
+    "undo": "Desfazer"
+  },
+  "draft": {
+    "*": "(já registradas em A3)",
+    "title": "Descartar alterações?",
+    "body": "O que você digitou neste editor ainda não foi salvo e será perdido.",
+    "discard": "DESCARTAR",
+    "keep": "CONTINUAR EDITANDO"
+  },
+  "saveShortcutHint": "Salvar (⌘S ou Ctrl+S)",
+  "list": {
+    "sort": {
+      "default": "Padrão",
+      "recent": "Mais recentes",
+      "title": "Título (A-Z)",
+      "type": "Tipo",
+      "id": "ID"
+    },
+    "sortLabel": "Ordenar"
   }
 }

@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { subscribeToQrRedirects, saveQrRedirect, deleteQrRedirect } from '../../store/firestore';
 import { activityLogger } from '../../services/ActivityLogger';
 import { useModal } from './ConfirmModal';
+import { useToast } from './ToastProvider';
+import { useListControls } from '../hooks/useListControls';
 import { format } from 'date-fns';
 import Screw from '../../components/player/Screw';
 import { intelService } from '../../services/IntelService';
@@ -29,12 +31,15 @@ export default function RedirectsPanel({
   const { t } = useTranslation('admin');
   const [redirects, setRedirects] = useState<QrRedirect[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
+  const list = useListControls<QrRedirect, 'default'>({ storageKey: 'redirects', defaultSort: 'default', sorters: { default: null } });
+  const search = list.query;
+  const setSearch = list.setQuery;
   const [newSourceId, setNewSourceId] = useState('');
   const [newTargetId, setNewTargetId] = useState('');
   const [newReason, setNewReason] = useState('');
   const [isSaving, setIsSaving] = useState(false);
-  const { showAlert, modal } = useModal();
+  const { showAlert, showConfirm, modal } = useModal();
+  const toast = useToast();
   const [intelItems, setIntelItems] = useState<IntelItem[]>(() => intelRegistry.getAll());
 
   useEffect(() => intelService.subscribeToIntelRegistry(setIntelItems), []);
@@ -77,10 +82,32 @@ export default function RedirectsPanel({
     }
   };
 
-  const handleDelete = async (sourceId: string) => {
+  const handleDelete = async (r: QrRedirect) => {
+    const { sourceId } = r;
+    const ok = await showConfirm(
+      t('redirects.removeTitle'),
+      t('redirects.removeBody', { sourceId }),
+      t('redirects.removeAction'),
+    );
+    if (!ok) return;
     try {
       await deleteQrRedirect(sourceId);
       activityLogger.logAdmin('mestre', 'qr_redirect_remove', `Removeu redirecionamento: ${sourceId}`, { sourceId });
+      toast.info(t('redirects.removed'), {
+        durationMs: 8000,
+        action: {
+          label: t('common.undo'),
+          onClick: async () => {
+            try {
+              await saveQrRedirect(r.sourceId, r.targetId, r.reason, intelRegistry.get(r.targetId)?.campaignId ?? null);
+              activityLogger.logAdmin('mestre', 'qr_redirect_add', `Restaurou redirecionamento: ${r.sourceId} -> ${r.targetId}`, { sourceId: r.sourceId, targetId: r.targetId });
+            } catch (err) {
+              console.error('Error restoring redirect:', err);
+              showAlert('Erro', 'Falha ao restaurar redirecionamento.');
+            }
+          },
+        },
+      });
       // Real-time listener handles state update
     } catch (err) {
       console.error('Error deleting redirect:', err);
@@ -266,7 +293,7 @@ export default function RedirectsPanel({
                           </div>
                         </div>
                         <button
-                          onClick={() => handleDelete(r.sourceId)}
+                          onClick={() => handleDelete(r)}
                           className="w-10 h-10 flex items-center justify-center text-ash-800 hover:text-red-500 hover:bg-red-500/10 transition opacity-0 group-hover:opacity-100 rounded-sm"
                           title="ELIMINAR MAPEAMENTO"
                         ><MIcon name="delete" /></button>

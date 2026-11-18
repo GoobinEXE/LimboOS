@@ -216,7 +216,12 @@
     "jukebox": "Table Jukebox",
     "recentLog": "Recent Log",
     "fullLog": "View full log →",
-    "allTargets": "all*"
+    "allTargets": "all*",
+    "undo": {
+      "delivered": "Delivered to {{n}} agent(s).",
+      "done": "Delivery undone for {{n}} agent(s). Notifications already sent are not recalled.",
+      "fail": "Could not undo the delivery."
+    }
   },
   "deliver": {
     "kind": {
@@ -412,7 +417,9 @@
       "more": "and {{count}} more",
       "disabled": "Off",
       "dialogueCount_one": "{{count}} dialogue",
-      "dialogueCount_other": "{{count}} dialogues"
+      "dialogueCount_other": "{{count}} dialogues",
+      "search": "Search mission resources",
+      "noMatch": "No matches."
     },
     "delete": {
       "lead": "Deleting \"{{name}}\" removes the mission from Firestore and undoes the links to it.",
@@ -432,7 +439,8 @@
       "title": "No missions in this folder",
       "bodyOwner": "Create the first mission to start setting up the table.",
       "bodyCogm": "The game master hasn't invited you to any mission in this folder yet."
-    }
+    },
+    "duplicate": "Duplicate mission"
   },
   "media": {
     "title": "Library",
@@ -467,6 +475,14 @@
     },
     "toast": {
       "uploadOk": "✓ {{n}} files uploaded. Editing the first — others are in the catalog."
+    },
+    "queue": {
+      "title": "Upload queue",
+      "tooLarge": "Larger than the {{max}} MB limit",
+      "badType": "File type not allowed (audio, image, video or PDF)",
+      "retry": "Retry",
+      "clearDone": "Clear finished",
+      "done": "Uploaded"
     }
   },
   "intel": {
@@ -500,7 +516,11 @@
       "npc": "RESPONSIBLE NPC",
       "chapter": "CHAPTER / SECTOR",
       "duration": "DURATION (SEC)",
-      "format": "PHYSICAL FORMAT"
+      "format": "PHYSICAL FORMAT",
+      "saveShortcutHint": "⌘S or ⌘Enter",
+      "previewAsPlayer": "View as player",
+      "previewClose": "Close preview",
+      "previewUnavailable": "Preview covers text, image and meta. Audio and video have no preview here."
     },
     "qr": {
       "title": "Generate QR for this Intel",
@@ -511,7 +531,11 @@
       "title": "Export Master Record"
     },
     "catalog": {
-      "preview": "Preview"
+      "preview": "Preview",
+      "duplicate": "Duplicate",
+      "sort": {
+        "default": "Catalog order"
+      }
     },
     "dist": {
       "search": "LOCATE IN LIBRARY...",
@@ -520,6 +544,10 @@
       "videoSelected": "1 VIDEO SELECTED",
       "selectVideo": "SELECT A VIDEO",
       "error": "ERROR: Operation failed."
+    },
+    "delete": {
+      "storageCheckbox": "Also delete the file from Storage",
+      "sharedFileWarning": "Another intel uses this same file. Deleting it breaks that intel."
     }
   },
   "accounts": {
@@ -794,7 +822,11 @@
     "destination": "Destination",
     "integrity": "Mapping Integrity: Optimal",
     "targetHint": "Type the title or id: the field suggests intel from the catalog.",
-    "targetUnknown": "Intel not found in the catalog"
+    "targetUnknown": "Intel not found in the catalog",
+    "removeTitle": "Remove redirect",
+    "removeBody": "Code {{sourceId}} will stop pointing to its target intel.",
+    "removeAction": "Remove",
+    "removed": "Redirect removed."
   },
   "achievements": {
     "title": "Global Achievements Catalog",
@@ -831,7 +863,8 @@
     "createForMission": "New achievement for this mission",
     "firstCreateTitle": "Import suggestions first",
     "firstCreateBody": "The catalog still uses the local suggestions. The first achievement saved to Firestore becomes the whole catalog and the suggestions disappear from the list. Import the suggestions and then create the new achievement?",
-    "firstCreateAction": "Import and create"
+    "firstCreateAction": "Import and create",
+    "duplicate": "Duplicate"
   },
   "npcSms": {
     "title": "SMS / NPC Catalog",
@@ -900,7 +933,8 @@
     "distHidden_other": "{{count}} NPCs from other missions hidden. Show all",
     "firstCreateTitle": "Import suggestions first",
     "firstCreateBody": "The catalog still uses the suggested NPCs and dialogues. The first record saved to Firestore replaces the suggestions, which disappear from the list. Import the suggestions and then create the new record?",
-    "firstCreateAction": "Import and create"
+    "firstCreateAction": "Import and create",
+    "duplicate": "Duplicate"
   },
   "jukebox": {
     "title": "Jukebox Broadcast Interface",
@@ -918,7 +952,9 @@
     "addFail": "Failed to add audio to jukebox.",
     "removeTitle": "Warning",
     "removeBody": "Remove \"{{title}}\" from the jukebox?",
-    "removeAction": "Remove"
+    "removeAction": "Remove",
+    "removeFail": "Could not remove the track.",
+    "removeOrphan": "Track removed, but the file was not deleted from Storage: {{path}}"
   },
   "scope": {
     "label": "Filter by mission",
@@ -1007,8 +1043,11 @@
       "createFail": "Could not create the invite.",
       "revokeFail": "Could not revoke the invite.",
       "removed": "Co-GM removed.",
-      "removeFail": "Could not remove the co-GM."
-    }
+      "removeFail": "Could not remove the co-GM.",
+      "duplicated": "Matching invite created. Link copied."
+    },
+    "duplicateInvite": "Generate same",
+    "noInvitesAction": "Create first invite"
   },
   "platform": {
     "title": "Platform accounts",
@@ -1034,11 +1073,66 @@
     }
   },
   "push": {
-    "target": { "label": "Target", "selected": "Agents ({{n}})", "group": "Session squad", "mission": "Mission", "all": "Whole folder" },
-    "field": { "title": "Title", "body": "Message", "sendAt": "Schedule (empty sends now)" },
-    "action": { "send": "Send now", "schedule": "Schedule" },
+    "target": {
+      "label": "Target",
+      "selected": "Agents ({{n}})",
+      "group": "Session squad",
+      "mission": "Mission",
+      "all": "Whole folder"
+    },
+    "field": {
+      "title": "Title",
+      "body": "Message",
+      "sendAt": "Schedule (empty sends now)"
+    },
+    "action": {
+      "send": "Send now",
+      "schedule": "Schedule"
+    },
     "pending": "Scheduled",
     "history": "Recent sends",
-    "toast": { "sent": "Sent to {{sent}} device(s) across {{n}} account(s)", "scheduled": "Reminder scheduled", "fail": "Push failed" }
+    "toast": {
+      "sent": "Sent to {{sent}} device(s) across {{n}} account(s)",
+      "scheduled": "Reminder scheduled",
+      "fail": "Push failed"
+    }
+  },
+  "bulk": {
+    "moveToFolder": "Move to folder",
+    "linkMission": "Link to mission",
+    "unlinkMission": "No mission",
+    "remove": "Remove",
+    "removeBody_one": "Remove {{count}} item from the catalog? Players who already have it keep it in their inventory.",
+    "removeBody_other": "Remove {{count}} items from the catalog? Players who already have them keep them in their inventory.",
+    "removeFilesBody_one": "Permanently remove {{count}} file? This may break existing links.",
+    "removeFilesBody_other": "Permanently remove {{count}} files? This may break existing links.",
+    "result": "{{ok}} of {{total}} items processed",
+    "resultPartial": "{{ok}} processed, {{failed}} failed",
+    "selected_one": "{{count}} selected",
+    "selected_other": "{{count}} selected",
+    "clear": "Clear",
+    "selectAll": "Select all"
+  },
+  "common": {
+    "copySuffix": "(copy)",
+    "undo": "Undo"
+  },
+  "draft": {
+    "*": "(already in A3)",
+    "title": "Discard changes?",
+    "body": "What you entered in this editor has not been saved and will be lost.",
+    "discard": "DISCARD",
+    "keep": "KEEP EDITING"
+  },
+  "saveShortcutHint": "Save (⌘S or Ctrl+S)",
+  "list": {
+    "sort": {
+      "default": "Default",
+      "recent": "Newest first",
+      "title": "Title (A-Z)",
+      "type": "Type",
+      "id": "ID"
+    },
+    "sortLabel": "Sort"
   }
 }

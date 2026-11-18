@@ -4,6 +4,8 @@ import { EASE_OUT } from '../../lib/motion';
 import { useTranslation } from 'react-i18next';
 import RetroLoading from '../../components/player/RetroLoading';
 import { analyticsTracker } from '../../services/AnalyticsTracker';
+import ErrorBoundary from '../../components/ErrorBoundary';
+import { useOverlay } from '../../lib/overlayStack';
 
 const BiosTerminal = React.lazy(() => import('../../components/BiosTerminal'));
 const LimboBoard = React.lazy(() => import('../../components/LimboBoard'));
@@ -25,6 +27,9 @@ const LIMBO_EASE = EASE_OUT;
 
 export default function MiniAppsOverlay({ screen, playerData, limboStatus, setScreen, exitMiniApp }: MiniAppsOverlayProps) {
   const { t } = useTranslation('player');
+
+  // Esc e botão voltar do Android fecham o mini-app (volta à tela de origem).
+  useOverlay(true, exitMiniApp, { id: 'mini-app' });
 
   useEffect(() => {
     if (screen === 'bios') analyticsTracker.markFlag('biosOpened');
@@ -66,6 +71,7 @@ export default function MiniAppsOverlay({ screen, playerData, limboStatus, setSc
         </div>
       </div>
 
+      <ErrorBoundary variant="miniApp" resetKey={screen} onReset={exitMiniApp}>
       <React.Suspense
         fallback={
           <RetroLoading
@@ -118,6 +124,7 @@ export default function MiniAppsOverlay({ screen, playerData, limboStatus, setSc
           />
         )}
       </React.Suspense>
+      </ErrorBoundary>
     </motion.div>
   );
 }

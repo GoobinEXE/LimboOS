@@ -11,6 +11,7 @@ import LoginScreen from '../components/LoginScreen';
 import RetroLoading from '../components/player/RetroLoading';
 import RetroSpinner from '../components/player/RetroSpinner';
 import { dialogPop } from '../lib/motion';
+import { isNetworkError, useOnlineStatus } from '../lib/connectivity';
 
 const ADMIN_WORKSPACE_KEY = 'limboos.admin.workspace';
 
@@ -24,6 +25,9 @@ export default function InviteApp() {
   const { t } = useTranslation('common');
   const [user, setUser] = useState<User | null | undefined>(undefined);
   const [preview, setPreview] = useState<InvitePreview | null>(null);
+  const [previewError, setPreviewError] = useState<'network' | 'unexpected' | null>(null);
+  const [attempt, setAttempt] = useState(0);
+  const online = useOnlineStatus();
   const [codinome, setCodinome] = useState('');
   const [accepting, setAccepting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -32,14 +36,44 @@ export default function InviteApp() {
 
   useEffect(() => {
     let cancelled = false;
+    setPreviewError(null);
     inviteService
       .preview(token)
-      .then((p) => !cancelled && setPreview(p))
-      .catch(() => !cancelled && setPreview({ kind: 'player', workspaceName: '', campaignName: '', valid: false, reason: 'not-found' }));
+      .then((p) => {
+        if (!cancelled) setPreview(p);
+      })
+      .catch((err) => {
+        if (!cancelled) setPreviewError(isNetworkError(err) ? 'network' : 'unexpected');
+      });
     return () => {
       cancelled = true;
     };
-  }, [token]);
+  }, [token, attempt]);
+
+  // Voltou o sinal com o cartão de falha na tela: tenta de novo sozinho.
+  useEffect(() => {
+    if (online && previewError === 'network') setAttempt((n) => n + 1);
+  }, [online, previewError]);
+
+  if (previewError && !preview) {
+    return (
+      <div className="w-full min-h-screen flex items-center justify-center bg-surface relative overflow-hidden">
+        <div className="noise-overlay" />
+        <div className="scanlines" />
+        <div className="vignette" />
+        <div className="relative z-10 max-w-md w-full mx-4 bg-surface-container-low rounded-panel shadow-panel machined-edge p-8 space-y-5">
+          <h1 className="font-display text-2xl font-bold text-bone uppercase tracking-tight text-center">
+            {t('invite.invalidTitle')}
+          </h1>
+          <p role="alert" className="text-sm text-ash-400 text-center">{t(`invite.reason.${previewError}`)}</p>
+          <button type="button" onClick={() => setAttempt((n) => n + 1)} className="lmb-btn lmb-btn-primary w-full justify-center">
+            {t('invite.retry')}
+          </button>
+          <a href="/" className="lmb-btn w-full justify-center">{t('invite.goHome')}</a>
+        </div>
+      </div>
+    );
+  }
 
   if (user === undefined || preview === null) {
     return <RetroLoading fullScreen message={t('invite.loading')} />;

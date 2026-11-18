@@ -1,0 +1,7 @@
+{ "pacote": "A7-nokia-controles", "chaves": [
+  { "id": "J11", "ns": "player", "chave": "nokia.aria.eject", "pt-BR": "Ejetar fita", "en": "Eject tape", "onde": "aria-label do botão de ejetar do Nokia (leitor de tela)", "limite": 24, "publico": "jogador" },
+  { "id": "J11", "ns": "player", "chave": "nokia.aria.video", "pt-BR": "Vídeo: {{title}}", "en": "Video: {{title}}", "onde": "aria-label do vídeo e do grupo da superfície de vídeo do Nokia", "limite": 60, "publico": "jogador" },
+  { "id": "J11", "ns": "player", "chave": "walkman.library.itemAria", "pt-BR": "{{title}}, {{type}}", "en": "{{title}}, {{type}}", "onde": "aria-label de cada fita da lista de provas do walkman", "limite": 80, "publico": "jogador" },
+  { "id": "J11", "ns": "player", "chave": "walkman.library.nowPlaying", "pt-BR": "tocando agora", "en": "now playing", "onde": "sufixo do aria-label da fita que está tocando", "limite": 20, "publico": "jogador" },
+  { "id": "J15", "ns": "player", "chave": "campaign.progressValueText", "pt-BR": "Missão {{current}} de {{total}}", "en": "Mission {{current}} of {{total}}", "onde": "aria-valuetext do slider de campanhas (TapeProgress)", "limite": 30, "publico": "jogador" }
+] }

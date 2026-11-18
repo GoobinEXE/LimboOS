@@ -28,7 +28,8 @@
       "id": "RM-USER-01 or email"
     },
     "hint": {
-      "register": "New accounts are registered automatically on first access."
+      "register": "New accounts are registered automatically on first access.",
+      "lostAccess": "LOST ACCESS? CONTACT YOUR GAME MASTER."
     },
     "submit": "Enter System",
     "syncing": "Syncing...",
@@ -47,7 +48,11 @@
       "> STATUS: LIMBO",
       "> Y2K CHECK: UNKNOWN",
       "> LOG: AWAITING INPUT..."
-    ]
+    ],
+    "password": {
+      "show": "Show password",
+      "hide": "Hide password"
+    }
   },
   "character": {
     "loading": "Accessing Database...",
@@ -114,7 +119,8 @@
     "progressAria": "Campaign navigation",
     "progressRecords": "Records",
     "metadataTitle": "View Terminal Metadata",
-    "metadataAria": "View terminal metadata"
+    "metadataAria": "View terminal metadata",
+    "progressValueText": "Mission {{current}} of {{total}}"
   },
   "cassette": {
     "mission": "Mission // {{n}} · {{side}}",
@@ -256,7 +262,9 @@
       "nokia": "REGISTROS OPERACIONAIS"
     },
     "statusPrefix": "STATUS: {{status}}",
-    "languageSection": "Preferences"
+    "languageSection": "Preferences",
+    "saveNameFail": "CODENAME SAVE FAILED",
+    "photoFail": "PHOTO UPLOAD FAILED"
   },
   "evidence": {
     "registry": "EVIDENCE LOG",
@@ -293,7 +301,15 @@
     "intelUnlocked": "Intel Unlocked!",
     "intelInserted": "Intel Inserted",
     "transmissionOpen": "Transmission Open",
-    "transmissionReceived": "Transmission Received"
+    "transmissionReceived": "Transmission Received",
+    "resumeTape": "TAPE RESUMED",
+    "resumeTapeSub": "Back where you left off.",
+    "action": {
+      "fromStart": "From start"
+    },
+    "tapeLoadFail": "UNREADABLE TAPE",
+    "tapeLoadFailSub": "The tape could not be read.",
+    "tapeLoadFailOffline": "No signal. Check your connection."
   },
   "loading": {
     "default": "TUNING...",
@@ -317,14 +333,17 @@
         "type": "Type"
       },
       "empty": "No evidence",
-      "emptyHint": "Scan a QR code to start"
+      "emptyHint": "Scan a QR code to start",
+      "itemAria": "{{title}}, {{type}}",
+      "nowPlaying": "now playing"
     },
     "visor": {
       "eject": "CLICK TO EJECT",
       "startingScanner": "Starting scanner...",
       "loadingProof": "Loading evidence...",
       "emptyBay": "Empty Bay",
-      "scanHint": "Scan QR to Insert Evidence"
+      "scanHint": "Scan QR to Insert Evidence",
+      "buffering": "LOADING TAPE..."
     },
     "systems": "Systems",
     "mhDos": "MH-DOS v6.22",
@@ -373,7 +392,8 @@
       "play": "PLAY",
       "pause": "PAUSE",
       "playing": "PLAYING",
-      "paused": "PAUSED"
+      "paused": "PAUSED",
+      "buffering": "LOADING..."
     },
     "mhDos": "MH-DOS",
     "mhDosFull": "MH-DOS v6.22",
@@ -395,6 +415,10 @@
     },
     "list": {
       "empty": "EMPTY"
+    },
+    "aria": {
+      "eject": "Eject tape",
+      "video": "Video: {{title}}"
     }
   },
   "bios": {
@@ -502,5 +526,18 @@
       "enable": "Allow notifications",
       "denied": "Notifications are blocked on this device. Allow them in system settings."
     }
+  },
+  "sync": {
+    "error": {
+      "title": "UNSTABLE SIGNAL",
+      "body": "Sync dropped. New items may be delayed.",
+      "bodyServer": "The server refused to sync.",
+      "retry": "TRY AGAIN",
+      "retrying": "RECONNECTING..."
+    }
+  },
+  "offline": {
+    "lost": "NO SIGNAL",
+    "restored": "SIGNAL RESTORED"
   }
 }

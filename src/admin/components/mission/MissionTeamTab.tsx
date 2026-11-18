@@ -36,6 +36,7 @@ export default function MissionTeamTab({ campaign, groups }: MissionTeamTabProps
   const [invites, setInvites] = useState<InviteSummary[] | null>(null);
   const [creating, setCreating] = useState<InviteKind | null>(null);
   const [lastLink, setLastLink] = useState<{ kind: InviteKind; url: string } | null>(null);
+  const [duplicating, setDuplicating] = useState<string | null>(null);
   const [squadId, setSquadId] = useState('');
   const [maxUses, setMaxUses] = useState(10);
   const [days, setDays] = useState(7);
@@ -87,6 +88,34 @@ export default function MissionTeamTab({ campaign, groups }: MissionTeamTabProps
       toast.error(t('team.toast.createFail'));
     } finally {
       setCreating(null);
+    }
+  };
+
+  /** Gera um convite novo com o mesmo esquadrão, usos e o prazo que ainda resta no original. */
+  const duplicateInvite = async (inv: InviteSummary) => {
+    setDuplicating(inv.id);
+    try {
+      const remainingMs = inv.expiresAt ? new Date(inv.expiresAt).getTime() - Date.now() : days * 86_400_000;
+      const created = await inviteService.create({
+        kind: inv.kind,
+        campaignId: campaign.id,
+        ...(inv.kind === 'player' ? { squadId: inv.squadId ?? null, maxUses: inv.maxUses } : { maxUses: 1 }),
+        expiresInDays: Math.max(1, Math.ceil(remainingMs / 86_400_000)),
+      });
+      const url = inviteUrl(created.token);
+      setLastLink({ kind: inv.kind, url });
+      try {
+        await navigator.clipboard.writeText(url);
+      } catch {
+        /* sem permissão de clipboard: o link aparece no bloco superior */
+      }
+      toast.success(t('team.toast.duplicated'));
+      void refreshInvites();
+    } catch (err) {
+      console.error('[MissionTeamTab] duplicateInvite failed:', err);
+      toast.error(t('team.toast.createFail'));
+    } finally {
+      setDuplicating(null);
     }
   };
 
@@ -222,7 +251,17 @@ export default function MissionTeamTab({ campaign, groups }: MissionTeamTabProps
         {invites === null ? (
           <RetroSpinner />
         ) : activeInvites.length === 0 ? (
-          <p className="text-[10px] text-ash-500 uppercase tracking-wider">{t('team.noInvites')}</p>
+          <div className="space-y-3">
+            <p className="text-[10px] text-ash-500 uppercase tracking-wider">{t('team.noInvites')}</p>
+            <button
+              type="button"
+              onClick={() => void createInvite('player')}
+              disabled={creating !== null}
+              className="lmb-btn"
+            >
+              {creating === 'player' ? <RetroSpinner /> : t('team.noInvitesAction')}
+            </button>
+          </div>
         ) : (
           <ul className="space-y-2">
             {activeInvites.map((inv) => (
@@ -234,7 +273,17 @@ export default function MissionTeamTab({ campaign, groups }: MissionTeamTabProps
                 <span className="text-[10px] font-mono text-ash-500">
                   {t('team.usage', { uses: inv.uses, max: inv.maxUses })} · {t('team.expires', { date: formatDate(inv.expiresAt, i18n.language) })}
                 </span>
-                <button type="button" onClick={() => void revoke(inv)} className="lmb-btn text-red-400">{t('team.revoke')}</button>
+                <span className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => void duplicateInvite(inv)}
+                    disabled={duplicating !== null}
+                    className="lmb-btn"
+                  >
+                    {duplicating === inv.id ? <RetroSpinner /> : t('team.duplicateInvite')}
+                  </button>
+                  <button type="button" onClick={() => void revoke(inv)} className="lmb-btn text-red-400">{t('team.revoke')}</button>
+                </span>
               </li>
             ))}
           </ul>

@@ -18,7 +18,12 @@ import {
 import type { Campaign } from '../../../data/campaigns';
 import type { CampaignScope } from '../../lib/campaignResources';
 import CampaignScopeSelect from '../CampaignScopeSelect';
+import SortSelect from '../SortSelect';
+import BulkActionBar from '../BulkActionBar';
+import type { Selection } from '../../hooks/useSelection';
+import type { IntelSortKey } from '../../hooks/useIntelCatalog';
 import MIcon from '../MIcon';
+import { useAdminScope } from '../../context/AdminScopeContext';
 
 interface IntelCatalogPaneProps {
   items: IntelItem[];
@@ -37,6 +42,13 @@ interface IntelCatalogPaneProps {
   onStatusFilter: (v: IntelStatusFilter) => void;
   onEdit: (item: IntelItem) => void;
   onDelete: (item: IntelItem) => void;
+  sortKey: IntelSortKey;
+  onSortKey: (v: IntelSortKey) => void;
+  onDuplicate: (item: IntelItem) => void;
+  selection: Selection<string>;
+  bulkBusy?: boolean;
+  onBulkDelete: (items: IntelItem[]) => void;
+  onBulkLink: (items: IntelItem[], campaignId: string | null) => void;
   onDeleteFile: (item: IntelItem) => void;
   onQr: (item: IntelItem) => void;
   onPlayAudio: (item: IntelItem) => void;
@@ -58,13 +70,30 @@ export default function IntelCatalogPane({
   onStatusFilter,
   onEdit,
   onDelete,
+  sortKey,
+  onSortKey,
+  onDuplicate,
+  selection,
+  bulkBusy = false,
+  onBulkDelete,
+  onBulkLink,
   onDeleteFile,
   onQr,
   onPlayAudio,
 }: IntelCatalogPaneProps) {
   const { t } = useTranslation('admin');
+  const { isCoGm } = useAdminScope();
   const listRef = useRef<HTMLDivElement>(null);
   const rowRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const visibleIds = items.map((i) => i.id);
+  const selectedItems = items.filter((i) => selection.isSelected(i.id));
+  const sortOptions: { value: IntelSortKey; label: string }[] = [
+    { value: 'default', label: t('intel.catalog.sort.default', { defaultValue: 'Ordem do catálogo' }) },
+    { value: 'title', label: t('list.sort.title', { defaultValue: 'Título (A-Z)' }) },
+    { value: 'type', label: t('list.sort.type', { defaultValue: 'Tipo' }) },
+    { value: 'id', label: t('list.sort.id', { defaultValue: 'ID' }) },
+  ];
+  const linkableCampaigns = campaigns.filter((c) => c.status !== 'Arquivada');
 
   useEffect(() => {
     if (!focusedId) return;
@@ -114,6 +143,7 @@ export default function IntelCatalogPane({
             </button>
           ))}
         </div>
+        <SortSelect value={sortKey} onChange={onSortKey} options={sortOptions} />
         <div className="relative group">
           <MIcon name="search" className="absolute left-2.5 top-1/2 -translate-y-1/2 text-ash-500 text-sm group-focus-within:text-primary" />
           <input
@@ -154,6 +184,51 @@ export default function IntelCatalogPane({
         </div>
       </div>
 
+      {selection.count > 0 && (
+        <div className="p-2 shrink-0 border-b border-primary/5">
+          <BulkActionBar
+            count={selection.count}
+            onClear={selection.clear}
+            onSelectAll={() => selection.selectAll(visibleIds)}
+            allSelected={selection.allSelected(visibleIds)}
+          >
+            <label className="relative flex items-center min-w-0">
+              <span className="sr-only">{t('bulk.linkMission', { defaultValue: 'Vincular a missão' })}</span>
+              <select
+                value=""
+                disabled={bulkBusy}
+                onChange={(e) => {
+                  const v = e.target.value;
+                  if (!v) return;
+                  onBulkLink(selectedItems, v === '__none__' ? null : v);
+                }}
+                className="lmb-field text-[12px] truncate"
+              >
+                <option value="">{t('bulk.linkMission', { defaultValue: 'Vincular a missão' })}</option>
+                {/* Co-mestre só grava intel ligada a campanha dele; "sem missão" é exclusivo do dono. */}
+                {!isCoGm && (
+                  <option value="__none__">{t('bulk.unlinkMission', { defaultValue: 'Sem missão' })}</option>
+                )}
+                {linkableCampaigns.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name || c.id}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <button
+              type="button"
+              disabled={bulkBusy}
+              onClick={() => onBulkDelete(selectedItems)}
+              className="lmb-btn lmb-btn-danger"
+            >
+              <MIcon name="delete" className="text-base" />
+              {t('bulk.remove', { defaultValue: 'Remover' })}
+            </button>
+          </BulkActionBar>
+        </div>
+      )}
+
       <div ref={listRef} className="flex-1 overflow-y-auto custom-scrollbar min-h-0">
         <AnimatePresence mode="popLayout">
           {items.length === 0 ? (
@@ -190,6 +265,13 @@ export default function IntelCatalogPane({
                   }`}
                 >
                   <div className="flex items-start gap-2">
+                    <input
+                      type="checkbox"
+                      checked={selection.isSelected(item.id)}
+                      onChange={() => selection.toggle(item.id)}
+                      aria-label={item.title}
+                      className="mt-1 h-4 w-4 shrink-0 cursor-pointer accent-primary"
+                    />
                     <MIcon name={INTEL_TYPE_OPTIONS.find((t) => t.value === item.type)?.icon || 'description'} className=" text-base text-ash-500 group-hover:text-primary mt-0.5" />
                     <div className="min-w-0 flex-1">
                       <p className="text-[11px] font-display font-bold text-bone uppercase tracking-wide truncate">
@@ -237,6 +319,7 @@ export default function IntelCatalogPane({
                     )}
                     <IconBtn icon="qr_code_2" title="QR" onClick={() => onQr(item)} />
                     <IconBtn icon="edit_note" title="Editar" onClick={() => onEdit(item)} />
+                    <IconBtn icon="content_copy" title={t('intel.catalog.duplicate', { defaultValue: 'Duplicar' })} onClick={() => onDuplicate(item)} />
                     {asset?.storagePath && (
                       <IconBtn icon="folder_delete" title="Remover arquivo" onClick={() => onDeleteFile(item)} tone="amber" />
                     )}

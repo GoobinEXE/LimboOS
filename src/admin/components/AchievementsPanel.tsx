@@ -22,6 +22,8 @@ import {
 } from '../lib/campaignResources';
 import type { CampaignScopeRequest } from '../lib/adminNavigation';
 import { useAchievementEditor } from '../hooks/useAchievementEditor';
+import { useListControls } from '../hooks/useListControls';
+import SortSelect from './SortSelect';
 import MIcon from './MIcon';
 
 interface AchievementsPanelProps {
@@ -44,23 +46,38 @@ export default function AchievementsPanel({
   const { defs, isRemote } = useAchievementCatalog();
   const { campaigns } = useAdminCampaigns();
 
-  const [search, setSearch] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState<AchievementCategory | 'all'>('all');
+  const list = useListControls<AchievementDef, 'default' | 'title' | 'id'>({
+    storageKey: 'achievements',
+    defaultSort: 'default',
+    sorters: {
+      default: null,
+      title: (a, b) => a.title.localeCompare(b.title, 'pt-BR'),
+      id: (a, b) => a.id.localeCompare(b.id, 'pt-BR'),
+    },
+    defaultFilters: { category: 'all' },
+  });
+  const search = list.query;
+  const setSearch = list.setQuery;
+  const categoryFilter = list.filters.category as AchievementCategory | 'all';
+  const setCategoryFilter = (c: AchievementCategory | 'all') => list.setFilter('category', c);
   const achievementEditor = useAchievementEditor();
   const [importing, setImporting] = useState(false);
 
-  const filteredDefs = useMemo(() => {
-    const q = search.toLowerCase();
-    return defs.filter((a) => {
-      const matchesSearch =
-        !q ||
-        a.title.toLowerCase().includes(q) ||
-        a.id.toLowerCase().includes(q) ||
-        a.description.toLowerCase().includes(q);
-      const matchesCategory = categoryFilter === 'all' || a.category === categoryFilter;
-      return matchesSearch && matchesCategory && matchesBindingScope(a.campaignIds, campaignScope);
-    });
-  }, [defs, search, categoryFilter, campaignScope]);
+  const filteredDefs = useMemo(
+    () =>
+      list.apply(
+        defs.filter(
+          (a) =>
+            (categoryFilter === 'all' || a.category === categoryFilter) &&
+            matchesBindingScope(a.campaignIds, campaignScope),
+        ),
+        (a, q) =>
+          a.title.toLowerCase().includes(q) ||
+          a.id.toLowerCase().includes(q) ||
+          a.description.toLowerCase().includes(q),
+      ),
+    [defs, list.apply, categoryFilter, campaignScope],
+  );
 
   const groups = useMemo(() => {
     const asAchievements = filteredDefs.map(achievementFromDef);
@@ -87,6 +104,7 @@ export default function AchievementsPanel({
   }, [scopeRequest]);
 
   const openEdit = achievementEditor.openEdit;
+  const openDuplicate = achievementEditor.openDuplicate;
 
   const handleImport = async () => {
     const ok = await showConfirm(
@@ -183,6 +201,15 @@ export default function AchievementsPanel({
               />
             </div>
             <div className="flex items-center gap-2 flex-wrap sm:ml-auto">
+              <SortSelect
+                value={list.sortKey}
+                onChange={list.setSortKey}
+                options={[
+                  { value: 'default', label: t('list.sort.default') },
+                  { value: 'title', label: t('list.sort.title') },
+                  { value: 'id', label: t('list.sort.id') },
+                ]}
+              />
               <span className="text-[10px] font-black text-ash-500 uppercase tracking-wider shrink-0">
                 {filteredDefs.length} {t('achievements.countLabel')}
                 {!isRemote && (
@@ -339,6 +366,13 @@ export default function AchievementsPanel({
                         className="flex-1 text-[10px] font-black uppercase tracking-wider py-2 text-ash-400 hover:text-bone rounded-sm disabled:opacity-30"
                       >
                         {t('achievements.edit')}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => openDuplicate(ach)}
+                        className="flex-1 text-[10px] font-black uppercase tracking-wider py-2 text-ash-400 hover:text-bone rounded-sm"
+                      >
+                        {t('achievements.duplicate')}
                       </button>
                       <button
                         type="button"

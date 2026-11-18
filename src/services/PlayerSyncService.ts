@@ -1,5 +1,6 @@
 import { collection, doc, onSnapshot } from 'firebase/firestore';
-import { db } from '../lib/firebase';
+import { auth, db } from '../lib/firebase';
+import { isNetworkError } from '../lib/connectivity';
 import { checkMacClosed, checkTerminalClosed } from '../store/firestore';
 import { getTenantScope, setTenantScope } from '../lib/tenantScope';
 import { activityLogger } from './ActivityLogger';
@@ -55,9 +56,30 @@ function applyOneShotForce(
     });
 }
 
+/** Origem do listener que falhou. */
+export type PlayerSyncSource = 'intel' | 'roster' | 'campaignState' | 'character' | 'achievements';
+
+export interface PlayerSyncError {
+  source: PlayerSyncSource;
+  /** Código do Firestore (ex.: `unavailable`), quando existir. */
+  code: string | null;
+  /** Queda de rede ou serviço fora do ar (`isNetworkError`), em vez de recusa do servidor. */
+  network: boolean;
+  at: number;
+}
+
+export interface PlayerSyncCallbacks {
+  /** Um listener encerrou com erro; o Firestore não o reabre sozinho. */
+  onError?: (error: PlayerSyncError) => void;
+  /** Um snapshot chegou com sucesso; limpa o aviso de erro. */
+  onHealthy?: () => void;
+}
+
 export class PlayerSyncService {
   private static instance: PlayerSyncService;
   private unsubs: (() => void)[] = [];
+  /** Muda a cada assinatura e a cada `stopAll`; callbacks de gerações antigas são descartados. */
+  private generation = 0;
   private constructor() {}
 
   public static getInstance(): PlayerSyncService {
@@ -72,10 +94,29 @@ export class PlayerSyncService {
     characterId: string | undefined,
     onPlayerDataUpdate: (data: Partial<PlayerData>) => void,
     onScreenChange: (screenSetter: (prev: AppScreen) => AppScreen) => void,
-    onLimboUpdate: (limboStatus: LimboGlobalState) => void
+    onLimboUpdate: (limboStatus: LimboGlobalState) => void,
+    callbacks: PlayerSyncCallbacks = {}
   ) {
     this.stopAll();
     if (!uid || !characterId) return;
+
+    const gen = this.generation;
+    // Listener que falhou não volta sozinho: só uma nova assinatura limpa o erro, e o
+    // snapshot de outro listener (intel, agente) não pode escondê-lo.
+    let failed = false;
+    const reportError = (source: PlayerSyncSource, error: unknown) => {
+      console.warn(`[PlayerSyncService] ${source} error:`, error);
+      // Listener de uma assinatura já cancelada (logout ou troca de agente).
+      if (gen !== this.generation) return;
+      const code = typeof (error as { code?: unknown })?.code === 'string' ? (error as { code: string }).code : null;
+      // Sair da conta derruba o token antes do cancelamento: permission-denied não é falha de sinal.
+      if (code === 'permission-denied' && !auth.currentUser) return;
+      failed = true;
+      callbacks.onError?.({ source, code, network: isNetworkError(error), at: Date.now() });
+    };
+    const reportHealthy = () => {
+      if (gen === this.generation && !failed) callbacks.onHealthy?.();
+    };
 
     // 1. Intel Listener — reads the unified 'intel' subcollection.
 
@@ -89,10 +130,11 @@ export class PlayerSyncService {
 
     const unsubIntel = onSnapshot(collection(db, 'users', uid, 'characters', characterId, 'intel'),
       (snapshot) => {
+        reportHealthy();
         latestIntelIds = snapshot.docs.map((d) => d.id).sort();
         emitIntelUpdate();
       },
-      (error) => console.warn('[PlayerSyncService] Intel/unified error:', error)
+      (error) => reportError('intel', error)
     );
 
     // 2. Agente: flags de hardware (vivem no agente), mesa e campanha ativa.
@@ -133,7 +175,7 @@ export class PlayerSyncService {
           rosterCampaigns = snap.exists() && Array.isArray(snap.data().campaignIds) ? snap.data().campaignIds : [];
           applyScope();
         },
-        (error) => console.warn('[PlayerSyncService] Roster error:', error)
+        (error) => reportError('roster', error)
       );
     };
 
@@ -152,12 +194,13 @@ export class PlayerSyncService {
           onLimboUpdate({ ...(data as LimboGlobalState), seized: !!data.seized });
           diskRepairService.setAllowed(!!data.diskRepairAllowed);
         },
-        (error) => console.warn('[PlayerSyncService] Campaign state error:', error)
+        (error) => reportError('campaignState', error)
       );
     };
 
     const unsubChar = onSnapshot(doc(db, 'users', uid, 'characters', characterId),
       (snap) => {
+        reportHealthy();
         if (snap.exists()) {
           const data = snap.data() as CharacterData;
 
@@ -187,7 +230,7 @@ export class PlayerSyncService {
           });
         }
       },
-      (error) => console.warn('[PlayerSyncService] Character error:', error)
+      (error) => reportError('character', error)
     );
 
     // 5. Achievements — grants admin/remotos refletem sem reload
@@ -198,7 +241,7 @@ export class PlayerSyncService {
           achievementIds: snapshot.docs.map((d) => d.id),
         });
       },
-      (error) => console.warn('[PlayerSyncService] Achievements error:', error)
+      (error) => reportError('achievements', error)
     );
 
     this.unsubs.push(
@@ -211,6 +254,7 @@ export class PlayerSyncService {
   }
 
   public stopAll() {
+    this.generation += 1;
     this.unsubs.forEach((unsub) => unsub());
     this.unsubs = [];
     if (getTenantScope()?.role === 'player') setTenantScope(null);

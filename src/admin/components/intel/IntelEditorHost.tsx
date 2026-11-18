@@ -5,6 +5,7 @@ import MediaSelectorModal from '../MediaSelectorModal';
 import IntelEditorModal from './IntelEditorModal';
 import { useToast } from '../ToastProvider';
 import type { useIntelCatalog } from '../../hooks/useIntelCatalog';
+import { useDraftGuard } from '../../hooks/useDraftGuard';
 
 interface IntelEditorHostProps {
   intel: ReturnType<typeof useIntelCatalog>;
@@ -21,6 +22,15 @@ export default function IntelEditorHost({ intel, campaigns, toastFeedback = fals
   const { t } = useTranslation('admin');
   const toast = useToast();
   const { feedback, setFeedback } = intel;
+  // M02: fechar por Esc, X ou Cancelar com alterações pede confirmação.
+  const guard = useDraftGuard({
+    key: 'intel-editor',
+    open: intel.showEditor,
+    value: intel.formData,
+    extraDirty: intel.mediaUploading,
+    saving: intel.isSaving,
+  });
+  const closeEditor = () => void guard.requestClose(() => intel.setShowEditor(false));
 
   useEffect(() => {
     if (!toastFeedback || !feedback) return;
@@ -31,6 +41,7 @@ export default function IntelEditorHost({ intel, campaigns, toastFeedback = fals
 
   return (
     <>
+      {guard.modal}
       <MediaSelectorModal
         isOpen={intel.isMediaSelectorOpen}
         onClose={() => intel.setIsMediaSelectorOpen(false)}
@@ -47,7 +58,8 @@ export default function IntelEditorHost({ intel, campaigns, toastFeedback = fals
         mediaUploading={intel.mediaUploading}
         mediaFileInputRef={intel.mediaFileInputRef}
         videoFileInputRef={intel.videoFileInputRef}
-        onClose={() => intel.setShowEditor(false)}
+        onClose={closeEditor}
+        saving={intel.isSaving}
         onSave={() => void intel.handleSave()}
         onUpdateField={intel.updateField}
         onUpdateMeta={intel.updateMeta}

@@ -231,6 +231,24 @@ export default function CampaignsPanel({
     nav.go(adminPath.newMission());
   };
 
+  /** Copia só os campos de Dados: sem esquadrões, jogadores, convites nem estado ao vivo. */
+  const handleDuplicateCampaign = (campaign: Campaign) => {
+    const blank = createNewCampaignDraft();
+    setDraft(NEW_MISSION_SEGMENT, {
+      ...blank,
+      description: campaign.description,
+      location: campaign.location,
+      year: campaign.year,
+      rpgSystem: campaign.rpgSystem,
+      status: campaign.status,
+      imageUrl: campaign.imageUrl,
+      playerType: campaign.playerType,
+      features: campaign.features ? { ...campaign.features } : undefined,
+      name: `${campaign.name} ${t('common.copySuffix')}`,
+    });
+    nav.go(adminPath.newMission());
+  };
+
 
   const handleMissionSaved = (saved: Campaign) => {
     if (route.view !== 'new') return;
@@ -448,6 +466,15 @@ export default function CampaignsPanel({
                     <MIcon name="tune" className="text-sm" />
                     {t('missions.manage')}
                   </button>
+                  {canManage && <button
+                    type="button"
+                    onClick={() => handleDuplicateCampaign(campaign)}
+                    className="w-11 flex items-center justify-center bg-black/40 rounded-inset text-ash-500 hover:text-primary transition active:translate-y-px hover:bg-primary/10"
+                    title={t('missions.duplicate')}
+                    aria-label={t('missions.duplicate')}
+                  >
+                    <MIcon name="content_copy" className="text-xl" />
+                  </button>}
                   {canManage && <button
                     onClick={() => handleDeleteCampaign(campaign.id, campaign.name)}
                     className="w-11 flex items-center justify-center bg-black/40 rounded-inset text-ash-500 hover:text-red-500 transition active:translate-y-px hover:bg-red-500/10"

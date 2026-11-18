@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { Campaign } from '../../data/campaigns';
 import type { NpcContact } from '../../types/npcSms';
 import CampaignBindingPicker from './CampaignBindingPicker';
 import MIcon from './MIcon';
+import OverlayPortal from './OverlayPortal';
+import { NpcContactPreview } from './intel/IntelPlayerPreview';
 
 export const npcFieldClass =
   'w-full bg-black/50 text-[11px] font-bold uppercase px-3 py-2.5 text-bone outline-none rounded-sm';
@@ -39,20 +41,32 @@ export default function NpcContactEditorModal({
   onSave,
 }: NpcContactEditorModalProps) {
   const { t } = useTranslation('admin');
+  const [previewOpen, setPreviewOpen] = useState(false);
 
   return (
+    <OverlayPortal open onClose={onClose}>
     <div
       className="fixed inset-0 z-[9000] flex items-center justify-center bg-surface-scrim p-4"
       onMouseDown={(e) => {
         if (e.target === e.currentTarget && !saving) onClose();
       }}
     >
-      <div className="bg-seam w-full max-w-lg rounded-card shadow-panel overflow-hidden">
+      <div className="bg-seam w-full max-w-lg rounded-card shadow-panel relative">
+        {previewOpen && <NpcContactPreview contact={contact} onClose={() => setPreviewOpen(false)} />}
         <div className="px-6 py-4 border-b border-border flex justify-between items-center bg-black/40">
           <h3 className="text-xs font-black uppercase tracking-[0.1em] text-bone">
             {isEdit ? t('npcSms.editContact') : t('npcSms.createContact')}
           </h3>
-          <button type="button" onClick={() => !saving && onClose()} className=" text-ash-500"><MIcon name="close" /></button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setPreviewOpen((v) => !v)}
+              aria-pressed={previewOpen}
+              title={t('intel.editor.previewAsPlayer', { defaultValue: 'Ver como jogador' })}
+              className="text-ash-500 hover:text-primary"
+            ><MIcon name="visibility" /></button>
+            <button type="button" onClick={() => !saving && onClose()} className=" text-ash-500"><MIcon name="close" /></button>
+          </div>
         </div>
         <div className="p-6 space-y-4">
           <div className="flex gap-4">
@@ -144,6 +158,7 @@ export default function NpcContactEditorModal({
             type="button"
             disabled={saving}
             onClick={onSave}
+            title={t('saveShortcutHint')}
             className="flex-1 px-4 py-3 text-[10px] font-black uppercase tracking-wider bg-primary text-black rounded-sm disabled:opacity-40"
           >
             {saving ? '…' : t('npcSms.save')}
@@ -151,5 +166,6 @@ export default function NpcContactEditorModal({
         </div>
       </div>
     </div>
+    </OverlayPortal>
   );
 }

@@ -14,6 +14,8 @@ import {
   type CampaignScope,
 } from '../lib/campaignResources';
 import type { CampaignScopeRequest, NpcViewId } from '../lib/adminNavigation';
+import { useListControls } from '../hooks/useListControls';
+import SortSelect from './SortSelect';
 import MIcon from './MIcon';
 
 type TabId = 'contacts' | 'dialogues';
@@ -64,8 +66,20 @@ export default function NpcSmsPanel({
     if (onNpcViewChange) onNpcViewChange(id === 'dialogues' ? 'dialogos' : 'contatos');
     else setLocalTab(id);
   };
-  const [search, setSearch] = useState('');
-  const [npcFilter, setNpcFilter] = useState<string>('all');
+  const list = useListControls<NpcContact | NpcDialogue, 'default' | 'title' | 'id'>({
+    storageKey: 'npcs',
+    defaultSort: 'default',
+    sorters: {
+      default: null,
+      title: (a, b) => ('name' in a ? a.name : a.title).localeCompare('name' in b ? b.name : b.title, 'pt-BR'),
+      id: (a, b) => a.id.localeCompare(b.id, 'pt-BR'),
+    },
+    defaultFilters: { npc: 'all' },
+  });
+  const search = list.query;
+  const setSearch = list.setQuery;
+  const npcFilter = list.filters.npc;
+  const setNpcFilter = (v: string) => list.setFilter('npc', v);
   const [importing, setImporting] = useState(false);
 
   const contactEditor = useNpcContactEditor();
@@ -73,17 +87,17 @@ export default function NpcSmsPanel({
   const [isEdit, setIsEdit] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  const filteredContacts = useMemo(() => {
-    const q = search.toLowerCase();
-    return contacts.filter(
-      (c) =>
-        matchesBindingScope(c.campaignIds, campaignScope) &&
-        (!q ||
-          c.name.toLowerCase().includes(q) ||
+  const filteredContacts = useMemo(
+    () =>
+      list.apply(
+        contacts.filter((c) => matchesBindingScope(c.campaignIds, campaignScope)),
+        (c, q) =>
+          (c as NpcContact).name.toLowerCase().includes(q) ||
           c.id.toLowerCase().includes(q) ||
-          c.number.toLowerCase().includes(q)),
-    );
-  }, [contacts, search, campaignScope]);
+          (c as NpcContact).number.toLowerCase().includes(q),
+      ) as NpcContact[],
+    [contacts, list.apply, campaignScope],
+  );
 
   /** Diálogo herda a missão do NPC que o envia. */
   const scopedNpcIds = useMemo(
@@ -94,19 +108,20 @@ export default function NpcSmsPanel({
     [contacts, campaignScope],
   );
 
-  const filteredDialogues = useMemo(() => {
-    const q = search.toLowerCase();
-    return dialogues.filter((d) => {
-      if (campaignScope !== 'all' && !scopedNpcIds.has(d.npcId)) return false;
-      const matchesNpc = npcFilter === 'all' || d.npcId === npcFilter;
-      const matchesSearch =
-        !q ||
-        d.title.toLowerCase().includes(q) ||
-        d.id.toLowerCase().includes(q) ||
-        d.npcId.toLowerCase().includes(q);
-      return matchesNpc && matchesSearch;
-    });
-  }, [dialogues, search, npcFilter, campaignScope, scopedNpcIds]);
+  const filteredDialogues = useMemo(
+    () =>
+      list.apply(
+        dialogues.filter((d) => {
+          if (campaignScope !== 'all' && !scopedNpcIds.has(d.npcId)) return false;
+          return npcFilter === 'all' || d.npcId === npcFilter;
+        }),
+        (d, q) =>
+          (d as NpcDialogue).title.toLowerCase().includes(q) ||
+          d.id.toLowerCase().includes(q) ||
+          (d as NpcDialogue).npcId.toLowerCase().includes(q),
+      ) as NpcDialogue[],
+    [dialogues, list.apply, npcFilter, campaignScope, scopedNpcIds],
+  );
 
   const requireRemoteContacts = async () => {
     if (hasRemoteContacts) return true;
@@ -161,6 +176,7 @@ export default function NpcSmsPanel({
   }, [scopeRequest]);
 
   const openEditContact = contactEditor.openEdit;
+  const openDuplicateContact = contactEditor.openDuplicate;
 
   const openCreateDialogue = () => {
     const defaultNpc =
@@ -338,6 +354,15 @@ export default function NpcSmsPanel({
               ))}
             </div>
             <div className="flex items-center gap-2 flex-wrap">
+              <SortSelect
+                value={list.sortKey}
+                onChange={list.setSortKey}
+                options={[
+                  { value: 'default', label: t('list.sort.default') },
+                  { value: 'title', label: t('list.sort.title') },
+                  { value: 'id', label: t('list.sort.id') },
+                ]}
+              />
               <span className="text-[10px] font-black text-ash-500 uppercase tracking-wider">
                 {tab === 'contacts' ? filteredContacts.length : filteredDialogues.length}{' '}
                 {tab === 'contacts' ? t('npcSms.countContacts') : t('npcSms.countDialogues')}
@@ -444,6 +469,13 @@ export default function NpcSmsPanel({
                     className="text-[10px] font-black uppercase tracking-wider px-3 py-2 text-ash-400 hover:text-bone rounded-sm disabled:opacity-30"
                   >
                     {t('npcSms.edit')}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => openDuplicateContact(c)}
+                    className="text-[10px] font-black uppercase tracking-wider px-3 py-2 text-ash-400 hover:text-bone rounded-sm"
+                  >
+                    {t('npcSms.duplicate')}
                   </button>
                   <button
                     type="button"

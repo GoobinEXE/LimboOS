@@ -1,11 +1,28 @@
 import React, { useRef, useState } from 'react';
 import { motion } from 'motion/react';
-import RetroSpinner from '../../../components/player/RetroSpinner';
+import { useTranslation } from 'react-i18next';
 import Screw from '../../../components/player/Screw';
-import OverlayPortal from '../OverlayPortal';
 import MIcon from '../MIcon';
 
+export interface UploadJob {
+  id: string;
+  file: File;
+  status: 'queued' | 'uploading' | 'done' | 'error';
+  progress: number;
+  error?: string;
+  /** Falhas de validação (tipo, tamanho) não têm "tentar de novo". */
+  retryable?: boolean;
+  folderIds?: string[];
+  /** Lote de origem: o editor de intel abre só para o primeiro sucesso do lote. */
+  batchId: string;
+  batchSize: number;
+}
+
 interface MediaUploadZoneProps {
+  /** Fila de envio, um item por arquivo. */
+  jobs?: UploadJob[];
+  onRetry?: (id: string) => void;
+  onClearDone?: () => void;
   onUpload: (files: FileList) => Promise<void>;
   uploading: boolean;
   uploadProgress: number;
@@ -23,6 +40,9 @@ interface MediaUploadZoneProps {
 }
 
 export default function MediaUploadZone({
+  jobs = [],
+  onRetry,
+  onClearDone,
   onUpload,
   uploading,
   uploadProgress,
@@ -33,38 +53,65 @@ export default function MediaUploadZone({
   dropHint = 'ARRASTAR E SOLTAR PARA CRIAR INTEL',
   dropSubhint = 'O editor abre automaticamente com o arquivo vinculado',
 }: MediaUploadZoneProps) {
+  const { t } = useTranslation('admin');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragOver, setIsDragOver] = useState(false);
 
   const handleFiles = async (files: FileList | null) => {
-    if (!files?.length || disabled || uploading) return;
+    if (!files?.length || disabled) return;
     await onUpload(files);
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   return (
     <>
-      {uploading && (
-        <OverlayPortal open={uploading}>
-          <div className="fixed inset-0 bg-surface-scrim z-[200] flex flex-col items-center justify-center gap-6 animate-fade-in" role="status" aria-live="polite">
-            <RetroSpinner />
-            <div className="space-y-2 text-center">
-              <div className="text-primary font-display font-bold uppercase tracking-[0.12em] animate-led text-lg">
-                Transferindo Dados...
-              </div>
-              <div className="w-64 h-1 bg-white/5 rounded-full overflow-hidden">
-                <motion.div
-                  className="h-full bg-primary glow-orange"
-                  initial={{ width: 0 }}
-                  animate={{ width: `${uploadProgress}%` }}
-                />
-              </div>
-              <div className="text-[10px] font-display font-bold text-ash-500 tracking-wider uppercase">
-                {Math.round(uploadProgress)}% COMPLETO
-              </div>
-            </div>
+      {jobs.length > 0 && (
+        <div className="rounded-panel bg-surface-container-low shadow-hairline" role="status" aria-live="polite">
+          <div className="flex items-center justify-between gap-2 px-3 py-2">
+            <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-primary">
+              {t('media.queue.title', { defaultValue: 'Fila de envio' })}
+            </span>
+            {jobs.some((j) => j.status === 'done') && (
+              <button type="button" onClick={onClearDone} className="lmb-btn lmb-btn-ghost">
+                {t('media.queue.clearDone', { defaultValue: 'Limpar concluídos' })}
+              </button>
+            )}
           </div>
-        </OverlayPortal>
+          <ul className="max-h-56 overflow-y-auto custom-scrollbar">
+            {jobs.map((job) => (
+              <li key={job.id} className="px-3 py-2 space-y-1">
+                <div className="flex items-center gap-2 min-w-0">
+                  <MIcon
+                    name={job.status === 'done' ? 'check_circle' : job.status === 'error' ? 'error' : job.status === 'uploading' ? 'sync' : 'schedule'}
+                    className={`text-base shrink-0 ${job.status === 'error' ? 'text-red-400' : job.status === 'done' ? 'text-phosphor-400' : 'text-primary'}`}
+                  />
+                  <span className="text-[11px] font-display font-bold text-bone truncate flex-1">{job.file.name}</span>
+                  {job.status === 'done' && (
+                    <span className="text-[10px] font-mono uppercase text-phosphor-400">
+                      {t('media.queue.done', { defaultValue: 'Enviado' })}
+                    </span>
+                  )}
+                  {job.status === 'error' && job.retryable && (
+                    <button type="button" onClick={() => onRetry?.(job.id)} className="lmb-btn lmb-btn-ghost">
+                      {t('media.queue.retry', { defaultValue: 'Tentar de novo' })}
+                    </button>
+                  )}
+                </div>
+                {job.status === 'error' ? (
+                  <p className="text-[10px] text-red-400">{job.error}</p>
+                ) : (
+                  <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                    <motion.div
+                      className="h-full bg-primary"
+                      initial={false}
+                      animate={{ width: `${job.status === 'done' ? 100 : job.progress}%` }}
+                    />
+                  </div>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
 
       <input
@@ -81,7 +128,7 @@ export default function MediaUploadZone({
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            disabled={disabled || uploading}
+            disabled={disabled}
             className="flex items-center gap-2 bg-primary hover:bg-primary-container text-black px-5 py-2.5 rounded-sm font-display font-bold text-[10px] tracking-wider transition active:translate-y-px glow-orange shadow-lg disabled:opacity-40"
           >
             <MIcon name={uploading ? 'sync' : 'add_circle'} className="text-base" />
@@ -94,7 +141,7 @@ export default function MediaUploadZone({
         <div
           onDragOver={(e) => {
             e.preventDefault();
-            if (!disabled && !uploading) setIsDragOver(true);
+            if (!disabled) setIsDragOver(true);
           }}
           onDragLeave={() => setIsDragOver(false)}
           onDrop={(e) => {
@@ -103,13 +150,13 @@ export default function MediaUploadZone({
             handleFiles(e.dataTransfer.files);
           }}
           onClick={() => {
-            if (!disabled && !uploading) fileInputRef.current?.click();
+            if (!disabled) fileInputRef.current?.click();
           }}
           className={`relative rounded-sm p-8 text-center transition group overflow-hidden cursor-pointer ${
             isDragOver
               ? 'bg-primary/5'
               : 'bg-black/20 hover:bg-black/40'
-          } ${disabled || uploading ? 'opacity-50 pointer-events-none' : ''}`}
+          } ${disabled ? 'opacity-50 pointer-events-none' : ''}`}
         >
           <div className="absolute top-2 left-2 opacity-20">
             <Screw size="xs" />

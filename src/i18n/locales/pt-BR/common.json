@@ -124,12 +124,22 @@
     "achievement": {
       "header": "REGISTRO // MEDALHA DESBLOQUEADA",
       "class": "CLASSE // {{tier}}"
+    },
+    "action": {
+      "retry": "TENTAR DE NOVO",
+      "scanAgain": "ESCANEAR DE NOVO",
+      "dismiss": "FECHAR"
     }
   },
   "errorBoundary": {
     "title": "CRITICAL SYSTEM FAILURE",
     "body": "O módulo encontrou uma instabilidade irrecuperável nos protocolos de interface. O registro foi enviado para o centro de comando.",
-    "reload": "Reiniciar Protocolos"
+    "reload": "Reiniciar Protocolos",
+    "miniApp": {
+      "title": "CONEXÃO PERDIDA",
+      "body": "O sistema caiu. Sua fita continua intacta no aparelho.",
+      "back": "Voltar ao aparelho"
+    }
   },
   "auth": {
     "error": {
@@ -145,7 +155,8 @@
       "cancelled": "OPERAÇÃO CANCELADA PELO USUÁRIO",
       "emailInUse": "E-mail já cadastrado através de outro método de login.",
       "unexpected": "Erro inesperado ({{code}})",
-      "provider": "Erro no login via provedor ({{code}})"
+      "provider": "Erro no login via provedor ({{code}})",
+      "tooManyRequests": "ACESSO BLOQUEADO: muitas tentativas. Aguarde alguns minutos."
     }
   },
   "os": {
@@ -170,7 +181,9 @@
       "expired": "Este convite venceu. Peça um novo ao mestre.",
       "revoked": "O mestre revogou este convite.",
       "exhausted": "Este convite já foi usado o máximo de vezes.",
-      "not-found": "Convite não encontrado. Confira o link."
+      "not-found": "Convite não encontrado. Confira o link.",
+      "network": "SEM SINAL: não deu para ler o convite. Verifique a rede.",
+      "unexpected": "Falha inesperada ao ler o convite. Tente de novo."
     },
     "goHome": "Ir para o início",
     "cogmTitle": "Convite de co-mestre",
@@ -183,7 +196,8 @@
     "signedAs": "Conectado como {{name}}.",
     "switchAccount": "Trocar de conta",
     "accept": "Aceitar convite",
-    "acceptFail": "Não foi possível aceitar o convite. Ele pode ter vencido ou já ter sido usado."
+    "acceptFail": "Não foi possível aceitar o convite. Ele pode ter vencido ou já ter sido usado.",
+    "retry": "Tentar novamente"
   },
   "about": {
     "title": "Sobre o LimboOS",
@@ -223,5 +237,14 @@
     "licenseNote": "O uso, a cópia e a redistribuição seguem a licença do LimboOS. Bibliotecas de terceiros mantêm as próprias licenças.",
     "close": "Fechar",
     "rowSub": "Versão, licenças e créditos"
+  },
+  "copySuffix": "(cópia)",
+  "offline": {
+    "banner": "Sem sinal. Tentando reconectar",
+    "restored": "Sinal restabelecido"
+  },
+  "update": {
+    "available": "Nova versão disponível.",
+    "action": "Atualizar"
   }
 }

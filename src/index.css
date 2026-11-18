@@ -310,6 +310,12 @@
       font-size: 16px !important;
     }
   }
+
+  /* Player com zoom travado (src/lib/viewportZoom.ts): sem zoom por duplo toque
+     e sem a espera de 300 ms do toque. Pinça segue a meta viewport. */
+  html[data-zoom-locked] {
+    touch-action: manipulation;
+  }
 }
 
 @layer components {

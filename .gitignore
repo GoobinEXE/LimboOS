@@ -35,3 +35,7 @@ service-account.json
 # Gerados por scripts/build-info.mjs
 /public/build-info.json
 /public/licenses.json
+
+# Análise de bundle (npm run analyze)
+stats.html
+dist-stats/

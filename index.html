@@ -2,7 +2,7 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>LimboOS | Terminal dos agentes</title>
     <meta name="description" content="Companion app de RPG de mesa: os agentes recebem áudios, arquivos e mensagens do mestre em aparelhos retrô, como walkman, Nokia e terminais antigos." />
     <link rel="canonical" href="https://terminalhubrpg.web.app/" />
@@ -43,15 +43,18 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-title" content="LimboOS" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://firestore.googleapis.com">
     <link rel="preconnect" href="https://identitytoolkit.googleapis.com">
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..800&family=Spline+Sans+Mono:wght@400;600;700&family=VT323&display=swap" />
-    <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..800&family=Spline+Sans+Mono:wght@400;600;700&family=VT323&display=swap" rel="stylesheet" media="print" onload="this.media='all'"/>
-    <noscript>
-      <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..800&family=Spline+Sans+Mono:wght@400;600;700&family=VT323&display=swap" rel="stylesheet"/>
-    </noscript>
+    <script>
+      // Teto da splash nativa (app Capacitor): se o bundle nem rodar, esconde em 2,5 s
+      // pela ponte nativa. O caminho normal fica em src/lib/native/nativeShell.ts.
+      setTimeout(function () {
+        var cap = window.Capacitor;
+        if (cap && cap.isNativePlatform && cap.isNativePlatform() && cap.nativePromise) {
+          cap.nativePromise('SplashScreen', 'hide', { fadeOutDuration: 200 }).catch(function () {});
+        }
+      }, 2500);
+    </script>
     <style>
       /* Splash crítico com a assinatura Dark Room. Substrato Preto Fita Magnética (#090A0C),
          logo oficial (public/brand/dark-room-logo.svg) e texto em Spline Sans Mono #8F9397.

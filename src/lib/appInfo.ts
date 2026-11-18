@@ -5,7 +5,7 @@ export const COPYRIGHT_START_YEAR = 2026;
 export const COPYRIGHT_HOLDER = 'Marcelo Pessoa / LimboOS';
 export const STUDIO_NAME = 'Dark Room';
 export const APP_NAME = 'LimboOS';
-export const WEBSITE_URL = 'https://terminalhubrpg.web.app';
+export const WEBSITE_URL = 'https://limboos.web.app';
 export const SOURCE_URL = 'https://github.com/xXinous/LimboOS';
 
 export interface AppInfo {

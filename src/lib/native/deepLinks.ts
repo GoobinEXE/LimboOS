@@ -1,4 +1,5 @@
-const APP_LINK_HOST = 'terminalhubrpg.web.app';
+// limboos é o endereço atual; terminalhubrpg segue aceito para links já enviados.
+const APP_LINK_HOSTS = new Set(['limboos.web.app', 'terminalhubrpg.web.app']);
 const INVITE_PREFIX = '/convite/';
 /** URL de abertura já tratado: uma recarga do WebView não volta ao convite. */
 const LAUNCH_HANDLED_KEY = 'limboos.launchUrlHandled';
@@ -7,7 +8,7 @@ const LAUNCH_HANDLED_KEY = 'limboos.launchUrlHandled';
 function invitePathFromUrl(url: string): string | null {
   try {
     const parsed = new URL(url);
-    if (parsed.hostname !== APP_LINK_HOST || !parsed.pathname.startsWith(INVITE_PREFIX)) return null;
+    if (!APP_LINK_HOSTS.has(parsed.hostname) || !parsed.pathname.startsWith(INVITE_PREFIX)) return null;
     return `${parsed.pathname}${parsed.search}${parsed.hash}`;
   } catch (err) {
     console.warn('[Native] link inválido:', err);

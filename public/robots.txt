@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin
 Disallow: /convite/
 
-Sitemap: https://terminalhubrpg.web.app/sitemap.xml
+Sitemap: https://limboos.web.app/sitemap.xml

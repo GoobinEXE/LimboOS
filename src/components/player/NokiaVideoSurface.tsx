@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useImperativeHandle, forwardRef } from 'react';
 import { VideoIntel } from '../../services/IntelEngine';
+import { useTranslation } from 'react-i18next';
 import { loadYoutubeIframeApi } from '../../lib/youtube';
 
 export interface NokiaVideoSurfaceHandle {
@@ -17,6 +18,7 @@ interface NokiaVideoSurfaceProps {
 
 const NokiaVideoSurface = forwardRef<NokiaVideoSurfaceHandle, NokiaVideoSurfaceProps>(
   function NokiaVideoSurface({ intel, isPlaying, volume, onEnded }, ref) {
+    const { t } = useTranslation('player');
     const videoRef = useRef<HTMLVideoElement | null>(null);
     const ytContainerRef = useRef<HTMLDivElement | null>(null);
     const ytPlayerRef = useRef<any>(null);
@@ -129,7 +131,7 @@ const NokiaVideoSurface = forwardRef<NokiaVideoSurfaceHandle, NokiaVideoSurfaceP
     }, [isYoutube, intel.id, onEnded]);
 
     return (
-      <div className="relative w-full h-full bg-black">
+      <div role="group" aria-label={t('nokia.aria.video', { title: intel.title })} className="relative w-full h-full bg-black">
         {isYoutube ? (
           <div ref={ytContainerRef} className="w-full h-full pointer-events-none" />
         ) : (
@@ -138,6 +140,7 @@ const NokiaVideoSurface = forwardRef<NokiaVideoSurfaceHandle, NokiaVideoSurfaceP
             src={intel.mediaUrl}
             className="w-full h-full object-contain"
             playsInline
+            aria-label={intel.title}
             preload="metadata"
           />
         )}

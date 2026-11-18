@@ -16,6 +16,8 @@ const KEYCAP =
 const KEYCAP_ACTIVE =
   'active:translate-y-px active:scale-[0.97] active:from-surface-container-highest active:to-surface-container-high active:shadow-[inset_0_2px_6px_rgba(0,0,0,0.75)]';
 const KEYCAP_DISABLED = 'opacity-40 cursor-not-allowed';
+// Amplia a área de toque para 44 px sem mudar o visual (a borda de 2 px entra na conta do inset)
+const HIT_AREA = "relative before:content-[''] before:absolute before:-inset-y-[6px] before:-inset-x-[2px]";
 
 export default React.memo(function BottomControls({ 
   status,
@@ -112,7 +114,7 @@ export default React.memo(function BottomControls({
         }}
         aria-label={t('walkman.rewind')}
         aria-disabled={!hasTape || isRewinding}
-        className={`${sideBtn} rounded-full ${KEYCAP} ${(hasTape && !isRewinding) ? KEYCAP_ACTIVE : KEYCAP_DISABLED}`}
+        className={`${sideBtn} ${HIT_AREA} rounded-full ${KEYCAP} ${(hasTape && !isRewinding) ? KEYCAP_ACTIVE : KEYCAP_DISABLED}`}
       >
         <RotateCcw size={iconSide} className={`text-accent ${isRewinding ? 'animate-spin' : ''}`} />
       </button>
@@ -128,7 +130,7 @@ export default React.memo(function BottomControls({
       }}
         aria-label={isPlaying ? t('walkman.pause') : t('walkman.play')}
         aria-disabled={!hasTape}
-        className={`${playBtn} gap-1 ${KEYCAP} ${hasTape ? KEYCAP_ACTIVE : KEYCAP_DISABLED}`}>
+        className={`${playBtn} ${HIT_AREA} gap-1 ${KEYCAP} ${hasTape ? KEYCAP_ACTIVE : KEYCAP_DISABLED}`}>
         {isPlaying
           ? <Pause size={iconPlay} className="text-accent fill-accent" />
           : <Play size={iconPlay} className="text-accent fill-accent" />}
@@ -139,7 +141,7 @@ export default React.memo(function BottomControls({
         aria-label={appCount > 1 ? t('walkman.systems') : terminalAccess ? t('walkman.mhDos') : macAccess ? t('walkman.macos') : t('walkman.eq')}
         aria-disabled={appCount === 0}
         aria-expanded={appCount > 1 ? showMenu : undefined}
-        className={`${sideBtn} rounded-full ${KEYCAP} ${appCount > 0 ? KEYCAP_ACTIVE : KEYCAP_DISABLED}`}
+        className={`${sideBtn} ${HIT_AREA} rounded-full ${KEYCAP} ${appCount > 0 ? KEYCAP_ACTIVE : KEYCAP_DISABLED}`}
       >
         <span className="flex items-center justify-center pointer-events-none">
           {appCount > 1 ? (

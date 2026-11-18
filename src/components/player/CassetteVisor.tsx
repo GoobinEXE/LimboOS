@@ -19,6 +19,7 @@ export default React.memo(function CassetteVisor({
   onQrDetected,
   compact,
   fluid,
+  isBuffering,
 }: {
   currentIntel: IntelBase | null; 
   status: WalkmanStatus;
@@ -29,11 +30,14 @@ export default React.memo(function CassetteVisor({
   compact?: boolean;
   /** Landscape: preenche a coluna sem altura fixa em px */
   fluid?: boolean;
+  /** Fita travada esperando dados (já com atraso anti-piscada, vem do hook). */
+  isBuffering?: boolean;
 }) {
   const { t } = useTranslation('player');
   const isPlaying = status === 'PLAYING';
   const isRewinding = status === 'REWINDING';
   const isLoading = status === 'LOADING';
+  const showBuffering = Boolean(isBuffering) && status === 'PLAYING';
   const isScanning = status === 'SCANNING';
   const hasTape = !!currentIntel && (status === 'LOADED' || status === 'PLAYING' || status === 'REWINDING');
   // Fita encaixando: só na transição vazio → com fita (não toca ao montar a tela)
@@ -89,6 +93,9 @@ export default React.memo(function CassetteVisor({
               <div className="flex-1 flex flex-col text-center px-2">
                 <div className="text-[13px] font-black uppercase tracking-tight text-ash-800 truncate leading-tight">{currentIntel.title}</div>
                 <div className="text-[10px] font-bold text-ash-600 truncate mt-0.5">{currentIntel instanceof AudioIntel ? currentIntel.metadata.artist : currentIntel.metadata?.npc}</div>
+                {showBuffering && (
+                  <div role="status" className="text-[9px] font-black uppercase tracking-widest text-accent mt-1 motion-safe:animate-led">{t('walkman.visor.buffering')}</div>
+                )}
               </div>
               <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-45 h-12.5 bg-surface-container rounded-t-lg border-t-2 border-l-2 border-r-2 border-surface-sunken" />
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity bg-black/80 text-bone text-[10px] font-bold tracking-widest px-3 py-1 rounded-inset">{t('walkman.visor.eject')}</div>
@@ -102,7 +109,7 @@ export default React.memo(function CassetteVisor({
                     animation: 'spin 3s linear infinite',
                     animationDuration: isRewinding ? '0.3s' : '3s',
                     animationDirection: isRewinding ? 'reverse' : 'normal',
-                    animationPlayState: isPlaying || isRewinding ? 'running' : 'paused',
+                    animationPlayState: (isPlaying && !showBuffering) || isRewinding ? 'running' : 'paused',
                   }}
                   className="w-10 h-10 rounded-full bg-industrial-silver flex items-center justify-center relative shadow-md">
                   <div className="absolute inset-0 rounded-full border-[6px] border-surface-sunken opacity-90" />

@@ -21,6 +21,8 @@ interface WalkmanShellProps {
   currentIntel: IntelBase | null;
   walkmanStatus: WalkmanStatus;
   isPlaying: boolean;
+  /** Fita bufferizando (A4/J03); vem de `playback.isBuffering`. */
+  isBuffering?: boolean;
   displayMode: DisplayMode;
   volume: number;
   setVolume: (v: number) => void;
@@ -44,6 +46,7 @@ function WalkmanShell({
   currentIntel,
   walkmanStatus,
   isPlaying,
+  isBuffering,
   displayMode,
   volume,
   setVolume,
@@ -145,6 +148,7 @@ function WalkmanShell({
               <CassetteVisor
                 currentIntel={currentIntel}
                 status={walkmanStatus}
+                isBuffering={isBuffering}
                 onEject={onEject}
                 onScanClick={onScanClick}
                 onCancelScan={onCancelScan}
@@ -195,6 +199,7 @@ function WalkmanShell({
             <CassetteVisor
               currentIntel={currentIntel}
               status={walkmanStatus}
+              isBuffering={isBuffering}
               onEject={onEject}
               onScanClick={onScanClick}
               onCancelScan={onCancelScan}

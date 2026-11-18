@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { clearMediaSession, updateMediaSession } from '../../lib/native/mediaSession';
 import type { Dispatch, SetStateAction } from 'react';
 import { audioEngine } from '../../services/AudioEngine';
@@ -20,6 +20,17 @@ import type { PlayerData, PlayerStats, WalkmanStatus, DisplayMode, AppScreen } f
 import type { Toast } from '../../components/ToastNotification';
 import type { DeviceCapabilities } from './useActiveCampaign';
 import i18n from '../../i18n';
+import { pushService } from '../../services/PushService';
+import { holdWakeLock } from '../../lib/wakeLock';
+import {
+  clearTapeId,
+  clearTapePosition,
+  readTapeId,
+  readTapePosition,
+  writeTapeId,
+  writeTapePosition,
+  type AgentRef,
+} from '../lib/agentPersistence';
 import { normalizeQrPayload } from '../../lib/qrCode';
 export interface UseWalkmanPlaybackOptions {
   playerData: PlayerData | null;
@@ -44,6 +55,9 @@ export function useWalkmanPlayback(options: UseWalkmanPlaybackOptions) {
   const [preMuteVolume, setPreMuteVolume] = useState(80);
   const [nokiaBackVisible, setNokiaBackVisible] = useState(true);
 
+  const [isBuffering, setIsBuffering] = useState(false);
+  const [audioError, setAudioError] = useState<{ code: number | null; at: number } | null>(null);
+
   const hasPlayedCurrentTape = useRef(false);
   const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
   const nokiaBackHandlerRef = useRef<(() => boolean) | null>(null);
@@ -52,8 +66,28 @@ export function useWalkmanPlayback(options: UseWalkmanPlaybackOptions) {
   // Ref para os callbacks estáveis consultarem as capacidades atuais do dispositivo
   const capabilitiesRef = useRef(deviceCapabilities);
   capabilitiesRef.current = deviceCapabilities;
+  const addToastRef = useRef(addToast);
+  addToastRef.current = addToast;
+  const activeEvidenceRef = useRef<IntelBase | null>(null);
+  activeEvidenceRef.current = activeEvidence;
 
   const isPlaying = walkmanStatus === 'PLAYING';
+
+  // Agente atual (F5): chave de persistência por uid + characterId
+  const agentUid = playerData?.uid;
+  const agentCharId = playerData?.activeCharacterId;
+  const agent = useMemo<AgentRef | null>(
+    () => (agentUid && agentCharId ? { uid: agentUid, characterId: agentCharId } : null),
+    [agentUid, agentCharId]
+  );
+  const agentRef = useRef(agent);
+  agentRef.current = agent;
+  const currentIntelRef = useRef<IntelBase | null>(null);
+  const walkmanStatusRef = useRef<WalkmanStatus>('IDLE');
+  walkmanStatusRef.current = walkmanStatus;
+  const restoredForRef = useRef<string | null>(null);
+  const lastErrorToastAtRef = useRef(0);
+  const handleQrDetectedRef = useRef<(code: string) => Promise<void>>(async () => undefined);
 
   const clearPendingTimer = useCallback(() => {
     if (timerRef.current) {
@@ -79,10 +113,148 @@ export function useWalkmanPlayback(options: UseWalkmanPlaybackOptions) {
 
   useEffect(() => {
     audioEngine.setOnEnded(() => {
+      clearTapePosition(agentRef.current);
       setWalkmanStatus('LOADED');
       analyticsTracker.endPlayback();
     });
   }, []);
+
+  // Buffering (J03): mostra só após 300 ms para não piscar em rede normal
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    audioEngine.setOnBuffering((buffering) => {
+      if (timer) clearTimeout(timer);
+      if (buffering) timer = setTimeout(() => setIsBuffering(true), 300);
+      else setIsBuffering(false);
+    });
+    return () => {
+      if (timer) clearTimeout(timer);
+      audioEngine.setOnBuffering(null);
+    };
+  }, []);
+
+  // Erro do <audio> (J01): propagado até aqui; toast e retry entram na onda 2
+  useEffect(() => {
+    audioEngine.setOnError((code) => {
+      setIsBuffering(false);
+      setAudioError({ code, at: Date.now() });
+      setWalkmanStatus((s) => (s === 'PLAYING' ? 'LOADED' : s));
+    });
+    return () => audioEngine.setOnError(null);
+  }, []);
+
+  // Toast de fita ilegível (J01), com ação que recarrega a fita; deduplica em 1 s com o toast do play()
+  useEffect(() => {
+    if (!audioError) return;
+    if (audioError.at - lastErrorToastAtRef.current < 1000) return;
+    lastErrorToastAtRef.current = audioError.at;
+    const intel = currentIntelRef.current;
+    const offline = typeof navigator !== 'undefined' && navigator.onLine === false;
+    addToastRef.current({
+      type: 'error',
+      title: i18n.t('toast.tapeLoadFail', { ns: 'player' }),
+      subtitle: i18n.t(offline ? 'toast.tapeLoadFailOffline' : 'toast.tapeLoadFailSub', { ns: 'player' }),
+      icon: '[!]',
+      action:
+        intel instanceof AudioIntel && intel.mediaUrl
+          ? {
+              label: i18n.t('toast.action.retry', { ns: 'common' }),
+              onClick: () => {
+                audioEngine.loadTrack(intel.mediaUrl);
+                setWalkmanStatus('PLAYING');
+              },
+            }
+          : undefined,
+    });
+  }, [audioError]);
+
+  // Retomar de onde parou (J12): ao carregar metadados, volta à posição guardada desta fita
+  useEffect(() => {
+    audioEngine.setOnLoadedMetadata((duration) => {
+      const intel = currentIntelRef.current;
+      const saved = readTapePosition(agentRef.current);
+      if (!intel || !saved || saved.intelId !== intel.id || duration <= 0) return;
+      if (saved.t < 5 || saved.t > duration - 5) return;
+      audioEngine.seekTo(saved.t);
+      addToastRef.current({
+        type: 'tape',
+        title: i18n.t('toast.resumeTape', { ns: 'player' }),
+        subtitle: i18n.t('toast.resumeTapeSub', { ns: 'player' }),
+        icon: '[>>]',
+        action: {
+          label: i18n.t('toast.action.fromStart', { ns: 'player' }),
+          onClick: () => {
+            audioEngine.seekTo(0);
+            clearTapePosition(agentRef.current);
+          },
+        },
+      });
+    });
+    return () => audioEngine.setOnLoadedMetadata(null);
+  }, []);
+
+  // Salva a posição a cada 5 s tocando, ao pausar (cleanup) e ao fechar a página
+  useEffect(() => {
+    if (walkmanStatus !== 'PLAYING' || !(currentIntel instanceof AudioIntel)) return;
+    const id = currentIntel.id;
+    const save = () => {
+      // Eject, troca de fita ou rewind já cuidaram do registro
+      if (currentIntelRef.current?.id !== id || walkmanStatusRef.current === 'REWINDING') return;
+      const t = audioEngine.getCurrentTime();
+      const d = audioEngine.getDuration();
+      if (d > 0 && t > d - 5) clearTapePosition(agentRef.current);
+      else if (t > 0) writeTapePosition(agentRef.current, id, t);
+    };
+    window.addEventListener('pagehide', save);
+    const interval = setInterval(save, 5000);
+    return () => {
+      window.removeEventListener('pagehide', save);
+      clearInterval(interval);
+      save();
+    };
+  }, [currentIntel, walkmanStatus]);
+
+  // Tela acesa enquanto toca áudio (J16)
+  useEffect(() => {
+    if (walkmanStatus !== 'PLAYING' || !(currentIntel instanceof AudioIntel)) return;
+    return holdWakeLock();
+  }, [walkmanStatus, currentIntel]);
+
+  useEffect(() => {
+    if (walkmanStatus !== 'PLAYING') setIsBuffering(false);
+  }, [walkmanStatus]);
+
+  // Guarda qual fita está dentro (J14)
+  currentIntelRef.current = currentIntel;
+  useEffect(() => {
+    if (currentIntel) writeTapeId(agentRef.current, currentIntel.id);
+  }, [currentIntel]);
+
+  // Restaura a fita do agente em LOADED, sem tocar (J14)
+  useEffect(() => {
+    if (!agent || !playerData) return;
+    const key = `${agent.uid}:${agent.characterId}`;
+    if (restoredForRef.current === key) return;
+    restoredForRef.current = key;
+    if (currentIntelRef.current || activeEvidenceRef.current) return;
+    const id = readTapeId(agent);
+    if (!id || !playerData.unlockedIntelIds.includes(id)) {
+      if (id) clearTapeId(agent);
+      return;
+    }
+    void intelService
+      .resolve(id)
+      .then((raw) => {
+        if (agentRef.current?.uid !== agent.uid || agentRef.current?.characterId !== agent.characterId) return;
+        if (!raw || currentIntelRef.current || walkmanStatusRef.current !== 'IDLE') return;
+        const intel = IntelFactory.getInstance().create(raw);
+        // Só áudio volta sozinho; vídeo depende do shell e da capacidade do aparelho
+        if (!(intel instanceof AudioIntel)) return;
+        setCurrentIntel(intel);
+        setWalkmanStatus('LOADED');
+      })
+      .catch(() => undefined);
+  }, [agent, playerData]);
 
   useEffect(() => {
     if (currentIntel instanceof AudioIntel && currentIntel.mediaUrl) {
@@ -123,7 +295,14 @@ export function useWalkmanPlayback(options: UseWalkmanPlaybackOptions) {
           if (cancelled) return;
           // Autoplay bloqueado ou mídia indisponível: não deixa a UI presa em PLAYING
           setWalkmanStatus('LOADED');
-          addToast({ type: 'error', title: i18n.t('toast.playbackFail', { ns: 'player' }), subtitle: i18n.t('toast.playbackFailSub', { ns: 'player' }), icon: '[!]' });
+          lastErrorToastAtRef.current = Date.now();
+          addToast({
+            type: 'error',
+            title: i18n.t('toast.playbackFail', { ns: 'player' }),
+            subtitle: i18n.t('toast.playbackFailSub', { ns: 'player' }),
+            icon: '[!]',
+            action: { label: i18n.t('toast.action.retry', { ns: 'common' }), onClick: () => setWalkmanStatus('PLAYING') },
+          });
         });
       return () => {
         cancelled = true;
@@ -147,11 +326,14 @@ export function useWalkmanPlayback(options: UseWalkmanPlaybackOptions) {
       playing: walkmanStatus === 'PLAYING',
       onPlay: () => setWalkmanStatus('PLAYING'),
       onPause: () => setWalkmanStatus('LOADED'),
+      onSeekBackward: () => audioEngine.seekBy(-10),
+      onSeekForward: () => audioEngine.seekBy(10),
     });
   }, [currentIntel, walkmanStatus]);
 
   const resetPlayback = useCallback(() => {
     clearPendingTimer();
+    restoredForRef.current = null;
     setCurrentIntel(null);
     setWalkmanStatus('IDLE');
     setActiveEvidence(null);
@@ -183,6 +365,7 @@ export function useWalkmanPlayback(options: UseWalkmanPlaybackOptions) {
             title: i18n.t('toast.unknownCode', { ns: 'player' }),
             subtitle: i18n.t('toast.unknownCodeSub', { ns: 'player', code }),
             icon: '[X]',
+            action: { label: i18n.t('toast.action.scanAgain', { ns: 'common' }), onClick: () => setWalkmanStatus('SCANNING') },
           });
         }
 
@@ -190,6 +373,7 @@ export function useWalkmanPlayback(options: UseWalkmanPlaybackOptions) {
         const { alreadyOwned, updatedIds } = await intelService.unlock(currentPD, intel.id, code);
 
         firebaseAnalytics.logQrScan(alreadyOwned ? 'duplicate' : 'success');
+        pushService.markPushMoment();
 
         const now = Date.now();
         const recentScans = [...scanTimes.filter((t) => now - t < 300000), now];
@@ -235,11 +419,19 @@ export function useWalkmanPlayback(options: UseWalkmanPlaybackOptions) {
           { tapeId: intel.id }
         );
       } catch {
-        addToast({ type: 'error', title: i18n.t('toast.qrError', { ns: 'player' }), subtitle: i18n.t('toast.qrErrorSub', { ns: 'player' }), icon: '[!]' });
+        addToast({
+          type: 'error',
+          title: i18n.t('toast.qrError', { ns: 'player' }),
+          subtitle: i18n.t('toast.qrErrorSub', { ns: 'player' }),
+          icon: '[!]',
+          action: { label: i18n.t('toast.action.retry', { ns: 'common' }), onClick: () => void handleQrDetectedRef.current(rawCode) },
+        });
       }
     },
     [localStats, scanTimes, addToast, playerDataRef, setPlayerData, scheduleTimer]
   );
+
+  handleQrDetectedRef.current = handleQrDetected;
 
   const handleIntelSelect = useCallback(
     (intel: IntelBase) => {
@@ -281,6 +473,8 @@ export function useWalkmanPlayback(options: UseWalkmanPlaybackOptions) {
     if (!hasPlayedCurrentTape.current && currentIntel) {
       analyticsTracker.incrementStat('ejectWithoutPlay');
     }
+    clearTapeId(agentRef.current);
+    clearTapePosition(agentRef.current);
     setWalkmanStatus('IDLE');
     setCurrentIntel(null);
   }, [currentIntel]);
@@ -297,6 +491,7 @@ export function useWalkmanPlayback(options: UseWalkmanPlaybackOptions) {
   }, []);
 
   const handleRewind = useCallback(() => {
+    clearTapePosition(agentRef.current);
     setWalkmanStatus('REWINDING');
     scheduleTimer(() => setWalkmanStatus('LOADED'), 1500);
   }, [scheduleTimer]);
@@ -362,6 +557,7 @@ export function useWalkmanPlayback(options: UseWalkmanPlaybackOptions) {
         if (!updatedIds.includes(intelId)) {
           const unlockResult = await intelService.unlock(currentPD, intelId);
           updatedIds = unlockResult.updatedIds;
+          pushService.markPushMoment();
           const updatedPD = { ...currentPD, unlockedIntelIds: updatedIds };
           setPlayerData(updatedPD);
           analyticsTracker.updatePlayerData(updatedPD);
@@ -413,6 +609,11 @@ export function useWalkmanPlayback(options: UseWalkmanPlaybackOptions) {
   return {
     walkmanStatus,
     setWalkmanStatus,
+    /** Fita travada esperando dados, já com atraso de 300 ms (J03). */
+    isBuffering,
+    /** Último erro do <audio> com fita válida; null se nenhum (J01, a tratar na onda 2). */
+    audioError,
+    seekBy: audioEngine.seekBy.bind(audioEngine),
     currentIntel,
     setCurrentIntel,
     volume,

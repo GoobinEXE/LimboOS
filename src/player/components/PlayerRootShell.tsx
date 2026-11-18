@@ -5,6 +5,8 @@ import { useTranslation } from 'react-i18next';
 import ToastNotification from '../../components/ToastNotification';
 import RetroLoading from '../../components/player/RetroLoading';
 import { isNative } from '../../lib/native/platform';
+import { useOnlineStatus } from '../../lib/connectivity';
+import { AudioIntel } from '../../services/IntelEngine';
 
 const EvidenceReader = React.lazy(() => import('../../components/EvidenceReader'));
 const PushPermissionPrompt = React.lazy(() => import('../../components/campaign/PushPermissionPrompt'));
@@ -34,7 +36,13 @@ export default function PlayerRootShell() {
     exitMiniApp,
     openOverlay,
     closeOverlay,
+    syncError,
+    syncRetrying,
+    retrySync,
   } = session;
+  const online = useOnlineStatus();
+  // Offline a faixa global já avisa; aqui só falha com rede (servidor fora do ar, recusa).
+  const showSyncError = Boolean(syncError) && online && screen !== 'login';
 
   const closeEvidence = useCallback(() => {
     if (playback.activeEvidence) playback.setActiveEvidence(null);
@@ -55,6 +63,14 @@ export default function PlayerRootShell() {
     Boolean(playerData?.character?.campaignId),
     goBack,
     exitMiniApp,
+    playback.currentIntel && !playback.activeEvidence
+      ? {
+          toggle: () => playback.handleSetIsPlaying(!playback.isPlaying),
+          canSeek: playback.currentIntel instanceof AudioIntel,
+          seekBy: playback.seekBy,
+          toggleMute: playback.handleToggleMute,
+        }
+      : undefined,
   );
 
   const swipeHandlers = useSwipeable({
@@ -120,6 +136,33 @@ export default function PlayerRootShell() {
         <React.Suspense fallback={null}>
           <PushPermissionPrompt />
         </React.Suspense>
+      )}
+
+      {showSyncError && (
+        <div
+          role="alert"
+          className="fixed inset-x-0 top-0 z-[9000] flex justify-center px-3 pt-[env(safe-area-inset-top,0px)] pointer-events-none"
+        >
+          <div className="pointer-events-auto mt-2 flex max-w-md items-center gap-3 bg-surface-container-lowest/95 px-3 py-2 shadow-hairline">
+            <span aria-hidden="true" className="lmb-led text-accent motion-safe:animate-pulse" />
+            <div className="min-w-0 flex-1">
+              <p className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-tertiary">
+                {t('sync.error.title', { defaultValue: 'SINAL INSTÁVEL' })}
+              </p>
+              <p className="text-xs opacity-70">
+                {syncError?.network ? t('sync.error.body', { defaultValue: 'A sincronização caiu. Novos itens podem demorar.' }) : t('sync.error.bodyServer', { defaultValue: 'O servidor recusou a sincronização.' })}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={retrySync}
+              disabled={syncRetrying}
+              className="lmb-btn min-h-11 shrink-0 px-3 font-mono text-[11px] font-bold uppercase tracking-wider disabled:opacity-60"
+            >
+              {syncRetrying ? t('sync.error.retrying', { defaultValue: 'RECONECTANDO...' }) : t('sync.error.retry', { defaultValue: 'TENTAR DE NOVO' })}
+            </button>
+          </div>
+        </div>
       )}
 
       <ToastNotification toasts={playback.toasts} onDismiss={playback.dismissToast} />

@@ -177,6 +177,7 @@ export default function PlayerScreenRouter() {
             onRewind={playback.handleRewind}
             onTerminalOpen={playback.handleTerminalOpen}
             onMacOpen={playback.handleMacOpen}
+            isBuffering={playback.isBuffering}
           />
         </React.Suspense>
       ) : (

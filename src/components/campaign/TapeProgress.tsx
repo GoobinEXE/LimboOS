@@ -36,15 +36,38 @@ export const TapeProgress = ({ total, current, onChange }: TapeProgressProps) =>
     window.addEventListener('pointerup', onUp);
   }, [resolveIndex]);
 
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (!onChange || total < 1) return;
+    let next: number;
+    switch (e.key) {
+      case 'ArrowLeft':
+      case 'ArrowDown': next = current - 1; break;
+      case 'ArrowRight':
+      case 'ArrowUp': next = current + 1; break;
+      case 'PageDown': next = current - 3; break;
+      case 'PageUp': next = current + 3; break;
+      case 'Home': next = 0; break;
+      case 'End': next = total - 1; break;
+      default: return;
+    }
+    e.preventDefault();
+    next = Math.max(0, Math.min(total - 1, next));
+    if (next !== current) onChange(next);
+  }, [onChange, total, current]);
+
   const denominator = Math.max(1, total - 1);
 
   return (
     <div className="flex flex-col items-center w-full max-w-55 cursor-pointer group">
       <div
         ref={barRef}
-        className="relative w-full py-4 -my-4 touch-none"
+        className="relative w-full py-4 -my-4 touch-none rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         onPointerDown={handlePointerDown}
+        onKeyDown={handleKeyDown}
+        tabIndex={onChange ? 0 : -1}
         role="slider"
+        aria-orientation="horizontal"
+        aria-valuetext={t('campaign.progressValueText', { current: current + 1, total })}
         aria-label={t('campaign.progressAria')}
         aria-valuemin={0}
         aria-valuemax={total - 1}

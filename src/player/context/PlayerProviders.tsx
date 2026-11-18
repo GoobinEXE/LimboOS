@@ -109,6 +109,8 @@ function PlayerProvidersInner({ children }: { children: React.ReactNode }) {
     activeEvidence,
     setActiveEvidence,
     isMuted,
+    isBuffering,
+    seekBy,
     nokiaBackVisible,
     setNokiaBackVisible,
     handleQrDetected,
@@ -163,7 +165,7 @@ function PlayerProvidersInner({ children }: { children: React.ReactNode }) {
     handleCharacterSelect,
     handleCharacterSwitch,
   });
-  usePlayerServicesSync(auth, addToast);
+  const { syncError, syncRetrying, retrySync } = usePlayerServicesSync(auth, addToast);
   usePlayerScreenAnalytics(screen);
 
   const sessionValue = useMemo<PlayerSessionValue>(
@@ -195,6 +197,9 @@ function PlayerProvidersInner({ children }: { children: React.ReactNode }) {
       closeOverlay,
       isAdminOperator,
       openAdminConsole,
+      syncError,
+      syncRetrying,
+      retrySync,
     }),
     [
       masterAccount,
@@ -223,6 +228,9 @@ function PlayerProvidersInner({ children }: { children: React.ReactNode }) {
       openOverlay,
       closeOverlay,
       isAdminOperator,
+      syncError,
+      syncRetrying,
+      retrySync,
     ]
   );
 
@@ -242,6 +250,8 @@ function PlayerProvidersInner({ children }: { children: React.ReactNode }) {
       activeEvidence,
       setActiveEvidence,
       isMuted,
+      isBuffering,
+      seekBy,
       nokiaBackVisible,
       setNokiaBackVisible,
       toasts: toastList,
@@ -275,6 +285,8 @@ function PlayerProvidersInner({ children }: { children: React.ReactNode }) {
       activeEvidence,
       setActiveEvidence,
       isMuted,
+      isBuffering,
+      seekBy,
       nokiaBackVisible,
       setNokiaBackVisible,
       toastList,

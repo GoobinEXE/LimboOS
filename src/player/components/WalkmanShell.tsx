@@ -1,4 +1,4 @@
-import React, { memo, Suspense } from 'react';
+import React, { memo, Suspense, useEffect } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { EASE_OUT } from '../../lib/motion';
@@ -9,6 +9,7 @@ import BottomControls from '../../components/player/BottomControls';
 import Screw from '../../components/player/Screw';
 import RetroSpinner from '../../components/player/RetroSpinner';
 import { useLandscapeLayout } from '../hooks/useLandscapeLayout';
+import { walkmanSfx } from '../../services/WalkmanSfx';
 import type { IntelBase } from '../../services/IntelEngine';
 import type { PlayerData, WalkmanStatus, DisplayMode } from '../../types/player';
 
@@ -69,6 +70,9 @@ function WalkmanShell({
   const { isLandscape } = useLandscapeLayout();
   const isScanning = walkmanStatus === 'SCANNING';
   const landscapeScan = isLandscape && isScanning;
+
+  // Cliques do aparelho prontos antes do primeiro toque
+  useEffect(() => { walkmanSfx.preload(); }, []);
 
   return (
     <motion.div

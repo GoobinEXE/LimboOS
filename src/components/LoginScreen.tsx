@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useTranslation } from 'react-i18next';
-import { Lock, Terminal, Cpu, AlertTriangle, ChevronRight, Info, Eye, EyeOff } from 'lucide-react';
+import { Lock, Terminal, Cpu, AlertTriangle, ChevronRight, Info, Eye, EyeOff, Sparkles } from 'lucide-react';
 import AboutDialog from './AboutDialog';
 import { loginOrCreate, loginWithProvider } from '../store/profile';
 import type { MasterAccount } from '../types/player';
@@ -209,6 +209,13 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
               ))}
             </div>
             <div className="flex items-center gap-3">
+              <a
+                href="/oraculo"
+                className="inline-flex items-center gap-1.5 text-[10px] font-display font-bold uppercase tracking-[0.12em] text-ash-400 hover:text-accent transition-colors"
+              >
+                <Sparkles size={12} />
+                <span>{tCommon('oracle.entryLink')}</span>
+              </a>
               <button
                 type="button"
                 onClick={() => setAboutOpen(true)}

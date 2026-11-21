@@ -15,6 +15,7 @@ const Player = lazy(() => import('./Player'));
 const AdminApp = lazy(() => import('./admin/AdminApp'));
 const TerminalApp = lazy(() => import('./terminal/TerminalApp'));
 const InviteApp = lazy(() => import('./invite/InviteApp'));
+const OracleApp = lazy(() => import('./oracle/OracleApp'));
 
 function AppRoutes() {
   const { t } = useTranslation('common');
@@ -33,6 +34,8 @@ function AppRoutes() {
         <Route path="/admin/*" element={<AdminApp />} />
         <Route path="/terminal/*" element={<TerminalApp />} />
         <Route path="/convite/:token" element={<InviteApp />} />
+        <Route path="/oraculo" element={<OracleApp />} />
+        <Route path="/oraculo/:slotCode" element={<OracleApp />} />
       </Routes>
     </Suspense>
   );

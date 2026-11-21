@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { EASE_OUT, dialogPop, overlayFade, staggerDelay } from '../lib/motion';
 import { useTranslation } from 'react-i18next';
-import { UserPlus, Shield, User, ChevronRight, AlertCircle, Skull, Search, LogOut, MonitorCog } from 'lucide-react';
+import { UserPlus, Shield, User, ChevronRight, AlertCircle, Skull, Search, LogOut, MonitorCog, Sparkles } from 'lucide-react';
 import { fetchCharacters, createCharacter, fetchPlayerMemberships, updateOwnDisplayName } from '../store/firestore';
 import { parseInviteToken } from '../invite/inviteToken';
 import type { CharacterData, MasterAccount } from '../types/player';
@@ -224,6 +224,13 @@ export default function CharacterSelectionScreen({ account, onSelect, onLogout, 
           <button type="submit" disabled={!parseInviteToken(inviteInput)} className="bg-accent/10 hover:bg-accent/20 text-accent px-4 py-3 rounded-control text-protocol transition-colors duration-(--duration-fast) disabled:opacity-40">
             {t('character.invite.submit')}
           </button>
+          <a
+            href="/oraculo"
+            className="bg-surface-raised hover:bg-surface-panel text-ash-300 hover:text-accent px-4 py-3 rounded-control text-protocol transition-colors duration-(--duration-fast) inline-flex items-center justify-center gap-2 shrink-0"
+          >
+            <Sparkles size={14} />
+            <span>{tCommon('oracle.entryLink')}</span>
+          </a>
         </form>
         <div>
         </div>

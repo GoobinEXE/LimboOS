@@ -40,10 +40,12 @@ export default React.memo(function SideControls({ volume, setVolume, onModeChang
     return () => { if (volumeTimer.current) clearTimeout(volumeTimer.current); };
   }, [volume]);
 
-  const handleProfilePointerDown = (e: React.PointerEvent) => {
+  const handleProfilePointerDown = () => {
+    walkmanSfx.button();
     longPressTimer.current = setTimeout(() => {
       if (onCharacterSwitch) {
         haptic('double');
+        walkmanSfx.keyRelease();
         activityLogger.logAction('player', 'Troca rápida de agente acionada via long-press');
         onCharacterSwitch();
       }
@@ -61,6 +63,13 @@ export default React.memo(function SideControls({ volume, setVolume, onModeChang
     animate(dragY, 0, SPRING_MECHANICAL);
   };
 
+  // Dente do volume a cada 5%: o arraste passa por vários e cada um estala
+  const changeVolume = (next: number) => {
+    const v = Math.max(0, Math.min(100, next));
+    if (Math.floor(v / 5) !== Math.floor(volume / 5) || (v !== volume && (v === 0 || v === 100))) walkmanSfx.detent();
+    setVolume(v);
+  };
+
   const handleVolumeKey = (e: React.KeyboardEvent) => {
     const step = e.key === 'PageUp' || e.key === 'PageDown' ? 10 : 5;
     let next: number | null = null;
@@ -70,14 +79,13 @@ export default React.memo(function SideControls({ volume, setVolume, onModeChang
     else if (e.key === 'End') next = 100;
     if (next === null) return;
     e.preventDefault();
-    setVolume(Math.max(0, Math.min(100, next)));
+    changeVolume(next);
   };
 
   const handleProfilePointerUp = () => {
     if (longPressTimer.current) {
       clearTimeout(longPressTimer.current);
       longPressTimer.current = null;
-      walkmanSfx.button();
       onProfileOpen();
     }
   };
@@ -100,7 +108,7 @@ export default React.memo(function SideControls({ volume, setVolume, onModeChang
           }
         }}
         className={`${landscape ? 'w-9 h-9 min-h-9' : 'w-10 h-10'} rounded-full bg-radial-[at_35%_30%] from-surface-bright to-surface-container-highest border-2 border-surface-sunken shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_4px_10px_-3px_rgba(0,0,0,0.9)] flex items-center justify-center hover:from-accent-20 hover:to-surface-container-highest transition duration-150 ease-limbo shrink-0 active:scale-90 active:shadow-[inset_0_2px_5px_rgba(0,0,0,0.7)]`}
-        onClick={(e) => { if (e.detail === 0) onProfileOpen(); }}
+        onClick={(e) => { if (e.detail === 0) { walkmanSfx.button(); onProfileOpen(); } }}
         title={t('walkman.profileTitle')}
         aria-label={t('walkman.profileTitle')}
       >
@@ -184,7 +192,7 @@ export default React.memo(function SideControls({ volume, setVolume, onModeChang
             analyticsTracker.incrementStat('fidgetClicks');
             const rect = e.currentTarget.getBoundingClientRect();
             const pct = Math.round(((rect.bottom - e.clientY) / rect.height) * 100);
-            setVolume(Math.max(0, Math.min(100, pct)));
+            changeVolume(pct);
           }}>
           <div className="absolute bottom-0 w-full bg-accent rounded-full transition-[height] duration-75" style={{ height: `${volume}%` }} />
           <div className="absolute left-1/2 -translate-x-1/2 w-6 h-8 bg-linear-to-b from-ash-200 to-ash-400 rounded border-2 border-ash-600 shadow-[0_3px_8px_-2px_rgba(0,0,0,0.9),inset_0_1px_0_rgba(255,255,255,0.5)] cursor-ns-resize flex flex-col justify-center items-center gap-0.5 z-10"
@@ -192,9 +200,14 @@ export default React.memo(function SideControls({ volume, setVolume, onModeChang
             onPointerDown={(e) => {
               (e.target as Element).setPointerCapture(e.pointerId);
               const startY = e.clientY, startVol = volume;
+              let lastVol = volume;
               const onMove = (me: PointerEvent) => {
                 analyticsTracker.incrementStat('fidgetClicks');
-                setVolume(Math.max(0, Math.min(100, Math.round(startVol + ((startY - me.clientY) / 80) * 100))));
+                const next = Math.max(0, Math.min(100, Math.round(startVol + ((startY - me.clientY) / 80) * 100)));
+                if (next === lastVol) return;
+                if (Math.floor(next / 5) !== Math.floor(lastVol / 5)) walkmanSfx.detent();
+                lastVol = next;
+                setVolume(next);
               }
               const onUp = () => { window.removeEventListener('pointermove', onMove); window.removeEventListener('pointerup', onUp); };
               window.addEventListener('pointermove', onMove); window.addEventListener('pointerup', onUp);

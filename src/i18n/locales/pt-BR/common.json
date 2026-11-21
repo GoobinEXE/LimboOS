@@ -246,5 +246,72 @@
   "update": {
     "available": "Nova versão disponível.",
     "action": "Atualizar"
+  },
+  "oracle": {
+    "entryLink": "Oráculo",
+    "loading": "Consultando código de vaga...",
+    "access": {
+      "eyebrow": "Oráculo",
+      "title": "Código de Vaga",
+      "hint": "Informe o código individual enviado pelo mestre para responder ao questionário ou consultar sua ficha designada.",
+      "codeLabel": "Código da vaga",
+      "placeholder": "EX: ORC-K9M2",
+      "submit": "Acessar Oráculo",
+      "notFound": "Código não localizado. Confira com o mestre se foi digitado corretamente.",
+      "backToApp": "Voltar ao login"
+    },
+    "flow": {
+      "intakeTitle": "Identificação",
+      "intakeGuide": "Preencha os dados solicitados antes de iniciar.",
+      "quizTitle": "Questionário",
+      "quizGuide": "Responda intuitivamente. As alternativas são embaralhadas individualmente e não há escolhas certas ou erradas.",
+      "wordsTitle": "Palavras-Chave",
+      "wordsGuide": "Selecione exatamente {{count}} palavras na ordem de maior afinidade (a 1ª tem maior prioridade em desempates).",
+      "wordsOrderLabel": "Ordem selecionada (clique para remover)",
+      "nextQuiz": "Avançar ao Questionário",
+      "nextWords": "Avançar às Palavras",
+      "finish": "Confirmar e Enviar"
+    },
+    "confirm": {
+      "title": "Confirmar Envio Definitivo",
+      "body": "Após enviar, este código será travado e não será possível refazer ou alterar as respostas.",
+      "action": "Confirmar e Enviar"
+    },
+    "wait": {
+      "title": "Aguardando Designação",
+      "body": "Suas respostas foram registradas com segurança. Aguarde os demais participantes finalizarem ou o mestre liberar as fichas.",
+      "progressLabel": "Progresso da sala",
+      "progressCount": "{{submitted}} / {{total}} enviados",
+      "registeredIdentity": "Identificação registrada",
+      "checkNow": "Atualizar agora"
+    },
+    "dossier": {
+      "unexpectedBadge": "Designação Inesperada",
+      "sheetContent": "Ficha Designada",
+      "copyMd": "Copiar .md",
+      "copied": "Copiado",
+      "exportMd": "Exportar Ficha (.md)",
+      "previewPdf": "Visualizar PDF",
+      "hidePdf": "Ocultar PDF",
+      "openDoc": "Abrir documento",
+      "attributes": "Atributos",
+      "derivedStats": "Estatísticas Derivadas",
+      "traits": "Traços",
+      "intakeSummary": "Identificação",
+      "flavorTitle": "Personalização",
+      "flavorSaved": "Salvo",
+      "saveFlavor": "Salvar Detalhes",
+      "flavorSaveFail": "Não foi possível salvar os detalhes.",
+      "otherCode": "Abrir outro código",
+      "abilities": "Habilidades ({{count}})",
+      "searchAbilities": "Filtrar por nome ou descrição...",
+      "allCategories": "Todos",
+      "noAbilityMatch": "Nenhuma habilidade encontrada para o filtro."
+    },
+    "error": {
+      "network": "Sem sinal com o servidor. Verifique a rede e tente de novo.",
+      "unexpected": "Falha ao consultar o código. Tente novamente.",
+      "submitFail": "Não foi possível enviar as respostas. Tente novamente."
+    }
   }
 }

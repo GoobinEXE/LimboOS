@@ -49,8 +49,10 @@ export default React.memo(function BottomControls({
   const macAccess = !!hasMacAccess;
   const appCount = (terminalAccess ? 1 : 0) + (macAccess ? 1 : 0);
 
+  const appSfx = () => { if (appCount > 0) walkmanSfx.button(); else walkmanSfx.dead(); };
+
   const handleAppClick = () => {
-    if (appCount > 0) walkmanSfx.button();
+    appSfx();
     analyticsTracker.incrementStat('fidgetClicks');
     if (appCount > 1) {
       if (!showMenu) activityLogger.logAction('menu', 'Aberto seletor de sistemas');
@@ -60,6 +62,18 @@ export default React.memo(function BottomControls({
     } else if (macAccess && onMacOpen) {
       onMacOpen();
     }
+  };
+
+  // O clique sai no pointerdown, quando a tecla afunda; o click repete para teclado
+  // e o WalkmanSfx descarta a repetição. Sem fita, a tecla afunda e volta sem efeito.
+  const rewindSfx = () => {
+    if (isRewinding) return;
+    if (hasTape && onRewind) walkmanSfx.rewind(1500); else walkmanSfx.dead();
+  };
+  const playSfx = () => {
+    if (!hasTape) walkmanSfx.dead();
+    else if (isPlaying) walkmanSfx.keyRelease();
+    else walkmanSfx.keyPress();
   };
 
   const sideBtn = compact ? 'w-12 h-9 min-h-9' : 'w-16 h-10';
@@ -85,7 +99,7 @@ export default React.memo(function BottomControls({
             </div>
             {terminalAccess && (
               <button 
-                onClick={() => { onTerminalOpen?.(); setShowMenu(false); }}
+                onClick={() => { walkmanSfx.button(); onTerminalOpen?.(); setShowMenu(false); }}
                 className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-surface-container-high active:bg-surface-container-highest transition-colors duration-150 text-[10px] font-black tracking-widest text-crt"
               >
                 <Monitor size={14} /> {t('walkman.mhDos')}
@@ -93,7 +107,7 @@ export default React.memo(function BottomControls({
             )}
             {macAccess && (
               <button 
-                onClick={() => { onMacOpen?.(); setShowMenu(false); }}
+                onClick={() => { walkmanSfx.button(); onMacOpen?.(); setShowMenu(false); }}
                 className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-surface-container-high active:bg-surface-container-highest transition-colors duration-150 text-[10px] font-black tracking-widest text-ash-300"
               >
                 <div className="w-3.5 flex justify-center"><AppleIcon size={14} /></div> {t('walkman.macos')}
@@ -104,10 +118,11 @@ export default React.memo(function BottomControls({
       </AnimatePresence>
 
       <button 
+        onPointerDown={rewindSfx}
         onClick={() => { 
           analyticsTracker.incrementStat('fidgetClicks');
+          rewindSfx();
           if (hasTape && onRewind && !isRewinding) {
-            walkmanSfx.rewind(1500);
             activityLogger.logAction('player', 'Retroceder fita');
             onRewind();
           }
@@ -119,11 +134,11 @@ export default React.memo(function BottomControls({
         <RotateCcw size={iconSide} className={`text-accent ${isRewinding ? 'animate-spin' : ''}`} />
       </button>
 
-      <button onClick={() => {
+      <button onPointerDown={playSfx} onClick={() => {
         analyticsTracker.incrementStat('fidgetClicks');
+        playSfx();
         if (hasTape) {
           const nextPlaying = !isPlaying;
-          if (nextPlaying) walkmanSfx.keyPress(); else walkmanSfx.keyRelease();
           activityLogger.logAction('player', nextPlaying ? 'Iniciado Play' : 'Pausado');
           setIsPlaying(nextPlaying);
         }
@@ -137,6 +152,7 @@ export default React.memo(function BottomControls({
       </button>
 
       <button 
+        onPointerDown={appSfx}
         onClick={handleAppClick} 
         aria-label={appCount > 1 ? t('walkman.systems') : terminalAccess ? t('walkman.mhDos') : macAccess ? t('walkman.macos') : t('walkman.eq')}
         aria-disabled={appCount === 0}

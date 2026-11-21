@@ -1,17 +1,17 @@
-# Graph Report - LimboOS  (2026-11-11)
+# Graph Report - LimboOS  (2026-11-18)
 
 ## Corpus Check
-- 334 files · ~238,428 words
+- 342 files · ~242,929 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 79 file(s) not represented in the graph (top: .xml 20, (none) 16, .plist 6)
 
 ## Summary
-- 4027 nodes · 8974 edges · 234 communities (200 shown, 34 thin omitted)
-- Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 367 edges (avg confidence: 0.86)
+- 4108 nodes · 9264 edges · 248 communities (211 shown, 37 thin omitted)
+- Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 370 edges (avg confidence: 0.86)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `5be54d86`
+- Built from commit: `38603225`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -25,33 +25,33 @@
 - firebase.ts
 - IntelItem
 - Flutter Pub Dependencies
-- Intel Engine Evidence
-- CampaignsPanel.tsx
+- react-i18next
+- MissionWorkspace.tsx
 - Intel Catalog Display
 - Mobile Audio Engine
 - Retro Flutter Widgets
-- Stats HTML Visualizer
+- drawChart
 - Nokia Riverpod Providers
 - Character Repository Gen
 - Auth Character Domains
-- Windows95App.tsx
+- Player.tsx
 - Group Repository Gen
 - Auth Repository Flutter
 - Nokia Player View
 - Intel Item Domain
 - Dashboard.tsx
-- react
+- MIcon.tsx
 - Player Sync Types
 - AnalyticsTracker.ts
 - intel_repository.dart
 - Nokia SMS UI
-- MiniAppsOverlay.tsx
+- PlayerProviders.tsx
 - AchievementsPanel.tsx
 - Active Character Providers
-- PlayerRootShell.tsx
+- PlayerScreenRouter.tsx
 - Achievement Rules Engine
 - Agents Docs Lore
-- App Routes Bootstrap
+- AgentDossierView.tsx
 - Flutter Startup Theme
 - Retro Color Theme
 - Nokia Scanner View
@@ -70,11 +70,11 @@
 - Project Documentation 51
 - main
 - Admin Panel
-- AgentDossierView.tsx
+- AchievementCatalogService.ts
 - RunnerTests
 - campaign
 - active campaign provider
-- npcMessages.ts
+- ToastProvider.tsx
 - Project Documentation 59
 - Nokia Player Mobile
 - Firebase Analytics Service
@@ -83,12 +83,12 @@
 - Nokia Player Mobile 64
 - dependencies
 - Activity Logger
-- AdminApp.tsx
+- MissionTeamTab.tsx
 - index.js
 - PushService.ts
 - Project Documentation 70
 - Achievement Art Assets 71
-- usePlayerAuth.ts
+- AdminApp.tsx
 - Project Documentation 73
 - limboos
 - package.json
@@ -97,7 +97,7 @@
 - Achievement Art Assets 78
 - Achievement Art Assets 79
 - Achievement Art Assets 80
-- adminNavigation.ts
+- ContentPanel.tsx
 - isNative
 - Audio Engine
 - stackhawk
@@ -139,7 +139,7 @@
 - Achievement Art Assets 120
 - Achievement Art Assets 121
 - Achievement Art Assets 122
-- CassetteCard
+- wsDoc
 - hive
 - App Icon Assets 125
 - App Icon Assets 126
@@ -162,13 +162,13 @@
 - Achievement Art Assets 143
 - App Icon Assets 144
 - migrate-to-workspaces.cjs
-- adminAnalyticsService
+- AdminAnalyticsService.ts
 - character providers
 - apple touch icon
 - App Icon Assets 149
 - App Icon Assets 150
 - Project Documentation 151
-- MacOsApp.tsx
+- haptics.ts
 - Bundle Analyzer Report 153
 - phone utils
 - Readme Screenshots 155
@@ -195,67 +195,81 @@
 - LaunchImage
 - LaunchImage@2x
 - LaunchImage@3x
-- IntelService.ts
+- adminNavigation.ts
 - Project Documentation 180
-- intelService
+- seed-demo.cjs
 - analysis options
 - App Icon Assets 183
 - App Icon Assets 184
 - App Icon Assets 185
 - App Icon Assets 186
-- MediaAsset
+- mediaService
 - MainActivity
 - debug ios workspace
 - campaign_repository.dart
 - check xcworkspace
 - Bundle Analyzer Report 201
 - requireId
-- PlayerScreenRouter.tsx
+- CampaignsPanel.tsx
 - functions.test.js
 - ExampleInstrumentedTest.java
 - rules-tests/package.json
 - Fase 0: provabilidade das regras multi-tenant (resultados)
 - .scene
 - isId
-- push.js
+- Sidebar.tsx
 - build-info.mjs
-- RedirectsPanel.tsx
+- admin/lib/motion.ts
 - migration.test.js
-- nativeAuth.ts
+- capture.mjs
 - AppDelegate
 - AppDelegate
-- LimboBoard.tsx
-- diskRepairService
-- assertPlatformAdmin
-- CharacterSelectionScreen.tsx
-- mediaSession.ts
+- AchievementCatalog.tsx
+- ActivityLogger.ts
+- achievementManager
+- react
+- music-metadata
 - MainActivity.java
 - Package.swift
 - README.md
+- TerminalPanel.tsx
+- GroupManager.tsx
+- AnalyticsPanel.tsx
+- walkmanSfx
+- assertGm
+- Product
+- getTenantScope
+- Visualizer data v2
+- Main
+- createRainbowColor
+- Design
+- set_admin_claim.js
+- assets/UserRegistry-CKPQuV_9.js
+- assets/index.esm-DxP2ddg8.js
 
 ## God Nodes (most connected - your core abstractions)
-1. `react` - 128 edges
-2. `react-i18next` - 91 edges
-3. `Bundle root` - 76 edges
-4. `motion` - 62 edges
-5. `IntelItem` - 55 edges
-6. `Campaign` - 49 edges
-7. `wsDoc()` - 49 edges
-8. `activityLogger` - 44 edges
-9. `CharacterData` - 41 edges
-10. `useModal()` - 40 edges
+1. `react` - 130 edges
+2. `MIcon()` - 102 edges
+3. `react-i18next` - 91 edges
+4. `Bundle root` - 76 edges
+5. `motion` - 62 edges
+6. `IntelItem` - 55 edges
+7. `Campaign` - 49 edges
+8. `wsDoc()` - 49 edges
+9. `activityLogger` - 44 edges
+10. `CharacterData` - 41 edges
 
 ## Surprising Connections (you probably didn't know these)
+- `Deck do Joe` --semantically_similar_to--> `Walkman`  [AMBIGUOUS] [semantically similar]
+  sms/sms do nil.md → README.md
+- `Ícones` --references--> `MIcon()`  [INFERRED]
+  DESIGN.md → src/admin/components/MIcon.tsx
+- `Carregamento e abertura` --references--> `RetroLoading()`  [INFERRED]
+  DESIGN.md → src/components/player/RetroLoading.tsx
 - `7. Pendências observadas fora do escopo` --references--> `useNpcSmsCatalog()`  [INFERRED]
   docs/plano-modularidade.md → src/hooks/useNpcSmsCatalog.ts
 - `4. Aparelho novo` --references--> `DeviceCapabilities`  [INFERRED]
   docs/plano-modularidade.md → src/player/hooks/useActiveCampaign.ts
-- `6. Ordem de execução` --references--> `achievementManager`  [INFERRED]
-  docs/plano-modularidade.md → src/services/AchievementManager.ts
-- `Jaden` --semantically_similar_to--> `Jaden`  [INFERRED] [semantically similar]
-  README.md → sms/sms do jaden.md
-- `Bocão` --semantically_similar_to--> `Bocão`  [INFERRED] [semantically similar]
-  README.md → sms/sms bocao.md
 
 ## Import Cycles
 - 3-file cycle: `src/admin/components/MediaLibraryPanel.tsx -> src/admin/components/intel/IntelEditorHost.tsx -> src/admin/components/MediaSelectorModal.tsx -> src/admin/components/MediaLibraryPanel.tsx`
@@ -453,55 +467,55 @@
 - **xxxhdpi color and motion** — cyan_navy_palette, aerodynamic_right_lean, flutter_logo_mark [INFERRED 0.85]
 - **Orange ring ticks and center dot reticle** — public_favicon_orange_ring, public_favicon_cardinal_ticks, public_favicon_center_dot, public_favicon_crosshair_reticle [INFERRED 0.90]
 
-## Communities (234 total, 34 thin omitted)
+## Communities (248 total, 37 thin omitted)
 
 ### Community 0 - "LiveWorkspace.tsx"
-Cohesion: 0.05
-Nodes (70): date-fns, AdminMotionHintContext, AdminPanelActiveContext, AdminPanelEnteringContext, AdminPanelsRoot(), AdminTabPanelProps, useAdminPanelActive(), useRouteEnter() (+62 more)
+Cohesion: 0.09
+Nodes (32): date-fns, useAdminPanelActive(), AgentDossierView(), formatSecs(), StatBox(), LiveDeliverKind, LiveDeliverTarget, DeliverBtn() (+24 more)
 
 ### Community 1 - "npcSmsCatalogService"
-Cohesion: 0.10
-Nodes (5): 1. Âncora comum: o pacote de campanha, catalogStateService, normalizeDialogue(), npcSmsCatalogService, NpcDialogueInput
+Cohesion: 0.14
+Nodes (9): listScopeFromFirestore(), listScopeToFirestore(), normalizeContact(), normalizeDialogue(), npcSmsCatalogService, toFirestorePatch(), NpcContactInput, NpcDialogue (+1 more)
 
 ### Community 2 - "functions/package.json"
 Cohesion: 0.10
-Nodes (20): author, dependencies, firebase-functions@^7.2.3, description, devDependencies, firebase-functions-test@^3.5.0, engines, node (+12 more)
+Nodes (22): author, dependencies, firebase-admin@^13.7.0, firebase-functions@^7.2.3, description, devDependencies, firebase-functions-test@^3.5.0, engines (+14 more)
 
 ### Community 3 - "User Service Admin"
 Cohesion: 0.08
-Nodes (13): AgentDossierViewProps, LiveWorkspaceProps, CharacterSelectionScreenProps, NokiaPlayerProps, requireTenantScope(), CHARACTER_LEVEL_FLAGS, characterQueries(), chunk() (+5 more)
+Nodes (13): getScopedDocs(), requireTenantScope(), CharacterLevelFlag, characterQueries(), chunk(), PlayCountData, RosterAccount, rosterToAccount() (+5 more)
 
 ### Community 4 - "Mobile Campaign Screens"
 Cohesion: 0.05
 Nodes (28): build, LoginScreen, build, campaign, createState, _currentIndex, dispose, _filterCampaigns (+20 more)
 
 ### Community 5 - "Bundle Stats Chunks"
-Cohesion: 0.06
-Nodes (51): Bundle root, assets/AbstractID3Parser-CjTq90CN.js, assets/AchievementsPanel-B6ElmjgQ.js, assets/AgentDossierOverlay-BxNv71ig.js, assets/AiffParser-Cly_nin9.js, assets/AsfParser-CCPgzhRf.js, assets/campaigns-CG_GaG_x.js, assets/CharacterSelectionScreen-CEEsDmA2.js (+43 more)
+Cohesion: 0.07
+Nodes (40): Bundle root, assets/AchievementsPanel-B6ElmjgQ.js, assets/AgentDossierOverlay-BxNv71ig.js, assets/campaigns-CG_GaG_x.js, assets/CampaignSelection-B5QelCo-.js, assets/CharacterSelectionScreen-CEEsDmA2.js, assets/chevron-left-B24KP6WH.js, assets/chevron-right-DSOZ8Rvr.js (+32 more)
 
 ### Community 6 - "firebase.ts"
-Cohesion: 0.06
-Nodes (44): extractYoutubeId(), isYoutubeUrl(), JukeboxPanel(), JukeboxTrack, trackScope(), registerCampaigns(), appCheckSiteKey, db (+36 more)
+Cohesion: 0.07
+Nodes (32): extractYoutubeId(), isYoutubeUrl(), JukeboxPanel(), JukeboxTrack, trackScope(), LogEntry, LogRow, SEVERITY (+24 more)
 
 ### Community 7 - "IntelItem"
-Cohesion: 0.20
-Nodes (3): intelRegistry, LOCAL_INTEL_ITEMS, IntelItem
+Cohesion: 0.13
+Nodes (10): IntelQrModalProps, QrRedirect, RedirectsPanel(), matchesIntelScope(), intelRegistry, LOCAL_INTEL_ITEMS, deleteQrRedirect(), subscribeToQrRedirects() (+2 more)
 
 ### Community 8 - "Flutter Pub Dependencies"
 Cohesion: 0.05
 Nodes (43): dependencies, battery_plus, cached_network_image, cloud_firestore, cloud_functions, cupertino_icons, firebase_auth, firebase_core (+35 more)
 
-### Community 9 - "Intel Engine Evidence"
-Cohesion: 0.08
-Nodes (12): CorruptedTextRenderer(), EvidenceReader(), EvidenceReaderProps, EASE_EXIT, AudioIntel, IntelBase, IntelFactory, MetaIntel (+4 more)
-
-### Community 10 - "CampaignsPanel.tsx"
+### Community 9 - "react-i18next"
 Cohesion: 0.07
-Nodes (55): AdminRouteEnter(), CampaignScopeSelectProps, CampaignsPanel(), CampaignsPanelProps, createNewCampaignDraft(), useModal(), IntelEditorHost(), IntelEditorHostProps (+47 more)
+Nodes (33): Regras, lucide-react, motion, react-i18next, CorruptedTextRenderer(), EvidenceReader(), EvidenceReaderProps, QrScanner (+25 more)
+
+### Community 10 - "MissionWorkspace.tsx"
+Cohesion: 0.11
+Nodes (34): AgentDossierViewProps, CampaignsPanelProps, IntelEditorHost(), LiveWorkspaceProps, MediaSelectorModal(), MissionAccessTab(), MissionAccessTabProps, FEATURE_ORDER (+26 more)
 
 ### Community 11 - "Intel Catalog Display"
-Cohesion: 0.14
-Nodes (30): IconBtn(), IntelCatalogPane(), IntelCatalogPaneProps, FolderFilter, FolderRow(), MediaFolderSidebar(), MediaFolderSidebarProps, FilterTab() (+22 more)
+Cohesion: 0.11
+Nodes (40): CampaignScopeSelect(), CampaignScopeSelectProps, IconBtn(), IntelCatalogPane(), IntelCatalogPaneProps, IntelExportDrawer(), MediaFolderAssignModal(), MediaFolderAssignModalProps (+32 more)
 
 ### Community 12 - "Mobile Audio Engine"
 Cohesion: 0.05
@@ -511,9 +525,9 @@ Nodes (25): audioEngine, AudioEngineService, audioEngineProvider, dispose, durat
 Cohesion: 0.06
 Nodes (34): build, child, _controller, createState, CRTFilter, dispose, initState, NoiseOverlay (+26 more)
 
-### Community 14 - "Stats HTML Visualizer"
-Cohesion: 0.08
-Nodes (41): Brotli, bytes, Chart, createFilter, createRainbowColor, CSS Color Module Level 3, d3-array, d3-color (+33 more)
+### Community 14 - "drawChart"
+Cohesion: 0.24
+Nodes (13): d3-hierarchy, drawChart, hierarchy, Preact, rollup-plugin-visualizer, Rollup Visualizer, run, squarify (+5 more)
 
 ### Community 15 - "Nokia Riverpod Providers"
 Cohesion: 0.07
@@ -527,9 +541,9 @@ Nodes (35): _filterActiveCharacters, _firestore, getCharactersForUser, updatePho
 Cohesion: 0.09
 Nodes (20): achievementsRevealed, agentId, AgentStatus, archived, campaignId, codinome, copyWith, createdAt (+12 more)
 
-### Community 18 - "Windows95App.tsx"
-Cohesion: 0.18
-Nodes (16): DiskRepairApp(), DesktopIcon(), StartOption(), Window(), Windows95App(), Windows95AppProps, WindowType, NavButton() (+8 more)
+### Community 18 - "Player.tsx"
+Cohesion: 0.07
+Nodes (45): PlayerSessionProvider, DiskRepairApp(), DiskRepairAppProps, AppleIcon(), LimboBoard(), LimboBoardProps, Post, Thread (+37 more)
 
 ### Community 19 - "Group Repository Gen"
 Cohesion: 0.09
@@ -548,20 +562,20 @@ Cohesion: 0.06
 Nodes (30): achievementRuleId, artist, campaignId, chapter, description, duration, fromFirestore, fromMap (+22 more)
 
 ### Community 23 - "Dashboard.tsx"
-Cohesion: 0.07
-Nodes (53): clsx, react-router-dom, AdminNavDrawer(), AdminNavDrawerProps, AgentMetrics, CampaignMetrics, CampaignsPanel, computeAgentMetrics() (+45 more)
+Cohesion: 0.11
+Nodes (29): AdminPanelsRoot(), AgentMetrics, CampaignMetrics, CampaignsPanel, computeAgentMetrics(), computeCampaignMetrics(), ContentPanel, countActiveUsers7d() (+21 more)
 
-### Community 24 - "react"
-Cohesion: 0.06
-Nodes (62): lucide-react, motion, react, react-i18next, BulkInventoryModal(), BulkInventoryModalProps, ConfirmModal(), ConfirmModalProps (+54 more)
+### Community 24 - "MIcon.tsx"
+Cohesion: 0.10
+Nodes (34): BulkInventoryModal(), BulkInventoryModalProps, ConfirmModal(), ConfirmModalProps, DANGER_TERMS, ModalState, ModalVariant, DeliverShell() (+26 more)
 
 ### Community 25 - "Player Sync Types"
-Cohesion: 0.09
-Nodes (43): Toast, openAdminConsole(), setTenantScope(), MiniAppsOverlayProps, NokiaDeviceWrapperProps, WalkmanShellProps, PlayerPlaybackContext, PlayerProvidersInner() (+35 more)
+Cohesion: 0.12
+Nodes (29): ProfileScreenProps, Toast, clearMediaSession(), MediaSessionState, session(), updateMediaSession(), setTenantScope(), MiniAppsOverlayProps (+21 more)
 
 ### Community 26 - "AnalyticsTracker.ts"
-Cohesion: 0.09
-Nodes (24): PlayerSessionProvider, AppleIcon(), AchievementToast(), isImageIcon(), ToastIcon(), ToastItem(), ToastItemProps, ToastNotificationProps (+16 more)
+Cohesion: 0.16
+Nodes (14): AchievementToast(), isImageIcon(), ToastIcon(), ToastItem(), ToastItemProps, ToastNotificationProps, checkNewAchievements(), EVIDENCE_INTEL_FOR_ADMIN (+6 more)
 
 ### Community 27 - "intel_repository.dart"
 Cohesion: 0.15
@@ -571,33 +585,33 @@ Nodes (10): intelRepositoryProvider, findIntelById, _firestore, IntelRepository,
 Cohesion: 0.07
 Nodes (16): backVisible, build, onBack, onProfileOpen, _triggerHaptic, build, child, _paint (+8 more)
 
-### Community 29 - "MiniAppsOverlay.tsx"
-Cohesion: 0.28
-Nodes (10): DiskRepairAppProps, RetroLoading(), RetroLoadingProps, BiosTerminal, DiskRepairApp, LimboBoard, MacOsApp, MiniAppsOverlay() (+2 more)
+### Community 29 - "PlayerProviders.tsx"
+Cohesion: 0.13
+Nodes (31): clearPlayAsPlayerMode(), isAdminAccount(), openAdminConsole(), redirectToAdminPanel(), resolveAdminAccess(), wantsPlayAsPlayerMode(), PlayerPlaybackContext, PlayerProvidersInner() (+23 more)
 
 ### Community 30 - "AchievementsPanel.tsx"
 Cohesion: 0.09
-Nodes (44): AchievementEditorForm, AchievementEditorModal(), emptyAchievementForm(), formFromDef(), formToDefInput(), formToRule(), Props, RULE_TYPES (+36 more)
+Nodes (43): AchievementEditorModal(), RULE_TYPES, STAT_KEYS, CampaignBindingPicker(), CampaignBindingPickerProps, useModal(), MIcon(), NpcContactEditorModal() (+35 more)
 
 ### Community 31 - "Active Character Providers"
 Cohesion: 0.07
 Nodes (34): AuthRepository, authStateChanges, currentMasterAccount, authRepositoryProvider, authStateChangesProvider, currentMasterAccountProvider, activeCampaign, activeCampaignProvider (+26 more)
 
-### Community 32 - "PlayerRootShell.tsx"
-Cohesion: 0.22
-Nodes (14): ToastNotification(), EMPTY_INTEL, NokiaPlayer, NokiaSessionLayout(), ProfileScreen, EvidenceReader, PlayerRootShell(), PushPermissionPrompt (+6 more)
+### Community 32 - "PlayerScreenRouter.tsx"
+Cohesion: 0.15
+Nodes (24): Reel(), RetroLoading(), RetroLoadingProps, ToastNotification(), EMPTY_INTEL, NokiaPlayer, NokiaSessionLayout(), ProfileScreen (+16 more)
 
 ### Community 33 - "Achievement Rules Engine"
-Cohesion: 0.06
-Nodes (20): 0. Linha de base: o que o admin cobre hoje, 2. Mini-apps configuráveis por campanha, 3. Regras de conquista sem classe nova, 4. Aparelho novo, 5. Intel fixa e integridade dos vínculos, 6. Ordem de execução, 7. Pendências observadas fora do escopo, Plano de modularidade do LimboOS (+12 more)
+Cohesion: 0.07
+Nodes (17): 2. Mini-apps configuráveis por campanha, 3. Regras de conquista sem classe nova, AchievableProfile, getAllAchievements(), AchievementRule, AllFlagsRule, AudioTapeCountRule, FlagRule (+9 more)
 
 ### Community 34 - "Agents Docs Lore"
 Cohesion: 0.09
-Nodes (23): APP_URL, Submódulo backend, Deploy Firebase Hosting, Fenda, Firebase, Stack de frontend, GEMINI_API_KEY, LimboOS (+15 more)
+Nodes (22): APP_URL, Submódulo backend, Deploy Firebase Hosting, Fenda, Firebase, Stack de frontend, GEMINI_API_KEY, LimboOS (+14 more)
 
-### Community 35 - "App Routes Bootstrap"
-Cohesion: 0.13
-Nodes (14): AppScreen, PlayerScreenRouter, RetroLoading, useAppScreenHistory, AdminApp, App(), AppRoutes(), InviteApp (+6 more)
+### Community 35 - "AgentDossierView.tsx"
+Cohesion: 0.16
+Nodes (25): AchievementEditorForm, emptyAchievementForm(), formFromDef(), formToDefInput(), formToRule(), Props, AchievementsPanel(), useAchievementEditor() (+17 more)
 
 ### Community 36 - "Flutter Startup Theme"
 Cohesion: 0.08
@@ -620,28 +634,28 @@ Cohesion: 0.11
 Nodes (24): Aerodynamic right lean, Android launcher icon, Black icon background, Blue geometric parallelograms, Cerulean depth shading, Chevron fold layers, Cyan-navy palette, Diagonal cyan bars (+16 more)
 
 ### Community 42 - "Project Documentation"
-Cohesion: 0.16
-Nodes (18): Diálogos SMS, Bocão, Jaden, Joe, Mai, Nil, SMS de NPCs, Walkman (+10 more)
+Cohesion: 0.27
+Nodes (10): Ano de 2003 sem passado, Mai, Swallow Rest, Carros de hexágono, Deck do Joe, Fita de 2000, Loop até 2003, Nil (+2 more)
 
 ### Community 43 - "firestore.ts"
-Cohesion: 0.11
-Nodes (21): SessionGlobalsPanel(), campaignStateDoc(), functionScopeArgs(), useProfileUpdates(), broadcastVideoToCharacters(), CharacterTarget, clearPendingVideoPlay(), DEFAULT_STATS (+13 more)
+Cohesion: 0.08
+Nodes (22): SessionGlobalsPanel(), LIMBO_THREAD_COUNT, normalizeQrPayload(), campaignStateDoc(), functionScopeArgs(), IntelDeleteOptions, IntelGrantOptions, intelService (+14 more)
 
 ### Community 44 - "constants"
-Cohesion: 0.15
-Nodes (19): AnalogLogo, Barcode, CARD_GAP, CARD_STEP, CARD_WIDTH, CENTER_OFFSET, CONTAINER_WIDTH, DRAG_THRESHOLD (+11 more)
+Cohesion: 0.10
+Nodes (30): CassetteCard, pad(), Reel(), Screw(), Spec(), AnalogLogo, Barcode, CARD_GAP (+22 more)
 
 ### Community 45 - "screenHistoryModel.ts"
-Cohesion: 0.13
-Nodes (32): newSessionId(), PendingTraversal, urlWithSearch(), useAppScreenHistory(), buildEntryState(), buildLoggedOutSearch(), buildScreenSearch(), findAncestor() (+24 more)
+Cohesion: 0.12
+Nodes (35): newSessionId(), PendingTraversal, urlWithSearch(), useAppScreenHistory(), isTypingTarget(), useDesktopPlayerShortcuts(), buildEntryState(), buildLoggedOutSearch() (+27 more)
 
 ### Community 46 - "Group Service"
-Cohesion: 0.13
+Cohesion: 0.14
 Nodes (9): createdAtMillis(), deriveGroupCampaignIds(), deriveMemberUids(), groupDoc(), groupsCol(), groupService, messagesCol(), GroupMessage (+1 more)
 
 ### Community 47 - "Project Documentation 47"
-Cohesion: 0.17
-Nodes (18): Limbo, Ashfield Springs, Fenda, Last Rewind, Limbo, Polarized, Swallow Rest, Bug do Ano 2000 (+10 more)
+Cohesion: 0.16
+Nodes (17): Diálogos SMS, Bocão, Jaden, Joe, Mai, Nil, SMS de NPCs, Bocão (+9 more)
 
 ### Community 48 - "index"
 Cohesion: 0.14
@@ -652,8 +666,8 @@ Cohesion: 0.16
 Nodes (20): BiosTerminal(), BiosTerminalProps, KeyDef, TerminalBlock(), TerminalCommand(), TerminalKeyboard(), TerminalResponse(), DIR_RESPONSE (+12 more)
 
 ### Community 50 - "AgentDossierOverlay.tsx"
-Cohesion: 0.07
-Nodes (48): AchievementCard(), AchievementCatalog(), AchievementIcon(), NokiaAchievementRow(), platformBorder(), TierBadge(), ACCESS_LEVEL_KEYS, AgentDossierOverlay() (+40 more)
+Cohesion: 0.08
+Nodes (35): ACCESS_LEVEL_KEYS, AgentDossierOverlay(), CornerMarks(), DANGER_KEYS, DossierTab, Row(), STATUS_STYLE, TABS (+27 more)
 
 ### Community 51 - "Project Documentation 51"
 Cohesion: 0.13
@@ -664,12 +678,12 @@ Cohesion: 0.10
 Nodes (11): build, initializeApp, LimboOSApp, main, widgetsBinding, SecurityMenu, AgentDossierScreen, SelectAgentScreen (+3 more)
 
 ### Community 53 - "Admin Panel"
-Cohesion: 0.15
-Nodes (23): Field(), IntelEditorModal(), IntelEditorModalProps, MetaField(), CATEGORY_OPTIONS, detectTypeFromUrl(), detectTypeFromUrlWithYoutube(), EMPTY_ITEM (+15 more)
+Cohesion: 0.17
+Nodes (22): IntelEditorHostProps, Field(), IntelEditorModal(), IntelEditorModalProps, MetaField(), CATEGORY_OPTIONS, detectTypeFromUrl(), detectTypeFromUrlWithYoutube() (+14 more)
 
-### Community 54 - "AgentDossierView.tsx"
-Cohesion: 0.06
-Nodes (32): AgentDossierView(), formatSecs(), StatBox(), AccountLike, achievementLabel(), entityT(), intelTitleLabel(), IntelTitleSource (+24 more)
+### Community 54 - "AchievementCatalogService.ts"
+Cohesion: 0.11
+Nodes (6): achievementCatalogService, normalizeDef(), toFirestorePatch(), CatalogKey, catalogStateService, AchievementDefInput
 
 ### Community 55 - "RunnerTests"
 Cohesion: 0.16
@@ -683,9 +697,9 @@ Nodes (17): bloqueada, Campaign, CampaignStatus, description, fromFirestore, fro
 Cohesion: 0.11
 Nodes (5): activeCharacter, watch, build, activeCampaignProvider, ActiveCampaignRef
 
-### Community 58 - "npcMessages.ts"
-Cohesion: 0.32
-Nodes (7): npcMessages, NpcSmsDialogue, NpcSmsMessage, SUGGESTED_NPC_CONTACTS, SUGGESTED_NPC_DIALOGUES, toLegacyDialogue(), assets/GroupManager-DqXEgxLa.js
+### Community 58 - "ToastProvider.tsx"
+Cohesion: 0.12
+Nodes (25): PlatformAccount, PlatformAccountsPanel(), PushDeliverDrawer(), PushDeliverDrawerProps, TargetMode, AdminToast(), Toast, TOAST_STYLES (+17 more)
 
 ### Community 59 - "Project Documentation 59"
 Cohesion: 0.17
@@ -694,6 +708,10 @@ Nodes (17): AchievementManager, Subcoleção achievements, ActivityLogger, Analy
 ### Community 60 - "Nokia Player Mobile"
 Cohesion: 0.11
 Nodes (13): _battery, _batteryLevel, _batterySubscription, build, _clockTimer, createState, dispose, _getBatteryLevel (+5 more)
+
+### Community 61 - "Firebase Analytics Service"
+Cohesion: 0.15
+Nodes (3): getFirebaseAnalytics(), FirebaseAnalyticsService, ONBOARDING_FUNNEL
 
 ### Community 62 - "tsconfig"
 Cohesion: 0.11
@@ -708,48 +726,44 @@ Cohesion: 0.11
 Nodes (17): contactNumber, copyWith, fromMap, groupId, id, isMe, messages, NokiaMessage (+9 more)
 
 ### Community 65 - "dependencies"
-Cohesion: 0.05
-Nodes (42): dependencies, @capacitor/android@^8.6.0, @capacitor/app@^8.1.2, @capacitor-firebase/app-check@^8.6.0, @capacitor-firebase/messaging@^8.6.0, @capacitor/ios@^8.6.0, @capacitor/splash-screen@^8.0.2, @capacitor/status-bar@^8.0.4 (+34 more)
-
-### Community 66 - "Activity Logger"
-Cohesion: 0.10
-Nodes (12): AccessFilter, AccountRow, GrantToggle(), TerminalPanelProps, BusyKey, HardwareKind, ONLINE_WINDOW_MS, setMacStateForUsers() (+4 more)
-
-### Community 67 - "AdminApp.tsx"
 Cohesion: 0.06
-Nodes (41): AccessHeader(), AccessShell(), AccessState, App(), CreateWorkspaceScreen(), loadAccess(), readStoredWorkspace(), storeWorkspace() (+33 more)
+Nodes (35): dependencies, @capacitor/android@^8.6.0, @capacitor/app@^8.1.2, @capacitor/device@^8.0.3, @capacitor-firebase/messaging@^8.6.0, @capacitor/ios@^8.6.0, @capacitor/splash-screen@^8.0.2, clsx@^2.1.1 (+27 more)
+
+### Community 67 - "MissionTeamTab.tsx"
+Cohesion: 0.12
+Nodes (16): formatDate(), MissionTeamTab(), AcceptedInvite, CreatedInvite, inviteService, inviteUrl(), CampaignLiveState, CampaignSettingsState (+8 more)
 
 ### Community 68 - "index.js"
 Cohesion: 0.10
-Nodes (27): accessCoversCampaign(), adminSendPush(), assertGm(), cancelScheduledPush(), claimScheduledPush(), createUserProfileIfMissing(), crypto, deriveMasterName() (+19 more)
+Nodes (28): acceptInvite(), adminCreateUser(), adminResetPassword(), assertPlatformAdmin(), createUserProfileIfMissing(), crypto, deriveMasterName(), displayNameOf() (+20 more)
 
 ### Community 69 - "PushService.ts"
-Cohesion: 0.10
-Nodes (13): @capacitor/core@^8.6.0, @capacitor/core, CATEGORIES, NotificationPrefsSection(), initDeepLinks(), AppPlatform, hasNativePlugin(), ForegroundListener (+5 more)
+Cohesion: 0.11
+Nodes (16): @capacitor/core@^8.6.0, @capacitor/status-bar@^8.0.4, @capacitor/core, @capacitor/status-bar, createAuth(), initDeepLinks(), initNativeShell(), AppPlatform (+8 more)
 
 ### Community 70 - "Project Documentation 70"
-Cohesion: 0.22
-Nodes (15): BiosTerminal, DiskRepairApp, LimboBoard, MiniAppsOverlay, Fluxo mental do jogador, playerType walkman, Windows 95 e Mac OS, Conquistas (+7 more)
+Cohesion: 0.13
+Nodes (22): AppScreen, BiosTerminal, DiskRepairApp, LimboBoard, MiniAppsOverlay, Fluxo mental do jogador, PlayerScreenRouter, playerType nokia (+14 more)
 
 ### Community 71 - "Achievement Art Assets 71"
 Cohesion: 0.15
 Nodes (16): Vintage beige PC desk setup, Tangled cables behind hardware, Green case power LED, Beige CRT monitor dark screen, Desk lamp warm orange shade, Horizontal beige desktop PC case, 5.25-inch drive bay opening, 3.5-inch floppy disk drive (+8 more)
 
-### Community 72 - "usePlayerAuth.ts"
-Cohesion: 0.13
-Nodes (31): BootLogColumn(), LoginScreen(), InviteApp(), clearPlayAsPlayerMode(), isAdminAccount(), redirectToAdminPanel(), resolveAdminAccess(), wantsPlayAsPlayerMode() (+23 more)
+### Community 72 - "AdminApp.tsx"
+Cohesion: 0.09
+Nodes (36): @capacitor-firebase/authentication@^8.6.0, @capacitor-firebase/authentication, AccessHeader(), AccessShell(), AccessState, App(), CreateWorkspaceScreen(), loadAccess() (+28 more)
 
 ### Community 73 - "Project Documentation 73"
-Cohesion: 0.23
-Nodes (12): Campaign, playerType nokia, Estação Orbital Zero, Last Rewind: Side B, LICENSE, LimboOS, Neo-Sampa 2099, Nokia (+4 more)
+Cohesion: 0.17
+Nodes (18): Campaign, Limbo, Ashfield Springs, Estação Orbital Zero, Fenda, Last Rewind, Last Rewind: Side B, LICENSE (+10 more)
 
 ### Community 74 - "limboos"
 Cohesion: 0.16
 Nodes (15): limboos.svg LimboOS logo asset, Solid black (#000000) backdrop, LimboOS brand mark (glyph only), Two opposing arrowheads in the path, Group Fundo scaled mark layer, Embedded PNG _Image1 solid black 2048x2048, Embedded PNG _Image2 mark 1527x1588, No SVG text or wordmark (+7 more)
 
 ### Community 75 - "package.json"
-Cohesion: 0.07
-Nodes (32): config, @tailwindcss/vite@^4.1.14, vite@^6.2.0, @vitejs/plugin-react@^5.0.4, devDependencies, autoprefixer@^10.4.21, @capacitor/cli@^8.6.0, tailwindcss@^4.1.14 (+24 more)
+Cohesion: 0.06
+Nodes (36): config, @capacitor-firebase/app-check@^8.6.0, i18next-browser-languagedetector@^8.2.1, @tailwindcss/vite@^4.1.14, vite@^6.2.0, @vitejs/plugin-react@^5.0.4, devDependencies, autoprefixer@^10.4.21 (+28 more)
 
 ### Community 76 - "Achievement Art Assets 76"
 Cohesion: 0.22
@@ -771,13 +785,13 @@ Nodes (15): Electronics repair workbench scene, Dark textured workbench mat, Aud
 Cohesion: 0.15
 Nodes (15): Cassette on electric guitar fretboard, 90 μs EQ, Warm amber light and haze, Type II chrome dioxide analog tape, Matte weathered black cassette shell, Dark fretboard with frets and dots, Guitar strings under cassette, HIGH OUTPUT / LOW NOISE (+7 more)
 
-### Community 81 - "adminNavigation.ts"
-Cohesion: 0.06
-Nodes (62): AdminSectionPanels(), AdminSectionPanelsProps, AdminSubTab, AdminSubTabs(), AdminSubTabsProps, AdminTabPanel(), AnalyticsPanel(), ClickableSection() (+54 more)
+### Community 81 - "ContentPanel.tsx"
+Cohesion: 0.14
+Nodes (29): AchievementsPanelProps, AdminSectionPanels(), AdminSectionPanelsProps, AdminSubTabs(), AdminTabPanel(), ContentPanel(), ContentPanelProps, MesaPanel() (+21 more)
 
 ### Community 82 - "isNative"
 Cohesion: 0.17
-Nodes (6): @capacitor/device@^8.0.3, @capacitor/app, @capacitor/device, createAuth(), isNative(), pushService
+Nodes (3): @capacitor/app, pushService, NotificationPrefs
 
 ### Community 84 - "stackhawk"
 Cohesion: 0.13
@@ -800,8 +814,8 @@ Cohesion: 0.18
 Nodes (14): Triple retro CRT workstation, Amber DIR file listing, Beige tower with floppy bays, Classic Mac menu File Edit View Special, Left dark CRT amber display, Legacy CLI and GUI coexistence, MS-DOS 6.22 blue prompt screen, Multi-OS vintage desk setup (+6 more)
 
 ### Community 89 - "AboutDialog.tsx"
-Cohesion: 0.15
-Nodes (22): AboutDialog(), AboutDialogProps, AboutPanel(), LinkRow(), DarkRoomLogo(), DarkRoomLogoProps, PATHS, APP_NAME (+14 more)
+Cohesion: 0.14
+Nodes (23): react-dom@^19.0.0, react-dom, AboutDialog(), AboutDialogProps, AboutPanel(), LinkRow(), DarkRoomLogo(), DarkRoomLogoProps (+15 more)
 
 ### Community 90 - "Achievement Art Assets 90"
 Cohesion: 0.19
@@ -844,8 +858,8 @@ Cohesion: 0.17
 Nodes (11): campaignId, characterId, characterSlots, fromFirestore, fromMap, Group, GroupCharacterSlot, id (+3 more)
 
 ### Community 100 - "push.test.js"
-Cohesion: 0.10
-Nodes (12): firebase-admin@^13.7.0, { after, beforeEach, describe, test }, assert, db, fft, { getFirestore, Timestamp }, sentMessages, firebase-admin (+4 more)
+Cohesion: 0.11
+Nodes (14): sendPushToTarget(), buildMessage(), DEAD_TOKEN_CODES, { getFirestore, FieldValue }, { getMessaging }, logPush(), sendToUser(), toDataPayload() (+6 more)
 
 ### Community 101 - "Achievement Art Assets 101"
 Cohesion: 0.21
@@ -935,9 +949,9 @@ Nodes (11): Three weathered cassette tapes upright, Warm amber glow under casset
 Cohesion: 0.24
 Nodes (11): Lattice telecom tower at night, Bright orange-amber tower beacon, Rectangular antenna arrays on mast, Dark triangular metal lattice mast, Deep navy night sky, No readable lettering, Night radio transmission mast, Long-range signal reach (+3 more)
 
-### Community 123 - "CassetteCard"
-Cohesion: 0.33
-Nodes (9): CassetteCard, CassetteCardProps, pad(), Reel(), Screw(), Spec(), applyWebKitLiteClass(), isWebKitLite() (+1 more)
+### Community 123 - "wsDoc"
+Cohesion: 0.11
+Nodes (5): 5. Intel fixa e integridade dos vínculos, requireWsId(), wsDoc(), campaignAdminService, mediaFolderService
 
 ### Community 124 - "hive"
 Cohesion: 0.20
@@ -1004,8 +1018,8 @@ Cohesion: 0.14
 Nodes (12): db(), get(), list(), @firebase/rules-unit-testing@^6.0.0, CASES, PERSONAS, results, audio (+4 more)
 
 ### Community 140 - "package 140"
-Cohesion: 0.14
-Nodes (14): scripts, build, clean, deploy, deploy:beta, deploy:full, dev, lint (+6 more)
+Cohesion: 0.15
+Nodes (13): scripts, build, clean, deploy, deploy:full, dev, lint, native:android (+5 more)
 
 ### Community 141 - "Achievement Art Assets 141"
 Cohesion: 0.31
@@ -1027,10 +1041,6 @@ Nodes (9): Small hourglass favicon mark, Brownish grey bevel edge glow, Browser 
 Cohesion: 0.14
 Nodes (15): ALL_FEATURES, { createRequire }, fs, functionsRequire, { getAuth }, { getFirestore, FieldValue }, { initializeApp, applicationDefault, getApps }, LEGACY_SEED_DIR (+7 more)
 
-### Community 146 - "adminAnalyticsService"
-Cohesion: 0.15
-Nodes (5): MediaFolderAssignModalProps, isOwnerScope(), adminAnalyticsService, mediaFolderService, MediaFolder
-
 ### Community 147 - "character providers"
 Cohesion: 0.29
 Nodes (4): build, clear, select, activeCharacterProvider
@@ -1051,9 +1061,9 @@ Nodes (8): Hourglass in orange reticle PWA icon, Four cardinal reticle tick mark
 Cohesion: 0.39
 Nodes (5): Fenda de 2000, Igreja de São Miguel, Jaden, Loop de 2003, Swallow Rest
 
-### Community 152 - "MacOsApp.tsx"
-Cohesion: 0.15
-Nodes (16): @capacitor/haptics@^8.0.2, @capacitor/haptics, ActiveWindow, DesktopIcon(), MacOsApp(), MacOsAppProps, PlatinumButton(), RepairStep (+8 more)
+### Community 152 - "haptics.ts"
+Cohesion: 0.25
+Nodes (7): @capacitor/haptics@^8.0.2, @capacitor/haptics, HapticKind, HapticsModule, loadHaptics(), nativeHaptic(), WEB_PATTERNS
 
 ### Community 153 - "Bundle Analyzer Report 153"
 Cohesion: 0.25
@@ -1076,8 +1086,8 @@ Cohesion: 0.29
 Nodes (6): AchievementDefinition, allAchievements, emoji, hiddenLabel, id, title
 
 ### Community 158 - "main.tsx"
-Cohesion: 0.14
-Nodes (15): alreadySeenThisSession(), detachBootSplash(), releaseBootSplash, assets/index-CW895xjg.js, assets/vendor-hGOh6sno.js, index.html, index.html inline CSS, cookie (+7 more)
+Cohesion: 0.08
+Nodes (26): RetroLoading, AdminApp, App(), AppRoutes(), InviteApp, Player, TerminalApp, ErrorBoundary (+18 more)
 
 ### Community 159 - "App Icon Assets 159"
 Cohesion: 0.40
@@ -1124,12 +1134,12 @@ Cohesion: 0.12
 Nodes (15): copyWith, createdAt, displayName, email, fromFirestore, hasMacAccess, hasTerminalAccess, lastLogin (+7 more)
 
 ### Community 170 - "NokiaPlayer.tsx"
-Cohesion: 0.23
-Nodes (8): FilterTab, generateRandomUSPhoneNumber(), getSfx(), NokiaAudioFeedback, NokiaPlayer(), PixelIcon, QrScanner, assets/NokiaPlayer-UuVU4XLq.js
+Cohesion: 0.17
+Nodes (12): FilterTab, generateRandomUSPhoneNumber(), getSfx(), NokiaAudioFeedback, NokiaPlayer(), PixelIcon, QrScanner, NokiaVideoSurface (+4 more)
 
 ### Community 172 - "Bundle Analyzer Report 172"
-Cohesion: 0.33
-Nodes (6): assets/animations-_--4-n34.js, assets/createLucideIcon-B3BaSbm3.js, framer-motion, motion, motion-dom, motion-utils
+Cohesion: 0.50
+Nodes (4): assets/animations-_--4-n34.js, motion, motion-dom, motion-utils
 
 ### Community 173 - "App Icon Assets 173"
 Cohesion: 0.40
@@ -1155,17 +1165,17 @@ Nodes (5): Solid black launch image 2x, Solid black color field, Empty content w
 Cohesion: 0.40
 Nodes (5): Solid black launch image 3x, Blank development raster, Zero pictorial detail, Pure black opaque square, 3x placeholder launch splash
 
-### Community 179 - "IntelService.ts"
-Cohesion: 0.20
-Nodes (12): EVIDENCE_INTEL_FOR_ADMIN, EvidenceIntelAdmin, normalizeQrPayload(), IntelDeleteOptions, IntelGrantOptions, ACCESS_LEVEL_LABELS, AccessLevel, IntelMetadata (+4 more)
+### Community 179 - "adminNavigation.ts"
+Cohesion: 0.12
+Nodes (24): pathByIdx, useAdminLocation(), BreadcrumbLookup, sectionLabel(), Translate, AdminDestinationDef, adminMotionHint(), AdminNavGroupId (+16 more)
 
 ### Community 180 - "Project Documentation 180"
 Cohesion: 0.67
 Nodes (4): Superfície Admin, Abas do admin, Painel do mestre, Mestre
 
-### Community 181 - "intelService"
-Cohesion: 0.16
-Nodes (3): intelService, fetchAudioTapesByIds(), VideoBroadcastTarget
+### Community 181 - "seed-demo.cjs"
+Cohesion: 0.11
+Nodes (22): auth, bucket, { createRequire }, crypto, daysAgo(), db, ensureDemoMedia(), ensureUser() (+14 more)
 
 ### Community 182 - "analysis options"
 Cohesion: 0.50
@@ -1187,21 +1197,17 @@ Nodes (4): iOS App Icon 29x29@1x, Soft blue geometric bands, Flutter logo (29px)
 Cohesion: 0.67
 Nodes (4): iOS App Icon 29x29@2x, Two-tone chevron fold, Flutter logo (58px), Sky-blue top stroke
 
-### Community 187 - "MediaAsset"
-Cohesion: 0.23
-Nodes (7): MediaSelectorModalProps, ALLOWED_MIME_PREFIXES, mediaService, toAssets(), uploadedMillis(), MediaAsset, MediaType
-
 ### Community 190 - "campaign_repository.dart"
 Cohesion: 0.17
 Nodes (12): activeCampaigns, CampaignRepository, activeCampaignsProvider, campaignRepositoryProvider, _firestore, getActiveCampaigns, setActiveCampaign, watch (+4 more)
 
 ### Community 202 - "requireId"
-Cohesion: 0.26
-Nodes (14): acceptInvite(), assertWorkspaceOwner(), createInvite(), displayNameOf(), getInvitePreview(), gmCreateCharacter(), hashToken(), inviteStatus() (+6 more)
+Cohesion: 0.47
+Nodes (9): assertWorkspaceOwner(), createInvite(), gmCreateCharacter(), removeCoGm(), removePlayer(), requireId(), revokeInvite(), transferCharacter() (+1 more)
 
-### Community 203 - "PlayerScreenRouter.tsx"
-Cohesion: 0.24
-Nodes (12): LoginScreenProps, EASE_OUT, AgentDossierOverlay, CampaignSelection, CharacterSelectionScreen, EXIT_EASE, LoginScreen, MiniAppsOverlay (+4 more)
+### Community 203 - "CampaignsPanel.tsx"
+Cohesion: 0.16
+Nodes (21): AdminRouteEnter(), CampaignsPanel(), createNewCampaignDraft(), MissionResourcesTab(), ResourceColumn(), ResourceRow(), STATE_STYLE, NEW_MISSION_SEGMENT (+13 more)
 
 ### Community 204 - "functions.test.js"
 Cohesion: 0.19
@@ -1219,41 +1225,93 @@ Nodes (10): Como rodar, Correção registrada no plano, Fase 0: provabilidade da
 Cohesion: 0.29
 Nodes (10): accessCoversAny(), isId(), pushCharacter(), pushDelivery(), pushOnAchievementGranted(), pushOnIntelGranted(), pushOnNpcMessage(), pushOnVideoBroadcast() (+2 more)
 
-### Community 210 - "push.js"
-Cohesion: 0.29
-Nodes (8): sendPushToTarget(), buildMessage(), DEAD_TOKEN_CODES, { getFirestore, FieldValue }, { getMessaging }, logPush(), sendToUser(), toDataPayload()
+### Community 210 - "Sidebar.tsx"
+Cohesion: 0.18
+Nodes (18): clsx, react-router-dom, AdminNavDrawer(), AdminNavDrawerProps, Header(), HeaderProps, operatorInitials(), Sidebar() (+10 more)
 
 ### Community 211 - "build-info.mjs"
 Cohesion: 0.22
 Nodes (5): buildInfo, licenses, pkg, repoUrl(), root
 
-### Community 212 - "RedirectsPanel.tsx"
-Cohesion: 0.31
-Nodes (8): IntelQrModal(), IntelQrModalProps, QrRedirect, RedirectsPanel(), matchesIntelScope(), deleteQrRedirect(), saveQrRedirect(), subscribeToQrRedirects()
+### Community 212 - "admin/lib/motion.ts"
+Cohesion: 0.12
+Nodes (19): AdminSubTab, AdminSubTabsProps, AdminMotionHintContext, AdminPanelActiveContext, AdminPanelEnteringContext, AdminTabPanelProps, useRouteEnter(), ADMIN_FADE (+11 more)
 
 ### Community 213 - "migration.test.js"
 Cohesion: 0.22
 Nodes (5): assert, { before, describe, test }, db, { getFirestore }, { initializeApp, getApps }
 
-### Community 214 - "nativeAuth.ts"
-Cohesion: 0.31
-Nodes (7): @capacitor-firebase/authentication@^8.6.0, @capacitor-firebase/authentication, authError(), isCancellation(), NativeProvider, signInWithNativeProvider(), signOutNativeProviders()
+### Community 214 - "capture.mjs"
+Cohesion: 0.19
+Nodes (17): admin(), DESKTOP, hero(), login(), makeShot(), ONLY, openContext(), openDos() (+9 more)
 
-### Community 217 - "LimboBoard.tsx"
-Cohesion: 0.28
-Nodes (8): LIMBO_THREAD_COUNT, LimboBoard(), LimboBoardProps, Post, Thread, THREADS, firestoreMarkThreadRead(), assets/LimboBoard-DrDHDBRN.js
+### Community 217 - "AchievementCatalog.tsx"
+Cohesion: 0.17
+Nodes (14): AchievementCard(), AchievementCatalog(), AchievementIcon(), NokiaAchievementRow(), platformBorder(), TierBadge(), getCampaignById(), listRegisteredCampaigns() (+6 more)
 
-### Community 219 - "assertPlatformAdmin"
+### Community 218 - "ActivityLogger.ts"
+Cohesion: 0.12
+Nodes (11): ActivityEvent, ActivityType, diskRepairService, RepairPhase, applyOneShotForce(), DOS_RELATED_SCREENS, pendingForceAcks, firestoreUnlockIntel() (+3 more)
+
+### Community 219 - "achievementManager"
+Cohesion: 0.14
+Nodes (7): 0. Linha de base: o que o admin cobre hoje, 1. Âncora comum: o pacote de campanha, 4. Aparelho novo, 6. Ordem de execução, 7. Pendências observadas fora do escopo, Plano de modularidade do LimboOS, achievementManager
+
+### Community 221 - "react"
+Cohesion: 0.22
+Nodes (14): react, CharacterSelectionScreen(), BootLogColumn(), LoginScreen(), RetroSpinner(), RetroSpinnerProps, InviteApp(), parseInviteToken() (+6 more)
+
+### Community 222 - "music-metadata"
+Cohesion: 0.12
+Nodes (16): assets/AbstractID3Parser-CjTq90CN.js, assets/AiffParser-Cly_nin9.js, assets/AsfParser-CCPgzhRf.js, assets/DsdiffParser-D6VqzuKF.js, assets/DsfParser-D3sM2-Ea.js, assets/FlacParser-CjYfv63S.js, assets/ID3v2Parser-DPJ2m7Ha.js, assets/MatroskaParser-BCiY5UYj.js (+8 more)
+
+### Community 234 - "TerminalPanel.tsx"
+Cohesion: 0.20
+Nodes (13): AccessFilter, AccountRow, GrantToggle(), TerminalPanel(), TerminalPanelProps, BusyKey, HardwareKind, ONLINE_WINDOW_MS (+5 more)
+
+### Community 235 - "GroupManager.tsx"
+Cohesion: 0.29
+Nodes (12): GroupManager(), GroupManagerProps, AccountLike, achievementLabel(), campaignLabel(), characterLabelByKey(), entityT(), intelTitleLabel() (+4 more)
+
+### Community 236 - "AnalyticsPanel.tsx"
+Cohesion: 0.21
+Nodes (12): AnalyticsPanel(), ClickableSection(), formatSecs(), KPICard(), MetricRow(), staggerContainer, staggerItem, AudioMetadata (+4 more)
+
+### Community 238 - "assertGm"
+Cohesion: 0.24
+Nodes (12): accessCoversCampaign(), adminSendPush(), assertGm(), cancelScheduledPush(), claimScheduledPush(), dispatchScheduledPushes(), getGmAccess(), listPushActivity() (+4 more)
+
+### Community 239 - "Product"
+Cohesion: 0.17
+Nodes (11): Accessibility & Inclusion, Brand Commitments, Capabilities and Constraints, Evidence on Hand, Operating Context, Platform, Positioning, Product (+3 more)
+
+### Community 240 - "getTenantScope"
 Cohesion: 0.32
-Nodes (8): adminCreateUser(), adminResetPassword(), assertPlatformAdmin(), isPlatformAdmin(), listAccounts(), masterIdToEmail(), platformLog(), setAccountSuspended()
+Nodes (6): registerCampaigns(), getTenantScope(), onTenantScopeChange(), wsCollection(), campaignService, recordPlayEvent()
 
-### Community 221 - "CharacterSelectionScreen.tsx"
-Cohesion: 0.52
-Nodes (5): CharacterSelectionScreen(), parseInviteToken(), createCharacter(), fetchPlayerMemberships(), updateOwnDisplayName()
+### Community 241 - "Visualizer data v2"
+Cohesion: 0.44
+Nodes (10): Brotli, bytes, Gzip, LABELS, nodeMetas, nodeParts, Rendered, Rollup 4.59.0 (+2 more)
 
-### Community 222 - "mediaSession.ts"
-Cohesion: 0.60
-Nodes (4): clearMediaSession(), MediaSessionState, session(), updateMediaSession()
+### Community 242 - "Main"
+Cohesion: 0.20
+Nodes (10): Chart, createFilter, isModuleTree, Main, Node, picomatch, prepareFilter, SideBar (+2 more)
+
+### Community 243 - "createRainbowColor"
+Cohesion: 0.32
+Nodes (8): createRainbowColor, CSS Color Module Level 3, d3-array, d3-color, d3-interpolate, d3-scale, FvD 13.37, WCAG 2.0 relative luminance
+
+### Community 244 - "Design"
+Cohesion: 0.29
+Nodes (6): Carregamento e abertura, Componentes base (`src/index.css`), Design, Tipografia, Toque, Ícones
+
+### Community 245 - "set_admin_claim.js"
+Cohesion: 0.29
+Nodes (4): fs, { getAuth }, { initializeApp, cert }, serviceAccount
+
+### Community 246 - "assets/UserRegistry-CKPQuV_9.js"
+Cohesion: 0.67
+Nodes (3): assets/format-CAWpYFwM.js, assets/UserRegistry-CKPQuV_9.js, date-fns
 
 ## Ambiguous Edges - Review These
 - `Electronics chassis screw mount` → `Orange residue in cross recess`  [AMBIGUOUS]
@@ -1277,22 +1335,22 @@ Nodes (4): clearMediaSession(), MediaSessionState, session(), updateMediaSession
 
 ## Knowledge Gaps
 - **809 isolated node(s):** `AppKit`, `UserNotifications`, `PackageDescription`, `XCTest`, `widgetsBinding` (+804 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 1479 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **34 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 1514 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **37 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Fluxo mental do jogador` connect `Project Documentation 70` to `Project Documentation 73`, `Agents Docs Lore`, `Project Documentation 59`, `Project Documentation 51`?**
-  _High betweenness centrality (0.229) - this node is a cross-community bridge._
+- **Why does `Fluxo mental do jogador` connect `Project Documentation 70` to `Project Documentation 73`, `Project Documentation 59`, `Project Documentation 51`?**
+  _High betweenness centrality (0.213) - this node is a cross-community bridge._
 - **What connects `AppKit`, `UserNotifications`, `PackageDescription` to the rest of the system?**
   _809 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `LiveWorkspace.tsx` be split into smaller, more focused modules?**
-  _Cohesion score 0.050949367088607596 - nodes in this community are weakly interconnected._
-- **Why does `playerType nokia` connect `Project Documentation 73` to `Nokia Player View`, `Project Documentation 70`?**
-  _High betweenness centrality (0.228) - this node is a cross-community bridge._
+  _Cohesion score 0.09365079365079365 - nodes in this community are weakly interconnected._
+- **Why does `playerType nokia` connect `Project Documentation 70` to `Project Documentation 73`, `Nokia Player View`?**
+  _High betweenness centrality (0.213) - this node is a cross-community bridge._
 - **Should `npcSmsCatalogService` be split into smaller, more focused modules?**
-  _Cohesion score 0.09803921568627451 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.13636363636363635 - nodes in this community are weakly interconnected._
 
 ### Low-confidence Hints
 _AMBIGUOUS edges — the extractor was unsure. Verify before acting on these._

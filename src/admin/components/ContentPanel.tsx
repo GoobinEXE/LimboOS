@@ -4,6 +4,7 @@ import MediaLibraryPanel from './MediaLibraryPanel';
 import AchievementsPanel from './AchievementsPanel';
 import NpcSmsPanel from './NpcSmsPanel';
 import RedirectsPanel from './RedirectsPanel';
+import OraclePanel from './oracle/OraclePanel';
 import AdminSubTabs from './AdminSubTabs';
 import AdminSectionPanels from './AdminSectionPanels';
 import CampaignScopeSelect from './CampaignScopeSelect';
@@ -11,6 +12,7 @@ import { useAdminCampaigns } from '../hooks/useAdminCampaigns';
 import {
   CONTENT_SECTIONS,
   adminPath,
+  type OracleViewId,
   type CampaignScopeRequest,
   type ContentSectionId,
   type NpcViewId,
@@ -46,11 +48,17 @@ export default function ContentPanel({ route, scopeRequest, onScopeConsumed }: C
 
   // Filtro não cria entrada de histórico: Voltar desfaz navegação, não ajuste de filtro
   const changeScope = (next: CampaignScope) => {
-    nav.go(adminPath.content(route.section, next, route.npcView), { replace: true });
+    nav.go(adminPath.content(route.section, next, route.npcView, route.oracleView), { replace: true });
   };
 
   const changeNpcView = (view: NpcViewId) => {
     if (view !== route.npcView) nav.go(adminPath.content('npcs', scope, view));
+  };
+
+  const changeOracleView = (view: OracleViewId) => {
+    if (view !== route.oracleView) {
+      nav.go(adminPath.content('oraculo', scope, route.npcView, view));
+    }
   };
 
   return (
@@ -115,6 +123,15 @@ export default function ContentPanel({ route, scopeRequest, onScopeConsumed }: C
               );
             case 'qr':
               return <RedirectsPanel embedded campaignScope={scope} />;
+            case 'oraculo':
+              return (
+                <OraclePanel
+                  embedded
+                  campaignScope={scope}
+                  view={route.oracleView}
+                  onViewChange={changeOracleView}
+                />
+              );
           }
         }}
       />

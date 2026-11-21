@@ -246,5 +246,72 @@
   "update": {
     "available": "A new version is available.",
     "action": "Update"
+  },
+  "oracle": {
+    "entryLink": "Oracle",
+    "loading": "Checking slot code...",
+    "access": {
+      "eyebrow": "Oracle",
+      "title": "Slot Code",
+      "hint": "Enter the individual code sent by your GM to take the blind questionnaire or view your assigned sheet.",
+      "codeLabel": "Slot code",
+      "placeholder": "E.G. ORC-K9M2",
+      "submit": "Open Oracle",
+      "notFound": "Code not found. Double-check with your GM.",
+      "backToApp": "Back to sign in"
+    },
+    "flow": {
+      "intakeTitle": "Identification",
+      "intakeGuide": "Fill in the requested details before starting.",
+      "quizTitle": "Questionnaire",
+      "quizGuide": "Answer intuitively. Options are shuffled individually and there are no right or wrong choices.",
+      "wordsTitle": "Keywords",
+      "wordsGuide": "Select exactly {{count}} words in order of affinity (1st pick has highest priority on ties).",
+      "wordsOrderLabel": "Selected order (click to remove)",
+      "nextQuiz": "Continue to Quiz",
+      "nextWords": "Continue to Words",
+      "finish": "Confirm & Submit"
+    },
+    "confirm": {
+      "title": "Confirm Final Submission",
+      "body": "Once submitted, this code will be permanently locked and cannot be retaken.",
+      "action": "Confirm & Submit"
+    },
+    "wait": {
+      "title": "Awaiting Assignment",
+      "body": "Your answers are sealed. Wait for the remaining participants to finish or for the GM to release the sheets.",
+      "progressLabel": "Session progress",
+      "progressCount": "{{submitted}} / {{total}} submitted",
+      "registeredIdentity": "Registered identity",
+      "checkNow": "Refresh now"
+    },
+    "dossier": {
+      "unexpectedBadge": "Unexpected Assignment",
+      "sheetContent": "Assigned Sheet",
+      "copyMd": "Copy .md",
+      "copied": "Copied",
+      "exportMd": "Export Sheet (.md)",
+      "previewPdf": "Preview PDF",
+      "hidePdf": "Hide PDF",
+      "openDoc": "Open document",
+      "attributes": "Attributes",
+      "derivedStats": "Derived Stats",
+      "traits": "Traits",
+      "intakeSummary": "Identification",
+      "flavorTitle": "Customization",
+      "flavorSaved": "Saved",
+      "saveFlavor": "Save Details",
+      "flavorSaveFail": "Could not save customization details.",
+      "otherCode": "Open another code",
+      "abilities": "Abilities ({{count}})",
+      "searchAbilities": "Filter by name or description...",
+      "allCategories": "All",
+      "noAbilityMatch": "No abilities match this filter."
+    },
+    "error": {
+      "network": "No connection to the server. Check your network and try again.",
+      "unexpected": "Failed to read slot code. Try again.",
+      "submitFail": "Could not submit answers. Try again."
+    }
   }
 }

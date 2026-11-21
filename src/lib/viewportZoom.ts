@@ -13,7 +13,7 @@ const BASE = 'width=device-width, initial-scale=1.0, viewport-fit=cover';
 const LOCKED = `${BASE}, maximum-scale=1.0, user-scalable=no`;
 
 /** Rotas que não são o player (têm entry próprio em App.tsx). */
-const FREE_ZOOM_PREFIXES = ['/admin', '/terminal', '/convite'];
+const FREE_ZOOM_PREFIXES = ['/admin', '/terminal', '/convite', '/oraculo'];
 
 /** O player trava o zoom; as outras superfícies não. */
 export function isZoomLockedPath(pathname: string): boolean {

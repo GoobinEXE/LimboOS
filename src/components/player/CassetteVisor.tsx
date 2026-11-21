@@ -76,6 +76,7 @@ export default React.memo(function CassetteVisor({
             initial={{ y: -28, opacity: 0 }}
             animate={{ y: 0, opacity: 1, transition: SPRING_MECHANICAL }}
             exit={{ y: -18, opacity: 0, transition: EXIT_FAST }}
+            onPointerDown={() => walkmanSfx.eject()}
             onClick={() => { walkmanSfx.eject(); onEject(); }}
             role="button"
             tabIndex={0}

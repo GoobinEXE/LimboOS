@@ -94,6 +94,10 @@ export default React.memo(function TapeLibrary({
                       exit={{ opacity: 0 }}
                       onClick={() => onIntelSelect(item)}
                       aria-current={item.id === currentIntelId ? 'true' : undefined}
+                      aria-label={
+                        t('walkman.library.itemAria', { title: item.title, type: item.getTypeLabel() }) +
+                        (item.id === currentIntelId && isPlaying ? `, ${t('walkman.library.nowPlaying')}` : '')
+                      }
                       className={`w-full text-left p-2 border-b border-border-subtle cursor-pointer transition-colors duration-150 ease-limbo flex justify-between items-center focus-visible:-outline-offset-2 ${item.id === currentIntelId ? 'bg-accent-10 border-border-accent' : 'hover:bg-surface-container active:bg-surface-container-high'}`}
                     >
                       <div className="flex flex-col min-w-0 pr-2">
@@ -109,13 +113,14 @@ export default React.memo(function TapeLibrary({
                       <div className="flex items-center gap-2 shrink-0">
                         {item.id === currentIntelId && isPlaying && (
                           <motion.div
+                            aria-hidden
                             animate={{ opacity: [0, 1] }}
                             transition={{ repeat: Infinity, duration: 0.5 }}
                             className="w-0 h-0 border-t-4 border-t-transparent border-l-[6px] border-l-accent border-b-4 border-b-transparent"
                           />
                         )}
                         <div
-                          title={item.getTypeLabel()}
+                          aria-hidden
                           className={`w-8 h-8 rounded-control border flex items-center justify-center shadow-hairline ${
                             item.type === 'TEXT'
                               ? 'bg-accent-20 border-border-accent text-accent'

@@ -1,0 +1,115 @@
+{
+ "pacote": "A12-missoes-ao-vivo",
+ "chaves": [
+  {
+   "id": "M01",
+   "ns": "admin",
+   "chave": "missions.duplicate",
+   "pt-BR": "Duplicar missão",
+   "en": "Duplicate mission",
+   "onde": "tooltip e rótulo do botão no card da missão",
+   "limite": 22,
+   "publico": "mestre"
+  },
+  {
+   "id": "M01",
+   "ns": "admin",
+   "chave": "common.copySuffix",
+   "pt-BR": "(cópia)",
+   "en": "(copy)",
+   "onde": "sufixo do nome de itens duplicados (compartilhada com os demais pacotes de M01)",
+   "limite": 10,
+   "publico": "mestre"
+  },
+  {
+   "id": "M06",
+   "ns": "admin",
+   "chave": "missions.resources.search",
+   "pt-BR": "Buscar nos recursos da missão",
+   "en": "Search mission resources",
+   "onde": "campo de busca da aba Recursos",
+   "limite": 34,
+   "publico": "mestre"
+  },
+  {
+   "id": "M06",
+   "ns": "admin",
+   "chave": "missions.resources.noMatch",
+   "pt-BR": "Nada encontrado.",
+   "en": "No matches.",
+   "onde": "coluna de Recursos quando a busca não acha nada",
+   "limite": 24,
+   "publico": "mestre"
+  },
+  {
+   "id": "M08",
+   "ns": "admin",
+   "chave": "team.duplicateInvite",
+   "pt-BR": "Gerar igual",
+   "en": "Generate same",
+   "onde": "botão em cada convite ativo",
+   "limite": 14,
+   "publico": "mestre"
+  },
+  {
+   "id": "M08",
+   "ns": "admin",
+   "chave": "team.toast.duplicated",
+   "pt-BR": "Convite igual gerado. Link copiado.",
+   "en": "Matching invite created. Link copied.",
+   "onde": "toast depois de duplicar um convite",
+   "limite": 44,
+   "publico": "mestre"
+  },
+  {
+   "id": "M13",
+   "ns": "admin",
+   "chave": "team.noInvitesAction",
+   "pt-BR": "Gerar primeiro convite",
+   "en": "Create first invite",
+   "onde": "botão no bloco vazio de convites",
+   "limite": 26,
+   "publico": "mestre"
+  },
+  {
+   "id": "M10",
+   "ns": "admin",
+   "chave": "live.undo.delivered",
+   "pt-BR": "Entrega feita para {{n}} agente(s).",
+   "en": "Delivered to {{n}} agent(s).",
+   "onde": "toast com Desfazer após entregar intel ou conquista",
+   "limite": 44,
+   "publico": "mestre"
+  },
+  {
+   "id": "M10",
+   "ns": "admin",
+   "chave": "live.undo.done",
+   "pt-BR": "Entrega desfeita para {{n}} agente(s). Notificações já enviadas não são recolhidas.",
+   "en": "Delivery undone for {{n}} agent(s). Notifications already sent are not recalled.",
+   "onde": "toast depois de desfazer",
+   "limite": 90,
+   "publico": "mestre"
+  },
+  {
+   "id": "M10",
+   "ns": "admin",
+   "chave": "live.undo.fail",
+   "pt-BR": "Não foi possível desfazer a entrega.",
+   "en": "Could not undo the delivery.",
+   "onde": "toast de erro ao desfazer",
+   "limite": 44,
+   "publico": "mestre"
+  },
+  {
+   "id": "M10",
+   "ns": "admin",
+   "chave": "common.undo",
+   "pt-BR": "Desfazer",
+   "en": "Undo",
+   "onde": "botão de ação do toast",
+   "limite": 12,
+   "publico": "mestre"
+  }
+ ]
+}

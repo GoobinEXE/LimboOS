@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Radio } from 'lucide-react';
-import { pushService } from '../../services/PushService';
+import { pushService, PUSH_MOMENT_EVENT } from '../../services/PushService';
 
 /** Explica o canal antes do pedido do sistema, que o iOS só mostra uma vez. */
 export default function PushPermissionPrompt() {
@@ -11,11 +11,18 @@ export default function PushPermissionPrompt() {
 
   useEffect(() => {
     let cancelled = false;
-    void pushService.getPermission().then((permission) => {
-      if (!cancelled && permission === 'prompt' && pushService.shouldAsk()) setVisible(true);
-    }).catch(() => undefined);
+    // Só abre depois do primeiro desbloqueio de intel ou fala de NPC (P06)
+    const check = () => {
+      if (!pushService.hasPushMoment()) return;
+      void pushService.getPermission().then((permission) => {
+        if (!cancelled && permission === 'prompt' && pushService.shouldAsk()) setVisible(true);
+      }).catch(() => undefined);
+    };
+    check();
+    window.addEventListener(PUSH_MOMENT_EVENT, check);
     return () => {
       cancelled = true;
+      window.removeEventListener(PUSH_MOMENT_EVENT, check);
     };
   }, []);
 

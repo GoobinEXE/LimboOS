@@ -1,0 +1,15 @@
+{ "pacote": "A3-kit-admin", "chaves": [
+  { "id": "M02", "ns": "admin", "chave": "draft.title", "pt-BR": "Descartar alterações?", "en": "Discard changes?", "onde": "título do diálogo ao fechar um editor com alterações não salvas", "limite": 28, "publico": "mestre" },
+  { "id": "M02", "ns": "admin", "chave": "draft.body", "pt-BR": "O que você digitou neste editor ainda não foi salvo e será perdido.", "en": "What you entered in this editor has not been saved and will be lost.", "onde": "corpo do diálogo de descarte de rascunho", "limite": 90, "publico": "mestre" },
+  { "id": "M02", "ns": "admin", "chave": "draft.discard", "pt-BR": "DESCARTAR", "en": "DISCARD", "onde": "botão de confirmar do diálogo de descarte", "limite": 14, "publico": "mestre" },
+  { "id": "M02", "ns": "admin", "chave": "draft.keep", "pt-BR": "CONTINUAR EDITANDO", "en": "KEEP EDITING", "onde": "botão de cancelar do diálogo de descarte", "limite": 22, "publico": "mestre" },
+  { "id": "M03", "ns": "admin", "chave": "bulk.selected_one", "pt-BR": "{{count}} selecionado", "en": "{{count}} selected", "onde": "BulkActionBar, contagem (singular)", "limite": 24, "publico": "mestre" },
+  { "id": "M03", "ns": "admin", "chave": "bulk.selected_other", "pt-BR": "{{count}} selecionados", "en": "{{count}} selected", "onde": "BulkActionBar, contagem (plural)", "limite": 24, "publico": "mestre" },
+  { "id": "M03", "ns": "admin", "chave": "bulk.clear", "pt-BR": "Limpar", "en": "Clear", "onde": "BulkActionBar, botão que limpa a seleção", "limite": 12, "publico": "mestre" },
+  { "id": "M03", "ns": "admin", "chave": "bulk.selectAll", "pt-BR": "Selecionar todos", "en": "Select all", "onde": "BulkActionBar, botão que marca todos os itens visíveis", "limite": 20, "publico": "mestre" },
+  { "id": "M06", "ns": "admin", "chave": "list.sortLabel", "pt-BR": "Ordenar", "en": "Sort", "onde": "rótulo acessível do SortSelect", "limite": 14, "publico": "mestre" },
+  { "id": "M06", "ns": "admin", "chave": "list.sort.recent", "pt-BR": "Mais recentes", "en": "Newest first", "onde": "opção do SortSelect (só mídia)", "limite": 18, "publico": "mestre" },
+  { "id": "M06", "ns": "admin", "chave": "list.sort.title", "pt-BR": "Título (A-Z)", "en": "Title (A-Z)", "onde": "opção do SortSelect", "limite": 18, "publico": "mestre" },
+  { "id": "M06", "ns": "admin", "chave": "list.sort.type", "pt-BR": "Tipo", "en": "Type", "onde": "opção do SortSelect", "limite": 14, "publico": "mestre" },
+  { "id": "M06", "ns": "admin", "chave": "list.sort.id", "pt-BR": "ID", "en": "ID", "onde": "opção do SortSelect", "limite": 10, "publico": "mestre" }
+] }

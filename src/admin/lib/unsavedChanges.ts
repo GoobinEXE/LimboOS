@@ -18,3 +18,8 @@ export function hasUnsavedChanges(): boolean {
 export function clearUnsavedChanges(): void {
   dirtyKeys.clear();
 }
+
+/** Chave de rascunho de modal de edição, usada por `useDraftGuard`. */
+export function modalDraftKey(key: string): string {
+  return `modal:${key}`;
+}

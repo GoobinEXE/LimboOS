@@ -13,20 +13,43 @@ interface ModalState {
   title: string;
   message: string;
   confirmLabel?: string;
-  resolve?: (v: boolean) => void;
+  cancelLabel?: string;
+  /** Força (ou desliga) o visual de ação destrutiva; sem isto vale a heurística do título. */
+  danger?: boolean;
+  /** Caixa de seleção opcional acima dos botões (M14). */
+  checkbox?: ConfirmCheckbox;
+  checked: boolean;
+}
+export interface ConfirmCheckbox {
+  label: string;
+  defaultChecked: boolean;
+  /** Aviso curto abaixo da caixa (ex.: arquivo compartilhado com outro item). */
+  hint?: string;
+}
+export interface ConfirmOptions {
+  checkbox?: ConfirmCheckbox;
+  /** Texto do botão de cancelar (padrão: ABORTAR). */
+  cancelLabel?: string;
+  danger?: boolean;
+}
+export interface ConfirmResult {
+  confirmed: boolean;
+  /** Valor da caixa de seleção na confirmação; false quando não há caixa. */
+  checked: boolean;
 }
 interface ConfirmModalProps {
   state: ModalState;
   onConfirm: () => void;
   onCancel: () => void;
+  onToggleChecked?: (checked: boolean) => void;
 }
 
 const DANGER_TERMS = ['atenção', 'attention', 'delete', 'apagar', 'zerar', 'reset', 'excluir', 'remover'];
 
-export function ConfirmModal({ state, onConfirm, onCancel }: ConfirmModalProps) {
+export function ConfirmModal({ state, onConfirm, onCancel, onToggleChecked }: ConfirmModalProps) {
   const { t } = useTranslation('admin');
   const titleLower = state.title.toLowerCase();
-  const isDanger = DANGER_TERMS.some((term) => titleLower.includes(term));
+  const isDanger = state.danger ?? DANGER_TERMS.some((term) => titleLower.includes(term));
   const confirmRef = useRef<HTMLButtonElement>(null);
   const cancelRef = useRef<HTMLButtonElement>(null);
   const titleId = useId();
@@ -90,12 +113,28 @@ export function ConfirmModal({ state, onConfirm, onCancel }: ConfirmModalProps) 
               <p id={messageId} className="text-ash-300 text-sm leading-relaxed text-pretty whitespace-pre-line">
                 {state.message}
               </p>
+              {state.checkbox && (
+                <div className="mt-4">
+                  <label className="flex items-start gap-2.5 cursor-pointer text-sm text-bone">
+                    <input
+                      type="checkbox"
+                      checked={state.checked}
+                      onChange={(e) => onToggleChecked?.(e.target.checked)}
+                      className="mt-0.5 size-4 shrink-0 accent-accent"
+                    />
+                    <span className="text-pretty">{state.checkbox.label}</span>
+                  </label>
+                  {state.checkbox.hint && (
+                    <p className="mt-1.5 pl-6.5 text-[12px] leading-snug text-ash-500 text-pretty">{state.checkbox.hint}</p>
+                  )}
+                </div>
+              )}
             </div>
 
             <div className="flex justify-end gap-2 px-7 pb-6">
               {state.variant === 'confirm' && (
                 <button ref={cancelRef} type="button" onClick={onCancel} className="lmb-btn lmb-btn-ghost">
-                  {t('confirm.abort')}
+                  {state.cancelLabel ?? t('confirm.abort')}
                 </button>
               )}
               <button
@@ -121,30 +160,64 @@ export function useModal() {
     variant: 'alert',
     title: '',
     message: '',
+    checked: false,
   });
-  const resolveRef = useRef<((v: boolean) => void) | null>(null);
-  const showConfirm = useCallback((title: string, message: string, confirmLabel?: string): Promise<boolean> => {
-    return new Promise((resolve) => {
-      resolveRef.current = resolve;
-      setModalState({ open: true, variant: 'confirm', title, message, confirmLabel });
-    });
-  }, []);
+  const resolveRef = useRef<((r: ConfirmResult) => void) | null>(null);
+  const checkedRef = useRef(false);
+
+  /** Confirmação com caixa de seleção opcional; resolve `{ confirmed, checked }`. */
+  const showConfirmWithOption = useCallback(
+    (title: string, message: string, confirmLabel?: string, options?: ConfirmOptions): Promise<ConfirmResult> => {
+      return new Promise((resolve) => {
+        resolveRef.current = resolve;
+        const checked = options?.checkbox?.defaultChecked ?? false;
+        checkedRef.current = checked;
+        setModalState({
+          open: true,
+          variant: 'confirm',
+          title,
+          message,
+          confirmLabel,
+          cancelLabel: options?.cancelLabel,
+          danger: options?.danger,
+          checkbox: options?.checkbox,
+          checked,
+        });
+      });
+    },
+    [],
+  );
+  const showConfirm = useCallback(
+    (title: string, message: string, confirmLabel?: string): Promise<boolean> =>
+      showConfirmWithOption(title, message, confirmLabel).then((r) => r.confirmed),
+    [showConfirmWithOption],
+  );
   const showAlert = useCallback((title: string, message: string): Promise<void> => {
     return new Promise((resolve) => {
-      resolveRef.current = (v: boolean) => { resolve(); };
-      setModalState({ open: true, variant: 'alert', title, message });
+      resolveRef.current = () => { resolve(); };
+      checkedRef.current = false;
+      setModalState({ open: true, variant: 'alert', title, message, checked: false });
     });
   }, []);
   const handleConfirm = useCallback(() => {
     setModalState((s) => ({ ...s, open: false }));
-    resolveRef.current?.(true);
+    resolveRef.current?.({ confirmed: true, checked: checkedRef.current });
   }, []);
   const handleCancel = useCallback(() => {
     setModalState((s) => ({ ...s, open: false }));
-    resolveRef.current?.(false);
+    resolveRef.current?.({ confirmed: false, checked: false });
+  }, []);
+  const handleToggleChecked = useCallback((checked: boolean) => {
+    checkedRef.current = checked;
+    setModalState((s) => ({ ...s, checked }));
   }, []);
   const modal = (
-    <ConfirmModal state={modalState} onConfirm={handleConfirm} onCancel={handleCancel} />
+    <ConfirmModal
+      state={modalState}
+      onConfirm={handleConfirm}
+      onCancel={handleCancel}
+      onToggleChecked={handleToggleChecked}
+    />
   );
-  return { showConfirm, showAlert, modal };
+  return { showConfirm, showConfirmWithOption, showAlert, modal };
 }

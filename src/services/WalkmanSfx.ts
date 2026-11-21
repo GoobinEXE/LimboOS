@@ -1,14 +1,47 @@
+import keyPressUrl from '../assets/sfx/walkman/key-press.wav';
+import keyReleaseUrl from '../assets/sfx/walkman/key-release.wav';
+import buttonUrl from '../assets/sfx/walkman/button.wav';
+import dialUrl from '../assets/sfx/walkman/dial.wav';
+import detentUrl from '../assets/sfx/walkman/detent.wav';
+import insertUrl from '../assets/sfx/walkman/insert.wav';
+import ejectUrl from '../assets/sfx/walkman/eject.wav';
+import deadUrl from '../assets/sfx/walkman/dead.wav';
+
 /**
- * Sons mecânicos do walkman via Web Audio (sem assets): tecla que trava,
- * mola da tampa, fita encaixando, motor do rebobinar e o clique da roda.
- * Ruído filtrado + transientes curtos, para soar como plástico e metal,
- * não como bipe. Sempre disparado por gesto do usuário (iOS libera o áudio).
+ * Sons mecânicos do walkman. Os cliques são amostras curtas (WAV mono, ~90 KB no
+ * total, geradas com o banco do earshot; o clique pequeno e o interruptor vêm de
+ * gravações CC0 de qubodup e IanStarGem no Freesound). O motor do rebobinar e a
+ * mola do ejetar continuam sintetizados. Toda a energia fica acima de ~400 Hz,
+ * a faixa que o alto-falante de celular reproduz.
+ *
+ * Cada toque varia um pouco o tom e o volume, para repetição não soar idêntica.
+ * O mesmo som pedido duas vezes em menos de 180 ms toca uma vez só: os controles
+ * chamam no pointerdown (o clique sai quando o dedo afunda a tecla) e de novo no
+ * click (teclado), sem dobrar.
  */
+const SAMPLE_URLS = {
+  keyPress: keyPressUrl,
+  keyRelease: keyReleaseUrl,
+  button: buttonUrl,
+  dial: dialUrl,
+  detent: detentUrl,
+  insert: insertUrl,
+  eject: ejectUrl,
+  dead: deadUrl,
+} as const;
+
+type SampleName = keyof typeof SAMPLE_URLS;
+
+const DEDUPE_MS = 180;
+
 class WalkmanSfx {
   private static instance: WalkmanSfx;
   private ctx: AudioContext | null = null;
   private noise: AudioBuffer | null = null;
   private master: GainNode | null = null;
+  private buffers = new Map<SampleName, AudioBuffer>();
+  private loading: Promise<void> | null = null;
+  private lastPlayed = new Map<string, number>();
 
   static getInstance(): WalkmanSfx {
     if (!WalkmanSfx.instance) WalkmanSfx.instance = new WalkmanSfx();
@@ -23,7 +56,7 @@ class WalkmanSfx {
         if (!Ctx) return null;
         this.ctx = new Ctx();
         this.master = this.ctx.createGain();
-        this.master.gain.value = 0.4;
+        this.master.gain.value = 0.55;
         this.master.connect(this.ctx.destination);
         const len = Math.floor(this.ctx.sampleRate * 1.5);
         this.noise = this.ctx.createBuffer(1, len, this.ctx.sampleRate);
@@ -34,10 +67,69 @@ class WalkmanSfx {
       }
     }
     if (this.ctx.state === 'suspended') void this.ctx.resume();
+    void this.load();
     return this.ctx;
   }
 
-  /** Estalo de ruído filtrado: o "corpo" de qualquer peça mecânica. */
+  /** Baixa e decodifica as amostras uma vez. Falha de rede deixa a síntese como reserva. */
+  private load(): Promise<void> {
+    if (this.loading) return this.loading;
+    if (typeof window === 'undefined') return Promise.resolve();
+    // Decodifica num contexto offline: dá para preparar antes do primeiro gesto
+    // e o AudioBuffer serve em qualquer contexto.
+    let ctx: BaseAudioContext | null = this.ctx;
+    if (!ctx) {
+      const Offline = window.OfflineAudioContext
+        || (window as unknown as { webkitOfflineAudioContext?: typeof OfflineAudioContext }).webkitOfflineAudioContext;
+      if (!Offline) return Promise.resolve();
+      try { ctx = new Offline(1, 1, 44100); } catch { return Promise.resolve(); }
+    }
+    const decoder = ctx;
+    this.loading = Promise.all(
+      (Object.keys(SAMPLE_URLS) as SampleName[]).map(async (name) => {
+        try {
+          const res = await fetch(SAMPLE_URLS[name]);
+          const raw = await res.arrayBuffer();
+          const buf = await new Promise<AudioBuffer>((resolve, reject) => {
+            // Safari antigo só aceita a forma com callbacks
+            const p = decoder.decodeAudioData(raw, resolve, reject);
+            if (p && typeof p.then === 'function') p.then(resolve, reject);
+          });
+          this.buffers.set(name, buf);
+        } catch { /* fica na síntese */ }
+      }),
+    ).then(() => undefined);
+    return this.loading;
+  }
+
+  /** Baixa as amostras ao abrir o walkman, antes do primeiro toque. */
+  preload() {
+    void this.load();
+  }
+
+  private isDuplicate(key: string): boolean {
+    const now = performance.now();
+    const last = this.lastPlayed.get(key) ?? -Infinity;
+    if (now - last < DEDUPE_MS) return true;
+    this.lastPlayed.set(key, now);
+    return false;
+  }
+
+  /** Toca a amostra com leve variação; devolve false se ainda não carregou. */
+  private sample(name: SampleName, at: number, gain = 1, rate = 1): boolean {
+    const buf = this.buffers.get(name);
+    if (!buf || !this.ctx || !this.master) return false;
+    const src = this.ctx.createBufferSource();
+    src.buffer = buf;
+    src.playbackRate.value = rate * (0.96 + Math.random() * 0.08);
+    const g = this.ctx.createGain();
+    g.gain.value = gain * (0.85 + Math.random() * 0.15);
+    src.connect(g).connect(this.master);
+    src.start(at);
+    return true;
+  }
+
+  /** Estalo de ruído filtrado (reserva e camadas sintéticas). */
   private burst(at: number, dur: number, freq: number, q: number, gain: number, type: BiquadFilterType = 'bandpass') {
     const ctx = this.ctx!;
     const src = ctx.createBufferSource();
@@ -55,119 +147,126 @@ class WalkmanSfx {
     src.stop(at + dur + 0.02);
   }
 
-  /** Batida grave curta (massa da carcaça). */
-  private thump(at: number, freq: number, dur: number, gain: number) {
-    const ctx = this.ctx!;
-    const o = ctx.createOscillator();
-    o.type = 'sine';
-    o.frequency.setValueAtTime(freq, at);
-    o.frequency.exponentialRampToValueAtTime(freq * 0.55, at + dur);
-    const g = ctx.createGain();
-    g.gain.setValueAtTime(0.0001, at);
-    g.gain.exponentialRampToValueAtTime(gain, at + 0.003);
-    g.gain.exponentialRampToValueAtTime(0.0001, at + dur);
-    o.connect(g).connect(this.master!);
-    o.start(at);
-    o.stop(at + dur + 0.02);
-  }
-
-  private run(fn: (t: number) => void) {
+  private run(key: string, fn: (t: number) => void) {
+    if (this.isDuplicate(key)) return;
     const ctx = this.init();
     if (!ctx || !this.noise) return;
-    try { fn(ctx.currentTime + 0.005); } catch { /* sem som */ }
+    try { fn(ctx.currentTime + 0.003); } catch { /* sem som */ }
   }
 
-  /** Tecla de play/stop: desce, trava e o mecanismo engata. */
+  /** Amostra com reserva sintética enquanto o arquivo não chegou. */
+  private play(name: SampleName, fallback: (t: number) => void, gain = 1) {
+    this.run(name, (t) => {
+      if (!this.sample(name, t, gain)) fallback(t);
+    });
+  }
+
+  /** Tecla de play descendo e travando. */
   keyPress() {
-    this.run((t) => {
-      this.burst(t, 0.03, 3200, 1.2, 0.5);
-      this.thump(t, 140, 0.07, 0.45);
-      this.burst(t + 0.045, 0.05, 1600, 2, 0.35);
-      this.thump(t + 0.045, 95, 0.09, 0.3);
+    this.play('keyPress', (t) => {
+      this.burst(t, 0.03, 3200, 1.2, 0.9);
+      this.burst(t + 0.045, 0.05, 1600, 2, 0.6);
     });
   }
 
-  /** Tecla soltando (stop): um clique só, mais seco. */
+  /** Tecla destravando (pause/stop): clique e a mola devolvendo a tecla. */
   keyRelease() {
-    this.run((t) => {
-      this.burst(t, 0.025, 2600, 1.5, 0.4);
-      this.thump(t, 180, 0.05, 0.25);
+    this.play('keyRelease', (t) => {
+      this.burst(t, 0.025, 2600, 1.5, 0.8);
     });
   }
 
-  /** Motor rebobinando: zumbido que acelera e o tranco ao parar. */
+  /** Tecla apertada sem efeito (sem fita, sem sistema): afunda e volta, seca. */
+  dead() {
+    this.play('dead', (t) => {
+      this.burst(t, 0.03, 900, 1, 0.6);
+    }, 0.8);
+  }
+
+  /** Motor rebobinando: tecla, zumbido que acelera e o tranco ao parar. */
   rewind(durationMs = 1400) {
-    this.run((t) => {
+    this.run('rewind', (t) => {
       const ctx = this.ctx!;
       const d = durationMs / 1000;
-      this.keyPress();
+      if (!this.sample('keyPress', t)) this.burst(t, 0.03, 3200, 1.2, 0.9);
+      const start = t + 0.06;
+      // Motor: serra filtrada, fundamental baixa mas harmônicos na faixa do celular
       const o = ctx.createOscillator();
       o.type = 'sawtooth';
-      o.frequency.setValueAtTime(70, t + 0.06);
-      o.frequency.exponentialRampToValueAtTime(190, t + 0.06 + d * 0.6);
-      o.frequency.exponentialRampToValueAtTime(150, t + 0.06 + d);
-      const lp = ctx.createBiquadFilter();
-      lp.type = 'lowpass';
-      lp.frequency.value = 900;
+      o.frequency.setValueAtTime(110, start);
+      o.frequency.exponentialRampToValueAtTime(260, start + d * 0.6);
+      o.frequency.exponentialRampToValueAtTime(210, start + d);
+      const bp = ctx.createBiquadFilter();
+      bp.type = 'bandpass';
+      bp.frequency.value = 1100;
+      bp.Q.value = 0.7;
       const g = ctx.createGain();
-      g.gain.setValueAtTime(0.0001, t + 0.06);
-      g.gain.exponentialRampToValueAtTime(0.07, t + 0.2);
-      g.gain.setValueAtTime(0.07, t + 0.06 + d - 0.08);
-      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.06 + d);
-      o.connect(lp).connect(g).connect(this.master!);
-      o.start(t + 0.06);
-      o.stop(t + 0.1 + d);
-      // fita chiando no cabeçote
+      g.gain.setValueAtTime(0.0001, start);
+      g.gain.exponentialRampToValueAtTime(0.09, start + 0.15);
+      g.gain.setValueAtTime(0.09, start + d - 0.08);
+      g.gain.exponentialRampToValueAtTime(0.0001, start + d);
+      o.connect(bp).connect(g).connect(this.master!);
+      o.start(start);
+      o.stop(start + d + 0.05);
+      // Fita chiando no cabeçote
       const src = ctx.createBufferSource();
       src.buffer = this.noise;
       const hp = ctx.createBiquadFilter();
       hp.type = 'highpass';
       hp.frequency.value = 4000;
       const ng = ctx.createGain();
-      ng.gain.setValueAtTime(0.0001, t + 0.06);
-      ng.gain.exponentialRampToValueAtTime(0.05, t + 0.25);
-      ng.gain.exponentialRampToValueAtTime(0.0001, t + 0.06 + d);
+      ng.gain.setValueAtTime(0.0001, start);
+      ng.gain.exponentialRampToValueAtTime(0.06, start + 0.25);
+      ng.gain.exponentialRampToValueAtTime(0.0001, start + d);
       src.connect(hp).connect(ng).connect(this.master!);
-      src.start(t + 0.06);
-      src.stop(t + 0.1 + d);
-      this.thump(t + 0.06 + d, 120, 0.08, 0.35);
-      this.burst(t + 0.06 + d, 0.04, 2200, 1.5, 0.3);
+      src.start(start);
+      src.stop(start + d + 0.05);
+      // Fim da fita: a tecla desarma sozinha
+      if (!this.sample('keyRelease', start + d)) this.burst(start + d, 0.04, 2200, 1.5, 0.7);
     });
   }
 
-  /** Ejetar: trava solta, mola abre a tampa e a fita sobe. */
+  /** Ejetar: trava solta, mola abre a tampa. */
   eject() {
-    this.run((t) => {
-      this.burst(t, 0.025, 3500, 1.4, 0.45);
-      this.thump(t, 160, 0.06, 0.35);
-      this.burst(t + 0.04, 0.18, 5200, 6, 0.12); // mola
-      this.burst(t + 0.16, 0.06, 1200, 1.2, 0.3);
-      this.thump(t + 0.16, 90, 0.1, 0.3);
+    this.run('eject', (t) => {
+      if (!this.sample('eject', t)) this.burst(t, 0.025, 3500, 1.4, 0.8);
+      this.burst(t + 0.03, 0.2, 5200, 6, 0.1); // mola
     });
   }
 
-  /** Fita entrando no compartimento e a tampa fechando. */
+  /** Fita deslizando no compartimento e a tampa travando. */
   insert() {
-    this.run((t) => {
-      this.burst(t, 0.12, 900, 0.8, 0.18, 'lowpass'); // deslizar
-      this.burst(t + 0.12, 0.04, 2400, 1.2, 0.45);
-      this.thump(t + 0.12, 110, 0.1, 0.45);
-      this.burst(t + 0.2, 0.03, 3000, 1.5, 0.25);
+    this.play('insert', (t) => {
+      this.burst(t, 0.12, 900, 0.8, 0.3, 'lowpass');
+      this.burst(t + 0.12, 0.04, 2400, 1.2, 0.8);
     });
   }
 
-  /** Clique da roda de modo / dentes do volume. */
+  /** Clique da roda de modo. */
   tick() {
-    this.run((t) => {
-      this.burst(t, 0.018, 4200, 3, 0.25);
+    this.play('dial', (t) => {
+      this.burst(t, 0.018, 4200, 3, 0.5);
     });
   }
 
-  /** Botão pequeno (perfil, menu de sistemas, câmera). */
+  /** Dente do volume. Mais baixo e sem dedupe longo: o arraste passa por vários. */
+  detent() {
+    const key = 'detent';
+    const now = performance.now();
+    if (now - (this.lastPlayed.get(key) ?? -Infinity) < 35) return;
+    this.lastPlayed.set(key, now);
+    const ctx = this.init();
+    if (!ctx || !this.noise) return;
+    const t = ctx.currentTime + 0.003;
+    try {
+      if (!this.sample('detent', t, 0.55)) this.burst(t, 0.015, 4800, 3, 0.3);
+    } catch { /* sem som */ }
+  }
+
+  /** Botão pequeno (perfil, seletor de sistemas, câmera). */
   button() {
-    this.run((t) => {
-      this.burst(t, 0.022, 2800, 1.6, 0.3);
-      this.thump(t, 220, 0.04, 0.2);
+    this.play('button', (t) => {
+      this.burst(t, 0.022, 2800, 1.6, 0.6);
     });
   }
 }

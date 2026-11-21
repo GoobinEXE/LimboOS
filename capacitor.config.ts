@@ -24,10 +24,18 @@ const config: CapacitorConfig = {
   },
   plugins: {
     SplashScreen: {
-      launchShowDuration: 4000,
+      // Sem auto-hide a splash só sai pelo hide() de src/lib/native/nativeShell.ts
+      // (primeiro quadro, primeiro erro ou 2,5 s); launchShowDuration seria ignorado.
       launchAutoHide: false,
       backgroundColor: '#090A0C',
       showSpinner: false,
+    },
+    Keyboard: {
+      // iOS: só o <body> encolhe (vh/dvh não mudam, o walkman não se espreme) e
+      // src/lib/native/keyboard.ts rola o campo focado para a vista.
+      resize: 'body',
+      // Android: com a status bar sobre o WebView o sistema não redimensiona sozinho.
+      resizeOnFullScreen: true,
     },
     StatusBar: {
       // DARK = texto claro, para o fundo escuro do app; o conteúdo usa safe-area-inset-*.

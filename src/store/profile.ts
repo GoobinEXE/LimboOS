@@ -16,6 +16,7 @@ import { updateLastLogin, waitForUserDoc } from './firestore';
 import type { MasterAccount } from '../types/player';
 import { isNative } from '../lib/native/platform';
 import { firebaseAnalytics } from '../services/FirebaseAnalyticsService';
+import { isNetworkError } from '../lib/connectivity';
 
 function masterIdToEmail(masterId: string): string {
   const slug = masterId.trim().toLowerCase().replace(/[^a-z0-9._-]/g, '_');
@@ -24,7 +25,7 @@ function masterIdToEmail(masterId: string): string {
 
 export type LoginResult =
   | { ok: true;  account: MasterAccount }
-  | { ok: false; error: 'wrong_password' | 'network' | 'unknown'; message: string };
+  | { ok: false; error: 'wrong_password' | 'network' | 'rate_limited' | 'unknown'; message: string };
 
 const PROFILE_NOT_FOUND_CODE = 'PROFILE_NOT_FOUND';
 const PROFILE_TIMEOUT_CODE = 'PROFILE_TIMEOUT';
@@ -139,6 +140,21 @@ function profileErrorMessage(err: unknown): string | null {
   return null;
 }
 
+/** Erros de Auth que valem em qualquer caminho (login, criação, provedor). */
+function mapAuthError(err: unknown): Extract<LoginResult, { ok: false }> | null {
+  const code = (err as { code?: string }).code ?? '';
+  if (code === 'auth/too-many-requests') {
+    return { ok: false, error: 'rate_limited', message: i18n.t('auth.error.tooManyRequests', { ns: 'common' }) };
+  }
+  if (code === 'auth/user-disabled') {
+    return { ok: false, error: 'unknown', message: i18n.t('auth.error.suspended', { ns: 'common' }) };
+  }
+  if (code.startsWith('auth/network') || isNetworkError(err)) {
+    return { ok: false, error: 'network', message: i18n.t('auth.error.noConnection', { ns: 'common' }) };
+  }
+  return null;
+}
+
 export async function loginOrCreate(
   masterId: string,
   password: string,
@@ -174,6 +190,8 @@ export async function loginOrCreate(
         if (createCode === 'auth/email-already-in-use') {
           return { ok: false, error: 'wrong_password', message: i18n.t('auth.error.wrongPassword', { ns: 'common' }) };
         }
+        const mapped = mapAuthError(createErr);
+        if (mapped) return mapped;
         const profileMsg = profileErrorMessage(createErr);
         if (profileMsg) {
           return { ok: false, error: 'unknown', message: profileMsg };
@@ -184,9 +202,8 @@ export async function loginOrCreate(
     if (code === 'auth/wrong-password') {
       return { ok: false, error: 'wrong_password', message: i18n.t('auth.error.invalidCredentials', { ns: 'common' }) };
     }
-    if (code.startsWith('auth/network')) {
-      return { ok: false, error: 'network', message: i18n.t('auth.error.noConnection', { ns: 'common' }) };
-    }
+    const mapped = mapAuthError(signInErr);
+    if (mapped) return mapped;
     const profileMsg = profileErrorMessage(signInErr);
     if (profileMsg) {
       await rollbackAuthOnProfileFailure(auth.currentUser);
@@ -226,9 +243,8 @@ export async function loginWithProvider(providerName: 'google' | 'apple'): Promi
     if (code === 'auth/popup-closed-by-user') {
       return { ok: false, error: 'unknown', message: i18n.t('auth.error.cancelled', { ns: 'common' }) };
     }
-    if (code.startsWith('auth/network')) {
-      return { ok: false, error: 'network', message: i18n.t('auth.error.noConnection', { ns: 'common' }) };
-    }
+    const mapped = mapAuthError(err);
+    if (mapped) return mapped;
     if (code === 'auth/account-exists-with-different-credential') {
       return { ok: false, error: 'unknown', message: i18n.t('auth.error.emailInUse', { ns: 'common' }) };
     }

@@ -12,6 +12,10 @@ import {
 import { useAdminCampaigns } from '../hooks/useAdminCampaigns';
 import CampaignBindingPicker from './CampaignBindingPicker';
 import MIcon from './MIcon';
+import OverlayPortal from './OverlayPortal';
+import { useTranslation } from 'react-i18next';
+import { useDraftGuard } from '../hooks/useDraftGuard';
+import { useSaveShortcut } from '../hooks/useSaveShortcut';
 
 const STAT_KEYS: (keyof PlayerStats)[] = [
   'totalListenTime',
@@ -200,14 +204,33 @@ export default function AchievementEditorModal({
   const [form, setForm] = useState(initial);
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const { t } = useTranslation('admin');
+  /** Formulário já carregado de `initial`: o guarda só tira o snapshot depois disso. */
+  const [syncedFor, setSyncedFor] = useState<AchievementEditorForm | null>(null);
 
   useEffect(() => {
     if (open) {
       setForm(initial);
       setFile(null);
       setPreview(null);
+      setSyncedFor(initial);
+    } else {
+      setSyncedFor(null);
     }
   }, [open, initial]);
+
+  const guard = useDraftGuard({
+    key: 'achievement-editor',
+    open: open && syncedFor === initial,
+    value: form,
+    extraDirty: file !== null,
+    saving,
+  });
+  const requestClose = () => void guard.requestClose(onClose);
+  const canSave = !saving && Boolean(form.id.trim()) && Boolean(form.title.trim());
+  useSaveShortcut(open, () => {
+    if (canSave) onSave(form, file);
+  });
 
   useEffect(() => {
     if (!file) {
@@ -244,10 +267,12 @@ export default function AchievementEditorModal({
   if (!open) return null;
 
   return (
+    <OverlayPortal open onClose={requestClose}>
+    {guard.modal}
     <div
       className="fixed inset-0 z-[9000] flex items-center justify-center bg-surface-scrim p-4"
       onMouseDown={(e) => {
-        if (e.target === e.currentTarget && !saving) onClose();
+        if (e.target === e.currentTarget && !saving) requestClose();
       }}
     >
       <div className="bg-seam w-full max-w-2xl max-h-[90vh] overflow-hidden rounded-card shadow-panel flex flex-col">
@@ -258,7 +283,7 @@ export default function AchievementEditorModal({
           <button
             type="button"
             disabled={saving}
-            onClick={onClose}
+            onClick={requestClose}
             className="text-ash-500 hover:text-bone text-xl"
           ><MIcon name="close" /></button>
         </div>
@@ -549,7 +574,7 @@ export default function AchievementEditorModal({
           <button
             type="button"
             disabled={saving}
-            onClick={onClose}
+            onClick={requestClose}
             className="flex-1 px-4 py-3 text-[10px] font-black uppercase tracking-wider text-ash-500 hover:text-bone bg-[#333] rounded-sm"
           >
             Cancelar
@@ -558,6 +583,7 @@ export default function AchievementEditorModal({
             type="button"
             disabled={saving || !form.id.trim() || !form.title.trim()}
             onClick={() => onSave(form, file)}
+            title={t('saveShortcutHint')}
             className="flex-1 px-4 py-3 text-[10px] font-black uppercase tracking-wider bg-primary text-black rounded-sm disabled:opacity-40"
           >
             {saving ? 'Salvando…' : 'Salvar'}
@@ -565,5 +591,6 @@ export default function AchievementEditorModal({
         </div>
       </div>
     </div>
+    </OverlayPortal>
   );
 }

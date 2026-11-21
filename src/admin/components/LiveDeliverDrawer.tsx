@@ -8,7 +8,12 @@ import { groupService } from '../../services/GroupService';
 import { activityLogger } from '../../services/ActivityLogger';
 import { resolveCampaignPlatform } from '../../data/campaigns';
 import { useAchievementCatalog } from '../../hooks/useAchievementCatalog';
-import IntelDistributionDrawer from './IntelDistributionDrawer';
+import IntelDistributionDrawer, { type DeliveryReceipt } from './IntelDistributionDrawer';
+import { achievementGrantDocId } from '../../services/AchievementManager';
+import { getDoc, doc } from 'firebase/firestore';
+import { db } from '../../lib/firebase';
+
+export type { DeliveryReceipt };
 import SmsDistributionDrawer, { type SmsTarget } from './SmsDistributionDrawer';
 import DeliverShell from './DeliverShell';
 import PushDeliverDrawer from './PushDeliverDrawer';
@@ -33,7 +38,7 @@ interface LiveDeliverDrawerProps {
   /** Esquadrão da sessão ativa: alvo opcional do push. */
   groupId?: string | null;
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccess: (receipt?: DeliveryReceipt) => void;
 }
 
 /**
@@ -96,7 +101,7 @@ function AchievementDeliverPane({
 }: {
   targets: LiveDeliverTarget[];
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccess: (receipt?: DeliveryReceipt) => void;
 }) {
   const { t } = useTranslation('admin');
   const toast = useToast();
@@ -119,10 +124,20 @@ function AchievementDeliverPane({
   const handleGrant = async () => {
     if (!selectedId || targets.length === 0) return;
     setLoading(true);
+    const receipt: DeliveryReceipt = { kind: 'achievement', ids: [] };
     try {
       for (const target of targets) {
         const campaignId = target.character.campaignId || 'unscoped';
         const platform = resolveCampaignPlatform(target.character.campaignId);
+        // Só entra no recibo quem ainda não tinha a conquista (o desfazer não revoga o que já era do agente)
+        // Mesmo id que grantUserAchievement grava (id com "__" já é id de concessão)
+        const docId = selectedId.includes('__') ? selectedId : achievementGrantDocId(selectedId, campaignId);
+        const already = await getDoc(
+          doc(db, 'users', target.uid, 'characters', target.characterId, 'achievements', docId),
+        )
+          .then((snap) => snap.exists())
+          .catch(() => true);
+        if (!already) receipt.ids.push({ uid: target.uid, characterId: target.characterId, docId });
         await userService.grantUserAchievement(target.uid, target.characterId, selectedId, {
           campaignId,
           platform,
@@ -135,7 +150,7 @@ function AchievementDeliverPane({
         { achievementId: selectedId, count: targets.length }
       );
       toast.success(t('deliver.toast.achievementOk', { n: targets.length }));
-      onSuccess();
+      onSuccess(receipt);
       onClose();
     } catch (err) {
       console.error(err);
@@ -226,7 +241,7 @@ function LiveSmsDeliver({
   targets: LiveDeliverTarget[];
   missionId?: string | null;
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccess: (receipt?: DeliveryReceipt) => void;
 }) {
   const { t } = useTranslation('admin');
   const [groups, setGroups] = useState<Group[]>([]);

@@ -9,8 +9,9 @@ import type { CampaignScope } from './campaignResources';
 export type AdminDestinationId = 'live' | 'missions' | 'content' | 'mesa' | 'system';
 /** Seções da página da missão: `apps` liga os mini-apps; `equipe` tem convites de mestres e jogadores. */
 export type MissionSectionId = 'recursos' | 'dados' | 'vinculos' | 'inventario' | 'apps' | 'equipe';
-export type ContentSectionId = 'intel' | 'conquistas' | 'npcs' | 'qr';
+export type ContentSectionId = 'intel' | 'conquistas' | 'npcs' | 'qr' | 'oraculo';
 export type NpcViewId = 'contatos' | 'dialogos';
+export type OracleViewId = 'sessoes' | 'modelos';
 export type MesaSectionId = 'esquadroes' | 'contas' | 'acesso';
 /** `contas` só aparece para o admin da plataforma (claim platformAdmin). */
 export type SystemSectionId = 'relatorios' | 'log' | 'contas';
@@ -32,7 +33,7 @@ export type AdminRoute =
   | { dest: 'missions'; view: 'list' }
   | { dest: 'missions'; view: 'new' }
   | { dest: 'missions'; view: 'mission'; campaignId: string; section: MissionSectionId }
-  | { dest: 'content'; section: ContentSectionId; mission: CampaignScope; npcView: NpcViewId }
+  | { dest: 'content'; section: ContentSectionId; mission: CampaignScope; npcView: NpcViewId; oracleView: OracleViewId }
   | { dest: 'mesa'; section: MesaSectionId; accountUid?: string; agentId?: string; squadId?: string }
   | { dest: 'system'; section: SystemSectionId };
 
@@ -84,6 +85,7 @@ export const CONTENT_SECTIONS: readonly AdminSectionDef<ContentSectionId>[] = [
   { id: 'conquistas', labelKey: 'content.sub.achievements', blurbKey: 'content.sub.achievementsBlurb', icon: 'emoji_events' },
   { id: 'npcs', labelKey: 'content.sub.npcs', blurbKey: 'content.sub.npcsBlurb', icon: 'sms' },
   { id: 'qr', labelKey: 'content.sub.qr', blurbKey: 'content.sub.qrBlurb', icon: 'qr_code' },
+  { id: 'oraculo', labelKey: 'content.sub.oracle', blurbKey: 'content.sub.oracleBlurb', icon: 'auto_awesome' },
 ];
 
 export const MESA_SECTIONS: readonly AdminSectionDef<MesaSectionId>[] = [
@@ -118,9 +120,15 @@ export const adminPath = {
   content: (
     section: ContentSectionId = DEFAULT_CONTENT_SECTION,
     mission: CampaignScope = 'all',
-    npcView: NpcViewId = 'contatos'
+    npcView: NpcViewId = 'contatos',
+    oracleView: OracleViewId = 'sessoes'
   ) => {
-    const view = section === 'npcs' && npcView === 'dialogos' ? '/dialogos' : '';
+    const view =
+      section === 'npcs' && npcView === 'dialogos'
+        ? '/dialogos'
+        : section === 'oraculo' && oracleView === 'modelos'
+          ? '/modelos'
+          : '';
     const query = mission && mission !== 'all' ? `?mission=${enc(mission)}` : '';
     return `${BASE}/content/${section}${view}${query}`;
   },
@@ -141,7 +149,7 @@ export function routeToPath(route: AdminRoute): string {
       if (route.view === 'new') return adminPath.newMission();
       return adminPath.mission(route.campaignId, route.section);
     case 'content':
-      return adminPath.content(route.section, route.mission, route.npcView);
+      return adminPath.content(route.section, route.mission, route.npcView, route.oracleView);
     case 'mesa':
       if (route.section === 'contas' && route.accountUid) {
         return route.agentId
@@ -251,7 +259,9 @@ function parseRoute(segments: string[], params: URLSearchParams): AdminRoute {
       const section = isOneOf(a, CONTENT_SECTIONS) ? a : DEFAULT_CONTENT_SECTION;
       const mission = params.get('mission') || 'all';
       const npcView: NpcViewId = section === 'npcs' && b === 'dialogos' ? 'dialogos' : 'contatos';
-      return { dest: 'content', section, mission, npcView };
+      const oracleView: OracleViewId =
+        section === 'oraculo' && b === 'modelos' ? 'modelos' : 'sessoes';
+      return { dest: 'content', section, mission, npcView, oracleView };
     }
     case 'mesa': {
       const section = isOneOf(a, MESA_SECTIONS) ? a : DEFAULT_MESA_SECTION;

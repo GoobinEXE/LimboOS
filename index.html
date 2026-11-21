@@ -2,35 +2,35 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>LimboOS | Terminal dos agentes</title>
     <meta name="description" content="Companion app de RPG de mesa: os agentes recebem áudios, arquivos e mensagens do mestre em aparelhos retrô, como walkman, Nokia e terminais antigos." />
-    <link rel="canonical" href="https://terminalhubrpg.web.app/" />
+    <link rel="canonical" href="https://limboos.web.app/" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="LimboOS" />
     <meta property="og:locale" content="pt_BR" />
-    <meta property="og:url" content="https://terminalhubrpg.web.app/" />
+    <meta property="og:url" content="https://limboos.web.app/" />
     <meta property="og:title" content="LimboOS | Terminal dos agentes" />
     <meta property="og:description" content="Aparelho oficial dos agentes. Uma porta disfarçada de máquina." />
-    <meta property="og:image" content="https://terminalhubrpg.web.app/og-image.png" />
+    <meta property="og:image" content="https://limboos.web.app/og-image.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="Logotipo do LimboOS sobre fundo escuro" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="LimboOS | Terminal dos agentes" />
     <meta name="twitter:description" content="Aparelho oficial dos agentes. Uma porta disfarçada de máquina." />
-    <meta name="twitter:image" content="https://terminalhubrpg.web.app/og-image.png" />
+    <meta name="twitter:image" content="https://limboos.web.app/og-image.png" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "WebApplication",
         "name": "LimboOS",
-        "url": "https://terminalhubrpg.web.app/",
+        "url": "https://limboos.web.app/",
         "description": "Companion app de RPG de mesa em que os jogadores consomem áudios, arquivos e mensagens do mestre por interfaces retrô.",
         "applicationCategory": "GameApplication",
         "operatingSystem": "Web, iOS, Android",
         "inLanguage": ["pt-BR", "en"],
-        "image": "https://terminalhubrpg.web.app/og-image.png",
+        "image": "https://limboos.web.app/og-image.png",
         "offers": { "@type": "Offer", "price": "0", "priceCurrency": "BRL" }
       }
     </script>
@@ -43,15 +43,18 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-title" content="LimboOS" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://firestore.googleapis.com">
     <link rel="preconnect" href="https://identitytoolkit.googleapis.com">
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..800&family=Spline+Sans+Mono:wght@400;600;700&family=VT323&display=swap" />
-    <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..800&family=Spline+Sans+Mono:wght@400;600;700&family=VT323&display=swap" rel="stylesheet" media="print" onload="this.media='all'"/>
-    <noscript>
-      <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..800&family=Spline+Sans+Mono:wght@400;600;700&family=VT323&display=swap" rel="stylesheet"/>
-    </noscript>
+    <script>
+      // Teto da splash nativa (app Capacitor): se o bundle nem rodar, esconde em 2,5 s
+      // pela ponte nativa. O caminho normal fica em src/lib/native/nativeShell.ts.
+      setTimeout(function () {
+        var cap = window.Capacitor;
+        if (cap && cap.isNativePlatform && cap.isNativePlatform() && cap.nativePromise) {
+          cap.nativePromise('SplashScreen', 'hide', { fadeOutDuration: 200 }).catch(function () {});
+        }
+      }, 2500);
+    </script>
     <style>
       /* Splash crítico com a assinatura Dark Room. Substrato Preto Fita Magnética (#090A0C),
          logo oficial (public/brand/dark-room-logo.svg) e texto em Spline Sans Mono #8F9397.

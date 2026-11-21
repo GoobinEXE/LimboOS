@@ -4,6 +4,7 @@ import { motion } from 'motion/react';
 import { EASE_ENTER, EASE_EXIT } from '../lib/motion';
 import { IntelBase, VisualIntel, TextIntel, AudioIntel, MetaIntel, VideoIntel } from '../services/IntelEngine';
 import { analyticsTracker } from '../services/AnalyticsTracker';
+import { useOverlay } from '../lib/overlayStack';
 import IntelTypeIcon from './player/IntelTypeIcon';
 
 interface EvidenceReaderProps {
@@ -177,6 +178,7 @@ function CorruptedTextRenderer({ text }: { text: string }) {
  */
 export default function EvidenceReader({ evidence, onClose }: EvidenceReaderProps) {
   const { t } = useTranslation('player');
+  useOverlay(true, onClose, { id: 'evidence-reader', allowZoom: true });
   const isVisual = evidence instanceof VisualIntel;
   const isText = evidence instanceof TextIntel;
   const isAudio = evidence instanceof AudioIntel;

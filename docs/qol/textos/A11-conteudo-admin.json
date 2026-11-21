@@ -1,0 +1,135 @@
+{
+ "pacote": "A11-conteudo-admin",
+ "chaves": [
+  {
+   "id": "M01",
+   "ns": "admin",
+   "chave": "common.copySuffix",
+   "pt-BR": "(cópia)",
+   "en": "(copy)",
+   "onde": "sufixo do título/nome de conquista e NPC duplicados (pode já existir no pacote da intel)",
+   "limite": 10,
+   "publico": "mestre"
+  },
+  {
+   "id": "M01",
+   "ns": "admin",
+   "chave": "achievements.duplicate",
+   "pt-BR": "Duplicar",
+   "en": "Duplicate",
+   "onde": "botão no card da conquista",
+   "limite": 12,
+   "publico": "mestre"
+  },
+  {
+   "id": "M01",
+   "ns": "admin",
+   "chave": "npcSms.duplicate",
+   "pt-BR": "Duplicar",
+   "en": "Duplicate",
+   "onde": "botão na linha do contato de NPC",
+   "limite": 12,
+   "publico": "mestre"
+  },
+  {
+   "id": "M02",
+   "ns": "admin",
+   "chave": "draft.*",
+   "pt-BR": "(já registradas em A3)",
+   "en": "(already in A3)",
+   "onde": "usadas pelos editores de conquista e NPC via useDraftGuard",
+   "limite": 0,
+   "publico": "mestre"
+  },
+  {
+   "id": "M04",
+   "ns": "admin",
+   "chave": "redirects.removeTitle",
+   "pt-BR": "Remover redirecionamento",
+   "en": "Remove redirect",
+   "onde": "título do diálogo de remoção de QR",
+   "limite": 30,
+   "publico": "mestre"
+  },
+  {
+   "id": "M04",
+   "ns": "admin",
+   "chave": "redirects.removeBody",
+   "pt-BR": "O código {{sourceId}} deixará de apontar para a intel de destino.",
+   "en": "Code {{sourceId}} will stop pointing to its target intel.",
+   "onde": "corpo do diálogo de remoção de QR",
+   "limite": 90,
+   "publico": "mestre"
+  },
+  {
+   "id": "M04",
+   "ns": "admin",
+   "chave": "redirects.removeAction",
+   "pt-BR": "Remover",
+   "en": "Remove",
+   "onde": "botão de confirmar remoção",
+   "limite": 12,
+   "publico": "mestre"
+  },
+  {
+   "id": "M04",
+   "ns": "admin",
+   "chave": "redirects.removed",
+   "pt-BR": "Redirecionamento removido.",
+   "en": "Redirect removed.",
+   "onde": "toast após remover QR, com ação Desfazer",
+   "limite": 40,
+   "publico": "mestre"
+  },
+  {
+   "id": "M04",
+   "ns": "admin",
+   "chave": "common.undo",
+   "pt-BR": "Desfazer",
+   "en": "Undo",
+   "onde": "ação do toast de remoção",
+   "limite": 12,
+   "publico": "mestre"
+  },
+  {
+   "id": "M05",
+   "ns": "admin",
+   "chave": "saveShortcutHint",
+   "pt-BR": "Salvar (⌘S ou Ctrl+S)",
+   "en": "Save (⌘S or Ctrl+S)",
+   "onde": "title do botão salvar dos editores",
+   "limite": 30,
+   "publico": "mestre"
+  },
+  {
+   "id": "M06",
+   "ns": "admin",
+   "chave": "list.sort.default",
+   "pt-BR": "Padrão",
+   "en": "Default",
+   "onde": "opção de ordenação que mantém a ordem original",
+   "limite": 14,
+   "publico": "mestre"
+  },
+  {
+   "id": "M15",
+   "ns": "admin",
+   "chave": "jukebox.removeFail",
+   "pt-BR": "Não foi possível remover a faixa.",
+   "en": "Could not remove the track.",
+   "onde": "toast de erro ao apagar o documento da faixa",
+   "limite": 50,
+   "publico": "mestre"
+  },
+  {
+   "id": "M15",
+   "ns": "admin",
+   "chave": "jukebox.removeOrphan",
+   "pt-BR": "Faixa removida, mas o arquivo não foi apagado do Storage: {{path}}",
+   "en": "Track removed, but the file was not deleted from Storage: {{path}}",
+   "onde": "toast quando só o arquivo falha (arquivo órfão)",
+   "limite": 120,
+   "publico": "mestre"
+  }
+ ]
+}

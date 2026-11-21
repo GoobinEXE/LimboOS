@@ -28,7 +28,8 @@
       "id": "RM-USER-01 ou e-mail"
     },
     "hint": {
-      "register": "Novas contas são registradas automaticamente no primeiro acesso."
+      "register": "Novas contas são registradas automaticamente no primeiro acesso.",
+      "lostAccess": "PERDEU O ACESSO? FALE COM O MESTRE DA MESA."
     },
     "submit": "Entrar no Sistema",
     "syncing": "Sincronizando...",
@@ -47,7 +48,11 @@
       "> STATUS: LIMBO",
       "> Y2K CHECK: DESCONHECIDO",
       "> LOG: AGUARDANDO ENTRADA..."
-    ]
+    ],
+    "password": {
+      "show": "Mostrar senha",
+      "hide": "Ocultar senha"
+    }
   },
   "character": {
     "loading": "Acessando Banco de Dados...",
@@ -114,7 +119,8 @@
     "progressAria": "Navegação entre campanhas",
     "progressRecords": "Registros",
     "metadataTitle": "Ver Metadata do Terminal",
-    "metadataAria": "Ver metadata do terminal"
+    "metadataAria": "Ver metadata do terminal",
+    "progressValueText": "Missão {{current}} de {{total}}"
   },
   "cassette": {
     "mission": "Missão // {{n}} · {{side}}",
@@ -256,7 +262,9 @@
       "nokia": "REGISTROS OPERACIONAIS"
     },
     "statusPrefix": "STATUS: {{status}}",
-    "languageSection": "Preferências"
+    "languageSection": "Preferências",
+    "saveNameFail": "FALHA AO SALVAR CODINOME",
+    "photoFail": "FALHA AO ENVIAR FOTO"
   },
   "evidence": {
     "registry": "REGISTRO DE EVIDÊNCIA",
@@ -293,7 +301,15 @@
     "intelUnlocked": "Intel Desbloqueada!",
     "intelInserted": "Intel Inserida",
     "transmissionOpen": "Transmissão Aberta",
-    "transmissionReceived": "Transmissão Recebida"
+    "transmissionReceived": "Transmissão Recebida",
+    "resumeTape": "FITA RETOMADA",
+    "resumeTapeSub": "Voltou de onde você parou.",
+    "action": {
+      "fromStart": "Do início"
+    },
+    "tapeLoadFail": "FITA ILEGÍVEL",
+    "tapeLoadFailSub": "Não foi possível ler a fita.",
+    "tapeLoadFailOffline": "Sem sinal. Verifique a conexão."
   },
   "loading": {
     "default": "SINTONIZANDO...",
@@ -317,14 +333,17 @@
         "type": "Tipo"
       },
       "empty": "Nenhuma prova",
-      "emptyHint": "Escaneie um QR code para começar"
+      "emptyHint": "Escaneie um QR code para começar",
+      "itemAria": "{{title}}, {{type}}",
+      "nowPlaying": "tocando agora"
     },
     "visor": {
       "eject": "CLIQUE PARA EJETAR",
       "startingScanner": "Iniciando scanner...",
       "loadingProof": "Carregando prova...",
       "emptyBay": "Compartimento Vazio",
-      "scanHint": "Escaneie QR para Inserir Prova"
+      "scanHint": "Escaneie QR para Inserir Prova",
+      "buffering": "CARREGANDO FITA..."
     },
     "systems": "Sistemas",
     "mhDos": "MH-DOS v6.22",
@@ -373,7 +392,8 @@
       "play": "PLAY",
       "pause": "PAUSE",
       "playing": "PLAYING",
-      "paused": "PAUSED"
+      "paused": "PAUSED",
+      "buffering": "CARREGANDO..."
     },
     "mhDos": "MH-DOS",
     "mhDosFull": "MH-DOS v6.22",
@@ -395,6 +415,10 @@
     },
     "list": {
       "empty": "VAZIO"
+    },
+    "aria": {
+      "eject": "Ejetar fita",
+      "video": "Vídeo: {{title}}"
     }
   },
   "bios": {
@@ -502,5 +526,18 @@
       "enable": "Autorizar notificações",
       "denied": "Notificações bloqueadas neste aparelho. Libere nos ajustes do sistema."
     }
+  },
+  "sync": {
+    "error": {
+      "title": "SINAL INSTÁVEL",
+      "body": "A sincronização caiu. Novos itens podem demorar.",
+      "bodyServer": "O servidor recusou a sincronização.",
+      "retry": "TENTAR DE NOVO",
+      "retrying": "RECONECTANDO..."
+    }
+  },
+  "offline": {
+    "lost": "SEM SINAL",
+    "restored": "SINAL RESTABELECIDO"
   }
 }

@@ -1,0 +1,75 @@
+{
+  "pacote": "A6-backend",
+  "chaves": [
+    {
+      "id": "P03",
+      "ns": "arquivo",
+      "chave": "backend/functions/invitePage.js:INVITE_COPY.valid.title",
+      "pt-BR": "Convite para a mesa {mesa}",
+      "en": "Invitation to the {mesa} table",
+      "onde": "<title>, og:title e twitter:title da prévia de um link de convite válido; {mesa} é o nome da mesa (workspaces/{ws}.name, cortado em 48 caracteres). A Function só serve pt-BR; o en fica registrado para uma versão futura",
+      "limite": 70,
+      "publico": "visitante"
+    },
+    {
+      "id": "P03",
+      "ns": "arquivo",
+      "chave": "backend/functions/invitePage.js:INVITE_COPY.valid.description",
+      "pt-BR": "Um lugar na mesa espera por você. Abra o link no aparelho para aceitar o convite.",
+      "en": "A seat at the table is waiting for you. Open the link on your device to accept the invitation.",
+      "onde": "description, og:description e twitter:description da prévia de convite válido; não pode citar missão, tipo de convite (jogador ou co-mestre), dono ou vagas",
+      "limite": 110,
+      "publico": "visitante"
+    },
+    {
+      "id": "P03",
+      "ns": "arquivo",
+      "chave": "backend/functions/invitePage.js:INVITE_COPY.generic.title",
+      "pt-BR": "LimboOS | Convite",
+      "en": "LimboOS | Invitation",
+      "onde": "<title>, og:title e twitter:title da prévia genérica, usada para token inexistente, expirado, revogado, esgotado ou quando a leitura falha; não pode sugerir se o convite vale ou não",
+      "limite": 60,
+      "publico": "visitante"
+    },
+    {
+      "id": "P03",
+      "ns": "arquivo",
+      "chave": "backend/functions/invitePage.js:INVITE_COPY.generic.description",
+      "pt-BR": "Abra o link no aparelho para ver o convite do terminal dos agentes.",
+      "en": "Open the link on your device to see the invitation to the agents' terminal.",
+      "onde": "description, og:description e twitter:description da prévia genérica do convite; mesma restrição do título genérico",
+      "limite": 110,
+      "publico": "visitante"
+    },
+    {
+      "id": "P03",
+      "ns": "arquivo",
+      "chave": "backend/functions/invitePage.js:RETRY_HTML.body",
+      "pt-BR": "Sem sinal com o terminal. Tentando de novo...",
+      "en": "No signal from the terminal. Retrying...",
+      "onde": "página mínima (503) que se recarrega a cada 5 s quando a Function não consegue buscar o index.html do Hosting",
+      "limite": 60,
+      "publico": "jogador"
+    },
+    {
+      "id": "P16",
+      "ns": "arquivo",
+      "chave": "backend/firebase.json:auth.providers.googleSignIn.oAuthBrandDisplayName",
+      "pt-BR": "LimboOS",
+      "en": "LimboOS",
+      "onde": "nome do app na tela de consentimento do login com Google (vale em firebase deploy --only auth; o console prevalece se divergir)",
+      "limite": 30,
+      "publico": "visitante"
+    },
+    {
+      "id": "P16",
+      "ns": "arquivo",
+      "chave": "backend/firebase.json:auth.providers.googleSignIn.supportEmail",
+      "pt-BR": "PENDENTE: e-mail de suporte informado pelo dono",
+      "en": "PENDING: support e-mail provided by the owner",
+      "onde": "e-mail de suporte da tela de consentimento do Google; hoje está support@undefined.firebaseapp.com, inválido, e não há endereço real no repositório",
+      "limite": 254,
+      "publico": "visitante"
+    }
+  ]
+}

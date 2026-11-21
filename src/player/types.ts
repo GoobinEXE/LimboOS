@@ -14,6 +14,7 @@ import type {
 } from '../types/player';
 import type { Toast } from '../components/ToastNotification';
 import type { DeviceCapabilities } from './hooks/useActiveCampaign';
+import type { PlayerSyncError } from '../services/PlayerSyncService';
 import type { HistoryOverlay } from './lib/screenHistoryModel';
 
 export interface PlayerSessionValue {
@@ -47,6 +48,12 @@ export interface PlayerSessionValue {
   /** Admin jogando com `?mode=play`. */
   isAdminOperator: boolean;
   openAdminConsole: () => void;
+  /** Último erro de assinatura do Firestore; `null` quando a sincronização está saudável. */
+  syncError: PlayerSyncError | null;
+  /** Reassinatura em curso depois de "Tentar de novo". */
+  syncRetrying: boolean;
+  /** Cancela os listeners e assina de novo. */
+  retrySync: () => void;
 }
 
 export interface PlayerPlaybackValue {
@@ -60,6 +67,9 @@ export interface PlayerPlaybackValue {
   activeEvidence: IntelBase | null;
   setActiveEvidence: Dispatch<SetStateAction<IntelBase | null>>;
   isMuted: boolean;
+  /** Fita bufferizando há mais de 300 ms (A4). */
+  isBuffering: boolean;
+  seekBy: (deltaSeconds: number) => void;
   nokiaBackVisible: boolean;
   setNokiaBackVisible: Dispatch<SetStateAction<boolean>>;
   toasts: Toast[];

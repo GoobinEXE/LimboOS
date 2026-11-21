@@ -10,6 +10,7 @@ import { ref, deleteObject } from 'firebase/storage';
 import MediaSelectorModal from './MediaSelectorModal';
 import { MediaAsset } from '../../types/media';
 import { useModal } from './ConfirmModal';
+import { useToast } from './ToastProvider';
 import Screw from '../../components/player/Screw';
 import MIcon from './MIcon';
 
@@ -63,6 +64,7 @@ export default function JukeboxPanel({ embedded = false }: { embedded?: boolean 
   const ytContainerRef = useRef<HTMLDivElement>(null);
   const ytApiReady = useRef(false);
   const { showAlert, showConfirm, modal } = useModal();
+  const toast = useToast();
 
   const currentTrack = currentIndex >= 0 && currentIndex < tracks.length ? tracks[currentIndex] : null;
 
@@ -224,10 +226,22 @@ export default function JukeboxPanel({ embedded = false }: { embedded?: boolean 
   const handleDelete = async (track: JukeboxTrack) => {
     const ok = await showConfirm(t('jukebox.removeTitle'), t('jukebox.removeBody', { title: track.title }), t('jukebox.removeAction'));
     if (!ok) return;
-    if (track.storagePath) {
-      try { await deleteObject(ref(storage, track.storagePath)); } catch {}
+    // Documento primeiro: se falhar, a faixa continua listada e tocando.
+    try {
+      await deleteDoc(wsDoc('jukeboxTracks', track.id));
+    } catch (err) {
+      console.error(err);
+      toast.error(t('jukebox.removeFail'));
+      return;
     }
-    await deleteDoc(wsDoc('jukeboxTracks', track.id));
+    if (track.storagePath) {
+      try {
+        await deleteObject(ref(storage, track.storagePath));
+      } catch (err) {
+        console.error(err);
+        toast.error(t('jukebox.removeOrphan', { path: track.storagePath }));
+      }
+    }
     if (currentTrack?.id === track.id) {
       setCurrentIndex(-1);
       setIsPlaying(false);

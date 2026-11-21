@@ -47,6 +47,7 @@ export default function NokiaSessionLayout() {
             currentIntel={playback.currentIntel}
             status={playback.walkmanStatus}
             isPlaying={playback.isPlaying}
+            isBuffering={playback.isBuffering}
             setIsPlaying={playback.handleSetIsPlaying}
             volume={playback.volume}
             setVolume={playback.setVolume}

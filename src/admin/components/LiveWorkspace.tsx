@@ -17,7 +17,11 @@ import { useToast } from './ToastProvider';
 import { ONLINE_WINDOW_MS, useHardwareAccessActions } from '../hooks/useHardwareAccessActions';
 import { useModal } from './ConfirmModal';
 import SessionGlobalsPanel from './SessionGlobalsPanel';
+import { intelService } from '../../services/IntelService';
+import { userService } from '../../services/UserService';
+import { activityLogger } from '../../services/ActivityLogger';
 import LiveDeliverDrawer, {
+  type DeliveryReceipt,
   type LiveDeliverKind,
   type LiveDeliverTarget,
 } from './LiveDeliverDrawer';
@@ -225,8 +229,48 @@ export default function LiveWorkspace({
     });
   };
 
+  // Agentes que saíram da lista online deixam de contar como marcados
+  useEffect(() => {
+    const online = new Set(allOnlineRows.map((r) => r.uid));
+    setSelectedUids((prev) => {
+      let changed = false;
+      const next = new Set<string>();
+      prev.forEach((uid) => {
+        if (online.has(uid)) next.add(uid);
+        else changed = true;
+      });
+      return changed ? next : prev;
+    });
+  }, [allOnlineRows]);
+
+  /** Toast com "Desfazer" depois de entregar intel ou conquista (push já enviado não é recolhido). */
+  const offerUndo = (receipt: DeliveryReceipt) => {
+    const undo = async () => {
+      try {
+        for (const { uid, characterId, docId } of receipt.ids) {
+          if (receipt.kind === 'intel') await intelService.revokeIntel(uid, characterId, docId);
+          else await userService.revokeUserAchievement(uid, characterId, docId);
+        }
+        activityLogger.logAdmin(
+          'mestre',
+          'delivery_undo',
+          `Desfez entrega de ${receipt.kind === 'intel' ? 'intel' : 'conquista'} para ${receipt.ids.length} agente(s)`,
+          { kind: receipt.kind, ids: receipt.ids },
+        );
+        toast.success(t('live.undo.done', { n: receipt.ids.length }));
+      } catch (err) {
+        console.error('[LiveWorkspace] undo failed:', err);
+        toast.error(t('live.undo.fail'));
+      }
+    };
+    toast.success(t('live.undo.delivered', { n: receipt.ids.length }), {
+      durationMs: 8000,
+      action: { label: t('common.undo'), onClick: undo },
+    });
+  };
+
   const selectAll = () => {
-    if (selectedUids.size === rows.length) setSelectedUids(new Set());
+    if (selectedUids.size === onlineUids.length) setSelectedUids(new Set());
     else setSelectedUids(new Set(onlineUids));
   };
 
@@ -483,7 +527,7 @@ export default function LiveWorkspace({
                 onClick={selectAll}
                 className="text-[10px] font-display font-bold uppercase tracking-wider text-ash-500 hover:text-primary"
               >
-                {selectedUids.size === rows.length
+                {selectedUids.size === onlineUids.length
                   ? t('live.presence.clearSelection', { n: selectedUids.size })
                   : t('live.presence.selectAll', { n: rows.length })}
               </button>
@@ -705,7 +749,8 @@ export default function LiveWorkspace({
               setDeliverKind(null);
               setDeliverTargets([]);
             }}
-            onSuccess={() => {
+            onSuccess={(receipt) => {
+              if (receipt && receipt.ids.length > 0) offerUndo(receipt);
               const first = deliverTargets[0]?.uid;
               if (first) {
                 setFlashUid(first);

@@ -133,7 +133,9 @@
       "npcs": "NPCs & SMS",
       "npcsBlurb": "Contatos e diálogos de torpedos",
       "qr": "QR & Links",
-      "qrBlurb": "Mapear QR físico → intel de destino"
+      "qrBlurb": "Mapear QR físico → intel de destino",
+      "oracle": "Oráculo",
+      "oracleBlurb": "Designação cega 1-para-1 de fichas por pontuação de alta precisão"
     }
   },
   "systems": {
@@ -216,7 +218,12 @@
     "jukebox": "Jukebox da Mesa",
     "recentLog": "Log Recente",
     "fullLog": "Ver log completo →",
-    "allTargets": "todos*"
+    "allTargets": "todos*",
+    "undo": {
+      "delivered": "Entrega feita para {{n}} agente(s).",
+      "done": "Entrega desfeita para {{n}} agente(s). Notificações já enviadas não são recolhidas.",
+      "fail": "Não foi possível desfazer a entrega."
+    }
   },
   "deliver": {
     "kind": {
@@ -412,7 +419,9 @@
       "more": "e mais {{count}}",
       "disabled": "Off",
       "dialogueCount_one": "{{count}} diálogo",
-      "dialogueCount_other": "{{count}} diálogos"
+      "dialogueCount_other": "{{count}} diálogos",
+      "search": "Buscar nos recursos da missão",
+      "noMatch": "Nada encontrado."
     },
     "delete": {
       "lead": "Apagar \"{{name}}\" tira a missão do Firestore e desfaz os vínculos com ela.",
@@ -432,7 +441,8 @@
       "title": "Nenhuma missão nesta pasta",
       "bodyOwner": "Crie a primeira missão para começar a montar a mesa.",
       "bodyCogm": "O mestre ainda não te convidou para nenhuma missão desta pasta."
-    }
+    },
+    "duplicate": "Duplicar missão"
   },
   "media": {
     "title": "Biblioteca",
@@ -467,6 +477,14 @@
     },
     "toast": {
       "uploadOk": "✓ {{n}} arquivos enviados. Editando o primeiro — os demais estão no catálogo."
+    },
+    "queue": {
+      "title": "Fila de envio",
+      "tooLarge": "Maior que o limite de {{max}} MB",
+      "badType": "Tipo não permitido (áudio, imagem, vídeo ou PDF)",
+      "retry": "Tentar de novo",
+      "clearDone": "Limpar concluídos",
+      "done": "Enviado"
     }
   },
   "intel": {
@@ -500,7 +518,11 @@
       "npc": "NPC RESPONSÁVEL",
       "chapter": "CAPÍTULO / SETOR",
       "duration": "DURAÇÃO (SEG)",
-      "format": "FORMATO FÍSICO"
+      "format": "FORMATO FÍSICO",
+      "saveShortcutHint": "⌘S ou ⌘Enter",
+      "previewAsPlayer": "Ver como jogador",
+      "previewClose": "Fechar prévia",
+      "previewUnavailable": "A prévia cobre texto, imagem e meta. Áudio e vídeo não têm prévia aqui."
     },
     "qr": {
       "title": "Gerar QR desta Intel",
@@ -511,7 +533,11 @@
       "title": "Exportar Registro Mestre"
     },
     "catalog": {
-      "preview": "Prévia"
+      "preview": "Prévia",
+      "duplicate": "Duplicar",
+      "sort": {
+        "default": "Ordem do catálogo"
+      }
     },
     "dist": {
       "search": "LOCALIZAR NA BIBLIOTECA...",
@@ -520,6 +546,10 @@
       "videoSelected": "1 VÍDEO SELECIONADO",
       "selectVideo": "SELECIONE UM VÍDEO",
       "error": "ERRO: Falha na operação."
+    },
+    "delete": {
+      "storageCheckbox": "Apagar também o arquivo do Storage",
+      "sharedFileWarning": "Outra intel usa este mesmo arquivo. Apagá-lo quebra essa intel."
     }
   },
   "accounts": {
@@ -794,7 +824,11 @@
     "destination": "Destino",
     "integrity": "Integridade de Mapeamento: Ótima",
     "targetHint": "Digite o título ou o id: o campo sugere as intel do catálogo.",
-    "targetUnknown": "Intel não encontrada no catálogo"
+    "targetUnknown": "Intel não encontrada no catálogo",
+    "removeTitle": "Remover redirecionamento",
+    "removeBody": "O código {{sourceId}} deixará de apontar para a intel de destino.",
+    "removeAction": "Remover",
+    "removed": "Redirecionamento removido."
   },
   "achievements": {
     "title": "Catálogo Global de Conquistas",
@@ -831,7 +865,8 @@
     "createForMission": "Nova conquista para esta missão",
     "firstCreateTitle": "Importar sugestões antes",
     "firstCreateBody": "O catálogo ainda usa as sugestões locais. A primeira conquista salva no Firestore passa a ser o catálogo inteiro e as sugestões somem da lista. Importar as sugestões e criar a nova conquista em seguida?",
-    "firstCreateAction": "Importar e criar"
+    "firstCreateAction": "Importar e criar",
+    "duplicate": "Duplicar"
   },
   "npcSms": {
     "title": "Catálogo SMS / NPCs",
@@ -900,7 +935,8 @@
     "distHidden_other": "{{count}} NPCs de outras missões ocultos. Mostrar todos",
     "firstCreateTitle": "Importar sugestões antes",
     "firstCreateBody": "O catálogo ainda usa os NPCs e diálogos sugeridos. O primeiro registro salvo no Firestore substitui as sugestões, que somem da lista. Importar as sugestões e criar o novo registro em seguida?",
-    "firstCreateAction": "Importar e criar"
+    "firstCreateAction": "Importar e criar",
+    "duplicate": "Duplicar"
   },
   "jukebox": {
     "title": "Interface de Broadcast Jukebox",
@@ -918,7 +954,9 @@
     "addFail": "Falha ao adicionar áudio à jukebox.",
     "removeTitle": "Atenção",
     "removeBody": "Remover \"{{title}}\" da jukebox?",
-    "removeAction": "Remover"
+    "removeAction": "Remover",
+    "removeFail": "Não foi possível remover a faixa.",
+    "removeOrphan": "Faixa removida, mas o arquivo não foi apagado do Storage: {{path}}"
   },
   "scope": {
     "label": "Filtrar por missão",
@@ -1007,8 +1045,11 @@
       "createFail": "Não foi possível criar o convite.",
       "revokeFail": "Não foi possível revogar o convite.",
       "removed": "Co-mestre removido.",
-      "removeFail": "Não foi possível remover o co-mestre."
-    }
+      "removeFail": "Não foi possível remover o co-mestre.",
+      "duplicated": "Convite igual gerado. Link copiado."
+    },
+    "duplicateInvite": "Gerar igual",
+    "noInvitesAction": "Gerar primeiro convite"
   },
   "platform": {
     "title": "Contas da plataforma",
@@ -1034,11 +1075,274 @@
     }
   },
   "push": {
-    "target": { "label": "Destino", "selected": "Agentes ({{n}})", "group": "Esquadrão da sessão", "mission": "Missão", "all": "Pasta inteira" },
-    "field": { "title": "Título", "body": "Mensagem", "sendAt": "Agendar (vazio envia agora)" },
-    "action": { "send": "Enviar agora", "schedule": "Agendar" },
+    "target": {
+      "label": "Destino",
+      "selected": "Agentes ({{n}})",
+      "group": "Esquadrão da sessão",
+      "mission": "Missão",
+      "all": "Pasta inteira"
+    },
+    "field": {
+      "title": "Título",
+      "body": "Mensagem",
+      "sendAt": "Agendar (vazio envia agora)"
+    },
+    "action": {
+      "send": "Enviar agora",
+      "schedule": "Agendar"
+    },
     "pending": "Agendados",
     "history": "Últimos envios",
-    "toast": { "sent": "Enviado a {{sent}} aparelho(s) de {{n}} conta(s)", "scheduled": "Lembrete agendado", "fail": "Falha no push" }
+    "toast": {
+      "sent": "Enviado a {{sent}} aparelho(s) de {{n}} conta(s)",
+      "scheduled": "Lembrete agendado",
+      "fail": "Falha no push"
+    }
+  },
+  "bulk": {
+    "moveToFolder": "Mover para pasta",
+    "linkMission": "Vincular a missão",
+    "unlinkMission": "Sem missão",
+    "remove": "Remover",
+    "removeBody_one": "Remover {{count}} item do catálogo? Jogadores que já têm o item mantêm no inventário.",
+    "removeBody_other": "Remover {{count}} itens do catálogo? Jogadores que já têm os itens mantêm no inventário.",
+    "removeFilesBody_one": "Remover permanentemente {{count}} arquivo? Isso pode quebrar links existentes.",
+    "removeFilesBody_other": "Remover permanentemente {{count}} arquivos? Isso pode quebrar links existentes.",
+    "result": "{{ok}} de {{total}} itens processados",
+    "resultPartial": "{{ok}} processados, {{failed}} falharam",
+    "selected_one": "{{count}} selecionado",
+    "selected_other": "{{count}} selecionados",
+    "clear": "Limpar",
+    "selectAll": "Selecionar todos"
+  },
+  "common": {
+    "copySuffix": "(cópia)",
+    "undo": "Desfazer"
+  },
+  "draft": {
+    "*": "(já registradas em A3)",
+    "title": "Descartar alterações?",
+    "body": "O que você digitou neste editor ainda não foi salvo e será perdido.",
+    "discard": "DESCARTAR",
+    "keep": "CONTINUAR EDITANDO"
+  },
+  "saveShortcutHint": "Salvar (⌘S ou Ctrl+S)",
+  "list": {
+    "sort": {
+      "default": "Padrão",
+      "recent": "Mais recentes",
+      "title": "Título (A-Z)",
+      "type": "Tipo",
+      "id": "ID"
+    },
+    "sortLabel": "Ordenar"
+  },
+  "oracle": {
+    "view": {
+      "sessoes": "Sessões",
+      "modelos": "Modelos"
+    },
+    "mode": {
+      "batch": "Lote",
+      "instant": "Tempo Real"
+    },
+    "status": {
+      "pending": "Pendente",
+      "submitted": "Aguardando",
+      "revealed": "Designada"
+    },
+    "sessions": {
+      "new": "Nova Sessão",
+      "needTemplateFirst": "Crie ou importe ao menos um modelo antes de abrir uma sessão.",
+      "emptyTitle": "Nenhuma sessão do Oráculo criada",
+      "emptyBody": "Crie um modelo modular com suas fichas (texto, Markdown, PDF ou blocos), perguntas e palavras-chave, e abra uma sessão para os jogadores.",
+      "browseTemplates": "Ir para Modelos"
+    },
+    "creator": {
+      "title": "Criar Sessão do Oráculo",
+      "subtitle": "Gera códigos individuais para os jogadores responderem às cegas (1 ficha única por vaga).",
+      "template": "Modelo do Oráculo",
+      "sheetsUnit": "fichas",
+      "sessionTitle": "Nome da sessão",
+      "campaign": "Vincular à missão",
+      "noCampaign": "Avulsa (sem missão)",
+      "coGmNeedCampaign": "Co-mestres precisam vincular a sessão a uma de suas campanhas.",
+      "mode": "Modo de resolução",
+      "autoResolve": "Designar automaticamente quando todas as vagas responderem",
+      "prefix": "Prefixo dos códigos",
+      "slotCount": "Vagas (máx. {{max}})",
+      "slotLabelsHint": "Rótulos opcionais das vagas (para controle do mestre)",
+      "slotPlaceholder": "Vaga {{n}} (opcional)",
+      "submit": "Gerar Vagas"
+    },
+    "console": {
+      "stateResolved": "Designada",
+      "stateOpen": "Aberta",
+      "submittedUnit": "enviadas",
+      "freeSheetsUnit": "fichas livres",
+      "copyAllLinks": "Copiar todos os links",
+      "exportMd": "Exportar Dossiê (.md)",
+      "addSlot": "Adicionar Vaga",
+      "resolve": "Designar Fichas",
+      "resolvePartialTitle": "Designar sessão parcial?",
+      "resolvePartialBody": "Ainda há {{pending}} vaga(s) pendente(s). Deseja calcular e revelar agora as fichas para as {{ready}} vaga(s) enviada(s)?",
+      "deleteTitle": "Apagar sessão do Oráculo",
+      "deleteBody": "Remover \"{{title}}\" e invalidar todos os códigos de vaga gerados?",
+      "deleteAction": "Apagar",
+      "metricTotal": "Soma global",
+      "metricMin": "Menor nota",
+      "metricFirst": "1ªs opções",
+      "metricWords": "Palavras acertadas",
+      "slotsTitle": "Vagas & Códigos ({{count}})",
+      "copyLink": "Link",
+      "details": "Ver detalhes",
+      "resetTitle": "Resetar vaga",
+      "resetBody": "Limpar respostas de {{code}} e devolver a vaga para pendente?",
+      "resetAction": "Resetar",
+      "matrixTitle": "Matriz de Afinidade (4 casas decimais)",
+      "colSlot": "Vaga / Jogador",
+      "colAssigned": "Ficha Designada",
+      "auditTitle": "Log Auditável & Desempates",
+      "selectedWordsOrder": "Palavras selecionadas (em ordem)",
+      "scoresRanking": "Ranking de afinidade",
+      "intakeDataTitle": "Identificação"
+    },
+    "templates": {
+      "lead": "Monte modelos 100% modulares para qualquer RPG: número livre de fichas (texto, Markdown, PDF ou blocos), perguntas com pesos decimais e palavras-chave.",
+      "importJson": "Importar JSON",
+      "createNew": "Novo Modelo",
+      "exportJson": "Exportar JSON",
+      "launchSession": "Criar Sessão",
+      "workspaceTitle": "Modelos da Pasta ({{count}})",
+      "empty": "Nenhum modelo salvo nesta pasta ainda. Crie um modelo do zero ou importe um arquivo JSON.",
+      "unscoped": "Sem vínculo",
+      "statSummary": "{{sheets}} fichas · {{questions}} perguntas · {{words}} palavras",
+      "edit": "Editar",
+      "duplicate": "Duplicar",
+      "delete": "Apagar",
+      "deleteTitle": "Apagar modelo",
+      "deleteBody": "Excluir o modelo \"{{name}}\"? Sessões já criadas mantêm seu próprio snapshot.",
+      "importInvalid": "Arquivo JSON inválido para modelo do Oráculo (são necessárias ao menos 2 fichas).",
+      "importReady": "Modelo importado no editor. Revise e clique em Salvar."
+    },
+    "editor": {
+      "untitled": "Novo Modelo",
+      "tabGeneral": "Geral & Pontuação",
+      "tabIntake": "Identificação",
+      "tabSheets": "Fichas",
+      "tabQuiz": "Perguntas & Palavras",
+      "questionsCount": "perguntas",
+      "wordsCount": "palavras",
+      "name": "Nome do modelo",
+      "rpgSystem": "Sistema de RPG",
+      "description": "Descrição",
+      "codePrefix": "Prefixo dos códigos",
+      "campaigns": "Escopo de Missões",
+      "sharedDocTitle": "Documento único compartilhado (PDF / MD / TXT — opcional)",
+      "sharedDocHint": "Envie um PDF único contendo todas as fichas da mesa e indique o intervalo de páginas dentro de cada ficha.",
+      "uploadDoc": "Enviar arquivo",
+      "removeDoc": "Remover",
+      "uploadOk": "Documento enviado.",
+      "uploadFail": "Não foi possível enviar o documento.",
+      "textFileLoaded": "Conteúdo carregado de {{name}}.",
+      "scoringTitle": "Pontuação de Alta Precisão (até 4 casas decimais — 0.0001)",
+      "scoringHint": "Sem sistema de dados: se houver empate exato até 0.0001, vence quem marcou mais palavras da ficha e mais cedo na ordem de clique (#1 > #2 > #3...).",
+      "ptsPrimary": "Pts 1ª opção",
+      "ptsSecondary": "Pts 2ª opção",
+      "ptsWord": "Pts palavra",
+      "ptsWordPair": "Bônus múltiplas pal.",
+      "ptsSpecificity": "Especificidade",
+      "ptsCoherence": "Coerência P×W",
+      "reqWords": "Palavras exigidas",
+      "unexpectedThreshold": "Limiar inesperada",
+      "normalizeScores": "Normalizar notas finais na escala 0.0000 a 100.0000 proporcional ao máximo de cada ficha",
+      "copyTitle": "Títulos das etapas na tela do jogador",
+      "copyIntake": "Etapa de identificação",
+      "copyQuiz": "Etapa do questionário",
+      "copyWords": "Etapa de palavras-chave",
+      "copyWait": "Tela de espera",
+      "copyDossier": "Título da ficha revelada",
+      "copyUnexpected": "Selo de designação inesperada",
+      "intakeHint": "Campos opcionais preenchidos antes do questionário (0 a 20). Sem campos, esta etapa é pulada automaticamente.",
+      "intakeEmpty": "Nenhum campo de identificação. O jogador vai direto para o questionário.",
+      "addField": "Adicionar Campo",
+      "fieldLabel": "Rótulo",
+      "fieldType": "Tipo",
+      "required": "Obrigatório",
+      "bulkTitle": "Importar várias fichas de um documento único (.md ou .txt)",
+      "bulkHint": "Cole o texto completo ou carregue um arquivo único separado por --- ou títulos # para gerar todas as fichas de uma vez.",
+      "bulkOpen": "Abrir importador",
+      "bulkLoadFile": "Carregar .md / .txt",
+      "splitAuto": "Separar automaticamente (--- ou #)",
+      "splitHr": "Separar por ---",
+      "splitHeading": "Separar por títulos (# / ##)",
+      "formatPlain": "Texto simples",
+      "bulkPlaceholder": "# Ficha 1\nConteúdo da primeira ficha...\n\n---\n\n# Ficha 2\nConteúdo da segunda ficha...",
+      "bulkDetected": "{{count}} ficha(s) detectada(s)",
+      "bulkAppend": "Adicionar às existentes",
+      "bulkReplace": "Substituir fichas",
+      "bulkImported": "{{count}} ficha(s) importada(s).",
+      "addSheet": "Nova Ficha",
+      "editingSheet": "Editando ficha {{n}} de {{total}}",
+      "removeSheet": "Remover ficha",
+      "sheetName": "Nome da ficha",
+      "sheetColor": "Cor de destaque",
+      "sheetSubtitle": "Subtítulo (opcional)",
+      "sheetOrigin": "Categoria / Origem (opcional)",
+      "sheetSummary": "Resumo curto (opcional)",
+      "sheetBodyLabel": "Conteúdo livre da ficha (Markdown ou Texto simples)",
+      "sheetBodyPlaceholder": "Digite ou cole aqui a ficha completa em Markdown ou texto simples...",
+      "loadTextFile": "Carregar .md / .txt",
+      "sheetPdfTitle": "PDF / Arquivo da ficha (opcional)",
+      "pageRangePlaceholder": "Páginas / Seção (ex.: Págs. 3–5)",
+      "useSharedDoc": "Vincular ao documento compartilhado ({{name}})",
+      "optionalBlocksSummary": "Blocos estruturados opcionais ({{attrs}} atrib. · {{stats}} status · {{traits}} traços · {{abilities}} hab. · {{flavor}} campos extras)",
+      "revealNarrative": "Texto de revelação (opcional)",
+      "unexpectedNarrative": "Texto de designação inesperada (opcional)",
+      "attributes": "Atributos",
+      "derivedStats": "Estatísticas Derivadas",
+      "traits": "Traços",
+      "abilities": "Habilidades",
+      "flavorFields": "Campos pós-revelação preenchíveis pelo jogador",
+      "addItem": "Adicionar",
+      "balanceTitle": "Distribuição por ficha (Perguntas positivas · Palavras)",
+      "questionsTitle": "Perguntas ({{count}})",
+      "addQuestion": "Nova Pergunta",
+      "questionPrompt": "Pergunta {{n}}",
+      "questionWeight": "Peso da pergunta (0.0001)",
+      "optionPlaceholder": "Alternativa {{n}}",
+      "customWeightsActive": "Pesos decimais personalizados por ficha ativos abaixo",
+      "toggleDecimalWeights": "Alternar entre atalho simples e pesos decimais por ficha (4 casas)",
+      "addOption": "Nova Alternativa",
+      "wordsTitle": "Palavras-Chave ({{count}})",
+      "wordsHint": "Em caso de empate na nota, vence quem escolheu mais palavras da ficha e mais cedo na ordem de clique (#1 > #2 > #3...).",
+      "addWord": "Nova Palavra",
+      "wordPlaceholder": "Palavra",
+      "wordWeightHint": "Peso decimal opcional (vazio = padrão do modelo)",
+      "errName": "Informe o nome do modelo.",
+      "errCoGmScope": "Selecione ao menos uma de suas campanhas.",
+      "errSheetCount": "O modelo precisa ter entre 2 e 64 fichas.",
+      "errNeedQuestionsOrWords": "Adicione ao menos 1 pergunta ou exija ao menos 1 palavra-chave.",
+      "errWordCount": "Palavras exigidas não pode superar o total de palavras cadastradas.",
+      "errQuestion": "Cada pergunta precisa de enunciado e ao menos 2 alternativas.",
+      "errOption": "Cada alternativa precisa de texto e apontar ao menos uma ficha (ou peso decimal)."
+    },
+    "toast": {
+      "sessionCreated": "Sessão criada com {{count}} códigos.",
+      "createFail": "Não foi possível criar a sessão.",
+      "copyFail": "Não foi possível copiar para a área de transferência.",
+      "linkCopied": "Link da vaga copiado.",
+      "allLinksCopied": "Todos os links copiados.",
+      "resolved": "Designação concluída e fichas reveladas.",
+      "resolveFail": "Não foi possível concluir a designação.",
+      "slotAdded": "Nova vaga criada: {{code}}.",
+      "slotReset": "Vaga {{code}} resetada.",
+      "sessionDeleted": "Sessão removida.",
+      "actionFail": "Falha na operação.",
+      "templateSaved": "Modelo salvo na pasta.",
+      "saveFail": "Erro ao salvar modelo.",
+      "templateDeleted": "Modelo excluído.",
+      "deleteFail": "Erro ao excluir modelo."
+    }
   }
 }

@@ -22,7 +22,8 @@ import {
   accessLevelClass,
   accessLevelLabel,
 } from '../lib/intelDisplay';
-import MediaUploadZone from './media/MediaUploadZone';
+import MediaUploadZone, { type UploadJob } from './media/MediaUploadZone';
+import { MAX_UPLOAD_BYTES, validateUploadFile } from '../../services/MediaService';
 import MediaFolderSidebar, { FolderFilter } from './media/MediaFolderSidebar';
 import MediaFolderAssignModal from './media/MediaFolderAssignModal';
 import IntelCatalogPane from './intel/IntelCatalogPane';
@@ -30,6 +31,11 @@ import IntelEditorHost from './intel/IntelEditorHost';
 import IntelQrModal from './intel/IntelQrModal';
 import IntelExportDrawer from './intel/IntelExportDrawer';
 import { useIntelCatalog } from '../hooks/useIntelCatalog';
+import { useListControls } from '../hooks/useListControls';
+import { useSelection } from '../hooks/useSelection';
+import { useToast } from './ToastProvider';
+import SortSelect from './SortSelect';
+import BulkActionBar from './BulkActionBar';
 import { campaignService } from '../../services/CampaignService';
 import MIcon from './MIcon';
 
@@ -47,6 +53,16 @@ interface MediaLibraryPanelProps {
   /** Filtro de missão do catálogo de intel (vem do `?mission=` de Conteúdo). */
   campaignScope?: CampaignScope;
 }
+
+type MediaSortKey = 'recent' | 'title' | 'type';
+
+const assetTitle = (a: MediaAsset) => a.metadata?.title || a.filename || '';
+const MEDIA_SORTERS: Record<MediaSortKey, ((a: MediaAsset, b: MediaAsset) => number) | null> = {
+  // A assinatura já entrega os uploads do mais novo para o mais antigo.
+  recent: null,
+  title: (a, b) => assetTitle(a).localeCompare(assetTitle(b), 'pt-BR'),
+  type: (a, b) => (a.type || '').localeCompare(b.type || '', 'pt-BR') || assetTitle(a).localeCompare(assetTitle(b), 'pt-BR'),
+};
 
 export default function MediaLibraryPanel({
   onSelect,
@@ -67,10 +83,25 @@ export default function MediaLibraryPanel({
   const [foldersReady, setFoldersReady] = useState(false);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [filter, setFilter] = useState<MediaType | 'all'>('all');
+  const [jobs, setJobs] = useState<UploadJob[]>([]);
+  const jobsRef = useRef<UploadJob[]>([]);
+  const queueRunningRef = useRef(false);
+  const openedBatchesRef = useRef(new Set<string>());
+  // Busca, ordem e aba de tipo persistem por pasta; o seletor de mídia (modal) tem estado próprio.
+  const mediaControls = useListControls<MediaAsset, MediaSortKey>({
+    storageKey: selectionMode ? 'media-picker' : 'media',
+    defaultSort: 'recent',
+    sorters: MEDIA_SORTERS,
+    defaultFilters: { type: 'all' },
+  });
+  const filter = (mediaControls.filters.type || 'all') as MediaType | 'all';
+  const setFilter = (v: MediaType | 'all') => mediaControls.setFilter('type', v);
   const [folderFilter, setFolderFilter] = useState<FolderFilter>('all');
-  const [searchQuery, setSearchQuery] = useState('');
+  const searchQuery = mediaControls.query;
+  const setSearchQuery = mediaControls.setQuery;
+  const assetSelection = useSelection<string>();
+  const [bulkFolderOpen, setBulkFolderOpen] = useState(false);
+  const toast = useToast();
   const [selectedAssetId, setSelectedAssetId] = useState<string | null>(null);
   const [assignAsset, setAssignAsset] = useState<MediaAsset | null>(null);
   const [assignFolderIds, setAssignFolderIds] = useState<string[]>([]);
@@ -78,6 +109,8 @@ export default function MediaLibraryPanel({
   const syncingRef = useRef(false);
 
   const intel = useIntelCatalog({ campaignScope });
+  const intelRef = useRef(intel);
+  intelRef.current = intel;
   const { campaigns: campaignsForEditor } = useAdminCampaigns();
 
   useEffect(() => {
@@ -170,67 +203,102 @@ export default function MediaLibraryPanel({
     [assets],
   );
 
+  const patchJob = (id: string, patch: Partial<UploadJob>) => {
+    jobsRef.current = jobsRef.current.map((j) => (j.id === id ? { ...j, ...patch } : j));
+    setJobs(jobsRef.current);
+  };
+
+  /** Processa a fila um arquivo por vez; novos lotes entram no fim enquanto roda. */
+  const runQueue = async () => {
+    if (queueRunningRef.current) return;
+    queueRunningRef.current = true;
+    setUploading(true);
+    try {
+      for (;;) {
+        const job = jobsRef.current.find((j) => j.status === 'queued');
+        if (!job) break;
+        patchJob(job.id, { status: 'uploading', progress: 0, error: undefined });
+        try {
+          const asset = await mediaService.uploadMedia(
+            job.file,
+            auth.currentUser?.uid || auth.currentUser?.email || 'admin',
+            {
+              folderIds: job.folderIds,
+              onProgress: (progress) => patchJob(job.id, { progress }),
+            },
+          );
+          patchJob(job.id, { status: 'done', progress: 100 });
+          // Fluxo unificado: o editor abre só para o primeiro envio bem-sucedido do lote.
+          if (!selectionMode && !openedBatchesRef.current.has(job.batchId)) {
+            openedBatchesRef.current.add(job.batchId);
+            const cur = intelRef.current;
+            cur.openEditorFromAsset(asset);
+            cur.setFeedback({
+              type: 'success',
+              text:
+                job.batchSize === 1
+                  ? '✓ Arquivo enviado. Complete os metadados da intel.'
+                  : t('media.toast.uploadOk', { n: job.batchSize }),
+            });
+          }
+        } catch (error) {
+          console.error('Upload error:', error);
+          patchJob(job.id, {
+            status: 'error',
+            retryable: true,
+            error: error instanceof Error ? error.message : t('media.alert.uploadFail'),
+          });
+        }
+      }
+    } finally {
+      queueRunningRef.current = false;
+      setUploading(false);
+    }
+  };
+
   const handleUpload = async (files: FileList) => {
     if (files.length === 0) return;
-    setUploading(true);
-    setUploadProgress(0);
-
     const folderIds =
       folderFilter !== 'all' && folderFilter !== 'unfiled' ? [folderFilter] : undefined;
-
-    try {
-      const uploaded: MediaAsset[] = [];
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const mimeOk =
-          file.type.startsWith('audio/') ||
-          file.type.startsWith('image/') ||
-          file.type.startsWith('video/') ||
-          file.type === 'application/pdf';
-        if (!mimeOk) continue;
-        if (allowedTypes && !allowedTypes.some((t) => file.type.startsWith(t))) {
-          continue;
-        }
-        const asset = await mediaService.uploadMedia(
-          file,
-          auth.currentUser?.uid || auth.currentUser?.email || 'admin',
-          {
-            folderIds,
-            onProgress: (progress) => setUploadProgress(progress),
-          },
-        );
-        uploaded.push(asset);
+    const batchId = `b${Date.now()}`;
+    const picked = Array.from(files);
+    const newJobs: UploadJob[] = picked.map((file, i) => {
+      const rejection =
+        validateUploadFile(file) ??
+        (allowedTypes && !allowedTypes.some((ty) => file.type.startsWith(ty)) ? 'badType' : null);
+      const base = { id: `${batchId}-${i}`, file, progress: 0, folderIds, batchId, batchSize: picked.length };
+      if (rejection === 'tooLarge') {
+        return {
+          ...base,
+          status: 'error' as const,
+          error: t('media.queue.tooLarge', {
+            max: Math.round(MAX_UPLOAD_BYTES / (1024 * 1024)),
+            defaultValue: 'Maior que o limite de {{max}} MB',
+          }),
+        };
       }
-
-      if (uploaded.length === 0) {
-        showAlert(t('media.alert.upload'), t('media.alert.noValidFiles'));
-        return;
+      if (rejection === 'badType') {
+        return {
+          ...base,
+          status: 'error' as const,
+          error: t('media.queue.badType', { defaultValue: 'Tipo não permitido (áudio, imagem, vídeo ou PDF)' }),
+        };
       }
+      return { ...base, status: 'queued' as const, retryable: true };
+    });
+    jobsRef.current = [...jobsRef.current, ...newJobs];
+    setJobs(jobsRef.current);
+    await runQueue();
+  };
 
-      // Fluxo unificado: abre o editor com o primeiro arquivo; demais ficam no catálogo.
-      if (!selectionMode) {
-        const primary = uploaded[0];
-        intel.openEditorFromAsset(primary);
-        intel.setFeedback({
-          type: 'success',
-          text:
-            uploaded.length === 1
-              ? '✓ Arquivo enviado. Complete os metadados da intel.'
-              : t('media.toast.uploadOk', { n: uploaded.length }),
-        });
-      } else {
-        intel.setFeedback({
-          type: 'success',
-          text: `✓ ${uploaded.length} arquivo(s) enviado(s).`,
-        });
-      }
-    } catch (error) {
-      console.error('Upload error:', error);
-      showAlert(t('media.alert.uploadError'), t('media.alert.uploadFail'));
-    } finally {
-      setUploading(false);
-      setUploadProgress(0);
-    }
+  const handleRetryJob = (id: string) => {
+    patchJob(id, { status: 'queued', progress: 0, error: undefined });
+    void runQueue();
+  };
+
+  const handleClearDoneJobs = () => {
+    jobsRef.current = jobsRef.current.filter((j) => j.status !== 'done');
+    setJobs(jobsRef.current);
   };
 
   const handleDelete = async (asset: MediaAsset) => {
@@ -277,25 +345,91 @@ export default function MediaLibraryPanel({
     }
   };
 
-  const filteredAssets = assets.filter((a) => {
-    if (allowedTypes?.length && !allowedTypes.includes(a.type)) return false;
+  const filteredAssets = useMemo(() => {
+    const base = assets.filter((a) => {
+      if (allowedTypes?.length && !allowedTypes.includes(a.type)) return false;
+      const tags = a.metadata?.tags || [];
+      if (folderFilter === 'unfiled' && tags.length > 0) return false;
+      if (folderFilter !== 'all' && folderFilter !== 'unfiled' && !tags.includes(folderFilter)) {
+        return false;
+      }
+      return true;
+    });
+    return mediaControls.apply(base, (a, q) => {
+      const tags = a.metadata?.tags || [];
+      const folderNames = tags
+        .map((id) => folderNameById.get(id) || '')
+        .join(' ')
+        .toLowerCase();
+      return (
+        a.filename.toLowerCase().includes(q) ||
+        (a.metadata.title || '').toLowerCase().includes(q) ||
+        folderNames.includes(q)
+      );
+    });
+  }, [assets, allowedTypes, folderFilter, mediaControls.apply, folderNameById]);
 
-    const tags = a.metadata?.tags || [];
-    if (folderFilter === 'unfiled' && tags.length > 0) return false;
-    if (folderFilter !== 'all' && folderFilter !== 'unfiled' && !tags.includes(folderFilter)) {
-      return false;
+  // Trocar busca, aba ou pasta limpa a seleção; remoções descartam o que sumiu (M03).
+  useEffect(() => {
+    assetSelection.clear();
+  }, [searchQuery, filter, folderFilter, assetSelection.clear]);
+  useEffect(() => {
+    assetSelection.prune(filteredAssets.map((a) => a.id));
+  }, [filteredAssets, assetSelection.prune]);
+
+  const selectedAssets = filteredAssets.filter((a) => assetSelection.isSelected(a.id));
+
+  const reportBulk = (ok: number, failed: number, total: number) => {
+    if (failed === 0) {
+      toast.success(t('bulk.result', { ok, total, defaultValue: '{{ok}} de {{total}} itens processados' }));
+    } else {
+      toast.error(t('bulk.resultPartial', { ok, failed, defaultValue: '{{ok}} processados, {{failed}} falharam' }));
     }
+  };
 
-    const q = searchQuery.toLowerCase().trim();
-    if (!q) return true;
-    const title = (a.metadata.title || '').toLowerCase();
-    const filename = a.filename.toLowerCase();
-    const folderNames = tags
-      .map((id) => folderNameById.get(id) || '')
-      .join(' ')
-      .toLowerCase();
-    return filename.includes(q) || title.includes(q) || folderNames.includes(q);
-  });
+  /** Remove os arquivos marcados com uma única confirmação (mesmo caminho de `handleDelete`). */
+  const handleBulkDelete = async () => {
+    const targets = selectedAssets;
+    if (targets.length === 0) return;
+    const confirmed = await showConfirm(
+      t('bulk.remove', { defaultValue: 'Remover itens' }),
+      t('bulk.removeFilesBody', {
+        count: targets.length,
+        defaultValue: 'Remover permanentemente {{count}} arquivos? Isso pode quebrar links existentes.',
+      }),
+      t('bulk.remove', { defaultValue: 'Remover' }),
+    );
+    if (!confirmed) return;
+    let ok = 0;
+    let failed = 0;
+    for (const asset of targets) {
+      try {
+        await mediaService.deleteMedia(asset);
+        ok++;
+      } catch {
+        failed++;
+      }
+    }
+    assetSelection.clear();
+    reportBulk(ok, failed, targets.length);
+  };
+
+  /** Soma as pastas escolhidas às que cada arquivo já tem. */
+  const handleBulkFolders = async (folderIds: string[]) => {
+    const targets = selectedAssets;
+    let ok = 0;
+    let failed = 0;
+    for (const asset of targets) {
+      try {
+        await mediaFolderService.setAssetFolders(asset.id, [...(asset.metadata?.tags || []), ...folderIds]);
+        ok++;
+      } catch {
+        failed++;
+      }
+    }
+    assetSelection.clear();
+    reportBulk(ok, failed, targets.length);
+  };
 
   const handleAssetClick = (asset: MediaAsset) => {
     if (selectionMode) {
@@ -390,7 +524,10 @@ export default function MediaLibraryPanel({
         <MediaUploadZone
           onUpload={handleUpload}
           uploading={uploading}
-          uploadProgress={uploadProgress}
+          uploadProgress={0}
+          jobs={jobs}
+          onRetry={handleRetryJob}
+          onClearDone={handleClearDoneJobs}
           hideUploadButton
         />
       )}
@@ -399,7 +536,10 @@ export default function MediaLibraryPanel({
         <MediaUploadZone
           onUpload={handleUpload}
           uploading={uploading}
-          uploadProgress={uploadProgress}
+          uploadProgress={0}
+          jobs={jobs}
+          onRetry={handleRetryJob}
+          onClearDone={handleClearDoneJobs}
           hideDropZone
           uploadButtonLabel="UPLOAD"
         />
@@ -437,6 +577,35 @@ export default function MediaLibraryPanel({
               <FilterTab label={t('media.filter.images')} active={filter === 'image'} onClick={() => setFilter('image')} icon="image" />
               <FilterTab label={t('media.filter.videos')} active={filter === 'video'} onClick={() => setFilter('video')} icon="videocam" />
             </div>
+
+            <SortSelect
+              value={mediaControls.sortKey}
+              onChange={mediaControls.setSortKey}
+              options={[
+                { value: 'recent', label: t('list.sort.recent', { defaultValue: 'Mais recentes' }) },
+                { value: 'title', label: t('list.sort.title', { defaultValue: 'Título (A-Z)' }) },
+                { value: 'type', label: t('list.sort.type', { defaultValue: 'Tipo' }) },
+              ]}
+              className="max-w-xs"
+            />
+
+            {!selectionMode && (
+              <BulkActionBar
+                count={assetSelection.count}
+                onClear={assetSelection.clear}
+                onSelectAll={() => assetSelection.selectAll(filteredAssets.map((a) => a.id))}
+                allSelected={assetSelection.allSelected(filteredAssets.map((a) => a.id))}
+              >
+                <button type="button" onClick={() => setBulkFolderOpen(true)} className="lmb-btn">
+                  <MIcon name="folder" className="text-base" />
+                  {t('bulk.moveToFolder', { defaultValue: 'Mover para pasta' })}
+                </button>
+                <button type="button" onClick={() => void handleBulkDelete()} className="lmb-btn lmb-btn-danger">
+                  <MIcon name="delete" className="text-base" />
+                  {t('bulk.remove', { defaultValue: 'Remover' })}
+                </button>
+              </BulkActionBar>
+            )}
 
             <AnimatePresence mode="wait">
               {loading ? (
@@ -517,6 +686,21 @@ export default function MediaLibraryPanel({
                               </div>
                             )}
                           </div>
+
+                          {!selectionMode && (
+                            <input
+                              type="checkbox"
+                              checked={assetSelection.isSelected(asset.id)}
+                              onClick={(e) => e.stopPropagation()}
+                              onChange={() => assetSelection.toggle(asset.id)}
+                              aria-label={asset.metadata.title || asset.filename}
+                              className={`absolute bottom-8 left-1 z-30 h-4 w-4 cursor-pointer accent-primary transition-opacity ${
+                                assetSelection.isSelected(asset.id) || assetSelection.count > 0
+                                  ? 'opacity-100'
+                                  : 'opacity-0 group-hover:opacity-100 focus-visible:opacity-100'
+                              }`}
+                            />
+                          )}
 
                           {catalogStatus && !selectionMode && (
                             <div className="absolute top-1 right-1 z-20 flex flex-col items-end gap-0.5">
@@ -624,6 +808,13 @@ export default function MediaLibraryPanel({
               onStatusFilter={intel.setStatusFilter}
               onEdit={intel.handleEditItem}
               onDelete={(item) => void intel.handleDeleteItem(item)}
+              sortKey={intel.sortKey}
+              onSortKey={intel.setSortKey}
+              onDuplicate={intel.handleDuplicateItem}
+              selection={intel.selection}
+              bulkBusy={intel.bulkBusy}
+              onBulkDelete={(items) => void intel.handleBulkDelete(items)}
+              onBulkLink={(items, campaignId) => void intel.handleBulkLink(items, campaignId)}
               onDeleteFile={(item) => void intel.handleDeleteFileOnly(item)}
               onQr={intel.setQrCodeModal}
               onPlayAudio={playIntelAudio}
@@ -652,6 +843,15 @@ export default function MediaLibraryPanel({
           />
         </>
       )}
+
+      <MediaFolderAssignModal
+        open={bulkFolderOpen}
+        folders={folders}
+        selectedIds={[]}
+        assetTitle={t('bulk.selected', { count: assetSelection.count })}
+        onClose={() => setBulkFolderOpen(false)}
+        onSave={handleBulkFolders}
+      />
 
       <MediaFolderAssignModal
         open={!!assignAsset}

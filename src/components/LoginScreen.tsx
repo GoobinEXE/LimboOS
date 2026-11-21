@@ -1,11 +1,19 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useTranslation } from 'react-i18next';
-import { Lock, Terminal, Cpu, AlertTriangle, ChevronRight, Info } from 'lucide-react';
+import { Lock, Terminal, Cpu, AlertTriangle, ChevronRight, Info, Eye, EyeOff, Sparkles } from 'lucide-react';
 import AboutDialog from './AboutDialog';
 import { loginOrCreate, loginWithProvider } from '../store/profile';
 import type { MasterAccount } from '../types/player';
 import { EASE_OUT, EXIT_FAST } from '../lib/motion';
+import { isNative } from '../lib/native/platform';
+
+/** No app nativo, mantém o campo focado visível acima do teclado (P11). */
+function revealOnFocus(e: React.FocusEvent<HTMLInputElement>) {
+  if (!isNative()) return;
+  const el = e.currentTarget;
+  window.setTimeout(() => el.scrollIntoView({ block: 'center', behavior: 'smooth' }), 300);
+}
 
 interface LoginScreenProps {
   onLogin: (account: MasterAccount) => void;
@@ -19,6 +27,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
   const [aboutOpen, setAboutOpen] = useState(false);
   const [masterId, setMasterId] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -33,6 +42,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
     }
 
     setError(null);
+    setShowPassword(false);
     setIsLoggingIn(true);
     const result = await loginOrCreate(masterId.trim(), password);
     setIsLoggingIn(false);
@@ -92,7 +102,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-ash-500 group-focus-within:text-accent transition-colors duration-(--duration-fast)">
                       <Terminal size={16} />
                     </div>
-                    <input id="login-master-id" type="text" required value={masterId} onChange={e => setMasterId(e.target.value)}
+                    <input id="login-master-id" type="text" required value={masterId} onChange={e => setMasterId(e.target.value)} onFocus={revealOnFocus}
                       placeholder={t('login.placeholder.id')}
                       autoComplete="username" autoCapitalize="none" spellCheck={false}
                       aria-invalid={Boolean(error)} aria-describedby={error ? 'login-error' : undefined}
@@ -109,13 +119,22 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-ash-500 group-focus-within:text-accent transition-colors duration-(--duration-fast)">
                       <Lock size={16} />
                     </div>
-                    <input id="login-password" type="password" required value={password} onChange={e => setPassword(e.target.value)}
+                    <input id="login-password" type={showPassword ? 'text' : 'password'} required value={password} onChange={e => setPassword(e.target.value)} onFocus={revealOnFocus}
                       placeholder="••••••••"
                       autoComplete="current-password"
                       aria-invalid={Boolean(error)} aria-describedby={error ? 'login-error' : undefined}
-                      className="focus-bare w-full bg-surface-sunken rounded-control py-4 pl-12 pr-4 text-bone shadow-pressed font-sans text-base tracking-wide focus:ring-0 placeholder:text-ash-500 outline-none transition-colors duration-(--duration-fast)" />
+                      className="focus-bare w-full bg-surface-sunken rounded-control py-4 pl-12 pr-14 text-bone shadow-pressed font-sans text-base tracking-wide focus:ring-0 placeholder:text-ash-500 outline-none transition-colors duration-(--duration-fast)" />
+                    <button type="button" onClick={() => setShowPassword(v => !v)} aria-pressed={showPassword}
+                      aria-label={t('login.password.show')}
+                      title={showPassword ? t('login.password.hide') : t('login.password.show')}
+                      className="absolute inset-y-0 right-0 w-11 flex items-center justify-center text-ash-500 hover:text-bone transition-colors duration-(--duration-fast)">
+                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
                     <div className="absolute bottom-0 left-4 right-4 h-px bg-accent scale-x-0 origin-left transition-transform duration-(--duration-base) ease-limbo group-focus-within:scale-x-100" />
                   </div>
+                  <p className="mt-2 text-[10px] font-display text-ash-500 uppercase tracking-wider leading-relaxed">
+                    {t('login.hint.lostAccess')}
+                  </p>
                 </div>
               </div>
 
@@ -190,6 +209,13 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
               ))}
             </div>
             <div className="flex items-center gap-3">
+              <a
+                href="/oraculo"
+                className="inline-flex items-center gap-1.5 text-[10px] font-display font-bold uppercase tracking-[0.12em] text-ash-400 hover:text-accent transition-colors"
+              >
+                <Sparkles size={12} />
+                <span>{tCommon('oracle.entryLink')}</span>
+              </a>
               <button
                 type="button"
                 onClick={() => setAboutOpen(true)}

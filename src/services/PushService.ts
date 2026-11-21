@@ -19,6 +19,8 @@ type MessagingModule = typeof import('@capacitor-firebase/messaging');
 
 const ASK_LATER_KEY = 'limboos.push.askAfter';
 const ASK_LATER_MS = 7 * 86_400_000;
+const PUSH_MOMENT_KEY = 'limboos.push.moment';
+export const PUSH_MOMENT_EVENT = 'limboos:push-moment';
 const DETACH_TIMEOUT_MS = 1500;
 /** Mesmo id de backend/functions/push.js. */
 const ANDROID_CHANNEL_ID = 'limboos_transmissoes';
@@ -207,6 +209,25 @@ class PushService {
     await Promise.race([disable, new Promise((resolve) => setTimeout(resolve, DETACH_TIMEOUT_MS))]);
     this.uid = null;
     this.activeCharacterId = null;
+  }
+
+  /** Marca o primeiro desbloqueio de intel ou fala de NPC e avisa o prompt de permissão. */
+  public markPushMoment(): void {
+    try {
+      if (localStorage.getItem(PUSH_MOMENT_KEY)) return;
+      localStorage.setItem(PUSH_MOMENT_KEY, '1');
+    } catch {
+      /* sem storage: o evento ainda abre o prompt nesta sessão */
+    }
+    if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent(PUSH_MOMENT_EVENT));
+  }
+
+  public hasPushMoment(): boolean {
+    try {
+      return localStorage.getItem(PUSH_MOMENT_KEY) === '1';
+    } catch {
+      return false;
+    }
   }
 
   public shouldAsk(): boolean {

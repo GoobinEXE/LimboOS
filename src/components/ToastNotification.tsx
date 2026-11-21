@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import type { AchievementTier, PlayerPlatform } from '../services/AchievementManager';
@@ -12,6 +12,15 @@ export interface Toast {
   icon?: string;
   tier?: AchievementTier;
   platform?: PlayerPlatform;
+  /** Ação opcional (ex.: "Tentar de novo"). O toast com ação dura mais e some ao clicar nela. */
+  action?: ToastAction;
+  /** Duração em ms; padrão 3500 (5500 em conquista, 8000 com ação). */
+  durationMs?: number;
+}
+
+export interface ToastAction {
+  label: string;
+  onClick: () => void;
 }
 
 interface ToastNotificationProps {
@@ -21,6 +30,73 @@ interface ToastNotificationProps {
 
 const ACHIEVEMENT_DURATION_MS = 5500;
 const DEFAULT_DURATION_MS = 3500;
+const ACTION_DURATION_MS = 8000;
+
+function toastDuration(toast: Toast): number {
+  if (toast.durationMs) return toast.durationMs;
+  if (toast.action) return ACTION_DURATION_MS;
+  return toast.type === 'achievement' ? ACHIEVEMENT_DURATION_MS : DEFAULT_DURATION_MS;
+}
+
+/** Timer pausável (hover ou foco) com Esc para dispensar enquanto o toast está em uso. */
+interface ToastHandlers {
+  onPointerEnter: () => void;
+  onPointerLeave: () => void;
+  onFocus: () => void;
+  onBlur: () => void;
+}
+
+function useToastLifetime(toast: Toast, duration: number, onDismiss: (id: string) => void) {
+  const [paused, setPaused] = useState(false);
+  const remainingRef = useRef(duration);
+
+  useEffect(() => {
+    if (paused) return;
+    const startedAt = Date.now();
+    const timer = setTimeout(() => onDismiss(toast.id), remainingRef.current);
+    return () => {
+      clearTimeout(timer);
+      remainingRef.current = Math.max(0, remainingRef.current - (Date.now() - startedAt));
+    };
+  }, [paused, toast.id, onDismiss]);
+
+  useEffect(() => {
+    if (!paused) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onDismiss(toast.id);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [paused, toast.id, onDismiss]);
+
+  return {
+    paused,
+    handlers: {
+      onPointerEnter: () => setPaused(true),
+      onPointerLeave: () => setPaused(false),
+      onFocus: () => setPaused(true),
+      onBlur: () => setPaused(false),
+    },
+  };
+}
+
+function ToastActionButton({ toast, onDismiss, className }: { toast: Toast; onDismiss: (id: string) => void; className?: string }) {
+  if (!toast.action) return null;
+  const { action } = toast;
+  return (
+    <button
+      type="button"
+      onClick={(e) => {
+        e.stopPropagation();
+        action.onClick();
+        onDismiss(toast.id);
+      }}
+      className={`pointer-events-auto shrink-0 min-h-11 min-w-11 px-3 text-[10px] font-bold uppercase tracking-[0.12em] rounded-inset bg-surface-container-high hover:bg-surface-container-highest transition-colors ${className ?? 'text-accent'}`}
+    >
+      {action.label}
+    </button>
+  );
+}
 
 function isImageIcon(icon?: string): boolean {
   return !!icon && (icon.startsWith('/') || icon.startsWith('http') || icon.endsWith('.png') || icon.endsWith('.webp'));
@@ -64,15 +140,11 @@ interface ToastItemProps {
 function ToastItem({ toast, onDismiss }: ToastItemProps) {
   const { t } = useTranslation('common');
   const isAchievement = toast.type === 'achievement';
-  const duration = isAchievement ? ACHIEVEMENT_DURATION_MS : DEFAULT_DURATION_MS;
-
-  useEffect(() => {
-    const timer = setTimeout(() => onDismiss(toast.id), duration);
-    return () => clearTimeout(timer);
-  }, [toast.id, onDismiss, duration]);
+  const duration = toastDuration(toast);
+  const { paused, handlers } = useToastLifetime(toast, duration, onDismiss);
 
   if (isAchievement) {
-    return <AchievementToast toast={toast} onDismiss={onDismiss} duration={duration} />;
+    return <AchievementToast toast={toast} onDismiss={onDismiss} duration={duration} paused={paused} handlers={handlers} />;
   }
 
   const colors = {
@@ -102,9 +174,10 @@ function ToastItem({ toast, onDismiss }: ToastItemProps) {
       role="status"
       className={`pointer-events-auto relative overflow-hidden flex items-center gap-3 px-4 py-3 rounded-card bg-surface-container-low machined-edge min-w-[200px] max-w-[260px] cursor-pointer ${colors[toast.type]} ${glows[toast.type]}`}
       onClick={() => onDismiss(toast.id)}
+      {...handlers}
     >
       <ToastIcon icon={toast.icon} />
-      <div className="min-w-0">
+      <div className="min-w-0 flex-1">
         <p className={`text-[10px] uppercase tracking-[0.12em] opacity-60 truncate ${textColors[toast.type]}`}>
           {protocolLabels[toast.type]}
         </p>
@@ -115,13 +188,13 @@ function ToastItem({ toast, onDismiss }: ToastItemProps) {
           <p className="text-[10px] text-ash-400 truncate mt-0.5">{toast.subtitle}</p>
         )}
       </div>
-      <motion.div
-        initial={{ scaleX: 1 }}
-        animate={{ scaleX: 0 }}
-        transition={{ duration: duration / 1000, ease: 'linear' }}
+      <ToastActionButton toast={toast} onDismiss={onDismiss} className={textColors[toast.type]} />
+      <span
+        aria-hidden
         className={`absolute bottom-0 left-0 right-0 h-0.5 origin-left opacity-50 ${
           toast.type === 'tape' ? 'bg-accent' : 'bg-red-400'
         }`}
+        style={{ animation: `toast-countdown ${duration}ms linear forwards`, animationPlayState: paused ? 'paused' : 'running' }}
       />
     </motion.div>
   );
@@ -131,10 +204,14 @@ function AchievementToast({
   toast,
   onDismiss,
   duration,
+  paused,
+  handlers,
 }: {
   toast: Toast;
   onDismiss: (id: string) => void;
   duration: number;
+  paused: boolean;
+  handlers: ToastHandlers;
 }) {
   const { t } = useTranslation('common');
   const tier = toast.tier || 'common';
@@ -172,6 +249,7 @@ function AchievementToast({
       role="status"
       className={`pointer-events-auto relative overflow-hidden flex gap-3.5 px-4 py-3.5 rounded-card bg-surface-container-low machined-edge min-w-[260px] max-w-[300px] cursor-pointer ${tierBorder} ${tierGlow}`}
       onClick={() => onDismiss(toast.id)}
+      {...handlers}
     >
       <div
         aria-hidden
@@ -205,13 +283,13 @@ function AchievementToast({
           {t('toast.achievement.class', { tier: tierLabel })}
         </p>
       </div>
-      <motion.div
-        initial={{ scaleX: 1 }}
-        animate={{ scaleX: 0 }}
-        transition={{ duration: duration / 1000, ease: 'linear' }}
+      <ToastActionButton toast={toast} onDismiss={onDismiss} className={`relative self-center ${accentText}`} />
+      <span
+        aria-hidden
         className={`absolute bottom-0 left-0 right-0 h-0.5 origin-left ${
           platform === 'nokia' ? 'bg-phosphor-400/70' : 'bg-amber-400/70'
         }`}
+        style={{ animation: `toast-countdown ${duration}ms linear forwards`, animationPlayState: paused ? 'paused' : 'running' }}
       />
     </motion.div>
   );

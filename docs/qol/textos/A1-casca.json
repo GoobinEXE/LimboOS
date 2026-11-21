@@ -1,0 +1,6 @@
+{ "pacote": "A1-casca", "chaves": [
+  { "id": "P01", "ns": "common", "chave": "offline.banner", "pt-BR": "Sem sinal. Tentando reconectar", "en": "No signal. Trying to reconnect", "onde": "faixa fixa no topo de todas as telas enquanto o aparelho está sem rede (fonte mono, caixa alta por CSS)", "limite": 36, "publico": "sistema" },
+  { "id": "P01", "ns": "common", "chave": "offline.restored", "pt-BR": "Sinal restabelecido", "en": "Signal restored", "onde": "mesma faixa do topo por 2,5 s quando a rede volta (admin, convite e terminal; no player o aviso é o toast de usePlayerSync)", "limite": 36, "publico": "sistema" },
+  { "id": "P02", "ns": "common", "chave": "update.available", "pt-BR": "Nova versão disponível.", "en": "A new version is available.", "onde": "aviso fixo no canto inferior esquerdo quando o site publicado muda durante a sessão", "limite": 40, "publico": "sistema" },
+  { "id": "P02", "ns": "common", "chave": "update.action", "pt-BR": "Atualizar", "en": "Update", "onde": "botão do aviso de nova versão; recarrega a página", "limite": 12, "publico": "sistema" }
+] }
